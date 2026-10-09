@@ -43,2370 +43,3919 @@ abbrev candRows : List (List (Option (Fin 2 × Dir × Fin 543))) :=
 theorem reference_eq : refM = Machine.ofRows refRows := rfl
 theorem candidate_eq : candM = Machine.ofRows candRows := rfl
 
-def fNat (n : Nat) : Fin 543 :=
-  (if n < 372 then (if n < 186 then (if n < 93 then (if n < 47 then (if n < 24 then (if n < 12
-  then (if n < 6 then (if n < 3 then (if n < 2 then (if n < 1 then 0 else 1) else 2) else (if n <
-  5 then (if n < 4 then 31 else 3) else 4)) else (if n < 9 then (if n < 8 then (if n < 7 then 5
-  else 6) else 7) else (if n < 11 then (if n < 10 then 8 else 9) else 10))) else (if n < 18 then
-  (if n < 15 then (if n < 14 then (if n < 13 then 0 else 11) else 12) else (if n < 17 then (if n <
-  16 then 13 else 14) else 15)) else (if n < 21 then (if n < 20 then (if n < 19 then 16 else 17)
-  else 18) else (if n < 23 then (if n < 22 then 19 else 20) else 21)))) else (if n < 36 then (if n
-  < 30 then (if n < 27 then (if n < 26 then (if n < 25 then 22 else 23) else 24) else (if n < 29
-  then (if n < 28 then 25 else 26) else 27)) else (if n < 33 then (if n < 32 then (if n < 31 then
-  28 else 29) else 30) else (if n < 35 then (if n < 34 then 32 else 31) else 32))) else (if n < 42
-  then (if n < 39 then (if n < 38 then (if n < 37 then 0 else 0) else 0) else (if n < 41 then (if
-  n < 40 then 0 else 0) else 40)) else (if n < 45 then (if n < 44 then (if n < 43 then 33 else 34)
-  else 0) else (if n < 46 then 0 else 30))))) else (if n < 70 then (if n < 59 then (if n < 53 then
-  (if n < 50 then (if n < 49 then (if n < 48 then 0 else 0) else 0) else (if n < 52 then (if n <
-  51 then 0 else 0) else 0)) else (if n < 56 then (if n < 55 then (if n < 54 then 0 else 0) else
-  0) else (if n < 58 then (if n < 57 then 35 else 36) else 37))) else (if n < 65 then (if n < 62
-  then (if n < 61 then (if n < 60 then 38 else 39) else 0) else (if n < 64 then (if n < 63 then 0
-  else 40) else 0)) else (if n < 68 then (if n < 67 then (if n < 66 then 0 else 41) else 42) else
-  (if n < 69 then 43 else 0)))) else (if n < 82 then (if n < 76 then (if n < 73 then (if n < 72
-  then (if n < 71 then 287 else 44) else 33) else (if n < 75 then (if n < 74 then 0 else 0) else
-  0)) else (if n < 79 then (if n < 78 then (if n < 77 then 0 else 0) else 0) else (if n < 81 then
-  (if n < 80 then 45 else 0) else 0))) else (if n < 88 then (if n < 85 then (if n < 84 then (if n
-  < 83 then 47 else 46) else 15) else (if n < 87 then (if n < 86 then 0 else 0) else 47)) else (if
-  n < 91 then (if n < 90 then (if n < 89 then 46 else 0) else 0) else (if n < 92 then 48 else
-  49)))))) else (if n < 140 then (if n < 117 then (if n < 105 then (if n < 99 then (if n < 96 then
-  (if n < 95 then (if n < 94 then 50 else 51) else 52) else (if n < 98 then (if n < 97 then 53
-  else 54) else 55)) else (if n < 102 then (if n < 101 then (if n < 100 then 56 else 57) else 0)
-  else (if n < 104 then (if n < 103 then 0 else 58) else 59))) else (if n < 111 then (if n < 108
-  then (if n < 107 then (if n < 106 then 0 else 0) else 0) else (if n < 110 then (if n < 109 then
-  0 else 0) else 0)) else (if n < 114 then (if n < 113 then (if n < 112 then 0 else 60) else 61)
-  else (if n < 116 then (if n < 115 then 43 else 0) else 0)))) else (if n < 129 then (if n < 123
-  then (if n < 120 then (if n < 119 then (if n < 118 then 0 else 0) else 0) else (if n < 122 then
-  (if n < 121 then 0 else 0) else 0)) else (if n < 126 then (if n < 125 then (if n < 124 then 0
-  else 0) else 0) else (if n < 128 then (if n < 127 then 0 else 0) else 0))) else (if n < 135 then
-  (if n < 132 then (if n < 131 then (if n < 130 then 0 else 0) else 0) else (if n < 134 then (if n
-  < 133 then 0 else 0) else 0)) else (if n < 138 then (if n < 137 then (if n < 136 then 0 else 0)
-  else 62) else (if n < 139 then 0 else 0))))) else (if n < 163 then (if n < 152 then (if n < 146
-  then (if n < 143 then (if n < 142 then (if n < 141 then 0 else 0) else 0) else (if n < 145 then
-  (if n < 144 then 0 else 0) else 63)) else (if n < 149 then (if n < 148 then (if n < 147 then 0
-  else 0) else 0) else (if n < 151 then (if n < 150 then 0 else 0) else 64))) else (if n < 158
-  then (if n < 155 then (if n < 154 then (if n < 153 then 65 else 66) else 67) else (if n < 157
-  then (if n < 156 then 68 else 0) else 0)) else (if n < 161 then (if n < 160 then (if n < 159
-  then 0 else 0) else 0) else (if n < 162 then 0 else 0)))) else (if n < 175 then (if n < 169 then
-  (if n < 166 then (if n < 165 then (if n < 164 then 0 else 0) else 69) else (if n < 168 then (if
-  n < 167 then 0 else 0) else 0)) else (if n < 172 then (if n < 171 then (if n < 170 then 0 else
-  69) else 70) else (if n < 174 then (if n < 173 then 0 else 16) else 0))) else (if n < 181 then
-  (if n < 178 then (if n < 177 then (if n < 176 then 0 else 47) else 46) else (if n < 180 then (if
-  n < 179 then 0 else 0) else 44)) else (if n < 184 then (if n < 183 then (if n < 182 then 96 else
-  40) else 64) else (if n < 185 then 71 else 72))))))) else (if n < 279 then (if n < 233 then (if
-  n < 210 then (if n < 198 then (if n < 192 then (if n < 189 then (if n < 188 then (if n < 187
-  then 73 else 74) else 75) else (if n < 191 then (if n < 190 then 76 else 77) else 78)) else (if
-  n < 195 then (if n < 194 then (if n < 193 then 79 else 80) else 81) else (if n < 197 then (if n
-  < 196 then 82 else 83) else 84))) else (if n < 204 then (if n < 201 then (if n < 200 then (if n
-  < 199 then 85 else 86) else 87) else (if n < 203 then (if n < 202 then 88 else 89) else 90))
-  else (if n < 207 then (if n < 206 then (if n < 205 then 91 else 92) else 93) else (if n < 209
-  then (if n < 208 then 94 else 95) else 96)))) else (if n < 222 then (if n < 216 then (if n < 213
-  then (if n < 212 then (if n < 211 then 97 else 98) else 99) else (if n < 215 then (if n < 214
-  then 100 else 101) else 102)) else (if n < 219 then (if n < 218 then (if n < 217 then 103 else
-  104) else 105) else (if n < 221 then (if n < 220 then 106 else 107) else 108))) else (if n < 228
-  then (if n < 225 then (if n < 224 then (if n < 223 then 109 else 110) else 111) else (if n < 227
-  then (if n < 226 then 112 else 113) else 114)) else (if n < 231 then (if n < 230 then (if n <
-  229 then 115 else 116) else 117) else (if n < 232 then 118 else 119))))) else (if n < 256 then
-  (if n < 245 then (if n < 239 then (if n < 236 then (if n < 235 then (if n < 234 then 120 else
-  121) else 122) else (if n < 238 then (if n < 237 then 123 else 124) else 125)) else (if n < 242
-  then (if n < 241 then (if n < 240 then 126 else 90) else 89) else (if n < 244 then (if n < 243
-  then 127 else 128) else 95))) else (if n < 251 then (if n < 248 then (if n < 247 then (if n <
-  246 then 96 else 97) else 129) else (if n < 250 then (if n < 249 then 130 else 99) else 100))
-  else (if n < 254 then (if n < 253 then (if n < 252 then 101 else 131) else 132) else (if n < 255
-  then 104 else 103)))) else (if n < 268 then (if n < 262 then (if n < 259 then (if n < 258 then
-  (if n < 257 then 133 else 134) else 111) else (if n < 261 then (if n < 260 then 135 else 136)
-  else 137)) else (if n < 265 then (if n < 264 then (if n < 263 then 138 else 139) else 140) else
-  (if n < 267 then (if n < 266 then 141 else 142) else 143))) else (if n < 274 then (if n < 271
-  then (if n < 270 then (if n < 269 then 144 else 145) else 146) else (if n < 273 then (if n < 272
-  then 147 else 148) else 149)) else (if n < 277 then (if n < 276 then (if n < 275 then 150 else
-  151) else 152) else (if n < 278 then 153 else 154)))))) else (if n < 326 then (if n < 303 then
-  (if n < 291 then (if n < 285 then (if n < 282 then (if n < 281 then (if n < 280 then 155 else
-  156) else 157) else (if n < 284 then (if n < 283 then 158 else 159) else 160)) else (if n < 288
-  then (if n < 287 then (if n < 286 then 161 else 162) else 163) else (if n < 290 then (if n < 289
-  then 164 else 165) else 166))) else (if n < 297 then (if n < 294 then (if n < 293 then (if n <
-  292 then 167 else 168) else 169) else (if n < 296 then (if n < 295 then 170 else 171) else 172))
-  else (if n < 300 then (if n < 299 then (if n < 298 then 173 else 174) else 175) else (if n < 302
-  then (if n < 301 then 176 else 177) else 112)))) else (if n < 315 then (if n < 309 then (if n <
-  306 then (if n < 305 then (if n < 304 then 178 else 179) else 180) else (if n < 308 then (if n <
-  307 then 181 else 182) else 104)) else (if n < 312 then (if n < 311 then (if n < 310 then 115
-  else 183) else 184) else (if n < 314 then (if n < 313 then 96 else 185) else 186))) else (if n <
-  321 then (if n < 318 then (if n < 317 then (if n < 316 then 187 else 112) else 188) else (if n <
-  320 then (if n < 319 then 189 else 190) else 191)) else (if n < 324 then (if n < 323 then (if n
-  < 322 then 139 else 140) else 192) else (if n < 325 then 193 else 194))))) else (if n < 349 then
-  (if n < 338 then (if n < 332 then (if n < 329 then (if n < 328 then (if n < 327 then 195 else
-  196) else 197) else (if n < 331 then (if n < 330 then 198 else 199) else 200)) else (if n < 335
-  then (if n < 334 then (if n < 333 then 112 else 188) else 201) else (if n < 337 then (if n < 336
-  then 202 else 203) else 139))) else (if n < 344 then (if n < 341 then (if n < 340 then (if n <
-  339 then 140 else 192) else 204) else (if n < 343 then (if n < 342 then 205 else 206) else 207))
-  else (if n < 347 then (if n < 346 then (if n < 345 then 208 else 209) else 210) else (if n < 348
-  then 211 else 212)))) else (if n < 361 then (if n < 355 then (if n < 352 then (if n < 351 then
-  (if n < 350 then 213 else 214) else 215) else (if n < 354 then (if n < 353 then 216 else 217)
-  else 218)) else (if n < 358 then (if n < 357 then (if n < 356 then 219 else 220) else 221) else
-  (if n < 360 then (if n < 359 then 222 else 223) else 224))) else (if n < 367 then (if n < 364
-  then (if n < 363 then (if n < 362 then 225 else 226) else 227) else (if n < 366 then (if n < 365
-  then 228 else 229) else 230)) else (if n < 370 then (if n < 369 then (if n < 368 then 231 else
-  232) else 233) else (if n < 371 then 234 else 235)))))))) else (if n < 558 then (if n < 465 then
-  (if n < 419 then (if n < 396 then (if n < 384 then (if n < 378 then (if n < 375 then (if n < 374
-  then (if n < 373 then 99 else 100) else 236) else (if n < 377 then (if n < 376 then 237 else
-  140) else 238)) else (if n < 381 then (if n < 380 then (if n < 379 then 239 else 240) else 241)
-  else (if n < 383 then (if n < 382 then 242 else 243) else 244))) else (if n < 390 then (if n <
-  387 then (if n < 386 then (if n < 385 then 245 else 246) else 140) else (if n < 389 then (if n <
-  388 then 247 else 248) else 249)) else (if n < 393 then (if n < 392 then (if n < 391 then 250
-  else 251) else 252) else (if n < 395 then (if n < 394 then 253 else 254) else 255)))) else (if n
-  < 408 then (if n < 402 then (if n < 399 then (if n < 398 then (if n < 397 then 256 else 257)
-  else 258) else (if n < 401 then (if n < 400 then 259 else 260) else 261)) else (if n < 405 then
-  (if n < 404 then (if n < 403 then 262 else 263) else 264) else (if n < 407 then (if n < 406 then
-  265 else 103) else 115))) else (if n < 414 then (if n < 411 then (if n < 410 then (if n < 409
-  then 266 else 267) else 268) else (if n < 413 then (if n < 412 then 96 else 185) else 269)) else
-  (if n < 417 then (if n < 416 then (if n < 415 then 270 else 271) else 263) else (if n < 418 then
-  272 else 273))))) else (if n < 442 then (if n < 431 then (if n < 425 then (if n < 422 then (if n
-  < 421 then (if n < 420 then 274 else 139) else 140) else (if n < 424 then (if n < 423 then 275
-  else 276) else 277)) else (if n < 428 then (if n < 427 then (if n < 426 then 278 else 279) else
-  280) else (if n < 430 then (if n < 429 then 281 else 263) else 272))) else (if n < 437 then (if
-  n < 434 then (if n < 433 then (if n < 432 then 282 else 283) else 284) else (if n < 436 then (if
-  n < 435 then 275 else 285) else 286)) else (if n < 440 then (if n < 439 then (if n < 438 then
-  287 else 288) else 289) else (if n < 441 then 290 else 291)))) else (if n < 454 then (if n < 448
-  then (if n < 445 then (if n < 444 then (if n < 443 then 292 else 293) else 294) else (if n < 447
-  then (if n < 446 then 263 else 272) else 273)) else (if n < 451 then (if n < 450 then (if n <
-  449 then 295 else 296) else 297) else (if n < 453 then (if n < 452 then 298 else 299) else
-  300))) else (if n < 460 then (if n < 457 then (if n < 456 then (if n < 455 then 301 else 302)
-  else 303) else (if n < 459 then (if n < 458 then 304 else 305) else 306)) else (if n < 463 then
-  (if n < 462 then (if n < 461 then 307 else 308) else 309) else (if n < 464 then 306 else
-  310)))))) else (if n < 512 then (if n < 489 then (if n < 477 then (if n < 471 then (if n < 468
-  then (if n < 467 then (if n < 466 then 311 else 312) else 313) else (if n < 470 then (if n < 469
-  then 263 else 272) else 282)) else (if n < 474 then (if n < 473 then (if n < 472 then 283 else
-  314) else 315) else (if n < 476 then (if n < 475 then 316 else 317) else 318))) else (if n < 483
-  then (if n < 480 then (if n < 479 then (if n < 478 then 319 else 282) else 320) else (if n < 482
-  then (if n < 481 then 321 else 314) else 322)) else (if n < 486 then (if n < 485 then (if n <
-  484 then 323 else 324) else 325) else (if n < 488 then (if n < 487 then 326 else 139) else
-  140)))) else (if n < 501 then (if n < 495 then (if n < 492 then (if n < 491 then (if n < 490
-  then 314 else 315) else 327) else (if n < 494 then (if n < 493 then 328 else 329) else 305))
-  else (if n < 498 then (if n < 497 then (if n < 496 then 330 else 331) else 332) else (if n < 500
-  then (if n < 499 then 333 else 111) else 334))) else (if n < 507 then (if n < 504 then (if n <
-  503 then (if n < 502 then 335 else 336) else 115) else (if n < 506 then (if n < 505 then 116
-  else 117) else 337)) else (if n < 510 then (if n < 509 then (if n < 508 then 338 else 339) else
-  340) else (if n < 511 then 341 else 342))))) else (if n < 535 then (if n < 524 then (if n < 518
-  then (if n < 515 then (if n < 514 then (if n < 513 then 343 else 344) else 345) else (if n < 517
-  then (if n < 516 then 346 else 347) else 348)) else (if n < 521 then (if n < 520 then (if n <
-  519 then 349 else 350) else 351) else (if n < 523 then (if n < 522 then 352 else 353) else 0)))
-  else (if n < 530 then (if n < 527 then (if n < 526 then (if n < 525 then 354 else 0) else 0)
-  else (if n < 529 then (if n < 528 then 0 else 0) else 0)) else (if n < 533 then (if n < 532 then
-  (if n < 531 then 0 else 0) else 0) else (if n < 534 then 355 else 356)))) else (if n < 547 then
+def _fNat_0 (n : Nat) : Fin 543 :=
+  (if n < 6 then (if n < 3 then (if n < 2 then (if n < 1 then 0 else 1) else 2) else (if n < 5
+  then (if n < 4 then 31 else 3) else 4)) else (if n < 9 then (if n < 8 then (if n < 7 then 5 else
+  6) else 7) else (if n < 11 then (if n < 10 then 8 else 9) else 10)))
+
+def _fNat_1 (n : Nat) : Fin 543 :=
+  (if n < 18 then (if n < 15 then (if n < 14 then (if n < 13 then 0 else 11) else 12) else (if n <
+  17 then (if n < 16 then 13 else 14) else 15)) else (if n < 21 then (if n < 20 then (if n < 19
+  then 16 else 17) else 18) else (if n < 23 then (if n < 22 then 19 else 20) else 21)))
+
+def _fNat_2 (n : Nat) : Fin 543 :=
+  (if n < 30 then (if n < 27 then (if n < 26 then (if n < 25 then 22 else 23) else 24) else (if n
+  < 29 then (if n < 28 then 25 else 26) else 27)) else (if n < 33 then (if n < 32 then (if n < 31
+  then 28 else 29) else 30) else (if n < 35 then (if n < 34 then 32 else 31) else 32)))
+
+def _fNat_3 (n : Nat) : Fin 543 :=
+  (if n < 42 then (if n < 39 then (if n < 38 then (if n < 37 then 0 else 0) else 0) else (if n <
+  41 then (if n < 40 then 0 else 0) else 40)) else (if n < 45 then (if n < 44 then (if n < 43 then
+  33 else 34) else 0) else (if n < 46 then 0 else 30)))
+
+def _fNat_4 (n : Nat) : Fin 543 :=
+  (if n < 53 then (if n < 50 then (if n < 49 then (if n < 48 then 0 else 0) else 0) else (if n <
+  52 then (if n < 51 then 0 else 0) else 0)) else (if n < 56 then (if n < 55 then (if n < 54 then
+  0 else 0) else 0) else (if n < 58 then (if n < 57 then 35 else 36) else 37)))
+
+def _fNat_5 (n : Nat) : Fin 543 :=
+  (if n < 65 then (if n < 62 then (if n < 61 then (if n < 60 then 38 else 39) else 0) else (if n <
+  64 then (if n < 63 then 0 else 40) else 0)) else (if n < 68 then (if n < 67 then (if n < 66 then
+  0 else 41) else 42) else (if n < 69 then 43 else 0)))
+
+def _fNat_6 (n : Nat) : Fin 543 :=
+  (if n < 76 then (if n < 73 then (if n < 72 then (if n < 71 then 287 else 44) else 33) else (if n
+  < 75 then (if n < 74 then 0 else 0) else 0)) else (if n < 79 then (if n < 78 then (if n < 77
+  then 0 else 0) else 0) else (if n < 81 then (if n < 80 then 45 else 0) else 0)))
+
+def _fNat_7 (n : Nat) : Fin 543 :=
+  (if n < 88 then (if n < 85 then (if n < 84 then (if n < 83 then 47 else 46) else 15) else (if n
+  < 87 then (if n < 86 then 0 else 0) else 47)) else (if n < 91 then (if n < 90 then (if n < 89
+  then 46 else 0) else 0) else (if n < 92 then 48 else 49)))
+
+def _fNat_8 (n : Nat) : Fin 543 :=
+  (if n < 99 then (if n < 96 then (if n < 95 then (if n < 94 then 50 else 51) else 52) else (if n
+  < 98 then (if n < 97 then 53 else 54) else 55)) else (if n < 102 then (if n < 101 then (if n <
+  100 then 56 else 57) else 0) else (if n < 104 then (if n < 103 then 0 else 58) else 59)))
+
+def _fNat_9 (n : Nat) : Fin 543 :=
+  (if n < 111 then (if n < 108 then (if n < 107 then (if n < 106 then 0 else 0) else 0) else (if n
+  < 110 then (if n < 109 then 0 else 0) else 0)) else (if n < 114 then (if n < 113 then (if n <
+  112 then 0 else 60) else 61) else (if n < 116 then (if n < 115 then 43 else 0) else 0)))
+
+def _fNat_10 (n : Nat) : Fin 543 :=
+  (if n < 123 then (if n < 120 then (if n < 119 then (if n < 118 then 0 else 0) else 0) else (if n
+  < 122 then (if n < 121 then 0 else 0) else 0)) else (if n < 126 then (if n < 125 then (if n <
+  124 then 0 else 0) else 0) else (if n < 128 then (if n < 127 then 0 else 0) else 0)))
+
+def _fNat_11 (n : Nat) : Fin 543 :=
+  (if n < 135 then (if n < 132 then (if n < 131 then (if n < 130 then 0 else 0) else 0) else (if n
+  < 134 then (if n < 133 then 0 else 0) else 0)) else (if n < 138 then (if n < 137 then (if n <
+  136 then 0 else 0) else 62) else (if n < 139 then 0 else 0)))
+
+def _fNat_12 (n : Nat) : Fin 543 :=
+  (if n < 146 then (if n < 143 then (if n < 142 then (if n < 141 then 0 else 0) else 0) else (if n
+  < 145 then (if n < 144 then 0 else 0) else 63)) else (if n < 149 then (if n < 148 then (if n <
+  147 then 0 else 0) else 0) else (if n < 151 then (if n < 150 then 0 else 0) else 64)))
+
+def _fNat_13 (n : Nat) : Fin 543 :=
+  (if n < 158 then (if n < 155 then (if n < 154 then (if n < 153 then 65 else 66) else 67) else
+  (if n < 157 then (if n < 156 then 68 else 0) else 0)) else (if n < 161 then (if n < 160 then (if
+  n < 159 then 0 else 0) else 0) else (if n < 162 then 0 else 0)))
+
+def _fNat_14 (n : Nat) : Fin 543 :=
+  (if n < 169 then (if n < 166 then (if n < 165 then (if n < 164 then 0 else 0) else 69) else (if
+  n < 168 then (if n < 167 then 0 else 0) else 0)) else (if n < 172 then (if n < 171 then (if n <
+  170 then 0 else 69) else 70) else (if n < 174 then (if n < 173 then 0 else 16) else 0)))
+
+def _fNat_15 (n : Nat) : Fin 543 :=
+  (if n < 181 then (if n < 178 then (if n < 177 then (if n < 176 then 0 else 47) else 46) else (if
+  n < 180 then (if n < 179 then 0 else 0) else 44)) else (if n < 184 then (if n < 183 then (if n <
+  182 then 96 else 40) else 64) else (if n < 185 then 71 else 72)))
+
+def _fNat_16 (n : Nat) : Fin 543 :=
+  (if n < 192 then (if n < 189 then (if n < 188 then (if n < 187 then 73 else 74) else 75) else
+  (if n < 191 then (if n < 190 then 76 else 77) else 78)) else (if n < 195 then (if n < 194 then
+  (if n < 193 then 79 else 80) else 81) else (if n < 197 then (if n < 196 then 82 else 83) else
+  84)))
+
+def _fNat_17 (n : Nat) : Fin 543 :=
+  (if n < 204 then (if n < 201 then (if n < 200 then (if n < 199 then 85 else 86) else 87) else
+  (if n < 203 then (if n < 202 then 88 else 89) else 90)) else (if n < 207 then (if n < 206 then
+  (if n < 205 then 91 else 92) else 93) else (if n < 209 then (if n < 208 then 94 else 95) else
+  96)))
+
+def _fNat_18 (n : Nat) : Fin 543 :=
+  (if n < 216 then (if n < 213 then (if n < 212 then (if n < 211 then 97 else 98) else 99) else
+  (if n < 215 then (if n < 214 then 100 else 101) else 102)) else (if n < 219 then (if n < 218
+  then (if n < 217 then 103 else 104) else 105) else (if n < 221 then (if n < 220 then 106 else
+  107) else 108)))
+
+def _fNat_19 (n : Nat) : Fin 543 :=
+  (if n < 228 then (if n < 225 then (if n < 224 then (if n < 223 then 109 else 110) else 111) else
+  (if n < 227 then (if n < 226 then 112 else 113) else 114)) else (if n < 231 then (if n < 230
+  then (if n < 229 then 115 else 116) else 117) else (if n < 232 then 118 else 119)))
+
+def _fNat_20 (n : Nat) : Fin 543 :=
+  (if n < 239 then (if n < 236 then (if n < 235 then (if n < 234 then 120 else 121) else 122) else
+  (if n < 238 then (if n < 237 then 123 else 124) else 125)) else (if n < 242 then (if n < 241
+  then (if n < 240 then 126 else 90) else 89) else (if n < 244 then (if n < 243 then 127 else 128)
+  else 95)))
+
+def _fNat_21 (n : Nat) : Fin 543 :=
+  (if n < 251 then (if n < 248 then (if n < 247 then (if n < 246 then 96 else 97) else 129) else
+  (if n < 250 then (if n < 249 then 130 else 99) else 100)) else (if n < 254 then (if n < 253 then
+  (if n < 252 then 101 else 131) else 132) else (if n < 255 then 104 else 103)))
+
+def _fNat_22 (n : Nat) : Fin 543 :=
+  (if n < 262 then (if n < 259 then (if n < 258 then (if n < 257 then 133 else 134) else 111) else
+  (if n < 261 then (if n < 260 then 135 else 136) else 137)) else (if n < 265 then (if n < 264
+  then (if n < 263 then 138 else 139) else 140) else (if n < 267 then (if n < 266 then 141 else
+  142) else 143)))
+
+def _fNat_23 (n : Nat) : Fin 543 :=
+  (if n < 274 then (if n < 271 then (if n < 270 then (if n < 269 then 144 else 145) else 146) else
+  (if n < 273 then (if n < 272 then 147 else 148) else 149)) else (if n < 277 then (if n < 276
+  then (if n < 275 then 150 else 151) else 152) else (if n < 278 then 153 else 154)))
+
+def _fNat_24 (n : Nat) : Fin 543 :=
+  (if n < 285 then (if n < 282 then (if n < 281 then (if n < 280 then 155 else 156) else 157) else
+  (if n < 284 then (if n < 283 then 158 else 159) else 160)) else (if n < 288 then (if n < 287
+  then (if n < 286 then 161 else 162) else 163) else (if n < 290 then (if n < 289 then 164 else
+  165) else 166)))
+
+def _fNat_25 (n : Nat) : Fin 543 :=
+  (if n < 297 then (if n < 294 then (if n < 293 then (if n < 292 then 167 else 168) else 169) else
+  (if n < 296 then (if n < 295 then 170 else 171) else 172)) else (if n < 300 then (if n < 299
+  then (if n < 298 then 173 else 174) else 175) else (if n < 302 then (if n < 301 then 176 else
+  177) else 112)))
+
+def _fNat_26 (n : Nat) : Fin 543 :=
+  (if n < 309 then (if n < 306 then (if n < 305 then (if n < 304 then 178 else 179) else 180) else
+  (if n < 308 then (if n < 307 then 181 else 182) else 104)) else (if n < 312 then (if n < 311
+  then (if n < 310 then 115 else 183) else 184) else (if n < 314 then (if n < 313 then 96 else
+  185) else 186)))
+
+def _fNat_27 (n : Nat) : Fin 543 :=
+  (if n < 321 then (if n < 318 then (if n < 317 then (if n < 316 then 187 else 112) else 188) else
+  (if n < 320 then (if n < 319 then 189 else 190) else 191)) else (if n < 324 then (if n < 323
+  then (if n < 322 then 139 else 140) else 192) else (if n < 325 then 193 else 194)))
+
+def _fNat_28 (n : Nat) : Fin 543 :=
+  (if n < 332 then (if n < 329 then (if n < 328 then (if n < 327 then 195 else 196) else 197) else
+  (if n < 331 then (if n < 330 then 198 else 199) else 200)) else (if n < 335 then (if n < 334
+  then (if n < 333 then 112 else 188) else 201) else (if n < 337 then (if n < 336 then 202 else
+  203) else 139)))
+
+def _fNat_29 (n : Nat) : Fin 543 :=
+  (if n < 344 then (if n < 341 then (if n < 340 then (if n < 339 then 140 else 192) else 204) else
+  (if n < 343 then (if n < 342 then 205 else 206) else 207)) else (if n < 347 then (if n < 346
+  then (if n < 345 then 208 else 209) else 210) else (if n < 348 then 211 else 212)))
+
+def _fNat_30 (n : Nat) : Fin 543 :=
+  (if n < 355 then (if n < 352 then (if n < 351 then (if n < 350 then 213 else 214) else 215) else
+  (if n < 354 then (if n < 353 then 216 else 217) else 218)) else (if n < 358 then (if n < 357
+  then (if n < 356 then 219 else 220) else 221) else (if n < 360 then (if n < 359 then 222 else
+  223) else 224)))
+
+def _fNat_31 (n : Nat) : Fin 543 :=
+  (if n < 367 then (if n < 364 then (if n < 363 then (if n < 362 then 225 else 226) else 227) else
+  (if n < 366 then (if n < 365 then 228 else 229) else 230)) else (if n < 370 then (if n < 369
+  then (if n < 368 then 231 else 232) else 233) else (if n < 371 then 234 else 235)))
+
+def _fNat_32 (n : Nat) : Fin 543 :=
+  (if n < 93 then (if n < 47 then (if n < 24 then (if n < 12 then _fNat_0 n else _fNat_1 n) else
+  (if n < 36 then _fNat_2 n else _fNat_3 n)) else (if n < 70 then (if n < 59 then _fNat_4 n else
+  _fNat_5 n) else (if n < 82 then _fNat_6 n else _fNat_7 n))) else (if n < 140 then (if n < 117
+  then (if n < 105 then _fNat_8 n else _fNat_9 n) else (if n < 129 then _fNat_10 n else _fNat_11
+  n)) else (if n < 163 then (if n < 152 then _fNat_12 n else _fNat_13 n) else (if n < 175 then
+  _fNat_14 n else _fNat_15 n))))
+
+def _fNat_33 (n : Nat) : Fin 543 :=
+  (if n < 279 then (if n < 233 then (if n < 210 then (if n < 198 then _fNat_16 n else _fNat_17 n)
+  else (if n < 222 then _fNat_18 n else _fNat_19 n)) else (if n < 256 then (if n < 245 then
+  _fNat_20 n else _fNat_21 n) else (if n < 268 then _fNat_22 n else _fNat_23 n))) else (if n < 326
+  then (if n < 303 then (if n < 291 then _fNat_24 n else _fNat_25 n) else (if n < 315 then
+  _fNat_26 n else _fNat_27 n)) else (if n < 349 then (if n < 338 then _fNat_28 n else _fNat_29 n)
+  else (if n < 361 then _fNat_30 n else _fNat_31 n))))
+
+def _fNat_34 (n : Nat) : Fin 543 :=
+  (if n < 378 then (if n < 375 then (if n < 374 then (if n < 373 then 99 else 100) else 236) else
+  (if n < 377 then (if n < 376 then 237 else 140) else 238)) else (if n < 381 then (if n < 380
+  then (if n < 379 then 239 else 240) else 241) else (if n < 383 then (if n < 382 then 242 else
+  243) else 244)))
+
+def _fNat_35 (n : Nat) : Fin 543 :=
+  (if n < 390 then (if n < 387 then (if n < 386 then (if n < 385 then 245 else 246) else 140) else
+  (if n < 389 then (if n < 388 then 247 else 248) else 249)) else (if n < 393 then (if n < 392
+  then (if n < 391 then 250 else 251) else 252) else (if n < 395 then (if n < 394 then 253 else
+  254) else 255)))
+
+def _fNat_36 (n : Nat) : Fin 543 :=
+  (if n < 402 then (if n < 399 then (if n < 398 then (if n < 397 then 256 else 257) else 258) else
+  (if n < 401 then (if n < 400 then 259 else 260) else 261)) else (if n < 405 then (if n < 404
+  then (if n < 403 then 262 else 263) else 264) else (if n < 407 then (if n < 406 then 265 else
+  103) else 115)))
+
+def _fNat_37 (n : Nat) : Fin 543 :=
+  (if n < 414 then (if n < 411 then (if n < 410 then (if n < 409 then 266 else 267) else 268) else
+  (if n < 413 then (if n < 412 then 96 else 185) else 269)) else (if n < 417 then (if n < 416 then
+  (if n < 415 then 270 else 271) else 263) else (if n < 418 then 272 else 273)))
+
+def _fNat_38 (n : Nat) : Fin 543 :=
+  (if n < 425 then (if n < 422 then (if n < 421 then (if n < 420 then 274 else 139) else 140) else
+  (if n < 424 then (if n < 423 then 275 else 276) else 277)) else (if n < 428 then (if n < 427
+  then (if n < 426 then 278 else 279) else 280) else (if n < 430 then (if n < 429 then 281 else
+  263) else 272)))
+
+def _fNat_39 (n : Nat) : Fin 543 :=
+  (if n < 437 then (if n < 434 then (if n < 433 then (if n < 432 then 282 else 283) else 284) else
+  (if n < 436 then (if n < 435 then 275 else 285) else 286)) else (if n < 440 then (if n < 439
+  then (if n < 438 then 287 else 288) else 289) else (if n < 441 then 290 else 291)))
+
+def _fNat_40 (n : Nat) : Fin 543 :=
+  (if n < 448 then (if n < 445 then (if n < 444 then (if n < 443 then 292 else 293) else 294) else
+  (if n < 447 then (if n < 446 then 263 else 272) else 273)) else (if n < 451 then (if n < 450
+  then (if n < 449 then 295 else 296) else 297) else (if n < 453 then (if n < 452 then 298 else
+  299) else 300)))
+
+def _fNat_41 (n : Nat) : Fin 543 :=
+  (if n < 460 then (if n < 457 then (if n < 456 then (if n < 455 then 301 else 302) else 303) else
+  (if n < 459 then (if n < 458 then 304 else 305) else 306)) else (if n < 463 then (if n < 462
+  then (if n < 461 then 307 else 308) else 309) else (if n < 464 then 306 else 310)))
+
+def _fNat_42 (n : Nat) : Fin 543 :=
+  (if n < 471 then (if n < 468 then (if n < 467 then (if n < 466 then 311 else 312) else 313) else
+  (if n < 470 then (if n < 469 then 263 else 272) else 282)) else (if n < 474 then (if n < 473
+  then (if n < 472 then 283 else 314) else 315) else (if n < 476 then (if n < 475 then 316 else
+  317) else 318)))
+
+def _fNat_43 (n : Nat) : Fin 543 :=
+  (if n < 483 then (if n < 480 then (if n < 479 then (if n < 478 then 319 else 282) else 320) else
+  (if n < 482 then (if n < 481 then 321 else 314) else 322)) else (if n < 486 then (if n < 485
+  then (if n < 484 then 323 else 324) else 325) else (if n < 488 then (if n < 487 then 326 else
+  139) else 140)))
+
+def _fNat_44 (n : Nat) : Fin 543 :=
+  (if n < 495 then (if n < 492 then (if n < 491 then (if n < 490 then 314 else 315) else 327) else
+  (if n < 494 then (if n < 493 then 328 else 329) else 305)) else (if n < 498 then (if n < 497
+  then (if n < 496 then 330 else 331) else 332) else (if n < 500 then (if n < 499 then 333 else
+  111) else 334)))
+
+def _fNat_45 (n : Nat) : Fin 543 :=
+  (if n < 507 then (if n < 504 then (if n < 503 then (if n < 502 then 335 else 336) else 115) else
+  (if n < 506 then (if n < 505 then 116 else 117) else 337)) else (if n < 510 then (if n < 509
+  then (if n < 508 then 338 else 339) else 340) else (if n < 511 then 341 else 342)))
+
+def _fNat_46 (n : Nat) : Fin 543 :=
+  (if n < 518 then (if n < 515 then (if n < 514 then (if n < 513 then 343 else 344) else 345) else
+  (if n < 517 then (if n < 516 then 346 else 347) else 348)) else (if n < 521 then (if n < 520
+  then (if n < 519 then 349 else 350) else 351) else (if n < 523 then (if n < 522 then 352 else
+  353) else 0)))
+
+def _fNat_47 (n : Nat) : Fin 543 :=
+  (if n < 530 then (if n < 527 then (if n < 526 then (if n < 525 then 354 else 0) else 0) else (if
+  n < 529 then (if n < 528 then 0 else 0) else 0)) else (if n < 533 then (if n < 532 then (if n <
+  531 then 0 else 0) else 0) else (if n < 534 then 355 else 356)))
+
+def _fNat_48 (n : Nat) : Fin 543 :=
   (if n < 541 then (if n < 538 then (if n < 537 then (if n < 536 then 357 else 358) else 359) else
   (if n < 540 then (if n < 539 then 360 else 361) else 395)) else (if n < 544 then (if n < 543
   then (if n < 542 then 400 else 362) else 363) else (if n < 546 then (if n < 545 then 364 else
-  365) else 366))) else (if n < 553 then (if n < 550 then (if n < 549 then (if n < 548 then 367
-  else 368) else 369) else (if n < 552 then (if n < 551 then 370 else 371) else 372)) else (if n <
-  556 then (if n < 555 then (if n < 554 then 373 else 374) else 375) else (if n < 557 then 508
-  else 492))))))) else (if n < 651 then (if n < 605 then (if n < 582 then (if n < 570 then (if n <
-  564 then (if n < 561 then (if n < 560 then (if n < 559 then 376 else 377) else 378) else (if n <
-  563 then (if n < 562 then 379 else 380) else 381)) else (if n < 567 then (if n < 566 then (if n
-  < 565 then 382 else 383) else 384) else (if n < 569 then (if n < 568 then 385 else 386) else
-  387))) else (if n < 576 then (if n < 573 then (if n < 572 then (if n < 571 then 388 else 389)
-  else 390) else (if n < 575 then (if n < 574 then 391 else 392) else 393)) else (if n < 579 then
-  (if n < 578 then (if n < 577 then 394 else 395) else 396) else (if n < 581 then (if n < 580 then
-  397 else 398) else 399)))) else (if n < 594 then (if n < 588 then (if n < 585 then (if n < 584
-  then (if n < 583 then 400 else 401) else 402) else (if n < 587 then (if n < 586 then 403 else
-  404) else 405)) else (if n < 591 then (if n < 590 then (if n < 589 then 406 else 407) else 408)
-  else (if n < 593 then (if n < 592 then 409 else 410) else 411))) else (if n < 600 then (if n <
-  597 then (if n < 596 then (if n < 595 then 412 else 413) else 414) else (if n < 599 then (if n <
-  598 then 415 else 416) else 417)) else (if n < 603 then (if n < 602 then (if n < 601 then 418
-  else 419) else 420) else (if n < 604 then 421 else 422))))) else (if n < 628 then (if n < 617
-  then (if n < 611 then (if n < 608 then (if n < 607 then (if n < 606 then 423 else 424) else 425)
-  else (if n < 610 then (if n < 609 then 426 else 427) else 428)) else (if n < 614 then (if n <
-  613 then (if n < 612 then 429 else 430) else 431) else (if n < 616 then (if n < 615 then 432
-  else 433) else 434))) else (if n < 623 then (if n < 620 then (if n < 619 then (if n < 618 then
-  435 else 436) else 437) else (if n < 622 then (if n < 621 then 438 else 439) else 440)) else (if
-  n < 626 then (if n < 625 then (if n < 624 then 441 else 442) else 443) else (if n < 627 then 444
-  else 445)))) else (if n < 640 then (if n < 634 then (if n < 631 then (if n < 630 then (if n <
-  629 then 446 else 447) else 448) else (if n < 633 then (if n < 632 then 449 else 0) else 0))
-  else (if n < 637 then (if n < 636 then (if n < 635 then 450 else 0) else 0) else (if n < 639
-  then (if n < 638 then 451 else 452) else 453))) else (if n < 646 then (if n < 643 then (if n <
-  642 then (if n < 641 then 0 else 0) else 35) else (if n < 645 then (if n < 644 then 36 else 0)
-  else 0)) else (if n < 649 then (if n < 648 then (if n < 647 then 454 else 455) else 456) else
-  (if n < 650 then 457 else 115)))))) else (if n < 698 then (if n < 675 then (if n < 663 then (if
-  n < 657 then (if n < 654 then (if n < 653 then (if n < 652 then 116 else 458) else 459) else (if
-  n < 656 then (if n < 655 then 460 else 461) else 462)) else (if n < 660 then (if n < 659 then
-  (if n < 658 then 463 else 464) else 465) else (if n < 662 then (if n < 661 then 466 else 467)
-  else 468))) else (if n < 669 then (if n < 666 then (if n < 665 then (if n < 664 then 469 else
-  470) else 471) else (if n < 668 then (if n < 667 then 472 else 473) else 474)) else (if n < 672
-  then (if n < 671 then (if n < 670 then 475 else 476) else 477) else (if n < 674 then (if n < 673
-  then 478 else 479) else 480)))) else (if n < 687 then (if n < 681 then (if n < 678 then (if n <
-  677 then (if n < 676 then 481 else 482) else 483) else (if n < 680 then (if n < 679 then 484
-  else 485) else 486)) else (if n < 684 then (if n < 683 then (if n < 682 then 487 else 488) else
-  489) else (if n < 686 then (if n < 685 then 490 else 491) else 492))) else (if n < 693 then (if
-  n < 690 then (if n < 689 then (if n < 688 then 493 else 494) else 167) else (if n < 692 then (if
-  n < 691 then 495 else 496) else 497)) else (if n < 696 then (if n < 695 then (if n < 694 then
-  498 else 499) else 500) else (if n < 697 then 501 else 502))))) else (if n < 721 then (if n <
-  710 then (if n < 704 then (if n < 701 then (if n < 700 then (if n < 699 then 503 else 504) else
-  505) else (if n < 703 then (if n < 702 then 506 else 507) else 508)) else (if n < 707 then (if n
-  < 706 then (if n < 705 then 509 else 251) else 510) else (if n < 709 then (if n < 708 then 511
-  else 170) else 512))) else (if n < 716 then (if n < 713 then (if n < 712 then (if n < 711 then 0
-  else 0) else 135) else (if n < 715 then (if n < 714 then 142 else 513) else 514)) else (if n <
-  719 then (if n < 718 then (if n < 717 then 515 else 516) else 517) else (if n < 720 then 518
-  else 519)))) else (if n < 733 then (if n < 727 then (if n < 724 then (if n < 723 then (if n <
-  722 then 520 else 521) else 522) else (if n < 726 then (if n < 725 then 523 else 524) else 525))
-  else (if n < 730 then (if n < 729 then (if n < 728 then 526 else 527) else 528) else (if n < 732
-  then (if n < 731 then 529 else 530) else 531))) else (if n < 739 then (if n < 736 then (if n <
-  735 then (if n < 734 then 532 else 533) else 534) else (if n < 738 then (if n < 737 then 535
-  else 536) else 537)) else (if n < 742 then (if n < 741 then (if n < 740 then 538 else 539) else
-  540) else (if n < 743 then 541 else 542)))))))))
+  365) else 366)))
+
+def _fNat_49 (n : Nat) : Fin 543 :=
+  (if n < 553 then (if n < 550 then (if n < 549 then (if n < 548 then 367 else 368) else 369) else
+  (if n < 552 then (if n < 551 then 370 else 371) else 372)) else (if n < 556 then (if n < 555
+  then (if n < 554 then 373 else 374) else 375) else (if n < 557 then 508 else 492)))
+
+def _fNat_50 (n : Nat) : Fin 543 :=
+  (if n < 564 then (if n < 561 then (if n < 560 then (if n < 559 then 376 else 377) else 378) else
+  (if n < 563 then (if n < 562 then 379 else 380) else 381)) else (if n < 567 then (if n < 566
+  then (if n < 565 then 382 else 383) else 384) else (if n < 569 then (if n < 568 then 385 else
+  386) else 387)))
+
+def _fNat_51 (n : Nat) : Fin 543 :=
+  (if n < 576 then (if n < 573 then (if n < 572 then (if n < 571 then 388 else 389) else 390) else
+  (if n < 575 then (if n < 574 then 391 else 392) else 393)) else (if n < 579 then (if n < 578
+  then (if n < 577 then 394 else 395) else 396) else (if n < 581 then (if n < 580 then 397 else
+  398) else 399)))
+
+def _fNat_52 (n : Nat) : Fin 543 :=
+  (if n < 588 then (if n < 585 then (if n < 584 then (if n < 583 then 400 else 401) else 402) else
+  (if n < 587 then (if n < 586 then 403 else 404) else 405)) else (if n < 591 then (if n < 590
+  then (if n < 589 then 406 else 407) else 408) else (if n < 593 then (if n < 592 then 409 else
+  410) else 411)))
+
+def _fNat_53 (n : Nat) : Fin 543 :=
+  (if n < 600 then (if n < 597 then (if n < 596 then (if n < 595 then 412 else 413) else 414) else
+  (if n < 599 then (if n < 598 then 415 else 416) else 417)) else (if n < 603 then (if n < 602
+  then (if n < 601 then 418 else 419) else 420) else (if n < 604 then 421 else 422)))
+
+def _fNat_54 (n : Nat) : Fin 543 :=
+  (if n < 611 then (if n < 608 then (if n < 607 then (if n < 606 then 423 else 424) else 425) else
+  (if n < 610 then (if n < 609 then 426 else 427) else 428)) else (if n < 614 then (if n < 613
+  then (if n < 612 then 429 else 430) else 431) else (if n < 616 then (if n < 615 then 432 else
+  433) else 434)))
+
+def _fNat_55 (n : Nat) : Fin 543 :=
+  (if n < 623 then (if n < 620 then (if n < 619 then (if n < 618 then 435 else 436) else 437) else
+  (if n < 622 then (if n < 621 then 438 else 439) else 440)) else (if n < 626 then (if n < 625
+  then (if n < 624 then 441 else 442) else 443) else (if n < 627 then 444 else 445)))
+
+def _fNat_56 (n : Nat) : Fin 543 :=
+  (if n < 634 then (if n < 631 then (if n < 630 then (if n < 629 then 446 else 447) else 448) else
+  (if n < 633 then (if n < 632 then 449 else 0) else 0)) else (if n < 637 then (if n < 636 then
+  (if n < 635 then 450 else 0) else 0) else (if n < 639 then (if n < 638 then 451 else 452) else
+  453)))
+
+def _fNat_57 (n : Nat) : Fin 543 :=
+  (if n < 646 then (if n < 643 then (if n < 642 then (if n < 641 then 0 else 0) else 35) else (if
+  n < 645 then (if n < 644 then 36 else 0) else 0)) else (if n < 649 then (if n < 648 then (if n <
+  647 then 454 else 455) else 456) else (if n < 650 then 457 else 115)))
+
+def _fNat_58 (n : Nat) : Fin 543 :=
+  (if n < 657 then (if n < 654 then (if n < 653 then (if n < 652 then 116 else 458) else 459) else
+  (if n < 656 then (if n < 655 then 460 else 461) else 462)) else (if n < 660 then (if n < 659
+  then (if n < 658 then 463 else 464) else 465) else (if n < 662 then (if n < 661 then 466 else
+  467) else 468)))
+
+def _fNat_59 (n : Nat) : Fin 543 :=
+  (if n < 669 then (if n < 666 then (if n < 665 then (if n < 664 then 469 else 470) else 471) else
+  (if n < 668 then (if n < 667 then 472 else 473) else 474)) else (if n < 672 then (if n < 671
+  then (if n < 670 then 475 else 476) else 477) else (if n < 674 then (if n < 673 then 478 else
+  479) else 480)))
+
+def _fNat_60 (n : Nat) : Fin 543 :=
+  (if n < 681 then (if n < 678 then (if n < 677 then (if n < 676 then 481 else 482) else 483) else
+  (if n < 680 then (if n < 679 then 484 else 485) else 486)) else (if n < 684 then (if n < 683
+  then (if n < 682 then 487 else 488) else 489) else (if n < 686 then (if n < 685 then 490 else
+  491) else 492)))
+
+def _fNat_61 (n : Nat) : Fin 543 :=
+  (if n < 693 then (if n < 690 then (if n < 689 then (if n < 688 then 493 else 494) else 167) else
+  (if n < 692 then (if n < 691 then 495 else 496) else 497)) else (if n < 696 then (if n < 695
+  then (if n < 694 then 498 else 499) else 500) else (if n < 697 then 501 else 502)))
+
+def _fNat_62 (n : Nat) : Fin 543 :=
+  (if n < 704 then (if n < 701 then (if n < 700 then (if n < 699 then 503 else 504) else 505) else
+  (if n < 703 then (if n < 702 then 506 else 507) else 508)) else (if n < 707 then (if n < 706
+  then (if n < 705 then 509 else 251) else 510) else (if n < 709 then (if n < 708 then 511 else
+  170) else 512)))
+
+def _fNat_63 (n : Nat) : Fin 543 :=
+  (if n < 716 then (if n < 713 then (if n < 712 then (if n < 711 then 0 else 0) else 135) else (if
+  n < 715 then (if n < 714 then 142 else 513) else 514)) else (if n < 719 then (if n < 718 then
+  (if n < 717 then 515 else 516) else 517) else (if n < 720 then 518 else 519)))
+
+def _fNat_64 (n : Nat) : Fin 543 :=
+  (if n < 727 then (if n < 724 then (if n < 723 then (if n < 722 then 520 else 521) else 522) else
+  (if n < 726 then (if n < 725 then 523 else 524) else 525)) else (if n < 730 then (if n < 729
+  then (if n < 728 then 526 else 527) else 528) else (if n < 732 then (if n < 731 then 529 else
+  530) else 531)))
+
+def _fNat_65 (n : Nat) : Fin 543 :=
+  (if n < 739 then (if n < 736 then (if n < 735 then (if n < 734 then 532 else 533) else 534) else
+  (if n < 738 then (if n < 737 then 535 else 536) else 537)) else (if n < 742 then (if n < 741
+  then (if n < 740 then 538 else 539) else 540) else (if n < 743 then 541 else 542)))
+
+def _fNat_66 (n : Nat) : Fin 543 :=
+  (if n < 465 then (if n < 419 then (if n < 396 then (if n < 384 then _fNat_34 n else _fNat_35 n)
+  else (if n < 408 then _fNat_36 n else _fNat_37 n)) else (if n < 442 then (if n < 431 then
+  _fNat_38 n else _fNat_39 n) else (if n < 454 then _fNat_40 n else _fNat_41 n))) else (if n < 512
+  then (if n < 489 then (if n < 477 then _fNat_42 n else _fNat_43 n) else (if n < 501 then
+  _fNat_44 n else _fNat_45 n)) else (if n < 535 then (if n < 524 then _fNat_46 n else _fNat_47 n)
+  else (if n < 547 then _fNat_48 n else _fNat_49 n))))
+
+def _fNat_67 (n : Nat) : Fin 543 :=
+  (if n < 651 then (if n < 605 then (if n < 582 then (if n < 570 then _fNat_50 n else _fNat_51 n)
+  else (if n < 594 then _fNat_52 n else _fNat_53 n)) else (if n < 628 then (if n < 617 then
+  _fNat_54 n else _fNat_55 n) else (if n < 640 then _fNat_56 n else _fNat_57 n))) else (if n < 698
+  then (if n < 675 then (if n < 663 then _fNat_58 n else _fNat_59 n) else (if n < 687 then
+  _fNat_60 n else _fNat_61 n)) else (if n < 721 then (if n < 710 then _fNat_62 n else _fNat_63 n)
+  else (if n < 733 then _fNat_64 n else _fNat_65 n))))
+
+def fNat (n : Nat) : Fin 543 :=
+  (if n < 372 then (if n < 186 then _fNat_32 n else _fNat_33 n) else (if n < 558 then _fNat_66 n
+  else _fNat_67 n))
 def f (q : Fin 744) : Fin 543 := fNat q.val
 
-def m0Nat (n : Nat) : Nat :=
-  (if n < 372 then (if n < 186 then (if n < 93 then (if n < 47 then (if n < 24 then (if n < 12
-  then (if n < 6 then (if n < 3 then (if n < 2 then (if n < 1 then 0 else 33554431) else 33554431)
-  else (if n < 5 then (if n < 4 then 33554431 else 33553919) else 33553407)) else (if n < 9 then
-  (if n < 8 then (if n < 7 then 33553407 else 33554431) else 33554431) else (if n < 11 then (if n
-  < 10 then 33554431 else 33550335) else 33554431))) else (if n < 18 then (if n < 15 then (if n <
-  14 then (if n < 13 then 33554431 else 33554431) else 33554431) else (if n < 17 then (if n < 16
-  then 33554431 else 33554431) else 33554431)) else (if n < 21 then (if n < 20 then (if n < 19
-  then 33554431 else 33554431) else 33554431) else (if n < 23 then (if n < 22 then 33554431 else
-  33554431) else 33554431)))) else (if n < 36 then (if n < 30 then (if n < 27 then (if n < 26 then
-  (if n < 25 then 33554431 else 33554431) else 33554431) else (if n < 29 then (if n < 28 then
-  33554431 else 33554431) else 33554431)) else (if n < 33 then (if n < 32 then (if n < 31 then
-  33553407 else 33554431) else 33554431) else (if n < 35 then (if n < 34 then 33554431 else
-  33554431) else 33553407))) else (if n < 42 then (if n < 39 then (if n < 38 then (if n < 37 then
-  0 else 0) else 0) else (if n < 41 then (if n < 40 then 0 else 0) else 33553831)) else (if n < 45
-  then (if n < 44 then (if n < 43 then 33549135 else 33543839) else 0) else (if n < 46 then 0 else
-  0))))) else (if n < 70 then (if n < 59 then (if n < 53 then (if n < 50 then (if n < 49 then (if
-  n < 48 then 0 else 0) else 0) else (if n < 52 then (if n < 51 then 0 else 0) else 0)) else (if n
-  < 56 then (if n < 55 then (if n < 54 then 0 else 0) else 0) else (if n < 58 then (if n < 57 then
-  33554399 else 33554367) else 33554303))) else (if n < 65 then (if n < 62 then (if n < 61 then
-  (if n < 60 then 33554431 else 33550335) else 0) else (if n < 64 then (if n < 63 then 0 else
-  33554139) else 0)) else (if n < 68 then (if n < 67 then (if n < 66 then 0 else 0) else 0) else
-  (if n < 69 then 0 else 0)))) else (if n < 82 then (if n < 76 then (if n < 73 then (if n < 72
-  then (if n < 71 then 33485247 else 33416063) else 33290239) else (if n < 75 then (if n < 74 then
-  0 else 0) else 0)) else (if n < 79 then (if n < 78 then (if n < 77 then 0 else 0) else 0) else
-  (if n < 81 then (if n < 80 then 0 else 0) else 0))) else (if n < 88 then (if n < 85 then (if n <
-  84 then (if n < 83 then 33549599 else 33544767) else 33535103) else (if n < 87 then (if n < 86
-  then 0 else 0) else 0)) else (if n < 91 then (if n < 90 then (if n < 89 then 0 else 0) else 0)
-  else (if n < 92 then 32178175 else 30801919)))))) else (if n < 140 then (if n < 117 then (if n <
-  105 then (if n < 99 then (if n < 96 then (if n < 95 then (if n < 94 then 33550335 else 33546239)
-  else 33533951) else (if n < 98 then (if n < 97 then 33513471 else 33468415) else 33382399)) else
-  (if n < 102 then (if n < 101 then (if n < 100 then 33210367 else 32866303) else 0) else (if n <
-  104 then (if n < 103 then 0 else 0) else 0))) else (if n < 111 then (if n < 108 then (if n < 107
-  then (if n < 106 then 0 else 0) else 0) else (if n < 110 then (if n < 109 then 0 else 0) else
-  0)) else (if n < 114 then (if n < 113 then (if n < 112 then 0 else 33551647) else 33553407) else
-  (if n < 116 then (if n < 115 then 33552383 else 0) else 0)))) else (if n < 129 then (if n < 123
-  then (if n < 120 then (if n < 119 then (if n < 118 then 0 else 0) else 0) else (if n < 122 then
-  (if n < 121 then 0 else 0) else 0)) else (if n < 126 then (if n < 125 then (if n < 124 then 0
-  else 0) else 0) else (if n < 128 then (if n < 127 then 0 else 0) else 0))) else (if n < 135 then
-  (if n < 132 then (if n < 131 then (if n < 130 then 0 else 0) else 0) else (if n < 134 then (if n
-  < 133 then 0 else 0) else 0)) else (if n < 138 then (if n < 137 then (if n < 136 then 0 else 0)
-  else 0) else (if n < 139 then 0 else 0))))) else (if n < 163 then (if n < 152 then (if n < 146
-  then (if n < 143 then (if n < 142 then (if n < 141 then 0 else 0) else 0) else (if n < 145 then
-  (if n < 144 then 0 else 0) else 33364223)) else (if n < 149 then (if n < 148 then (if n < 147
-  then 0 else 0) else 0) else (if n < 151 then (if n < 150 then 0 else 0) else 33553215))) else
+def _m0Nat_0 (n : Nat) : Nat :=
+  (if n < 6 then (if n < 3 then (if n < 2 then (if n < 1 then 0 else 33554431) else 33554431) else
+  (if n < 5 then (if n < 4 then 33554431 else 33553919) else 33553407)) else (if n < 9 then (if n
+  < 8 then (if n < 7 then 33553407 else 33554431) else 33554431) else (if n < 11 then (if n < 10
+  then 33554431 else 33550335) else 33554431)))
+
+def _m0Nat_1 (n : Nat) : Nat :=
+  (if n < 18 then (if n < 15 then (if n < 14 then (if n < 13 then 33554431 else 33554431) else
+  33554431) else (if n < 17 then (if n < 16 then 33554431 else 33554431) else 33554431)) else (if
+  n < 21 then (if n < 20 then (if n < 19 then 33554431 else 33554431) else 33554431) else (if n <
+  23 then (if n < 22 then 33554431 else 33554431) else 33554431)))
+
+def _m0Nat_2 (n : Nat) : Nat :=
+  (if n < 30 then (if n < 27 then (if n < 26 then (if n < 25 then 33554431 else 33554431) else
+  33554431) else (if n < 29 then (if n < 28 then 33554431 else 33554431) else 33554431)) else (if
+  n < 33 then (if n < 32 then (if n < 31 then 33553407 else 33554431) else 33554431) else (if n <
+  35 then (if n < 34 then 33554431 else 33554431) else 33553407)))
+
+def _m0Nat_3 (n : Nat) : Nat :=
+  (if n < 42 then (if n < 39 then (if n < 38 then (if n < 37 then 0 else 0) else 0) else (if n <
+  41 then (if n < 40 then 0 else 0) else 33553831)) else (if n < 45 then (if n < 44 then (if n <
+  43 then 33549135 else 33543839) else 0) else (if n < 46 then 0 else 0)))
+
+def _m0Nat_4 (n : Nat) : Nat :=
+  (if n < 53 then (if n < 50 then (if n < 49 then (if n < 48 then 0 else 0) else 0) else (if n <
+  52 then (if n < 51 then 0 else 0) else 0)) else (if n < 56 then (if n < 55 then (if n < 54 then
+  0 else 0) else 0) else (if n < 58 then (if n < 57 then 33554399 else 33554367) else 33554303)))
+
+def _m0Nat_5 (n : Nat) : Nat :=
+  (if n < 65 then (if n < 62 then (if n < 61 then (if n < 60 then 33554431 else 33550335) else 0)
+  else (if n < 64 then (if n < 63 then 0 else 33554139) else 0)) else (if n < 68 then (if n < 67
+  then (if n < 66 then 0 else 0) else 0) else (if n < 69 then 0 else 0)))
+
+def _m0Nat_6 (n : Nat) : Nat :=
+  (if n < 76 then (if n < 73 then (if n < 72 then (if n < 71 then 33485247 else 33416063) else
+  33290239) else (if n < 75 then (if n < 74 then 0 else 0) else 0)) else (if n < 79 then (if n <
+  78 then (if n < 77 then 0 else 0) else 0) else (if n < 81 then (if n < 80 then 0 else 0) else
+  0)))
+
+def _m0Nat_7 (n : Nat) : Nat :=
+  (if n < 88 then (if n < 85 then (if n < 84 then (if n < 83 then 33549599 else 33544767) else
+  33535103) else (if n < 87 then (if n < 86 then 0 else 0) else 0)) else (if n < 91 then (if n <
+  90 then (if n < 89 then 0 else 0) else 0) else (if n < 92 then 32178175 else 30801919)))
+
+def _m0Nat_8 (n : Nat) : Nat :=
+  (if n < 99 then (if n < 96 then (if n < 95 then (if n < 94 then 33550335 else 33546239) else
+  33533951) else (if n < 98 then (if n < 97 then 33513471 else 33468415) else 33382399)) else (if
+  n < 102 then (if n < 101 then (if n < 100 then 33210367 else 32866303) else 0) else (if n < 104
+  then (if n < 103 then 0 else 0) else 0)))
+
+def _m0Nat_9 (n : Nat) : Nat :=
+  (if n < 111 then (if n < 108 then (if n < 107 then (if n < 106 then 0 else 0) else 0) else (if n
+  < 110 then (if n < 109 then 0 else 0) else 0)) else (if n < 114 then (if n < 113 then (if n <
+  112 then 0 else 33551647) else 33553407) else (if n < 116 then (if n < 115 then 33552383 else 0)
+  else 0)))
+
+def _m0Nat_10 (n : Nat) : Nat :=
+  (if n < 123 then (if n < 120 then (if n < 119 then (if n < 118 then 0 else 0) else 0) else (if n
+  < 122 then (if n < 121 then 0 else 0) else 0)) else (if n < 126 then (if n < 125 then (if n <
+  124 then 0 else 0) else 0) else (if n < 128 then (if n < 127 then 0 else 0) else 0)))
+
+def _m0Nat_11 (n : Nat) : Nat :=
+  (if n < 135 then (if n < 132 then (if n < 131 then (if n < 130 then 0 else 0) else 0) else (if n
+  < 134 then (if n < 133 then 0 else 0) else 0)) else (if n < 138 then (if n < 137 then (if n <
+  136 then 0 else 0) else 0) else (if n < 139 then 0 else 0)))
+
+def _m0Nat_12 (n : Nat) : Nat :=
+  (if n < 146 then (if n < 143 then (if n < 142 then (if n < 141 then 0 else 0) else 0) else (if n
+  < 145 then (if n < 144 then 0 else 0) else 33364223)) else (if n < 149 then (if n < 148 then (if
+  n < 147 then 0 else 0) else 0) else (if n < 151 then (if n < 150 then 0 else 0) else 33553215)))
+
+def _m0Nat_13 (n : Nat) : Nat :=
   (if n < 158 then (if n < 155 then (if n < 154 then (if n < 153 then 33547903 else 33545471) else
   33532415) else (if n < 157 then (if n < 156 then 33507327 else 0) else 0)) else (if n < 161 then
-  (if n < 160 then (if n < 159 then 0 else 0) else 0) else (if n < 162 then 0 else 0)))) else (if
-  n < 175 then (if n < 169 then (if n < 166 then (if n < 165 then (if n < 164 then 0 else 0) else
-  33550603) else (if n < 168 then (if n < 167 then 0 else 0) else 0)) else (if n < 172 then (if n
-  < 171 then (if n < 170 then 0 else 0) else 0) else (if n < 174 then (if n < 173 then 0 else
-  33545983) else 0))) else (if n < 181 then (if n < 178 then (if n < 177 then (if n < 176 then 0
-  else 33554399) else 33554367) else (if n < 180 then (if n < 179 then 0 else 0) else 33549339))
-  else (if n < 184 then (if n < 183 then (if n < 182 then 33544247 else 33534063) else 33517791)
-  else (if n < 185 then 33554431 else 33554431))))))) else (if n < 279 then (if n < 233 then (if n
-  < 210 then (if n < 198 then (if n < 192 then (if n < 189 then (if n < 188 then (if n < 187 then
-  33554431 else 33554431) else 33554431) else (if n < 191 then (if n < 190 then 33553151 else
-  33553919) else 33553407)) else (if n < 195 then (if n < 194 then (if n < 193 then 33554431 else
-  33554175) else 33553151) else (if n < 197 then (if n < 196 then 33553919 else 33552639) else
-  33552895))) else (if n < 204 then (if n < 201 then (if n < 200 then (if n < 199 then 33553407
-  else 33554431) else 33554431) else (if n < 203 then (if n < 202 then 33554175 else 33553503)
-  else 33552479)) else (if n < 207 then (if n < 206 then (if n < 205 then 33552575 else 33552767)
-  else 33553151) else (if n < 209 then (if n < 208 then 33553919 else 33554335) else 33553311))))
-  else (if n < 222 then (if n < 216 then (if n < 213 then (if n < 212 then (if n < 211 then
-  33554239 else 33554047) else 33554079) else (if n < 215 then (if n < 214 then 33553727 else
-  33553023) else 33553663)) else (if n < 219 then (if n < 218 then (if n < 217 then 33553439 else
-  33552415) else 33552447) else (if n < 221 then (if n < 220 then 33552511 else 33552639) else
-  33552895))) else (if n < 228 then (if n < 225 then (if n < 224 then (if n < 223 then 33553407
-  else 33554431) else 33554415) else (if n < 227 then (if n < 226 then 33553391 else 33554399)
-  else 33554367)) else (if n < 231 then (if n < 230 then (if n < 229 then 33554415 else 33554399)
-  else 33553343) else (if n < 232 then 33554303 else 33553855))))) else (if n < 256 then (if n <
-  245 then (if n < 239 then (if n < 236 then (if n < 235 then (if n < 234 then 33553279 else
-  33554175) else 33554111) else (if n < 238 then (if n < 237 then 33553791 else 33552767) else
-  33553151)) else (if n < 242 then (if n < 241 then (if n < 240 then 33553919 else 33553871) else
-  33552847) else (if n < 244 then (if n < 243 then 33553311 else 33554239) else 33554127))) else
+  (if n < 160 then (if n < 159 then 0 else 0) else 0) else (if n < 162 then 0 else 0)))
+
+def _m0Nat_14 (n : Nat) : Nat :=
+  (if n < 169 then (if n < 166 then (if n < 165 then (if n < 164 then 0 else 0) else 33550603)
+  else (if n < 168 then (if n < 167 then 0 else 0) else 0)) else (if n < 172 then (if n < 171 then
+  (if n < 170 then 0 else 0) else 0) else (if n < 174 then (if n < 173 then 0 else 33545983) else
+  0)))
+
+def _m0Nat_15 (n : Nat) : Nat :=
+  (if n < 181 then (if n < 178 then (if n < 177 then (if n < 176 then 0 else 33554399) else
+  33554367) else (if n < 180 then (if n < 179 then 0 else 0) else 33549339)) else (if n < 184 then
+  (if n < 183 then (if n < 182 then 33544247 else 33534063) else 33517791) else (if n < 185 then
+  33554431 else 33554431)))
+
+def _m0Nat_16 (n : Nat) : Nat :=
+  (if n < 192 then (if n < 189 then (if n < 188 then (if n < 187 then 33554431 else 33554431) else
+  33554431) else (if n < 191 then (if n < 190 then 33553151 else 33553919) else 33553407)) else
+  (if n < 195 then (if n < 194 then (if n < 193 then 33554431 else 33554175) else 33553151) else
+  (if n < 197 then (if n < 196 then 33553919 else 33552639) else 33552895)))
+
+def _m0Nat_17 (n : Nat) : Nat :=
+  (if n < 204 then (if n < 201 then (if n < 200 then (if n < 199 then 33553407 else 33554431) else
+  33554431) else (if n < 203 then (if n < 202 then 33554175 else 33553503) else 33552479)) else
+  (if n < 207 then (if n < 206 then (if n < 205 then 33552575 else 33552767) else 33553151) else
+  (if n < 209 then (if n < 208 then 33553919 else 33554335) else 33553311)))
+
+def _m0Nat_18 (n : Nat) : Nat :=
+  (if n < 216 then (if n < 213 then (if n < 212 then (if n < 211 then 33554239 else 33554047) else
+  33554079) else (if n < 215 then (if n < 214 then 33553727 else 33553023) else 33553663)) else
+  (if n < 219 then (if n < 218 then (if n < 217 then 33553439 else 33552415) else 33552447) else
+  (if n < 221 then (if n < 220 then 33552511 else 33552639) else 33552895)))
+
+def _m0Nat_19 (n : Nat) : Nat :=
+  (if n < 228 then (if n < 225 then (if n < 224 then (if n < 223 then 33553407 else 33554431) else
+  33554415) else (if n < 227 then (if n < 226 then 33553391 else 33554399) else 33554367)) else
+  (if n < 231 then (if n < 230 then (if n < 229 then 33554415 else 33554399) else 33553343) else
+  (if n < 232 then 33554303 else 33553855)))
+
+def _m0Nat_20 (n : Nat) : Nat :=
+  (if n < 239 then (if n < 236 then (if n < 235 then (if n < 234 then 33553279 else 33554175) else
+  33554111) else (if n < 238 then (if n < 237 then 33553791 else 33552767) else 33553151)) else
+  (if n < 242 then (if n < 241 then (if n < 240 then 33553919 else 33553871) else 33552847) else
+  (if n < 244 then (if n < 243 then 33553311 else 33554239) else 33554127)))
+
+def _m0Nat_21 (n : Nat) : Nat :=
   (if n < 251 then (if n < 248 then (if n < 247 then (if n < 246 then 33553103 else 33553823) else
   33553215) else (if n < 250 then (if n < 249 then 33554047 else 33553725) else 33553019)) else
   (if n < 254 then (if n < 253 then (if n < 252 then 33553727 else 33553023) else 33553663) else
-  (if n < 255 then 33553807 else 33552783)))) else (if n < 268 then (if n < 262 then (if n < 259
-  then (if n < 258 then (if n < 257 then 33553183 else 33553983) else 33554063) else (if n < 261
-  then (if n < 260 then 33553039 else 33553695) else 33552959)) else (if n < 265 then (if n < 264
-  then (if n < 263 then 33553535 else 33554191) else 33553951) else (if n < 267 then (if n < 266
-  then 33553471 else 33553935) else 33553439))) else (if n < 274 then (if n < 271 then (if n < 270
-  then (if n < 269 then 33552447 else 33552511) else 33552639) else (if n < 273 then (if n < 272
-  then 33552895 else 33553407) else 33554431)) else (if n < 277 then (if n < 276 then (if n < 275
-  then 33554431 else 33554431) else 33553375) else (if n < 278 then 33554367 else 33554431))))))
-  else (if n < 326 then (if n < 303 then (if n < 291 then (if n < 285 then (if n < 282 then (if n
-  < 281 then (if n < 280 then 33554431 else 33554303) else 33554431) else (if n < 284 then (if n <
-  283 then 33554175 else 33554431) else 33553919)) else (if n < 288 then (if n < 287 then (if n <
-  286 then 33554431 else 33553407) else 33554431) else (if n < 290 then (if n < 289 then 33553919
-  else 33553359) else 33554335))) else (if n < 297 then (if n < 294 then (if n < 293 then (if n <
-  292 then 33553779 else 33553127) else 33553871) else (if n < 296 then (if n < 295 then 33554431
-  else 33554431) else 33552847)) else (if n < 300 then (if n < 299 then (if n < 298 then 33553311
-  else 33554239) else 33553103) else (if n < 302 then (if n < 301 then 33553823 else 33553459)
-  else 33552435)))) else (if n < 315 then (if n < 309 then (if n < 306 then (if n < 305 then (if n
-  < 304 then 33552487 else 33552591) else 33552799) else (if n < 308 then (if n < 307 then
-  33553215 else 33554047) else 33554387)) else (if n < 312 then (if n < 311 then (if n < 310 then
-  33553363 else 33554343) else 33554255) else (if n < 314 then (if n < 313 then 33554131 else
-  33553831) else 33553231))) else (if n < 321 then (if n < 318 then (if n < 317 then (if n < 316
-  then 33554079 else 33553495) else 33552559) else (if n < 320 then (if n < 319 then 33552719 else
-  33553055) else 33553727)) else (if n < 324 then (if n < 323 then (if n < 322 then 33553567 else
-  33552703) else 33552975) else (if n < 325 then 33553567 else 33552463))))) else (if n < 349 then
-  (if n < 338 then (if n < 332 then (if n < 329 then (if n < 328 then (if n < 327 then 33552543
-  else 33552703) else 33553023) else (if n < 331 then (if n < 330 then 33553663 else 33554319)
-  else 33554207)) else (if n < 335 then (if n < 334 then (if n < 333 then 33553783 else 33553135)
-  else 33553807) else (if n < 337 then (if n < 336 then 33553183 else 33553983) else 33553831)))
-  else (if n < 344 then (if n < 341 then (if n < 340 then (if n < 339 then 33553231 else 33554063)
-  else 33553039) else (if n < 343 then (if n < 342 then 33553695 else 33554211) else 33553991))
-  else (if n < 347 then (if n < 346 then (if n < 345 then 33553551 else 33552671) else 33552959)
-  else (if n < 348 then 33553535 else 33554191)))) else (if n < 361 then (if n < 355 then (if n <
-  352 then (if n < 351 then (if n < 350 then 33553951 else 33553731) else 33553031) else (if n <
-  354 then (if n < 353 then 33553679 else 33552927) else 33553471)) else (if n < 358 then (if n <
-  357 then (if n < 356 then 33553935 else 33553903) else 33552515) else (if n < 360 then (if n <
-  359 then 33552647 else 33552911) else 33553439))) else (if n < 367 then (if n < 364 then (if n <
-  363 then (if n < 362 then 33554179 else 33553927) else 33553423) else (if n < 366 then (if n <
-  365 then 33552399 else 33552415) else 33552447)) else (if n < 370 then (if n < 369 then (if n <
-  368 then 33552511 else 33552639) else 33552895) else (if n < 371 then 33553407 else
-  33554431)))))))) else (if n < 558 then (if n < 465 then (if n < 419 then (if n < 396 then (if n
-  < 384 then (if n < 378 then (if n < 375 then (if n < 374 then (if n < 373 then 33553661 else
-  33552891) else 33553399) else (if n < 377 then (if n < 376 then 33554415 else 33552635) else
-  33552887)) else (if n < 381 then (if n < 380 then (if n < 379 then 33553391 else 33554399) else
-  33554167) else (if n < 383 then (if n < 382 then 33553903 else 33553655) else 33552879))) else
+  (if n < 255 then 33553807 else 33552783)))
+
+def _m0Nat_22 (n : Nat) : Nat :=
+  (if n < 262 then (if n < 259 then (if n < 258 then (if n < 257 then 33553183 else 33553983) else
+  33554063) else (if n < 261 then (if n < 260 then 33553039 else 33553695) else 33552959)) else
+  (if n < 265 then (if n < 264 then (if n < 263 then 33553535 else 33554191) else 33553951) else
+  (if n < 267 then (if n < 266 then 33553471 else 33553935) else 33553439)))
+
+def _m0Nat_23 (n : Nat) : Nat :=
+  (if n < 274 then (if n < 271 then (if n < 270 then (if n < 269 then 33552447 else 33552511) else
+  33552639) else (if n < 273 then (if n < 272 then 33552895 else 33553407) else 33554431)) else
+  (if n < 277 then (if n < 276 then (if n < 275 then 33554431 else 33554431) else 33553375) else
+  (if n < 278 then 33554367 else 33554431)))
+
+def _m0Nat_24 (n : Nat) : Nat :=
+  (if n < 285 then (if n < 282 then (if n < 281 then (if n < 280 then 33554431 else 33554303) else
+  33554431) else (if n < 284 then (if n < 283 then 33554175 else 33554431) else 33553919)) else
+  (if n < 288 then (if n < 287 then (if n < 286 then 33554431 else 33553407) else 33554431) else
+  (if n < 290 then (if n < 289 then 33553919 else 33553359) else 33554335)))
+
+def _m0Nat_25 (n : Nat) : Nat :=
+  (if n < 297 then (if n < 294 then (if n < 293 then (if n < 292 then 33553779 else 33553127) else
+  33553871) else (if n < 296 then (if n < 295 then 33554431 else 33554431) else 33552847)) else
+  (if n < 300 then (if n < 299 then (if n < 298 then 33553311 else 33554239) else 33553103) else
+  (if n < 302 then (if n < 301 then 33553823 else 33553459) else 33552435)))
+
+def _m0Nat_26 (n : Nat) : Nat :=
+  (if n < 309 then (if n < 306 then (if n < 305 then (if n < 304 then 33552487 else 33552591) else
+  33552799) else (if n < 308 then (if n < 307 then 33553215 else 33554047) else 33554387)) else
+  (if n < 312 then (if n < 311 then (if n < 310 then 33553363 else 33554343) else 33554255) else
+  (if n < 314 then (if n < 313 then 33554131 else 33553831) else 33553231)))
+
+def _m0Nat_27 (n : Nat) : Nat :=
+  (if n < 321 then (if n < 318 then (if n < 317 then (if n < 316 then 33554079 else 33553495) else
+  33552559) else (if n < 320 then (if n < 319 then 33552719 else 33553055) else 33553727)) else
+  (if n < 324 then (if n < 323 then (if n < 322 then 33553567 else 33552703) else 33552975) else
+  (if n < 325 then 33553567 else 33552463)))
+
+def _m0Nat_28 (n : Nat) : Nat :=
+  (if n < 332 then (if n < 329 then (if n < 328 then (if n < 327 then 33552543 else 33552703) else
+  33553023) else (if n < 331 then (if n < 330 then 33553663 else 33554319) else 33554207)) else
+  (if n < 335 then (if n < 334 then (if n < 333 then 33553783 else 33553135) else 33553807) else
+  (if n < 337 then (if n < 336 then 33553183 else 33553983) else 33553831)))
+
+def _m0Nat_29 (n : Nat) : Nat :=
+  (if n < 344 then (if n < 341 then (if n < 340 then (if n < 339 then 33553231 else 33554063) else
+  33553039) else (if n < 343 then (if n < 342 then 33553695 else 33554211) else 33553991)) else
+  (if n < 347 then (if n < 346 then (if n < 345 then 33553551 else 33552671) else 33552959) else
+  (if n < 348 then 33553535 else 33554191)))
+
+def _m0Nat_30 (n : Nat) : Nat :=
+  (if n < 355 then (if n < 352 then (if n < 351 then (if n < 350 then 33553951 else 33553731) else
+  33553031) else (if n < 354 then (if n < 353 then 33553679 else 33552927) else 33553471)) else
+  (if n < 358 then (if n < 357 then (if n < 356 then 33553935 else 33553903) else 33552515) else
+  (if n < 360 then (if n < 359 then 33552647 else 33552911) else 33553439)))
+
+def _m0Nat_31 (n : Nat) : Nat :=
+  (if n < 367 then (if n < 364 then (if n < 363 then (if n < 362 then 33554179 else 33553927) else
+  33553423) else (if n < 366 then (if n < 365 then 33552399 else 33552415) else 33552447)) else
+  (if n < 370 then (if n < 369 then (if n < 368 then 33552511 else 33552639) else 33552895) else
+  (if n < 371 then 33553407 else 33554431)))
+
+def _m0Nat_32 (n : Nat) : Nat :=
+  (if n < 93 then (if n < 47 then (if n < 24 then (if n < 12 then _m0Nat_0 n else _m0Nat_1 n) else
+  (if n < 36 then _m0Nat_2 n else _m0Nat_3 n)) else (if n < 70 then (if n < 59 then _m0Nat_4 n
+  else _m0Nat_5 n) else (if n < 82 then _m0Nat_6 n else _m0Nat_7 n))) else (if n < 140 then (if n
+  < 117 then (if n < 105 then _m0Nat_8 n else _m0Nat_9 n) else (if n < 129 then _m0Nat_10 n else
+  _m0Nat_11 n)) else (if n < 163 then (if n < 152 then _m0Nat_12 n else _m0Nat_13 n) else (if n <
+  175 then _m0Nat_14 n else _m0Nat_15 n))))
+
+def _m0Nat_33 (n : Nat) : Nat :=
+  (if n < 279 then (if n < 233 then (if n < 210 then (if n < 198 then _m0Nat_16 n else _m0Nat_17
+  n) else (if n < 222 then _m0Nat_18 n else _m0Nat_19 n)) else (if n < 256 then (if n < 245 then
+  _m0Nat_20 n else _m0Nat_21 n) else (if n < 268 then _m0Nat_22 n else _m0Nat_23 n))) else (if n <
+  326 then (if n < 303 then (if n < 291 then _m0Nat_24 n else _m0Nat_25 n) else (if n < 315 then
+  _m0Nat_26 n else _m0Nat_27 n)) else (if n < 349 then (if n < 338 then _m0Nat_28 n else _m0Nat_29
+  n) else (if n < 361 then _m0Nat_30 n else _m0Nat_31 n))))
+
+def _m0Nat_34 (n : Nat) : Nat :=
+  (if n < 378 then (if n < 375 then (if n < 374 then (if n < 373 then 33553661 else 33552891) else
+  33553399) else (if n < 377 then (if n < 376 then 33554415 else 33552635) else 33552887)) else
+  (if n < 381 then (if n < 380 then (if n < 379 then 33553391 else 33554399) else 33554167) else
+  (if n < 383 then (if n < 382 then 33553903 else 33553655) else 33552879)))
+
+def _m0Nat_35 (n : Nat) : Nat :=
   (if n < 390 then (if n < 387 then (if n < 386 then (if n < 385 then 33553375 else 33554367) else
   33553339) else (if n < 389 then (if n < 388 then 33554295 else 33553271) else 33554159)) else
   (if n < 393 then (if n < 392 then (if n < 391 then 33553783 else 33554013) else 33553595) else
-  (if n < 395 then (if n < 394 then 33552759 else 33553135) else 33553887)))) else (if n < 408
-  then (if n < 402 then (if n < 399 then (if n < 398 then (if n < 397 then 33554039 else 33553647)
-  else 33553527) else (if n < 401 then (if n < 400 then 33552623 else 33552863) else 33553343))
-  else (if n < 405 then (if n < 404 then (if n < 403 then 33554303 else 33552877) else 33553371)
-  else (if n < 407 then (if n < 406 then 33554359 else 33554157) else 33553133))) else (if n < 414
-  then (if n < 411 then (if n < 410 then (if n < 409 then 33553883 else 33553335) else 33554287)
-  else (if n < 413 then (if n < 412 then 33554285 else 33554139) else 33553847)) else (if n < 417
-  then (if n < 416 then (if n < 415 then 33553263 else 33554143) else 33553901) else (if n < 418
-  then 33553371 else 33554103))))) else (if n < 442 then (if n < 431 then (if n < 425 then (if n <
-  422 then (if n < 421 then (if n < 420 then 33553775 else 33553709) else 33552987) else (if n <
-  424 then (if n < 423 then 33553591 else 33552751) else 33553119)) else (if n < 428 then (if n <
-  427 then (if n < 426 then 33553855 else 33554231) else 33553207) else (if n < 430 then (if n <
-  429 then 33554031 else 33553517) else 33552603))) else (if n < 437 then (if n < 434 then (if n <
-  433 then (if n < 432 then 33552695 else 33553007) else 33553631) else (if n < 436 then (if n <
-  435 then 33552951 else 33553519) else 33554359)) else (if n < 440 then (if n < 439 then (if n <
-  438 then 33553933 else 33553435) else 33552439) else (if n < 441 then 33552495 else 33552607))))
-  else (if n < 454 then (if n < 448 then (if n < 445 then (if n < 444 then (if n < 443 then
-  33552831 else 33553279) else 33554175) else (if n < 447 then (if n < 446 then 33553653 else
-  33552875) else 33553367)) else (if n < 451 then (if n < 450 then (if n < 449 then 33554351 else
-  33552855) else 33553327) else (if n < 453 then (if n < 452 then 33554271 else 33554391) else
-  33553839))) else (if n < 460 then (if n < 457 then (if n < 456 then (if n < 455 then 33553623
-  else 33552815) else 33553247) else (if n < 459 then (if n < 458 then 33554111 else 33553877)
-  else 33552853)) else (if n < 463 then (if n < 462 then (if n < 461 then 33553323 else 33554263)
-  else 33554095) else (if n < 464 then 33553749 else 33553067)))))) else (if n < 512 then (if n <
-  489 then (if n < 477 then (if n < 471 then (if n < 468 then (if n < 467 then (if n < 466 then
-  33553751 else 33553071) else 33553759) else (if n < 470 then (if n < 469 then 33553557 else
-  33552683) else 33552983)) else (if n < 474 then (if n < 473 then (if n < 472 then 33553583 else
-  33552471) else 33552559) else (if n < 476 then (if n < 475 then 33552735 else 33553087) else
-  33553791))) else (if n < 483 then (if n < 480 then (if n < 479 then (if n < 478 then 33554223
-  else 33553815) else 33553199) else (if n < 482 then (if n < 481 then 33554015 else 33554071)
-  else 33553711)) else (if n < 486 then (if n < 485 then (if n < 484 then 33552535 else 33552687)
-  else 33552991) else (if n < 488 then (if n < 487 then 33553599 else 33553605) else 33552779))))
-  else (if n < 501 then (if n < 495 then (if n < 492 then (if n < 491 then (if n < 490 then
-  33553175 else 33553967) else 33552663) else (if n < 494 then (if n < 493 then 33552943 else
-  33553503) else 33553541)) else (if n < 498 then (if n < 497 then (if n < 496 then 33552517 else
-  33552651) else 33552919) else (if n < 500 then (if n < 499 then 33553455 else 33554181) else
-  33553157))) else (if n < 507 then (if n < 504 then (if n < 503 then (if n < 502 then 33553931
-  else 33553431) else 33553925) else (if n < 506 then (if n < 505 then 33553419 else 33552407)
-  else 33552431)) else (if n < 510 then (if n < 509 then (if n < 508 then 33552479 else 33552575)
-  else 33552767) else (if n < 511 then 33553151 else 33553919))))) else (if n < 535 then (if n <
-  524 then (if n < 518 then (if n < 515 then (if n < 514 then (if n < 513 then 33554425 else
-  33553401) else 33554419) else (if n < 517 then (if n < 516 then 33554407 else 33554383) else
-  33554335)) else (if n < 521 then (if n < 520 then (if n < 519 then 33554239 else 33554047) else
-  33553663) else (if n < 523 then (if n < 522 then 33552895 else 33553407) else 0))) else (if n <
-  530 then (if n < 527 then (if n < 526 then (if n < 525 then 33554431 else 0) else 0) else (if n
-  < 529 then (if n < 528 then 0 else 0) else 0)) else (if n < 533 then (if n < 532 then (if n <
-  531 then 0 else 0) else 0) else (if n < 534 then 33554431 else 33554431)))) else (if n < 547
-  then (if n < 541 then (if n < 538 then (if n < 537 then (if n < 536 then 33554431 else 33554431)
-  else 33554431) else (if n < 540 then (if n < 539 then 33554431 else 33554431) else 33554431))
-  else (if n < 544 then (if n < 543 then (if n < 542 then 33554430 else 33554431) else 33554431)
-  else (if n < 546 then (if n < 545 then 33554431 else 33554431) else 33554431))) else (if n < 553
-  then (if n < 550 then (if n < 549 then (if n < 548 then 33554431 else 33554431) else 33554431)
-  else (if n < 552 then (if n < 551 then 33554431 else 33554431) else 33554431)) else (if n < 556
-  then (if n < 555 then (if n < 554 then 33554431 else 33554431) else 33554431) else (if n < 557
-  then 33554431 else 33554430))))))) else (if n < 651 then (if n < 605 then (if n < 582 then (if n
-  < 570 then (if n < 564 then (if n < 561 then (if n < 560 then (if n < 559 then 33554431 else
-  33554431) else 33554431) else (if n < 563 then (if n < 562 then 33554431 else 33554431) else
-  33554431)) else (if n < 567 then (if n < 566 then (if n < 565 then 33554431 else 33554431) else
-  33550335) else (if n < 569 then (if n < 568 then 33554431 else 33550335) else 33554367))) else
+  (if n < 395 then (if n < 394 then 33552759 else 33553135) else 33553887)))
+
+def _m0Nat_36 (n : Nat) : Nat :=
+  (if n < 402 then (if n < 399 then (if n < 398 then (if n < 397 then 33554039 else 33553647) else
+  33553527) else (if n < 401 then (if n < 400 then 33552623 else 33552863) else 33553343)) else
+  (if n < 405 then (if n < 404 then (if n < 403 then 33554303 else 33552877) else 33553371) else
+  (if n < 407 then (if n < 406 then 33554359 else 33554157) else 33553133)))
+
+def _m0Nat_37 (n : Nat) : Nat :=
+  (if n < 414 then (if n < 411 then (if n < 410 then (if n < 409 then 33553883 else 33553335) else
+  33554287) else (if n < 413 then (if n < 412 then 33554285 else 33554139) else 33553847)) else
+  (if n < 417 then (if n < 416 then (if n < 415 then 33553263 else 33554143) else 33553901) else
+  (if n < 418 then 33553371 else 33554103)))
+
+def _m0Nat_38 (n : Nat) : Nat :=
+  (if n < 425 then (if n < 422 then (if n < 421 then (if n < 420 then 33553775 else 33553709) else
+  33552987) else (if n < 424 then (if n < 423 then 33553591 else 33552751) else 33553119)) else
+  (if n < 428 then (if n < 427 then (if n < 426 then 33553855 else 33554231) else 33553207) else
+  (if n < 430 then (if n < 429 then 33554031 else 33553517) else 33552603)))
+
+def _m0Nat_39 (n : Nat) : Nat :=
+  (if n < 437 then (if n < 434 then (if n < 433 then (if n < 432 then 33552695 else 33553007) else
+  33553631) else (if n < 436 then (if n < 435 then 33552951 else 33553519) else 33554359)) else
+  (if n < 440 then (if n < 439 then (if n < 438 then 33553933 else 33553435) else 33552439) else
+  (if n < 441 then 33552495 else 33552607)))
+
+def _m0Nat_40 (n : Nat) : Nat :=
+  (if n < 448 then (if n < 445 then (if n < 444 then (if n < 443 then 33552831 else 33553279) else
+  33554175) else (if n < 447 then (if n < 446 then 33553653 else 33552875) else 33553367)) else
+  (if n < 451 then (if n < 450 then (if n < 449 then 33554351 else 33552855) else 33553327) else
+  (if n < 453 then (if n < 452 then 33554271 else 33554391) else 33553839)))
+
+def _m0Nat_41 (n : Nat) : Nat :=
+  (if n < 460 then (if n < 457 then (if n < 456 then (if n < 455 then 33553623 else 33552815) else
+  33553247) else (if n < 459 then (if n < 458 then 33554111 else 33553877) else 33552853)) else
+  (if n < 463 then (if n < 462 then (if n < 461 then 33553323 else 33554263) else 33554095) else
+  (if n < 464 then 33553749 else 33553067)))
+
+def _m0Nat_42 (n : Nat) : Nat :=
+  (if n < 471 then (if n < 468 then (if n < 467 then (if n < 466 then 33553751 else 33553071) else
+  33553759) else (if n < 470 then (if n < 469 then 33553557 else 33552683) else 33552983)) else
+  (if n < 474 then (if n < 473 then (if n < 472 then 33553583 else 33552471) else 33552559) else
+  (if n < 476 then (if n < 475 then 33552735 else 33553087) else 33553791)))
+
+def _m0Nat_43 (n : Nat) : Nat :=
+  (if n < 483 then (if n < 480 then (if n < 479 then (if n < 478 then 33554223 else 33553815) else
+  33553199) else (if n < 482 then (if n < 481 then 33554015 else 33554071) else 33553711)) else
+  (if n < 486 then (if n < 485 then (if n < 484 then 33552535 else 33552687) else 33552991) else
+  (if n < 488 then (if n < 487 then 33553599 else 33553605) else 33552779)))
+
+def _m0Nat_44 (n : Nat) : Nat :=
+  (if n < 495 then (if n < 492 then (if n < 491 then (if n < 490 then 33553175 else 33553967) else
+  33552663) else (if n < 494 then (if n < 493 then 33552943 else 33553503) else 33553541)) else
+  (if n < 498 then (if n < 497 then (if n < 496 then 33552517 else 33552651) else 33552919) else
+  (if n < 500 then (if n < 499 then 33553455 else 33554181) else 33553157)))
+
+def _m0Nat_45 (n : Nat) : Nat :=
+  (if n < 507 then (if n < 504 then (if n < 503 then (if n < 502 then 33553931 else 33553431) else
+  33553925) else (if n < 506 then (if n < 505 then 33553419 else 33552407) else 33552431)) else
+  (if n < 510 then (if n < 509 then (if n < 508 then 33552479 else 33552575) else 33552767) else
+  (if n < 511 then 33553151 else 33553919)))
+
+def _m0Nat_46 (n : Nat) : Nat :=
+  (if n < 518 then (if n < 515 then (if n < 514 then (if n < 513 then 33554425 else 33553401) else
+  33554419) else (if n < 517 then (if n < 516 then 33554407 else 33554383) else 33554335)) else
+  (if n < 521 then (if n < 520 then (if n < 519 then 33554239 else 33554047) else 33553663) else
+  (if n < 523 then (if n < 522 then 33552895 else 33553407) else 0)))
+
+def _m0Nat_47 (n : Nat) : Nat :=
+  (if n < 530 then (if n < 527 then (if n < 526 then (if n < 525 then 33554431 else 0) else 0)
+  else (if n < 529 then (if n < 528 then 0 else 0) else 0)) else (if n < 533 then (if n < 532 then
+  (if n < 531 then 0 else 0) else 0) else (if n < 534 then 33554431 else 33554431)))
+
+def _m0Nat_48 (n : Nat) : Nat :=
+  (if n < 541 then (if n < 538 then (if n < 537 then (if n < 536 then 33554431 else 33554431) else
+  33554431) else (if n < 540 then (if n < 539 then 33554431 else 33554431) else 33554431)) else
+  (if n < 544 then (if n < 543 then (if n < 542 then 33554430 else 33554431) else 33554431) else
+  (if n < 546 then (if n < 545 then 33554431 else 33554431) else 33554431)))
+
+def _m0Nat_49 (n : Nat) : Nat :=
+  (if n < 553 then (if n < 550 then (if n < 549 then (if n < 548 then 33554431 else 33554431) else
+  33554431) else (if n < 552 then (if n < 551 then 33554431 else 33554431) else 33554431)) else
+  (if n < 556 then (if n < 555 then (if n < 554 then 33554431 else 33554431) else 33554431) else
+  (if n < 557 then 33554431 else 33554430)))
+
+def _m0Nat_50 (n : Nat) : Nat :=
+  (if n < 564 then (if n < 561 then (if n < 560 then (if n < 559 then 33554431 else 33554431) else
+  33554431) else (if n < 563 then (if n < 562 then 33554431 else 33554431) else 33554431)) else
+  (if n < 567 then (if n < 566 then (if n < 565 then 33554431 else 33554431) else 33550335) else
+  (if n < 569 then (if n < 568 then 33554431 else 33550335) else 33554367)))
+
+def _m0Nat_51 (n : Nat) : Nat :=
   (if n < 576 then (if n < 573 then (if n < 572 then (if n < 571 then 33554303 else 33554171) else
   33553911) else (if n < 575 then (if n < 574 then 33554429 else 33553405) else 33554427)) else
   (if n < 579 then (if n < 578 then (if n < 577 then 33554423 else 33554141) else 33553851) else
-  (if n < 581 then (if n < 580 then 33554245 else 33554059) else 33553687)))) else (if n < 594
-  then (if n < 588 then (if n < 585 then (if n < 584 then (if n < 583 then 33554429 else 33554427)
-  else 33553771) else (if n < 587 then (if n < 586 then 33553111 else 33554429) else 33554427))
-  else (if n < 591 then (if n < 590 then (if n < 589 then 33554423 else 33553333) else 33554283)
-  else (if n < 593 then (if n < 592 then 33554135 else 33554155) else 33553879))) else (if n < 600
-  then (if n < 597 then (if n < 596 then (if n < 595 then 33554429 else 33554427) else 33554427)
-  else (if n < 599 then (if n < 598 then 33554423 else 33554411) else 33554391)) else (if n < 603
-  then (if n < 602 then (if n < 601 then 33554429 else 33552941) else 33553499) else (if n < 604
-  then 33552567 else 33554419))))) else (if n < 628 then (if n < 617 then (if n < 611 then (if n <
-  608 then (if n < 607 then (if n < 606 then 33554407 else 33553863) else 33553295) else (if n <
-  610 then (if n < 609 then 33554431 else 33554047) else 33553663)) else (if n < 614 then (if n <
-  613 then (if n < 612 then 33553787 else 33553143) else 33553799) else (if n < 616 then (if n <
-  615 then 33553167 else 33554047) else 33553663))) else (if n < 623 then (if n < 620 then (if n <
-  619 then (if n < 618 then 33554431 else 33554279) else 33554127) else (if n < 622 then (if n <
-  621 then 33554431 else 33554431) else 33554267)) else (if n < 626 then (if n < 625 then (if n <
-  624 then 33554103 else 33553855) else 33553279) else (if n < 627 then 33553183 else 33553983))))
-  else (if n < 640 then (if n < 634 then (if n < 631 then (if n < 630 then (if n < 629 then
-  33553535 else 33554271) else 33554111) else (if n < 633 then (if n < 632 then 33553791 else 0)
-  else 0)) else (if n < 637 then (if n < 636 then (if n < 635 then 33552383 else 0) else 0) else
-  (if n < 639 then (if n < 638 then 33554303 else 33553407) else 33554175))) else (if n < 646 then
-  (if n < 643 then (if n < 642 then (if n < 641 then 0 else 0) else 33553407) else (if n < 645
-  then (if n < 644 then 33552383 else 0) else 0)) else (if n < 649 then (if n < 648 then (if n <
-  647 then 33554431 else 33554431) else 33554431) else (if n < 650 then 33554175 else
-  33553919)))))) else (if n < 698 then (if n < 675 then (if n < 663 then (if n < 657 then (if n <
-  654 then (if n < 653 then (if n < 652 then 33553407 else 33553919) else 33553407) else (if n <
-  656 then (if n < 655 then 33553631 else 33552831) else 33553407)) else (if n < 660 then (if n <
-  659 then (if n < 658 then 33554023 else 33553615) else 33553407) else (if n < 662 then (if n <
-  661 then 33554367 else 33554303) else 33553759))) else (if n < 669 then (if n < 666 then (if n <
-  665 then (if n < 664 then 33553087 else 33553651) else 33552871) else (if n < 668 then (if n <
-  667 then 33554291 else 33553395) else 33554151)) else (if n < 672 then (if n < 671 then (if n <
-  670 then 33553871 else 33554415) else 33554399) else (if n < 674 then (if n < 673 then 33553407
-  else 33553567) else 33552703)))) else (if n < 687 then (if n < 681 then (if n < 678 then (if n <
-  677 then (if n < 676 then 33553851 else 33553271) else 33552963) else (if n < 680 then (if n <
-  679 then 33553543 else 33552655) else 33554431)) else (if n < 684 then (if n < 683 then (if n <
-  682 then 33553503 else 33552575) else 33554431) else (if n < 686 then (if n < 685 then 33554431
-  else 33553915) else 33553405))) else (if n < 693 then (if n < 690 then (if n < 689 then (if n <
-  688 then 33554427 else 33554427) else 33553407) else (if n < 692 then (if n < 691 then 33554431
-  else 33554267) else 33554431)) else (if n < 696 then (if n < 695 then (if n < 694 then 33553151
-  else 33553791) else 33554271) else (if n < 697 then 33554427 else 33553027))))) else (if n < 721
-  then (if n < 710 then (if n < 704 then (if n < 701 then (if n < 700 then (if n < 699 then
-  33553671 else 33553663) else 33552895) else (if n < 703 then (if n < 702 then 33553407 else
-  33554303) else 33553117)) else (if n < 707 then (if n < 706 then (if n < 705 then 33552827 else
-  33553405) else 33554331) else (if n < 709 then (if n < 708 then 33552711 else 33553343) else
-  33553767))) else (if n < 716 then (if n < 713 then (if n < 712 then (if n < 711 then 0 else 0)
-  else 33554431) else (if n < 715 then (if n < 714 then 33553407 else 33554303) else 33554375))
-  else (if n < 719 then (if n < 718 then (if n < 717 then 33553903 else 33553773) else 33553115)
-  else (if n < 720 then 33554427 else 33553371)))) else (if n < 733 then (if n < 727 then (if n <
-  724 then (if n < 723 then (if n < 722 then 33554119 else 33554303) else 33554431) else (if n <
-  726 then (if n < 725 then 33553511 else 33553395) else 33554343)) else (if n < 730 then (if n <
-  729 then (if n < 728 then 33553615 else 33552799) else 33553547) else (if n < 732 then (if n <
-  731 then 33554411 else 33554431) else 33554207))) else (if n < 739 then (if n < 736 then (if n <
-  735 then (if n < 734 then 33553823 else 33553215) else 33554055) else (if n < 738 then (if n <
-  737 then 33554399 else 33553471) else 33554183)) else (if n < 742 then (if n < 741 then (if n <
-  740 then 33553599 else 33554431) else 33554431) else (if n < 743 then 33553407 else
-  33554335)))))))))
-def m1Nat (n : Nat) : Nat :=
-  (if n < 372 then (if n < 186 then (if n < 93 then (if n < 47 then (if n < 24 then (if n < 12
-  then (if n < 6 then (if n < 3 then (if n < 2 then (if n < 1 then 0 else 33552895) else 33553407)
-  else (if n < 5 then (if n < 4 then 33547263 else 33553407) else 33554431)) else (if n < 9 then
-  (if n < 8 then (if n < 7 then 33548287 else 33554431) else 33554431) else (if n < 11 then (if n
-  < 10 then 33542143 else 33529855) else 33529855))) else (if n < 18 then (if n < 15 then (if n <
-  14 then (if n < 13 then 20971519 else 20959231) else 33505279) else (if n < 17 then (if n < 16
-  then 33505279 else 33456127) else 33452031)) else (if n < 21 then (if n < 20 then (if n < 19
-  then 33357823 else 33357823) else 33161215) else (if n < 23 then (if n < 22 then 33157119 else
-  32767999) else 32767999)))) else (if n < 36 then (if n < 30 then (if n < 27 then (if n < 26 then
-  (if n < 25 then 31981567 else 31977471) else 30408703) else (if n < 29 then (if n < 28 then
-  30404607 else 27262975) else 27258879)) else (if n < 33 then (if n < 32 then (if n < 31 then
-  33554431 else 33554431) else 33548160) else (if n < 35 then (if n < 34 then 33551296 else
-  33553407) else 33554431))) else (if n < 42 then (if n < 39 then (if n < 38 then (if n < 37 then
-  0 else 0) else 0) else (if n < 41 then (if n < 40 then 0 else 0) else 33522267)) else (if n < 45
-  then (if n < 44 then (if n < 43 then 33494199 else 33433967) else 0) else (if n < 46 then 0 else
-  0))))) else (if n < 70 then (if n < 59 then (if n < 53 then (if n < 50 then (if n < 49 then (if
-  n < 48 then 0 else 0) else 0) else (if n < 52 then (if n < 51 then 0 else 0) else 0)) else (if n
-  < 56 then (if n < 55 then (if n < 54 then 0 else 0) else 0) else (if n < 58 then (if n < 57 then
-  33522467 else 33490503) else 33426575))) else (if n < 65 then (if n < 62 then (if n < 61 then
-  (if n < 60 then 33315839 else 33077247) else 0) else (if n < 64 then (if n < 63 then 0 else
-  33521959) else 0)) else (if n < 68 then (if n < 67 then (if n < 66 then 0 else 0) else 0) else
-  (if n < 69 then 0 else 0)))) else (if n < 82 then (if n < 76 then (if n < 73 then (if n < 72
-  then (if n < 71 then 33099391 else 32644351) else 31850495) else (if n < 75 then (if n < 74 then
-  0 else 0) else 0)) else (if n < 79 then (if n < 78 then (if n < 77 then 0 else 0) else 0) else
-  (if n < 81 then (if n < 80 then 0 else 0) else 0))) else (if n < 88 then (if n < 85 then (if n <
-  84 then (if n < 83 then 33526499 else 33498567) else 33442703) else (if n < 87 then (if n < 86
-  then 0 else 0) else 0)) else (if n < 91 then (if n < 90 then (if n < 89 then 0 else 0) else 0)
-  else (if n < 92 then 26546175 else 19533823)))))) else (if n < 140 then (if n < 117 then (if n <
-  105 then (if n < 99 then (if n < 96 then (if n < 95 then (if n < 94 then 33529855 else 33501183)
-  else 33447935) else (if n < 98 then (if n < 97 then 33337343 else 33120255) else 32681983)) else
-  (if n < 102 then (if n < 101 then (if n < 100 then 31805439 else 30052351) else 0) else (if n <
-  104 then (if n < 103 then 0 else 0) else 0))) else (if n < 111 then (if n < 108 then (if n < 107
-  then (if n < 106 then 0 else 0) else 0) else (if n < 110 then (if n < 109 then 0 else 0) else
-  0)) else (if n < 114 then (if n < 113 then (if n < 112 then 0 else 33524451) else 33505279) else
-  (if n < 116 then (if n < 115 then 33452031 else 0) else 0)))) else (if n < 129 then (if n < 123
-  then (if n < 120 then (if n < 119 then (if n < 118 then 0 else 0) else 0) else (if n < 122 then
-  (if n < 121 then 0 else 0) else 0)) else (if n < 126 then (if n < 125 then (if n < 124 then 0
-  else 0) else 0) else (if n < 128 then (if n < 127 then 0 else 0) else 0))) else (if n < 135 then
-  (if n < 132 then (if n < 131 then (if n < 130 then 0 else 0) else 0) else (if n < 134 then (if n
-  < 133 then 0 else 0) else 0)) else (if n < 138 then (if n < 137 then (if n < 136 then 0 else 0)
-  else 0) else (if n < 139 then 0 else 0))))) else (if n < 163 then (if n < 152 then (if n < 146
-  then (if n < 143 then (if n < 142 then (if n < 141 then 0 else 0) else 0) else (if n < 145 then
-  (if n < 144 then 0 else 0) else 32696191)) else (if n < 149 then (if n < 148 then (if n < 147
-  then 0 else 0) else 0) else (if n < 151 then (if n < 150 then 0 else 0) else 33490119))) else
+  (if n < 581 then (if n < 580 then 33554245 else 33554059) else 33553687)))
+
+def _m0Nat_52 (n : Nat) : Nat :=
+  (if n < 588 then (if n < 585 then (if n < 584 then (if n < 583 then 33554429 else 33554427) else
+  33553771) else (if n < 587 then (if n < 586 then 33553111 else 33554429) else 33554427)) else
+  (if n < 591 then (if n < 590 then (if n < 589 then 33554423 else 33553333) else 33554283) else
+  (if n < 593 then (if n < 592 then 33554135 else 33554155) else 33553879)))
+
+def _m0Nat_53 (n : Nat) : Nat :=
+  (if n < 600 then (if n < 597 then (if n < 596 then (if n < 595 then 33554429 else 33554427) else
+  33554427) else (if n < 599 then (if n < 598 then 33554423 else 33554411) else 33554391)) else
+  (if n < 603 then (if n < 602 then (if n < 601 then 33554429 else 33552941) else 33553499) else
+  (if n < 604 then 33552567 else 33554419)))
+
+def _m0Nat_54 (n : Nat) : Nat :=
+  (if n < 611 then (if n < 608 then (if n < 607 then (if n < 606 then 33554407 else 33553863) else
+  33553295) else (if n < 610 then (if n < 609 then 33554431 else 33554047) else 33553663)) else
+  (if n < 614 then (if n < 613 then (if n < 612 then 33553787 else 33553143) else 33553799) else
+  (if n < 616 then (if n < 615 then 33553167 else 33554047) else 33553663)))
+
+def _m0Nat_55 (n : Nat) : Nat :=
+  (if n < 623 then (if n < 620 then (if n < 619 then (if n < 618 then 33554431 else 33554279) else
+  33554127) else (if n < 622 then (if n < 621 then 33554431 else 33554431) else 33554267)) else
+  (if n < 626 then (if n < 625 then (if n < 624 then 33554103 else 33553855) else 33553279) else
+  (if n < 627 then 33553183 else 33553983)))
+
+def _m0Nat_56 (n : Nat) : Nat :=
+  (if n < 634 then (if n < 631 then (if n < 630 then (if n < 629 then 33553535 else 33554271) else
+  33554111) else (if n < 633 then (if n < 632 then 33553791 else 0) else 0)) else (if n < 637 then
+  (if n < 636 then (if n < 635 then 33552383 else 0) else 0) else (if n < 639 then (if n < 638
+  then 33554303 else 33553407) else 33554175)))
+
+def _m0Nat_57 (n : Nat) : Nat :=
+  (if n < 646 then (if n < 643 then (if n < 642 then (if n < 641 then 0 else 0) else 33553407)
+  else (if n < 645 then (if n < 644 then 33552383 else 0) else 0)) else (if n < 649 then (if n <
+  648 then (if n < 647 then 33554431 else 33554431) else 33554431) else (if n < 650 then 33554175
+  else 33553919)))
+
+def _m0Nat_58 (n : Nat) : Nat :=
+  (if n < 657 then (if n < 654 then (if n < 653 then (if n < 652 then 33553407 else 33553919) else
+  33553407) else (if n < 656 then (if n < 655 then 33553631 else 33552831) else 33553407)) else
+  (if n < 660 then (if n < 659 then (if n < 658 then 33554023 else 33553615) else 33553407) else
+  (if n < 662 then (if n < 661 then 33554367 else 33554303) else 33553759)))
+
+def _m0Nat_59 (n : Nat) : Nat :=
+  (if n < 669 then (if n < 666 then (if n < 665 then (if n < 664 then 33553087 else 33553651) else
+  33552871) else (if n < 668 then (if n < 667 then 33554291 else 33553395) else 33554151)) else
+  (if n < 672 then (if n < 671 then (if n < 670 then 33553871 else 33554415) else 33554399) else
+  (if n < 674 then (if n < 673 then 33553407 else 33553567) else 33552703)))
+
+def _m0Nat_60 (n : Nat) : Nat :=
+  (if n < 681 then (if n < 678 then (if n < 677 then (if n < 676 then 33553851 else 33553271) else
+  33552963) else (if n < 680 then (if n < 679 then 33553543 else 33552655) else 33554431)) else
+  (if n < 684 then (if n < 683 then (if n < 682 then 33553503 else 33552575) else 33554431) else
+  (if n < 686 then (if n < 685 then 33554431 else 33553915) else 33553405)))
+
+def _m0Nat_61 (n : Nat) : Nat :=
+  (if n < 693 then (if n < 690 then (if n < 689 then (if n < 688 then 33554427 else 33554427) else
+  33553407) else (if n < 692 then (if n < 691 then 33554431 else 33554267) else 33554431)) else
+  (if n < 696 then (if n < 695 then (if n < 694 then 33553151 else 33553791) else 33554271) else
+  (if n < 697 then 33554427 else 33553027)))
+
+def _m0Nat_62 (n : Nat) : Nat :=
+  (if n < 704 then (if n < 701 then (if n < 700 then (if n < 699 then 33553671 else 33553663) else
+  33552895) else (if n < 703 then (if n < 702 then 33553407 else 33554303) else 33553117)) else
+  (if n < 707 then (if n < 706 then (if n < 705 then 33552827 else 33553405) else 33554331) else
+  (if n < 709 then (if n < 708 then 33552711 else 33553343) else 33553767)))
+
+def _m0Nat_63 (n : Nat) : Nat :=
+  (if n < 716 then (if n < 713 then (if n < 712 then (if n < 711 then 0 else 0) else 33554431)
+  else (if n < 715 then (if n < 714 then 33553407 else 33554303) else 33554375)) else (if n < 719
+  then (if n < 718 then (if n < 717 then 33553903 else 33553773) else 33553115) else (if n < 720
+  then 33554427 else 33553371)))
+
+def _m0Nat_64 (n : Nat) : Nat :=
+  (if n < 727 then (if n < 724 then (if n < 723 then (if n < 722 then 33554119 else 33554303) else
+  33554431) else (if n < 726 then (if n < 725 then 33553511 else 33553395) else 33554343)) else
+  (if n < 730 then (if n < 729 then (if n < 728 then 33553615 else 33552799) else 33553547) else
+  (if n < 732 then (if n < 731 then 33554411 else 33554431) else 33554207)))
+
+def _m0Nat_65 (n : Nat) : Nat :=
+  (if n < 739 then (if n < 736 then (if n < 735 then (if n < 734 then 33553823 else 33553215) else
+  33554055) else (if n < 738 then (if n < 737 then 33554399 else 33553471) else 33554183)) else
+  (if n < 742 then (if n < 741 then (if n < 740 then 33553599 else 33554431) else 33554431) else
+  (if n < 743 then 33553407 else 33554335)))
+
+def _m0Nat_66 (n : Nat) : Nat :=
+  (if n < 465 then (if n < 419 then (if n < 396 then (if n < 384 then _m0Nat_34 n else _m0Nat_35
+  n) else (if n < 408 then _m0Nat_36 n else _m0Nat_37 n)) else (if n < 442 then (if n < 431 then
+  _m0Nat_38 n else _m0Nat_39 n) else (if n < 454 then _m0Nat_40 n else _m0Nat_41 n))) else (if n <
+  512 then (if n < 489 then (if n < 477 then _m0Nat_42 n else _m0Nat_43 n) else (if n < 501 then
+  _m0Nat_44 n else _m0Nat_45 n)) else (if n < 535 then (if n < 524 then _m0Nat_46 n else _m0Nat_47
+  n) else (if n < 547 then _m0Nat_48 n else _m0Nat_49 n))))
+
+def _m0Nat_67 (n : Nat) : Nat :=
+  (if n < 651 then (if n < 605 then (if n < 582 then (if n < 570 then _m0Nat_50 n else _m0Nat_51
+  n) else (if n < 594 then _m0Nat_52 n else _m0Nat_53 n)) else (if n < 628 then (if n < 617 then
+  _m0Nat_54 n else _m0Nat_55 n) else (if n < 640 then _m0Nat_56 n else _m0Nat_57 n))) else (if n <
+  698 then (if n < 675 then (if n < 663 then _m0Nat_58 n else _m0Nat_59 n) else (if n < 687 then
+  _m0Nat_60 n else _m0Nat_61 n)) else (if n < 721 then (if n < 710 then _m0Nat_62 n else _m0Nat_63
+  n) else (if n < 733 then _m0Nat_64 n else _m0Nat_65 n))))
+
+def m0Nat (n : Nat) : Nat :=
+  (if n < 372 then (if n < 186 then _m0Nat_32 n else _m0Nat_33 n) else (if n < 558 then _m0Nat_66
+  n else _m0Nat_67 n))
+def _m1Nat_0 (n : Nat) : Nat :=
+  (if n < 6 then (if n < 3 then (if n < 2 then (if n < 1 then 0 else 33552895) else 33553407) else
+  (if n < 5 then (if n < 4 then 33547263 else 33553407) else 33554431)) else (if n < 9 then (if n
+  < 8 then (if n < 7 then 33548287 else 33554431) else 33554431) else (if n < 11 then (if n < 10
+  then 33542143 else 33529855) else 33529855)))
+
+def _m1Nat_1 (n : Nat) : Nat :=
+  (if n < 18 then (if n < 15 then (if n < 14 then (if n < 13 then 20971519 else 20959231) else
+  33505279) else (if n < 17 then (if n < 16 then 33505279 else 33456127) else 33452031)) else (if
+  n < 21 then (if n < 20 then (if n < 19 then 33357823 else 33357823) else 33161215) else (if n <
+  23 then (if n < 22 then 33157119 else 32767999) else 32767999)))
+
+def _m1Nat_2 (n : Nat) : Nat :=
+  (if n < 30 then (if n < 27 then (if n < 26 then (if n < 25 then 31981567 else 31977471) else
+  30408703) else (if n < 29 then (if n < 28 then 30404607 else 27262975) else 27258879)) else (if
+  n < 33 then (if n < 32 then (if n < 31 then 33554431 else 33554431) else 33548160) else (if n <
+  35 then (if n < 34 then 33551296 else 33553407) else 33554431)))
+
+def _m1Nat_3 (n : Nat) : Nat :=
+  (if n < 42 then (if n < 39 then (if n < 38 then (if n < 37 then 0 else 0) else 0) else (if n <
+  41 then (if n < 40 then 0 else 0) else 33522267)) else (if n < 45 then (if n < 44 then (if n <
+  43 then 33494199 else 33433967) else 0) else (if n < 46 then 0 else 0)))
+
+def _m1Nat_4 (n : Nat) : Nat :=
+  (if n < 53 then (if n < 50 then (if n < 49 then (if n < 48 then 0 else 0) else 0) else (if n <
+  52 then (if n < 51 then 0 else 0) else 0)) else (if n < 56 then (if n < 55 then (if n < 54 then
+  0 else 0) else 0) else (if n < 58 then (if n < 57 then 33522467 else 33490503) else 33426575)))
+
+def _m1Nat_5 (n : Nat) : Nat :=
+  (if n < 65 then (if n < 62 then (if n < 61 then (if n < 60 then 33315839 else 33077247) else 0)
+  else (if n < 64 then (if n < 63 then 0 else 33521959) else 0)) else (if n < 68 then (if n < 67
+  then (if n < 66 then 0 else 0) else 0) else (if n < 69 then 0 else 0)))
+
+def _m1Nat_6 (n : Nat) : Nat :=
+  (if n < 76 then (if n < 73 then (if n < 72 then (if n < 71 then 33099391 else 32644351) else
+  31850495) else (if n < 75 then (if n < 74 then 0 else 0) else 0)) else (if n < 79 then (if n <
+  78 then (if n < 77 then 0 else 0) else 0) else (if n < 81 then (if n < 80 then 0 else 0) else
+  0)))
+
+def _m1Nat_7 (n : Nat) : Nat :=
+  (if n < 88 then (if n < 85 then (if n < 84 then (if n < 83 then 33526499 else 33498567) else
+  33442703) else (if n < 87 then (if n < 86 then 0 else 0) else 0)) else (if n < 91 then (if n <
+  90 then (if n < 89 then 0 else 0) else 0) else (if n < 92 then 26546175 else 19533823)))
+
+def _m1Nat_8 (n : Nat) : Nat :=
+  (if n < 99 then (if n < 96 then (if n < 95 then (if n < 94 then 33529855 else 33501183) else
+  33447935) else (if n < 98 then (if n < 97 then 33337343 else 33120255) else 32681983)) else (if
+  n < 102 then (if n < 101 then (if n < 100 then 31805439 else 30052351) else 0) else (if n < 104
+  then (if n < 103 then 0 else 0) else 0)))
+
+def _m1Nat_9 (n : Nat) : Nat :=
+  (if n < 111 then (if n < 108 then (if n < 107 then (if n < 106 then 0 else 0) else 0) else (if n
+  < 110 then (if n < 109 then 0 else 0) else 0)) else (if n < 114 then (if n < 113 then (if n <
+  112 then 0 else 33524451) else 33505279) else (if n < 116 then (if n < 115 then 33452031 else 0)
+  else 0)))
+
+def _m1Nat_10 (n : Nat) : Nat :=
+  (if n < 123 then (if n < 120 then (if n < 119 then (if n < 118 then 0 else 0) else 0) else (if n
+  < 122 then (if n < 121 then 0 else 0) else 0)) else (if n < 126 then (if n < 125 then (if n <
+  124 then 0 else 0) else 0) else (if n < 128 then (if n < 127 then 0 else 0) else 0)))
+
+def _m1Nat_11 (n : Nat) : Nat :=
+  (if n < 135 then (if n < 132 then (if n < 131 then (if n < 130 then 0 else 0) else 0) else (if n
+  < 134 then (if n < 133 then 0 else 0) else 0)) else (if n < 138 then (if n < 137 then (if n <
+  136 then 0 else 0) else 0) else (if n < 139 then 0 else 0)))
+
+def _m1Nat_12 (n : Nat) : Nat :=
+  (if n < 146 then (if n < 143 then (if n < 142 then (if n < 141 then 0 else 0) else 0) else (if n
+  < 145 then (if n < 144 then 0 else 0) else 32696191)) else (if n < 149 then (if n < 148 then (if
+  n < 147 then 0 else 0) else 0) else (if n < 151 then (if n < 150 then 0 else 0) else 33490119)))
+
+def _m1Nat_13 (n : Nat) : Nat :=
   (if n < 158 then (if n < 155 then (if n < 154 then (if n < 153 then 33429903 else 33301279) else
   33052223) else (if n < 157 then (if n < 156 then 32571391 else 0) else 0)) else (if n < 161 then
-  (if n < 160 then (if n < 159 then 0 else 0) else 0) else (if n < 162 then 0 else 0)))) else (if
-  n < 175 then (if n < 169 then (if n < 166 then (if n < 165 then (if n < 164 then 0 else 0) else
-  33525495) else (if n < 168 then (if n < 167 then 0 else 0) else 0)) else (if n < 172 then (if n
-  < 171 then (if n < 170 then 0 else 0) else 0) else (if n < 174 then (if n < 173 then 0 else
-  33335103) else 0))) else (if n < 181 then (if n < 178 then (if n < 177 then (if n < 176 then 0
-  else 33526263) else 33498095) else (if n < 180 then (if n < 179 then 0 else 0) else 33526759))
-  else (if n < 184 then (if n < 183 then (if n < 182 then 33499087 else 33443743) else 33328959)
-  else (if n < 185 then 33541889 else 33529347))))))) else (if n < 279 then (if n < 233 then (if n
-  < 210 then (if n < 198 then (if n < 192 then (if n < 189 then (if n < 188 then (if n < 187 then
-  33504263 else 33454095) else 33554431) else (if n < 191 then (if n < 190 then 33529091 else
-  33503751) else 33455119)) else (if n < 195 then (if n < 194 then (if n < 193 then 33355807 else
-  33503495) else 33504519) else (if n < 197 then (if n < 196 then 33454607 else 33505031) else
-  33455631))) else (if n < 204 then (if n < 201 then (if n < 200 then (if n < 199 then 33356831
-  else 33159231) else 33505223) else (if n < 203 then (if n < 202 then 33454351 else 33541025)
-  else 33542049)) else (if n < 207 then (if n < 206 then (if n < 205 then 33529667 else 33504903)
-  else 33455375) else (if n < 209 then (if n < 208 then 33356319 else 33540193) else 33541217))))
-  else (if n < 222 then (if n < 216 then (if n < 213 then (if n < 212 then (if n < 211 then
-  33528003 else 33503623) else 33540449) else (if n < 215 then (if n < 214 then 33528515 else
-  33504647) else 33454863)) else (if n < 219 then (if n < 218 then (if n < 217 then 33541089 else
-  33542113) else 33529795) else (if n < 221 then (if n < 220 then 33505159 else 33455887) else
-  33357343))) else (if n < 228 then (if n < 225 then (if n < 224 then (if n < 223 then 33160255
-  else 32766079) else 33540113) else (if n < 227 then (if n < 226 then 33541137 else 33527843)
-  else 33503303)) else (if n < 231 then (if n < 230 then (if n < 229 then 33540497 else 33528611)
-  else 33504327) else (if n < 232 then 33454223 else 33503815))))) else (if n < 256 then (if n <
-  245 then (if n < 239 then (if n < 236 then (if n < 235 then (if n < 234 then 33455247 else
-  33356063) else 33503559) else (if n < 238 then (if n < 237 then 33454735 else 33455759) else
-  33357087)) else (if n < 242 then (if n < 241 then (if n < 240 then 33159743 else 33540657) else
-  33541681) else (if n < 244 then (if n < 243 then 33528931 else 33503431) else 33540401))) else
+  (if n < 160 then (if n < 159 then 0 else 0) else 0) else (if n < 162 then 0 else 0)))
+
+def _m1Nat_14 (n : Nat) : Nat :=
+  (if n < 169 then (if n < 166 then (if n < 165 then (if n < 164 then 0 else 0) else 33525495)
+  else (if n < 168 then (if n < 167 then 0 else 0) else 0)) else (if n < 172 then (if n < 171 then
+  (if n < 170 then 0 else 0) else 0) else (if n < 174 then (if n < 173 then 0 else 33335103) else
+  0)))
+
+def _m1Nat_15 (n : Nat) : Nat :=
+  (if n < 181 then (if n < 178 then (if n < 177 then (if n < 176 then 0 else 33526263) else
+  33498095) else (if n < 180 then (if n < 179 then 0 else 0) else 33526759)) else (if n < 184 then
+  (if n < 183 then (if n < 182 then 33499087 else 33443743) else 33328959) else (if n < 185 then
+  33541889 else 33529347)))
+
+def _m1Nat_16 (n : Nat) : Nat :=
+  (if n < 192 then (if n < 189 then (if n < 188 then (if n < 187 then 33504263 else 33454095) else
+  33554431) else (if n < 191 then (if n < 190 then 33529091 else 33503751) else 33455119)) else
+  (if n < 195 then (if n < 194 then (if n < 193 then 33355807 else 33503495) else 33504519) else
+  (if n < 197 then (if n < 196 then 33454607 else 33505031) else 33455631)))
+
+def _m1Nat_17 (n : Nat) : Nat :=
+  (if n < 204 then (if n < 201 then (if n < 200 then (if n < 199 then 33356831 else 33159231) else
+  33505223) else (if n < 203 then (if n < 202 then 33454351 else 33541025) else 33542049)) else
+  (if n < 207 then (if n < 206 then (if n < 205 then 33529667 else 33504903) else 33455375) else
+  (if n < 209 then (if n < 208 then 33356319 else 33540193) else 33541217)))
+
+def _m1Nat_18 (n : Nat) : Nat :=
+  (if n < 216 then (if n < 213 then (if n < 212 then (if n < 211 then 33528003 else 33503623) else
+  33540449) else (if n < 215 then (if n < 214 then 33528515 else 33504647) else 33454863)) else
+  (if n < 219 then (if n < 218 then (if n < 217 then 33541089 else 33542113) else 33529795) else
+  (if n < 221 then (if n < 220 then 33505159 else 33455887) else 33357343)))
+
+def _m1Nat_19 (n : Nat) : Nat :=
+  (if n < 228 then (if n < 225 then (if n < 224 then (if n < 223 then 33160255 else 32766079) else
+  33540113) else (if n < 227 then (if n < 226 then 33541137 else 33527843) else 33503303)) else
+  (if n < 231 then (if n < 230 then (if n < 229 then 33540497 else 33528611) else 33504327) else
+  (if n < 232 then 33454223 else 33503815)))
+
+def _m1Nat_20 (n : Nat) : Nat :=
+  (if n < 239 then (if n < 236 then (if n < 235 then (if n < 234 then 33455247 else 33356063) else
+  33503559) else (if n < 238 then (if n < 237 then 33454735 else 33455759) else 33357087)) else
+  (if n < 242 then (if n < 241 then (if n < 240 then 33159743 else 33540657) else 33541681) else
+  (if n < 244 then (if n < 243 then 33528931 else 33503431) else 33540401)))
+
+def _m1Nat_21 (n : Nat) : Nat :=
   (if n < 251 then (if n < 248 then (if n < 247 then (if n < 246 then 33541425 else 33528419) else
   33504455) else (if n < 250 then (if n < 249 then 33454479 else 33540803) else 33529223)) else
   (if n < 254 then (if n < 253 then (if n < 252 then 33503943 else 33455503) else 33356575) else
-  (if n < 255 then 33540721 else 33541745)))) else (if n < 268 then (if n < 262 then (if n < 259
-  then (if n < 258 then (if n < 257 then 33529059 else 33503687) else 33540465) else (if n < 261
-  then (if n < 260 then 33541489 else 33528547) else 33504711)) else (if n < 265 then (if n < 264
-  then (if n < 263 then 33454991 else 33540337) else 33528291) else (if n < 267 then (if n < 266
-  then 33504199 else 33540593) else 33528803))) else (if n < 274 then (if n < 271 then (if n < 270
-  then (if n < 269 then 33505223 else 33456015) else 33357599) else (if n < 273 then (if n < 272
-  then 33160767 else 32767103) else 31979775)) else (if n < 277 then (if n < 276 then (if n < 275
-  then 33542141 else 33529851) else 33504295) else (if n < 278 then 33454159 else 33505271))))))
-  else (if n < 326 then (if n < 303 then (if n < 291 then (if n < 285 then (if n < 282 then (if n
-  < 281 then (if n < 280 then 33456111 else 33355935) else 33357791) else (if n < 284 then (if n <
-  283 then 33159487 else 33161151) else 32766591)) else (if n < 288 then (if n < 287 then (if n <
-  286 then 32767871 else 31980799) else 30407167) else (if n < 290 then (if n < 289 then 31980287
-  else 33504311) else 33454191))) else (if n < 297 then (if n < 294 then (if n < 293 then (if n <
-  292 then 33540749 else 33529115) else 33503799) else (if n < 296 then (if n < 295 then 33541103
-  else 33529823) else 33504823)) else (if n < 300 then (if n < 299 then (if n < 298 then 33455215
-  else 33355999) else 33504567) else (if n < 302 then (if n < 301 then 33454703 else 33541069)
-  else 33542093)))) else (if n < 315 then (if n < 309 then (if n < 306 then (if n < 305 then (if n
-  < 304 then 33529755 else 33505079) else 33455727) else (if n < 308 then (if n < 307 then
-  33357023 else 33159615) else 33540141)) else (if n < 312 then (if n < 311 then (if n < 310 then
-  33541165 else 33527899) else 33503415) else (if n < 314 then (if n < 313 then 33540397 else
-  33528411) else 33504439))) else (if n < 321 then (if n < 318 then (if n < 317 then (if n < 316
-  then 33454447 else 33541055) else 33529727) else (if n < 320 then (if n < 319 then 33504951 else
-  33455471) else 33356511)) else (if n < 324 then (if n < 323 then (if n < 322 then 33540991 else
-  33529599) else 33504695) else (if n < 325 then 33454959 else 33505207))))) else (if n < 349 then
-  (if n < 338 then (if n < 332 then (if n < 329 then (if n < 328 then (if n < 327 then 33455983
-  else 33357535) else 33160639) else (if n < 331 then (if n < 330 then 32766847 else 33503351)
-  else 33454319)) else (if n < 335 then (if n < 334 then (if n < 333 then 33540831 else 33529279)
-  else 33503863) else (if n < 337 then (if n < 336 then 33455343 else 33356255) else 33540735)))
-  else (if n < 344 then (if n < 341 then (if n < 340 then (if n < 339 then 33529087 else 33503607)
-  else 33504631) else (if n < 343 then (if n < 342 then 33454831 else 33540317) else 33528251))
-  else (if n < 347 then (if n < 346 then (if n < 345 then 33504119 else 33455855) else 33357279)
-  else (if n < 348 then 33160127 else 33503479)))) else (if n < 361 then (if n < 355 then (if n <
-  352 then (if n < 351 then (if n < 350 then 33454575 else 33540797) else 33529211) else (if n <
-  354 then (if n < 353 then 33503991 else 33455599) else 33356767)) else (if n < 358 then (if n <
-  357 then (if n < 356 then 33503735 else 33540991) else 33542013) else (if n < 360 then (if n <
-  359 then 33529595 else 33504759) else 33455087))) else (if n < 367 then (if n < 364 then (if n <
-  363 then (if n < 362 then 33540349 else 33528315) else 33504247) else (if n < 366 then (if n <
-  365 then 33505271 else 33456111) else 33357791)) else (if n < 370 then (if n < 369 then (if n <
-  368 then 33161151 else 32767871) else 31981311) else (if n < 371 then 30408191 else
-  27261951)))))))) else (if n < 558 then (if n < 465 then (if n < 419 then (if n < 396 then (if n
-  < 384 then (if n < 378 then (if n < 375 then (if n < 374 then (if n < 373 then 33540867 else
-  33529351) else 33504271) else (if n < 377 then (if n < 376 then 33454111 else 33529623) else
-  33504783)) else (if n < 381 then (if n < 380 then (if n < 379 then 33455135 else 33355839) else
-  33503503) else (if n < 383 then (if n < 382 then 33454623 else 33504015) else 33455647))) else
+  (if n < 255 then 33540721 else 33541745)))
+
+def _m1Nat_22 (n : Nat) : Nat :=
+  (if n < 262 then (if n < 259 then (if n < 258 then (if n < 257 then 33529059 else 33503687) else
+  33540465) else (if n < 261 then (if n < 260 then 33541489 else 33528547) else 33504711)) else
+  (if n < 265 then (if n < 264 then (if n < 263 then 33454991 else 33540337) else 33528291) else
+  (if n < 267 then (if n < 266 then 33504199 else 33540593) else 33528803)))
+
+def _m1Nat_23 (n : Nat) : Nat :=
+  (if n < 274 then (if n < 271 then (if n < 270 then (if n < 269 then 33505223 else 33456015) else
+  33357599) else (if n < 273 then (if n < 272 then 33160767 else 32767103) else 31979775)) else
+  (if n < 277 then (if n < 276 then (if n < 275 then 33542141 else 33529851) else 33504295) else
+  (if n < 278 then 33454159 else 33505271)))
+
+def _m1Nat_24 (n : Nat) : Nat :=
+  (if n < 285 then (if n < 282 then (if n < 281 then (if n < 280 then 33456111 else 33355935) else
+  33357791) else (if n < 284 then (if n < 283 then 33159487 else 33161151) else 32766591)) else
+  (if n < 288 then (if n < 287 then (if n < 286 then 32767871 else 31980799) else 30407167) else
+  (if n < 290 then (if n < 289 then 31980287 else 33504311) else 33454191)))
+
+def _m1Nat_25 (n : Nat) : Nat :=
+  (if n < 297 then (if n < 294 then (if n < 293 then (if n < 292 then 33540749 else 33529115) else
+  33503799) else (if n < 296 then (if n < 295 then 33541103 else 33529823) else 33504823)) else
+  (if n < 300 then (if n < 299 then (if n < 298 then 33455215 else 33355999) else 33504567) else
+  (if n < 302 then (if n < 301 then 33454703 else 33541069) else 33542093)))
+
+def _m1Nat_26 (n : Nat) : Nat :=
+  (if n < 309 then (if n < 306 then (if n < 305 then (if n < 304 then 33529755 else 33505079) else
+  33455727) else (if n < 308 then (if n < 307 then 33357023 else 33159615) else 33540141)) else
+  (if n < 312 then (if n < 311 then (if n < 310 then 33541165 else 33527899) else 33503415) else
+  (if n < 314 then (if n < 313 then 33540397 else 33528411) else 33504439)))
+
+def _m1Nat_27 (n : Nat) : Nat :=
+  (if n < 321 then (if n < 318 then (if n < 317 then (if n < 316 then 33454447 else 33541055) else
+  33529727) else (if n < 320 then (if n < 319 then 33504951 else 33455471) else 33356511)) else
+  (if n < 324 then (if n < 323 then (if n < 322 then 33540991 else 33529599) else 33504695) else
+  (if n < 325 then 33454959 else 33505207)))
+
+def _m1Nat_28 (n : Nat) : Nat :=
+  (if n < 332 then (if n < 329 then (if n < 328 then (if n < 327 then 33455983 else 33357535) else
+  33160639) else (if n < 331 then (if n < 330 then 32766847 else 33503351) else 33454319)) else
+  (if n < 335 then (if n < 334 then (if n < 333 then 33540831 else 33529279) else 33503863) else
+  (if n < 337 then (if n < 336 then 33455343 else 33356255) else 33540735)))
+
+def _m1Nat_29 (n : Nat) : Nat :=
+  (if n < 344 then (if n < 341 then (if n < 340 then (if n < 339 then 33529087 else 33503607) else
+  33504631) else (if n < 343 then (if n < 342 then 33454831 else 33540317) else 33528251)) else
+  (if n < 347 then (if n < 346 then (if n < 345 then 33504119 else 33455855) else 33357279) else
+  (if n < 348 then 33160127 else 33503479)))
+
+def _m1Nat_30 (n : Nat) : Nat :=
+  (if n < 355 then (if n < 352 then (if n < 351 then (if n < 350 then 33454575 else 33540797) else
+  33529211) else (if n < 354 then (if n < 353 then 33503991 else 33455599) else 33356767)) else
+  (if n < 358 then (if n < 357 then (if n < 356 then 33503735 else 33540991) else 33542013) else
+  (if n < 360 then (if n < 359 then 33529595 else 33504759) else 33455087)))
+
+def _m1Nat_31 (n : Nat) : Nat :=
+  (if n < 367 then (if n < 364 then (if n < 363 then (if n < 362 then 33540349 else 33528315) else
+  33504247) else (if n < 366 then (if n < 365 then 33505271 else 33456111) else 33357791)) else
+  (if n < 370 then (if n < 369 then (if n < 368 then 33161151 else 32767871) else 31981311) else
+  (if n < 371 then 30408191 else 27261951)))
+
+def _m1Nat_32 (n : Nat) : Nat :=
+  (if n < 93 then (if n < 47 then (if n < 24 then (if n < 12 then _m1Nat_0 n else _m1Nat_1 n) else
+  (if n < 36 then _m1Nat_2 n else _m1Nat_3 n)) else (if n < 70 then (if n < 59 then _m1Nat_4 n
+  else _m1Nat_5 n) else (if n < 82 then _m1Nat_6 n else _m1Nat_7 n))) else (if n < 140 then (if n
+  < 117 then (if n < 105 then _m1Nat_8 n else _m1Nat_9 n) else (if n < 129 then _m1Nat_10 n else
+  _m1Nat_11 n)) else (if n < 163 then (if n < 152 then _m1Nat_12 n else _m1Nat_13 n) else (if n <
+  175 then _m1Nat_14 n else _m1Nat_15 n))))
+
+def _m1Nat_33 (n : Nat) : Nat :=
+  (if n < 279 then (if n < 233 then (if n < 210 then (if n < 198 then _m1Nat_16 n else _m1Nat_17
+  n) else (if n < 222 then _m1Nat_18 n else _m1Nat_19 n)) else (if n < 256 then (if n < 245 then
+  _m1Nat_20 n else _m1Nat_21 n) else (if n < 268 then _m1Nat_22 n else _m1Nat_23 n))) else (if n <
+  326 then (if n < 303 then (if n < 291 then _m1Nat_24 n else _m1Nat_25 n) else (if n < 315 then
+  _m1Nat_26 n else _m1Nat_27 n)) else (if n < 349 then (if n < 338 then _m1Nat_28 n else _m1Nat_29
+  n) else (if n < 361 then _m1Nat_30 n else _m1Nat_31 n))))
+
+def _m1Nat_34 (n : Nat) : Nat :=
+  (if n < 378 then (if n < 375 then (if n < 374 then (if n < 373 then 33540867 else 33529351) else
+  33504271) else (if n < 377 then (if n < 376 then 33454111 else 33529623) else 33504783)) else
+  (if n < 381 then (if n < 380 then (if n < 379 then 33455135 else 33355839) else 33503503) else
+  (if n < 383 then (if n < 382 then 33454623 else 33504015) else 33455647)))
+
+def _m1Nat_35 (n : Nat) : Nat :=
   (if n < 390 then (if n < 387 then (if n < 386 then (if n < 385 then 33356863 else 33159295) else
   33528903) else (if n < 389 then (if n < 388 then 33503375 else 33504399) else 33454367)) else
   (if n < 393 then (if n < 392 then (if n < 391 then 33503887 else 33540515) else 33528647) else
-  (if n < 395 then (if n < 394 then 33504911 else 33455391) else 33356351)))) else (if n < 408
-  then (if n < 402 then (if n < 399 then (if n < 398 then (if n < 397 then 33503631 else 33454879)
-  else 33504143) else (if n < 401 then (if n < 400 then 33455903 else 33357375) else 33160319))
-  else (if n < 405 then (if n < 404 then (if n < 403 then 32766207 else 33541651) else 33528871)
-  else (if n < 407 then (if n < 406 then 33503311 else 33540371) else 33541395))) else (if n < 414
-  then (if n < 411 then (if n < 410 then (if n < 409 then 33528359 else 33504335) else 33454239)
-  else (if n < 413 then (if n < 412 then 33540243 else 33528103) else 33503823)) else (if n < 417
-  then (if n < 416 then (if n < 415 then 33455263 else 33356095) else 33540827) else (if n < 418
-  then 33529271 else 33503567))))) else (if n < 442 then (if n < 431 then (if n < 425 then (if n <
-  422 then (if n < 421 then (if n < 420 then 33454751 else 33540819) else 33529255) else (if n <
-  424 then (if n < 423 then 33504079 else 33455775) else 33357119)) else (if n < 428 then (if n <
-  427 then (if n < 426 then 33159807 else 33503439) else 33504463) else (if n < 430 then (if n <
-  429 then 33454495 else 33541115) else 33529847))) else (if n < 437 then (if n < 434 then (if n <
-  433 then (if n < 432 then 33504975 else 33455519) else 33356607) else (if n < 436 then (if n <
-  435 then 33504719 else 33455007) else 33505263)) else (if n < 440 then (if n < 439 then (if n <
-  438 then 33540595 else 33528807) else 33505231) else (if n < 441 then 33456031 else 33357631))))
-  else (if n < 454 then (if n < 448 then (if n < 445 then (if n < 444 then (if n < 443 then
-  33160831 else 32767231) else 31980031) else (if n < 447 then (if n < 446 then 33540875 else
-  33529367) else 33504303)) else (if n < 451 then (if n < 450 then (if n < 449 then 33454175 else
-  33504815) else 33455199) else (if n < 453 then (if n < 452 then 33355967 else 33505199) else
-  33454687))) else (if n < 460 then (if n < 457 then (if n < 456 then (if n < 455 then 33504047
-  else 33455711) else 33356991) else (if n < 459 then (if n < 458 then 33159551 else 33540651)
-  else 33541675)) else (if n < 463 then (if n < 462 then (if n < 461 then 33528919 else 33503407)
-  else 33454431) else (if n < 464 then 33540779 else 33529175)))))) else (if n < 512 then (if n <
-  489 then (if n < 477 then (if n < 471 then (if n < 468 then (if n < 467 then (if n < 466 then
-  33503919 else 33455455) else 33356479) else (if n < 470 then (if n < 469 then 33540971 else
-  33529559) else 33504687)) else (if n < 474 then (if n < 473 then (if n < 472 then 33454943 else
-  33505199) else 33455967) else (if n < 476 then (if n < 475 then 33357503 else 33160575) else
-  32766719))) else (if n < 483 then (if n < 480 then (if n < 479 then (if n < 478 then 33454303
-  else 33503855) else 33455327) else (if n < 482 then (if n < 481 then 33356223 else 33503599)
-  else 33454815)) else (if n < 486 then (if n < 485 then (if n < 484 then 33505135 else 33455839)
-  else 33357247) else (if n < 488 then (if n < 487 then 33160063 else 33540923) else 33529463))))
-  else (if n < 501 then (if n < 495 then (if n < 492 then (if n < 491 then (if n < 490 then
-  33504495 else 33454559) else 33505007) else (if n < 494 then (if n < 493 then 33455583 else
-  33356735) else 33540987)) else (if n < 498 then (if n < 497 then (if n < 496 then 33542011 else
-  33529591) else 33504751) else (if n < 500 then (if n < 499 then 33455071 else 33540347) else
-  33541371))) else (if n < 507 then (if n < 504 then (if n < 503 then (if n < 502 then 33528311
-  else 33504239) else 33540603) else (if n < 506 then (if n < 505 then 33528823 else 33505263)
-  else 33456095)) else (if n < 510 then (if n < 509 then (if n < 508 then 33357759 else 33161087)
-  else 32767743) else (if n < 511 then 31981055 else 30407679))))) else (if n < 535 then (if n <
-  524 then (if n < 518 then (if n < 515 then (if n < 514 then (if n < 513 then 33540103 else
-  33541127) else 33527823) else (if n < 517 then (if n < 516 then 33503263 else 33454143) else
-  33355903)) else (if n < 521 then (if n < 520 then (if n < 519 then 33159423 else 32766463) else
-  31980543) else (if n < 523 then (if n < 522 then 30408703 else 27262975) else 0))) else (if n <
-  530 then (if n < 527 then (if n < 526 then (if n < 525 then 33542143 else 0) else 0) else (if n
-  < 529 then (if n < 528 then 0 else 0) else 0)) else (if n < 533 then (if n < 532 then (if n <
-  531 then 0 else 0) else 0) else (if n < 534 then 33554431 else 33554431)))) else (if n < 547
-  then (if n < 541 then (if n < 538 then (if n < 537 then (if n < 536 then 33554431 else 33554431)
-  else 33554431) else (if n < 540 then (if n < 539 then 33554431 else 33554431) else 33550847))
-  else (if n < 544 then (if n < 543 then (if n < 542 then 33546749 else 33554431) else 33554431)
-  else (if n < 546 then (if n < 545 then 33554431 else 33554431) else 33554431))) else (if n < 553
-  then (if n < 550 then (if n < 549 then (if n < 548 then 33554431 else 33554431) else 33554431)
-  else (if n < 552 then (if n < 551 then 33554431 else 33554431) else 33554431)) else (if n < 556
-  then (if n < 555 then (if n < 554 then 33554431 else 33554431) else 33554431) else (if n < 557
-  then 33551359 else 33547261))))))) else (if n < 651 then (if n < 605 then (if n < 582 then (if n
-  < 570 then (if n < 564 then (if n < 561 then (if n < 560 then (if n < 559 then 33554431 else
-  33554431) else 33554431) else (if n < 563 then (if n < 562 then 33554431 else 33554431) else
-  33554431)) else (if n < 567 then (if n < 566 then (if n < 565 then 33554431 else 33550335) else
-  33554431) else (if n < 569 then (if n < 568 then 33550335 else 33554431) else 33540863))) else
+  (if n < 395 then (if n < 394 then 33504911 else 33455391) else 33356351)))
+
+def _m1Nat_36 (n : Nat) : Nat :=
+  (if n < 402 then (if n < 399 then (if n < 398 then (if n < 397 then 33503631 else 33454879) else
+  33504143) else (if n < 401 then (if n < 400 then 33455903 else 33357375) else 33160319)) else
+  (if n < 405 then (if n < 404 then (if n < 403 then 32766207 else 33541651) else 33528871) else
+  (if n < 407 then (if n < 406 then 33503311 else 33540371) else 33541395)))
+
+def _m1Nat_37 (n : Nat) : Nat :=
+  (if n < 414 then (if n < 411 then (if n < 410 then (if n < 409 then 33528359 else 33504335) else
+  33454239) else (if n < 413 then (if n < 412 then 33540243 else 33528103) else 33503823)) else
+  (if n < 417 then (if n < 416 then (if n < 415 then 33455263 else 33356095) else 33540827) else
+  (if n < 418 then 33529271 else 33503567)))
+
+def _m1Nat_38 (n : Nat) : Nat :=
+  (if n < 425 then (if n < 422 then (if n < 421 then (if n < 420 then 33454751 else 33540819) else
+  33529255) else (if n < 424 then (if n < 423 then 33504079 else 33455775) else 33357119)) else
+  (if n < 428 then (if n < 427 then (if n < 426 then 33159807 else 33503439) else 33504463) else
+  (if n < 430 then (if n < 429 then 33454495 else 33541115) else 33529847)))
+
+def _m1Nat_39 (n : Nat) : Nat :=
+  (if n < 437 then (if n < 434 then (if n < 433 then (if n < 432 then 33504975 else 33455519) else
+  33356607) else (if n < 436 then (if n < 435 then 33504719 else 33455007) else 33505263)) else
+  (if n < 440 then (if n < 439 then (if n < 438 then 33540595 else 33528807) else 33505231) else
+  (if n < 441 then 33456031 else 33357631)))
+
+def _m1Nat_40 (n : Nat) : Nat :=
+  (if n < 448 then (if n < 445 then (if n < 444 then (if n < 443 then 33160831 else 32767231) else
+  31980031) else (if n < 447 then (if n < 446 then 33540875 else 33529367) else 33504303)) else
+  (if n < 451 then (if n < 450 then (if n < 449 then 33454175 else 33504815) else 33455199) else
+  (if n < 453 then (if n < 452 then 33355967 else 33505199) else 33454687)))
+
+def _m1Nat_41 (n : Nat) : Nat :=
+  (if n < 460 then (if n < 457 then (if n < 456 then (if n < 455 then 33504047 else 33455711) else
+  33356991) else (if n < 459 then (if n < 458 then 33159551 else 33540651) else 33541675)) else
+  (if n < 463 then (if n < 462 then (if n < 461 then 33528919 else 33503407) else 33454431) else
+  (if n < 464 then 33540779 else 33529175)))
+
+def _m1Nat_42 (n : Nat) : Nat :=
+  (if n < 471 then (if n < 468 then (if n < 467 then (if n < 466 then 33503919 else 33455455) else
+  33356479) else (if n < 470 then (if n < 469 then 33540971 else 33529559) else 33504687)) else
+  (if n < 474 then (if n < 473 then (if n < 472 then 33454943 else 33505199) else 33455967) else
+  (if n < 476 then (if n < 475 then 33357503 else 33160575) else 32766719)))
+
+def _m1Nat_43 (n : Nat) : Nat :=
+  (if n < 483 then (if n < 480 then (if n < 479 then (if n < 478 then 33454303 else 33503855) else
+  33455327) else (if n < 482 then (if n < 481 then 33356223 else 33503599) else 33454815)) else
+  (if n < 486 then (if n < 485 then (if n < 484 then 33505135 else 33455839) else 33357247) else
+  (if n < 488 then (if n < 487 then 33160063 else 33540923) else 33529463)))
+
+def _m1Nat_44 (n : Nat) : Nat :=
+  (if n < 495 then (if n < 492 then (if n < 491 then (if n < 490 then 33504495 else 33454559) else
+  33505007) else (if n < 494 then (if n < 493 then 33455583 else 33356735) else 33540987)) else
+  (if n < 498 then (if n < 497 then (if n < 496 then 33542011 else 33529591) else 33504751) else
+  (if n < 500 then (if n < 499 then 33455071 else 33540347) else 33541371)))
+
+def _m1Nat_45 (n : Nat) : Nat :=
+  (if n < 507 then (if n < 504 then (if n < 503 then (if n < 502 then 33528311 else 33504239) else
+  33540603) else (if n < 506 then (if n < 505 then 33528823 else 33505263) else 33456095)) else
+  (if n < 510 then (if n < 509 then (if n < 508 then 33357759 else 33161087) else 32767743) else
+  (if n < 511 then 31981055 else 30407679)))
+
+def _m1Nat_46 (n : Nat) : Nat :=
+  (if n < 518 then (if n < 515 then (if n < 514 then (if n < 513 then 33540103 else 33541127) else
+  33527823) else (if n < 517 then (if n < 516 then 33503263 else 33454143) else 33355903)) else
+  (if n < 521 then (if n < 520 then (if n < 519 then 33159423 else 32766463) else 31980543) else
+  (if n < 523 then (if n < 522 then 30408703 else 27262975) else 0)))
+
+def _m1Nat_47 (n : Nat) : Nat :=
+  (if n < 530 then (if n < 527 then (if n < 526 then (if n < 525 then 33542143 else 0) else 0)
+  else (if n < 529 then (if n < 528 then 0 else 0) else 0)) else (if n < 533 then (if n < 532 then
+  (if n < 531 then 0 else 0) else 0) else (if n < 534 then 33554431 else 33554431)))
+
+def _m1Nat_48 (n : Nat) : Nat :=
+  (if n < 541 then (if n < 538 then (if n < 537 then (if n < 536 then 33554431 else 33554431) else
+  33554431) else (if n < 540 then (if n < 539 then 33554431 else 33554431) else 33550847)) else
+  (if n < 544 then (if n < 543 then (if n < 542 then 33546749 else 33554431) else 33554431) else
+  (if n < 546 then (if n < 545 then 33554431 else 33554431) else 33554431)))
+
+def _m1Nat_49 (n : Nat) : Nat :=
+  (if n < 553 then (if n < 550 then (if n < 549 then (if n < 548 then 33554431 else 33554431) else
+  33554431) else (if n < 552 then (if n < 551 then 33554431 else 33554431) else 33554431)) else
+  (if n < 556 then (if n < 555 then (if n < 554 then 33554431 else 33554431) else 33554431) else
+  (if n < 557 then 33551359 else 33547261)))
+
+def _m1Nat_50 (n : Nat) : Nat :=
+  (if n < 564 then (if n < 561 then (if n < 560 then (if n < 559 then 33554431 else 33554431) else
+  33554431) else (if n < 563 then (if n < 562 then 33554431 else 33554431) else 33554431)) else
+  (if n < 567 then (if n < 566 then (if n < 565 then 33554431 else 33550335) else 33554431) else
+  (if n < 569 then (if n < 568 then 33550335 else 33554431) else 33540863)))
+
+def _m1Nat_51 (n : Nat) : Nat :=
   (if n < 576 then (if n < 573 then (if n < 572 then (if n < 571 then 33529343 else 33528247) else
   33504111) else (if n < 575 then (if n < 574 then 33540315 else 33541627) else 33527815)) else
   (if n < 579 then (if n < 578 then (if n < 577 then 33503247 else 33540387) else 33528391) else
-  (if n < 581 then (if n < 580 then 33540283 else 33528183) else 33503983)))) else (if n < 594
-  then (if n < 588 then (if n < 585 then (if n < 584 then (if n < 583 then 33541115 else 33529847)
-  else 33528471) else (if n < 587 then (if n < 586 then 33504559 else 33540603) else 33528631))
-  else (if n < 591 then (if n < 590 then (if n < 589 then 33504879 else 33541627) else 33528823)
-  else (if n < 593 then (if n < 592 then 33505263 else 33528087) else 33503791))) else (if n < 600
-  then (if n < 597 then (if n < 596 then (if n < 595 then 33541115 else 33529847) else 33528823)
-  else (if n < 599 then (if n < 598 then 33505263 else 33528823) else 33505263)) else (if n < 603
-  then (if n < 602 then (if n < 601 then 33540603 else 33541587) else 33528743) else (if n < 604
-  then 33505103 else 33540573))))) else (if n < 628 then (if n < 617 then (if n < 611 then (if n <
-  608 then (if n < 607 then (if n < 606 then 33528763 else 33528379) else 33504375) else (if n <
-  610 then (if n < 609 then 33540607 else 33528799) else 33505215)) else (if n < 614 then (if n <
-  613 then (if n < 612 then 33528455 else 33504527) else 33528443) else (if n < 616 then (if n <
-  615 then 33504503 else 33541039) else 33529695))) else (if n < 623 then (if n < 620 then (if n <
-  619 then (if n < 618 then 33540607 else 33527963) else 33503543) else (if n < 622 then (if n <
-  621 then 33528831 else 33505279) else 33528551)) else (if n < 626 then (if n < 625 then (if n <
-  624 then 33504719 else 33540673) else 33528963) else (if n < 627 then 33541345 else 33528259))))
-  else (if n < 640 then (if n < 634 then (if n < 631 then (if n < 630 then (if n < 629 then
-  33504135 else 33540321) else 33528131) else (if n < 633 then (if n < 632 then 33503879 else 0)
-  else 0)) else (if n < 637 then (if n < 636 then (if n < 635 then 33525759 else 0) else 0) else
-  (if n < 639 then (if n < 638 then 33540225 else 33542143) else 33528067))) else (if n < 646 then
-  (if n < 643 then (if n < 642 then (if n < 641 then 0 else 0) else 33523711) else (if n < 645
-  then (if n < 644 then 33492991 else 0) else 0)) else (if n < 649 then (if n < 648 then (if n <
-  647 then 33527807 else 33540605) else 33554431) else (if n < 650 then 33528707 else
-  33541119)))))) else (if n < 698 then (if n < 675 then (if n < 663 then (if n < 657 then (if n <
-  654 then (if n < 653 then (if n < 652 then 33529855 else 33505031) else 33541631) else (if n <
-  656 then (if n < 655 then 33528611 else 33504839) else 33541631)) else (if n < 660 then (if n <
-  659 then (if n < 658 then 33528219 else 33504055) else 33541617) else (if n < 662 then (if n <
-  661 then 33527875 else 33503367) else 33528483))) else (if n < 669 then (if n < 666 then (if n <
-  665 then (if n < 664 then 33504583 else 33541101) else 33529819) else (if n < 668 then (if n <
-  667 then 33540605 else 33541629) else 33528827)) else (if n < 672 then (if n < 671 then (if n <
-  670 then 33505271 else 33527827) else 33503271) else (if n < 674 then (if n < 673 then 33541627
-  else 33528675) else 33504967)))) else (if n < 687 then (if n < 681 then (if n < 678 then (if n <
-  677 then (if n < 676 then 33528791 else 33505199) else 33541565) else (if n < 680 then (if n <
-  679 then 33528699 else 33505015) else 33540607)) else (if n < 684 then (if n < 683 then (if n <
-  682 then 33528739 else 33505095) else 33541117) else (if n < 686 then (if n < 685 then 33529851
-  else 33528759) else 33542139))) else (if n < 693 then (if n < 690 then (if n < 689 then (if n <
-  688 then 33528759 else 33528823) else 33542143) else (if n < 692 then (if n < 691 then 33528799
-  else 33528807) else 33540607)) else (if n < 696 then (if n < 695 then (if n < 694 then 33541601
-  else 33528451) else 33527971) else (if n < 697 then 33528183 else 33541501))))) else (if n < 721
-  then (if n < 710 then (if n < 704 then (if n < 701 then (if n < 700 then (if n < 699 then
-  33528571 else 33541119) else 33529855) else (if n < 703 then (if n < 702 then 33542143 else
-  33529855) else 33542075)) else (if n < 707 then (if n < 706 then (if n < 705 then 33529415 else
-  33542139) else 33527911) else (if n < 709 then (if n < 708 then 33529531 else 33541631) else
-  33528475))) else (if n < 716 then (if n < 713 then (if n < 712 then (if n < 711 then 0 else 0)
-  else 33541119) else (if n < 715 then (if n < 714 then 33541629 else 33528707) else 33527867))
-  else (if n < 719 then (if n < 718 then (if n < 717 then 33528339 else 33540859) else 33529335)
-  else (if n < 720 then 33529847 else 33529847)))) else (if n < 733 then (if n < 727 then (if n <
-  724 then (if n < 723 then (if n < 722 then 33528123 else 33528831) else 33541119) else (if n <
-  726 then (if n < 725 then 33528731 else 33541565) else 33528699)) else (if n < 730 then (if n <
-  729 then (if n < 728 then 33540913 else 33529443) else 33528695) else (if n < 732 then (if n <
-  731 then 33528823 else 33540603) else 33528035))) else (if n < 739 then (if n < 736 then (if n <
-  735 then (if n < 734 then 33540705 else 33529027) else 33528187) else (if n < 738 then (if n <
-  737 then 33540605 else 33528771) else 33528059)) else (if n < 742 then (if n < 741 then (if n <
-  740 then 33528643 else 33540593) else 33528803) else (if n < 743 then 33541631 else
-  33527907)))))))))
+  (if n < 581 then (if n < 580 then 33540283 else 33528183) else 33503983)))
+
+def _m1Nat_52 (n : Nat) : Nat :=
+  (if n < 588 then (if n < 585 then (if n < 584 then (if n < 583 then 33541115 else 33529847) else
+  33528471) else (if n < 587 then (if n < 586 then 33504559 else 33540603) else 33528631)) else
+  (if n < 591 then (if n < 590 then (if n < 589 then 33504879 else 33541627) else 33528823) else
+  (if n < 593 then (if n < 592 then 33505263 else 33528087) else 33503791)))
+
+def _m1Nat_53 (n : Nat) : Nat :=
+  (if n < 600 then (if n < 597 then (if n < 596 then (if n < 595 then 33541115 else 33529847) else
+  33528823) else (if n < 599 then (if n < 598 then 33505263 else 33528823) else 33505263)) else
+  (if n < 603 then (if n < 602 then (if n < 601 then 33540603 else 33541587) else 33528743) else
+  (if n < 604 then 33505103 else 33540573)))
+
+def _m1Nat_54 (n : Nat) : Nat :=
+  (if n < 611 then (if n < 608 then (if n < 607 then (if n < 606 then 33528763 else 33528379) else
+  33504375) else (if n < 610 then (if n < 609 then 33540607 else 33528799) else 33505215)) else
+  (if n < 614 then (if n < 613 then (if n < 612 then 33528455 else 33504527) else 33528443) else
+  (if n < 616 then (if n < 615 then 33504503 else 33541039) else 33529695)))
+
+def _m1Nat_55 (n : Nat) : Nat :=
+  (if n < 623 then (if n < 620 then (if n < 619 then (if n < 618 then 33540607 else 33527963) else
+  33503543) else (if n < 622 then (if n < 621 then 33528831 else 33505279) else 33528551)) else
+  (if n < 626 then (if n < 625 then (if n < 624 then 33504719 else 33540673) else 33528963) else
+  (if n < 627 then 33541345 else 33528259)))
+
+def _m1Nat_56 (n : Nat) : Nat :=
+  (if n < 634 then (if n < 631 then (if n < 630 then (if n < 629 then 33504135 else 33540321) else
+  33528131) else (if n < 633 then (if n < 632 then 33503879 else 0) else 0)) else (if n < 637 then
+  (if n < 636 then (if n < 635 then 33525759 else 0) else 0) else (if n < 639 then (if n < 638
+  then 33540225 else 33542143) else 33528067)))
+
+def _m1Nat_57 (n : Nat) : Nat :=
+  (if n < 646 then (if n < 643 then (if n < 642 then (if n < 641 then 0 else 0) else 33523711)
+  else (if n < 645 then (if n < 644 then 33492991 else 0) else 0)) else (if n < 649 then (if n <
+  648 then (if n < 647 then 33527807 else 33540605) else 33554431) else (if n < 650 then 33528707
+  else 33541119)))
+
+def _m1Nat_58 (n : Nat) : Nat :=
+  (if n < 657 then (if n < 654 then (if n < 653 then (if n < 652 then 33529855 else 33505031) else
+  33541631) else (if n < 656 then (if n < 655 then 33528611 else 33504839) else 33541631)) else
+  (if n < 660 then (if n < 659 then (if n < 658 then 33528219 else 33504055) else 33541617) else
+  (if n < 662 then (if n < 661 then 33527875 else 33503367) else 33528483)))
+
+def _m1Nat_59 (n : Nat) : Nat :=
+  (if n < 669 then (if n < 666 then (if n < 665 then (if n < 664 then 33504583 else 33541101) else
+  33529819) else (if n < 668 then (if n < 667 then 33540605 else 33541629) else 33528827)) else
+  (if n < 672 then (if n < 671 then (if n < 670 then 33505271 else 33527827) else 33503271) else
+  (if n < 674 then (if n < 673 then 33541627 else 33528675) else 33504967)))
+
+def _m1Nat_60 (n : Nat) : Nat :=
+  (if n < 681 then (if n < 678 then (if n < 677 then (if n < 676 then 33528791 else 33505199) else
+  33541565) else (if n < 680 then (if n < 679 then 33528699 else 33505015) else 33540607)) else
+  (if n < 684 then (if n < 683 then (if n < 682 then 33528739 else 33505095) else 33541117) else
+  (if n < 686 then (if n < 685 then 33529851 else 33528759) else 33542139)))
+
+def _m1Nat_61 (n : Nat) : Nat :=
+  (if n < 693 then (if n < 690 then (if n < 689 then (if n < 688 then 33528759 else 33528823) else
+  33542143) else (if n < 692 then (if n < 691 then 33528799 else 33528807) else 33540607)) else
+  (if n < 696 then (if n < 695 then (if n < 694 then 33541601 else 33528451) else 33527971) else
+  (if n < 697 then 33528183 else 33541501)))
+
+def _m1Nat_62 (n : Nat) : Nat :=
+  (if n < 704 then (if n < 701 then (if n < 700 then (if n < 699 then 33528571 else 33541119) else
+  33529855) else (if n < 703 then (if n < 702 then 33542143 else 33529855) else 33542075)) else
+  (if n < 707 then (if n < 706 then (if n < 705 then 33529415 else 33542139) else 33527911) else
+  (if n < 709 then (if n < 708 then 33529531 else 33541631) else 33528475)))
+
+def _m1Nat_63 (n : Nat) : Nat :=
+  (if n < 716 then (if n < 713 then (if n < 712 then (if n < 711 then 0 else 0) else 33541119)
+  else (if n < 715 then (if n < 714 then 33541629 else 33528707) else 33527867)) else (if n < 719
+  then (if n < 718 then (if n < 717 then 33528339 else 33540859) else 33529335) else (if n < 720
+  then 33529847 else 33529847)))
+
+def _m1Nat_64 (n : Nat) : Nat :=
+  (if n < 727 then (if n < 724 then (if n < 723 then (if n < 722 then 33528123 else 33528831) else
+  33541119) else (if n < 726 then (if n < 725 then 33528731 else 33541565) else 33528699)) else
+  (if n < 730 then (if n < 729 then (if n < 728 then 33540913 else 33529443) else 33528695) else
+  (if n < 732 then (if n < 731 then 33528823 else 33540603) else 33528035)))
+
+def _m1Nat_65 (n : Nat) : Nat :=
+  (if n < 739 then (if n < 736 then (if n < 735 then (if n < 734 then 33540705 else 33529027) else
+  33528187) else (if n < 738 then (if n < 737 then 33540605 else 33528771) else 33528059)) else
+  (if n < 742 then (if n < 741 then (if n < 740 then 33528643 else 33540593) else 33528803) else
+  (if n < 743 then 33541631 else 33527907)))
+
+def _m1Nat_66 (n : Nat) : Nat :=
+  (if n < 465 then (if n < 419 then (if n < 396 then (if n < 384 then _m1Nat_34 n else _m1Nat_35
+  n) else (if n < 408 then _m1Nat_36 n else _m1Nat_37 n)) else (if n < 442 then (if n < 431 then
+  _m1Nat_38 n else _m1Nat_39 n) else (if n < 454 then _m1Nat_40 n else _m1Nat_41 n))) else (if n <
+  512 then (if n < 489 then (if n < 477 then _m1Nat_42 n else _m1Nat_43 n) else (if n < 501 then
+  _m1Nat_44 n else _m1Nat_45 n)) else (if n < 535 then (if n < 524 then _m1Nat_46 n else _m1Nat_47
+  n) else (if n < 547 then _m1Nat_48 n else _m1Nat_49 n))))
+
+def _m1Nat_67 (n : Nat) : Nat :=
+  (if n < 651 then (if n < 605 then (if n < 582 then (if n < 570 then _m1Nat_50 n else _m1Nat_51
+  n) else (if n < 594 then _m1Nat_52 n else _m1Nat_53 n)) else (if n < 628 then (if n < 617 then
+  _m1Nat_54 n else _m1Nat_55 n) else (if n < 640 then _m1Nat_56 n else _m1Nat_57 n))) else (if n <
+  698 then (if n < 675 then (if n < 663 then _m1Nat_58 n else _m1Nat_59 n) else (if n < 687 then
+  _m1Nat_60 n else _m1Nat_61 n)) else (if n < 721 then (if n < 710 then _m1Nat_62 n else _m1Nat_63
+  n) else (if n < 733 then _m1Nat_64 n else _m1Nat_65 n))))
+
+def m1Nat (n : Nat) : Nat :=
+  (if n < 372 then (if n < 186 then _m1Nat_32 n else _m1Nat_33 n) else (if n < 558 then _m1Nat_66
+  n else _m1Nat_67 n))
 def m0 (q : Fin 744) : Nat := m0Nat q.val
 def m1 (q : Fin 744) : Nat := m1Nat q.val
 
-def refTrans0 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
-  (if n < 372 then (if n < 186 then (if n < 93 then (if n < 46 then (if n < 23 then (if n < 11
-  then (if n < 5 then (if n < 2 then (if n < 1 then some (0, .right, 523) else some (0, .left, 3))
-  else (if n < 3 then some (0, .right, 1) else (if n < 4 then some (1, .left, 566) else some (0,
-  .left, 6)))) else (if n < 8 then (if n < 6 then some (0, .right, 4) else (if n < 7 then some (0,
-  .left, 7) else some (0, .left, 567))) else (if n < 9 then some (1, .left, 7) else (if n < 10
-  then some (1, .left, 10) else some (0, .left, 14))))) else (if n < 17 then (if n < 14 then (if n
-  < 12 then some (1, .left, 14) else (if n < 13 then some (0, .left, 0) else some (1, .left, 0)))
-  else (if n < 15 then some (0, .left, 16) else (if n < 16 then some (1, .left, 16) else some (0,
-  .left, 18)))) else (if n < 20 then (if n < 18 then some (1, .left, 18) else (if n < 19 then some
-  (0, .left, 20) else some (1, .left, 20))) else (if n < 21 then some (0, .left, 22) else (if n <
-  22 then some (1, .left, 22) else some (0, .left, 24)))))) else (if n < 34 then (if n < 28 then
-  (if n < 25 then (if n < 24 then some (1, .left, 24) else some (0, .left, 26)) else (if n < 26
-  then some (1, .left, 26) else (if n < 27 then some (0, .left, 28) else some (1, .left, 28))))
-  else (if n < 31 then (if n < 29 then some (0, .left, 12) else (if n < 30 then some (1, .left,
-  12) else some (0, .left, 565))) else (if n < 32 then some (1, .right, 30) else (if n < 33 then
-  some (0, .right, 33) else some (0, .right, 34))))) else (if n < 40 then (if n < 37 then (if n <
-  35 then some (1, .left, 566) else (if n < 36 then some (0, .right, 34) else some (0, .left,
-  37))) else (if n < 38 then some (1, .left, 38) else (if n < 39 then some (1, .left, 177) else
-  some (0, .left, 40)))) else (if n < 43 then (if n < 41 then some (0, .left, 41) else (if n < 42
-  then some (1, .left, 42) else some (0, .left, 43))) else (if n < 44 then some (0, .left, 59)
-  else (if n < 45 then some (0, .left, 45) else some (0, .left, 46))))))) else (if n < 69 then (if
-  n < 57 then (if n < 51 then (if n < 48 then (if n < 47 then some (0, .left, 47) else some (1,
-  .left, 172)) else (if n < 49 then some (0, .left, 49) else (if n < 50 then some (0, .left, 50)
-  else some (0, .left, 51)))) else (if n < 54 then (if n < 52 then some (1, .left, 52) else (if n
-  < 53 then some (1, .left, 53) else some (0, .left, 121))) else (if n < 55 then some (0, .left,
-  55) else (if n < 56 then some (0, .left, 56) else some (0, .left, 57))))) else (if n < 63 then
-  (if n < 60 then (if n < 58 then some (0, .left, 58) else (if n < 59 then some (1, .left, 59)
-  else some (1, .left, 60))) else (if n < 61 then some (1, .left, 23) else (if n < 62 then some
-  (0, .left, 62) else some (0, .left, 63)))) else (if n < 66 then (if n < 64 then some (1, .left,
-  57) else (if n < 65 then some (0, .left, 65) else some (1, .left, 66))) else (if n < 67 then
-  some (0, .left, 67) else (if n < 68 then some (1, .left, 68) else some (1, .left, 69)))))) else
-  (if n < 81 then (if n < 75 then (if n < 72 then (if n < 70 then some (1, .left, 70) else (if n <
-  71 then some (1, .left, 71) else some (1, .left, 72))) else (if n < 73 then some (0, .left, 26)
-  else (if n < 74 then some (0, .left, 74) else some (1, .left, 46)))) else (if n < 78 then (if n
-  < 76 then some (0, .left, 76) else (if n < 77 then some (0, .left, 77) else some (0, .left,
-  78))) else (if n < 79 then some (0, .left, 79) else (if n < 80 then some (0, .left, 120) else
-  some (0, .left, 81))))) else (if n < 87 then (if n < 84 then (if n < 82 then some (1, .left, 82)
-  else (if n < 83 then some (0, .left, 83) else some (0, .left, 84))) else (if n < 85 then some
-  (0, .left, 19) else (if n < 86 then some (0, .left, 86) else some (0, .left, 87)))) else (if n <
-  90 then (if n < 88 then some (0, .left, 88) else (if n < 89 then some (1, .left, 79) else some
-  (0, .left, 90))) else (if n < 91 then some (1, .left, 93) else (if n < 92 then some (0, .left,
-  92) else some (0, .left, 0)))))))) else (if n < 139 then (if n < 116 then (if n < 104 then (if n
-  < 98 then (if n < 95 then (if n < 94 then some (0, .left, 94) else some (1, .left, 95)) else (if
-  n < 96 then some (0, .left, 96) else (if n < 97 then some (1, .left, 97) else some (0, .left,
-  98)))) else (if n < 101 then (if n < 99 then some (0, .left, 99) else (if n < 100 then some (0,
-  .left, 100) else some (0, .left, 91))) else (if n < 102 then some (0, .left, 102) else (if n <
-  103 then some (1, .left, 103) else some (0, .left, 104))))) else (if n < 110 then (if n < 107
-  then (if n < 105 then some (1, .left, 84) else (if n < 106 then some (0, .left, 106) else some
-  (0, .left, 109))) else (if n < 108 then some (0, .left, 108) else (if n < 109 then some (1,
-  .left, 109) else some (0, .left, 113)))) else (if n < 113 then (if n < 111 then some (0, .left,
-  111) else (if n < 112 then some (0, .left, 112) else some (1, .left, 113))) else (if n < 114
-  then some (0, .left, 114) else (if n < 115 then some (1, .left, 19) else some (0, .left,
-  116)))))) else (if n < 127 then (if n < 121 then (if n < 118 then (if n < 117 then some (0,
-  .left, 117) else some (0, .left, 118)) else (if n < 119 then some (1, .left, 119) else (if n <
-  120 then some (1, .left, 120) else some (1, .left, 121)))) else (if n < 124 then (if n < 122
-  then some (0, .left, 22) else (if n < 123 then some (0, .left, 123) else some (1, .left, 124)))
-  else (if n < 125 then some (0, .left, 125) else (if n < 126 then some (1, .left, 114) else some
-  (0, .left, 127))))) else (if n < 133 then (if n < 130 then (if n < 128 then some (1, .left, 128)
-  else (if n < 129 then some (0, .left, 129) else some (1, .left, 130))) else (if n < 131 then
-  some (1, .left, 131) else (if n < 132 then some (1, .left, 132) else some (0, .left, 145))))
-  else (if n < 136 then (if n < 134 then some (0, .left, 134) else (if n < 135 then some (0,
-  .left, 135) else some (0, .left, 136))) else (if n < 137 then some (1, .left, 137) else (if n <
-  138 then some (0, .left, 173) else some (0, .left, 139))))))) else (if n < 162 then (if n < 150
-  then (if n < 144 then (if n < 141 then (if n < 140 then some (0, .left, 140) else some (0,
-  .left, 141)) else (if n < 142 then some (1, .left, 142) else (if n < 143 then some (1, .left,
-  143) else some (0, .left, 144)))) else (if n < 147 then (if n < 145 then some (1, .left, 145)
-  else (if n < 146 then some (0, .left, 72) else some (0, .left, 147))) else (if n < 148 then some
-  (1, .left, 135) else (if n < 149 then some (0, .left, 149) else some (0, .left, 150))))) else
+def _refTrans0_0 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 5 then (if n < 2 then (if n < 1 then some (0, .right, 523) else some (0, .left, 3)) else
+  (if n < 3 then some (0, .right, 1) else (if n < 4 then some (1, .left, 566) else some (0, .left,
+  6)))) else (if n < 8 then (if n < 6 then some (0, .right, 4) else (if n < 7 then some (0, .left,
+  7) else some (0, .left, 567))) else (if n < 9 then some (1, .left, 7) else (if n < 10 then some
+  (1, .left, 10) else some (0, .left, 14)))))
+
+def _refTrans0_1 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 17 then (if n < 14 then (if n < 12 then some (1, .left, 14) else (if n < 13 then some
+  (0, .left, 0) else some (1, .left, 0))) else (if n < 15 then some (0, .left, 16) else (if n < 16
+  then some (1, .left, 16) else some (0, .left, 18)))) else (if n < 20 then (if n < 18 then some
+  (1, .left, 18) else (if n < 19 then some (0, .left, 20) else some (1, .left, 20))) else (if n <
+  21 then some (0, .left, 22) else (if n < 22 then some (1, .left, 22) else some (0, .left,
+  24)))))
+
+def _refTrans0_2 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 28 then (if n < 25 then (if n < 24 then some (1, .left, 24) else some (0, .left, 26))
+  else (if n < 26 then some (1, .left, 26) else (if n < 27 then some (0, .left, 28) else some (1,
+  .left, 28)))) else (if n < 31 then (if n < 29 then some (0, .left, 12) else (if n < 30 then some
+  (1, .left, 12) else some (0, .left, 565))) else (if n < 32 then some (1, .right, 30) else (if n
+  < 33 then some (0, .right, 33) else some (0, .right, 34)))))
+
+def _refTrans0_3 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 40 then (if n < 37 then (if n < 35 then some (1, .left, 566) else (if n < 36 then some
+  (0, .right, 34) else some (0, .left, 37))) else (if n < 38 then some (1, .left, 38) else (if n <
+  39 then some (1, .left, 177) else some (0, .left, 40)))) else (if n < 43 then (if n < 41 then
+  some (0, .left, 41) else (if n < 42 then some (1, .left, 42) else some (0, .left, 43))) else (if
+  n < 44 then some (0, .left, 59) else (if n < 45 then some (0, .left, 45) else some (0, .left,
+  46)))))
+
+def _refTrans0_4 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 51 then (if n < 48 then (if n < 47 then some (0, .left, 47) else some (1, .left, 172))
+  else (if n < 49 then some (0, .left, 49) else (if n < 50 then some (0, .left, 50) else some (0,
+  .left, 51)))) else (if n < 54 then (if n < 52 then some (1, .left, 52) else (if n < 53 then some
+  (1, .left, 53) else some (0, .left, 121))) else (if n < 55 then some (0, .left, 55) else (if n <
+  56 then some (0, .left, 56) else some (0, .left, 57)))))
+
+def _refTrans0_5 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 63 then (if n < 60 then (if n < 58 then some (0, .left, 58) else (if n < 59 then some
+  (1, .left, 59) else some (1, .left, 60))) else (if n < 61 then some (1, .left, 23) else (if n <
+  62 then some (0, .left, 62) else some (0, .left, 63)))) else (if n < 66 then (if n < 64 then
+  some (1, .left, 57) else (if n < 65 then some (0, .left, 65) else some (1, .left, 66))) else (if
+  n < 67 then some (0, .left, 67) else (if n < 68 then some (1, .left, 68) else some (1, .left,
+  69)))))
+
+def _refTrans0_6 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 75 then (if n < 72 then (if n < 70 then some (1, .left, 70) else (if n < 71 then some
+  (1, .left, 71) else some (1, .left, 72))) else (if n < 73 then some (0, .left, 26) else (if n <
+  74 then some (0, .left, 74) else some (1, .left, 46)))) else (if n < 78 then (if n < 76 then
+  some (0, .left, 76) else (if n < 77 then some (0, .left, 77) else some (0, .left, 78))) else (if
+  n < 79 then some (0, .left, 79) else (if n < 80 then some (0, .left, 120) else some (0, .left,
+  81)))))
+
+def _refTrans0_7 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 87 then (if n < 84 then (if n < 82 then some (1, .left, 82) else (if n < 83 then some
+  (0, .left, 83) else some (0, .left, 84))) else (if n < 85 then some (0, .left, 19) else (if n <
+  86 then some (0, .left, 86) else some (0, .left, 87)))) else (if n < 90 then (if n < 88 then
+  some (0, .left, 88) else (if n < 89 then some (1, .left, 79) else some (0, .left, 90))) else (if
+  n < 91 then some (1, .left, 93) else (if n < 92 then some (0, .left, 92) else some (0, .left,
+  0)))))
+
+def _refTrans0_8 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 98 then (if n < 95 then (if n < 94 then some (0, .left, 94) else some (1, .left, 95))
+  else (if n < 96 then some (0, .left, 96) else (if n < 97 then some (1, .left, 97) else some (0,
+  .left, 98)))) else (if n < 101 then (if n < 99 then some (0, .left, 99) else (if n < 100 then
+  some (0, .left, 100) else some (0, .left, 91))) else (if n < 102 then some (0, .left, 102) else
+  (if n < 103 then some (1, .left, 103) else some (0, .left, 104)))))
+
+def _refTrans0_9 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 110 then (if n < 107 then (if n < 105 then some (1, .left, 84) else (if n < 106 then
+  some (0, .left, 106) else some (0, .left, 109))) else (if n < 108 then some (0, .left, 108) else
+  (if n < 109 then some (1, .left, 109) else some (0, .left, 113)))) else (if n < 113 then (if n <
+  111 then some (0, .left, 111) else (if n < 112 then some (0, .left, 112) else some (1, .left,
+  113))) else (if n < 114 then some (0, .left, 114) else (if n < 115 then some (1, .left, 19) else
+  some (0, .left, 116)))))
+
+def _refTrans0_10 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 121 then (if n < 118 then (if n < 117 then some (0, .left, 117) else some (0, .left,
+  118)) else (if n < 119 then some (1, .left, 119) else (if n < 120 then some (1, .left, 120) else
+  some (1, .left, 121)))) else (if n < 124 then (if n < 122 then some (0, .left, 22) else (if n <
+  123 then some (0, .left, 123) else some (1, .left, 124))) else (if n < 125 then some (0, .left,
+  125) else (if n < 126 then some (1, .left, 114) else some (0, .left, 127)))))
+
+def _refTrans0_11 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 133 then (if n < 130 then (if n < 128 then some (1, .left, 128) else (if n < 129 then
+  some (0, .left, 129) else some (1, .left, 130))) else (if n < 131 then some (1, .left, 131) else
+  (if n < 132 then some (1, .left, 132) else some (0, .left, 145)))) else (if n < 136 then (if n <
+  134 then some (0, .left, 134) else (if n < 135 then some (0, .left, 135) else some (0, .left,
+  136))) else (if n < 137 then some (1, .left, 137) else (if n < 138 then some (0, .left, 173)
+  else some (0, .left, 139)))))
+
+def _refTrans0_12 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 144 then (if n < 141 then (if n < 140 then some (0, .left, 140) else some (0, .left,
+  141)) else (if n < 142 then some (1, .left, 142) else (if n < 143 then some (1, .left, 143) else
+  some (0, .left, 144)))) else (if n < 147 then (if n < 145 then some (1, .left, 145) else (if n <
+  146 then some (0, .left, 72) else some (0, .left, 147))) else (if n < 148 then some (1, .left,
+  135) else (if n < 149 then some (0, .left, 149) else some (0, .left, 150)))))
+
+def _refTrans0_13 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
   (if n < 156 then (if n < 153 then (if n < 151 then some (0, .left, 151) else (if n < 152 then
   some (1, .left, 152) else some (0, .left, 153))) else (if n < 154 then some (1, .left, 154) else
   (if n < 155 then some (1, .left, 155) else some (0, .left, 24)))) else (if n < 159 then (if n <
   157 then some (0, .left, 157) else (if n < 158 then some (0, .left, 165) else some (0, .left,
   159))) else (if n < 160 then some (0, .left, 160) else (if n < 161 then some (0, .left, 161)
-  else some (1, .left, 162)))))) else (if n < 174 then (if n < 168 then (if n < 165 then (if n <
-  163 then some (1, .left, 153) else (if n < 164 then some (0, .left, 164) else some (1, .left,
-  165))) else (if n < 166 then some (1, .left, 15) else (if n < 167 then some (0, .left, 167) else
-  some (0, .left, 176)))) else (if n < 171 then (if n < 169 then some (0, .left, 169) else (if n <
-  170 then some (0, .left, 170) else some (0, .left, 171))) else (if n < 172 then some (0, .left,
-  172) else (if n < 173 then some (1, .left, 173) else some (0, .left, 20))))) else (if n < 180
-  then (if n < 177 then (if n < 175 then some (0, .left, 175) else (if n < 176 then some (1,
-  .left, 176) else some (0, .left, 177))) else (if n < 178 then some (0, .left, 17) else (if n <
-  179 then some (0, .left, 179) else some (1, .left, 180)))) else (if n < 183 then (if n < 181
-  then some (0, .left, 181) else (if n < 182 then some (0, .left, 182) else some (0, .left, 183)))
-  else (if n < 184 then some (0, .left, 70) else (if n < 185 then some (0, .right, 32) else some
-  (0, .right, 184))))))))) else (if n < 279 then (if n < 232 then (if n < 209 then (if n < 197
-  then (if n < 191 then (if n < 188 then (if n < 187 then some (0, .right, 185) else some (0,
-  .right, 186)) else (if n < 189 then some (0, .right, 551) else (if n < 190 then some (0, .right,
-  188) else some (0, .right, 639)))) else (if n < 194 then (if n < 192 then some (0, .right, 190)
-  else (if n < 193 then some (0, .right, 187) else some (0, .right, 714))) else (if n < 195 then
-  some (0, .right, 694) else (if n < 196 then some (0, .right, 193) else some (0, .right, 714)))))
-  else (if n < 203 then (if n < 200 then (if n < 198 then some (0, .right, 652) else (if n < 199
-  then some (0, .right, 195) else some (0, .right, 192))) else (if n < 201 then some (0, .right,
-  741) else (if n < 202 then some (0, .right, 661) else some (0, .right, 547)))) else (if n < 206
-  then (if n < 204 then some (0, .right, 546) else (if n < 205 then some (0, .right, 202) else
-  some (0, .right, 739))) else (if n < 207 then some (0, .right, 631) else (if n < 208 then some
-  (0, .right, 201) else some (0, .right, 115)))))) else (if n < 220 then (if n < 214 then (if n <
-  211 then (if n < 210 then some (0, .right, 48) else some (0, .right, 208)) else (if n < 212 then
-  some (0, .right, 210) else (if n < 213 then some (0, .right, 545) else some (0, .right, 212))))
-  else (if n < 217 then (if n < 215 then some (0, .right, 213) else (if n < 216 then some (0,
-  .right, 211) else some (0, .right, 168))) else (if n < 218 then some (0, .right, 156) else (if n
-  < 219 then some (0, .right, 216) else some (0, .right, 737))))) else (if n < 226 then (if n <
-  223 then (if n < 221 then some (0, .right, 628) else (if n < 222 then some (0, .right, 215) else
-  some (0, .right, 207))) else (if n < 224 then some (0, .right, 199) else (if n < 225 then some
-  (0, .right, 174) else some (0, .right, 542)))) else (if n < 229 then (if n < 227 then some (0,
-  .right, 224) else (if n < 228 then some (0, .right, 226) else some (0, .right, 54))) else (if n
-  < 230 then some (0, .right, 228) else (if n < 231 then some (0, .right, 229) else some (0,
-  .right, 227))))))) else (if n < 255 then (if n < 243 then (if n < 237 then (if n < 234 then (if
-  n < 233 then some (0, .right, 229) else some (0, .right, 232)) else (if n < 235 then some (0,
-  .right, 231) else (if n < 236 then some (0, .right, 695) else some (0, .right, 235)))) else (if
-  n < 240 then (if n < 238 then some (0, .right, 200) else (if n < 239 then some (0, .right, 236)
-  else some (0, .right, 234))) else (if n < 241 then some (0, .right, 546) else (if n < 242 then
-  some (0, .right, 547) else some (0, .right, 240))))) else (if n < 249 then (if n < 246 then (if
-  n < 244 then some (0, .right, 743) else (if n < 245 then some (0, .right, 133) else some (0,
-  .right, 148))) else (if n < 247 then some (0, .right, 244) else (if n < 248 then some (0,
-  .right, 246) else some (0, .right, 243)))) else (if n < 252 then (if n < 250 then some (0,
-  .right, 545) else (if n < 251 then some (0, .right, 249) else some (0, .right, 250))) else (if n
-  < 253 then some (0, .right, 251) else (if n < 254 then some (0, .right, 248) else some (0,
-  .right, 75)))))) else (if n < 267 then (if n < 261 then (if n < 258 then (if n < 256 then some
-  (0, .right, 156) else (if n < 257 then some (0, .right, 254) else some (0, .right, 732))) else
-  (if n < 259 then some (0, .right, 80) else (if n < 260 then some (0, .right, 543) else some (0,
-  .right, 258)))) else (if n < 264 then (if n < 262 then some (0, .right, 260) else (if n < 263
-  then some (0, .right, 257) else some (0, .right, 166))) else (if n < 265 then some (0, .right,
-  263) else (if n < 266 then some (0, .right, 264) else some (0, .right, 551))))) else (if n < 273
-  then (if n < 270 then (if n < 268 then some (0, .right, 266) else (if n < 269 then some (0,
-  .right, 267) else some (0, .right, 265))) else (if n < 271 then some (0, .right, 262) else (if n
-  < 272 then some (0, .right, 253) else some (0, .right, 239)))) else (if n < 276 then (if n < 274
-  then some (0, .right, 223) else (if n < 275 then some (0, .right, 542) else some (0, .right,
-  274))) else (if n < 277 then some (0, .right, 716) else (if n < 278 then some (0, .right, 671)
-  else some (0, .right, 275)))))))) else (if n < 325 then (if n < 302 then (if n < 290 then (if n
-  < 284 then (if n < 281 then (if n < 280 then some (0, .right, 278) else some (0, .right, 277))
-  else (if n < 282 then some (0, .right, 279) else (if n < 283 then some (0, .right, 280) else
-  some (0, .right, 281)))) else (if n < 287 then (if n < 285 then some (0, .right, 282) else (if n
-  < 286 then some (0, .right, 283) else some (0, .right, 284))) else (if n < 288 then some (0,
-  .right, 273) else (if n < 289 then some (0, .right, 285) else some (0, .right, 684))))) else (if
-  n < 296 then (if n < 293 then (if n < 291 then some (0, .right, 278) else (if n < 292 then some
-  (0, .right, 552) else some (0, .right, 291))) else (if n < 294 then some (0, .right, 605) else
-  (if n < 295 then some (0, .right, 553) else some (0, .right, 294)))) else (if n < 299 then (if n
-  < 297 then some (0, .right, 616) else (if n < 298 then some (0, .right, 293) else some (0,
+  else some (1, .left, 162)))))
+
+def _refTrans0_14 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 168 then (if n < 165 then (if n < 163 then some (1, .left, 153) else (if n < 164 then
+  some (0, .left, 164) else some (1, .left, 165))) else (if n < 166 then some (1, .left, 15) else
+  (if n < 167 then some (0, .left, 167) else some (0, .left, 176)))) else (if n < 171 then (if n <
+  169 then some (0, .left, 169) else (if n < 170 then some (0, .left, 170) else some (0, .left,
+  171))) else (if n < 172 then some (0, .left, 172) else (if n < 173 then some (1, .left, 173)
+  else some (0, .left, 20)))))
+
+def _refTrans0_15 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 180 then (if n < 177 then (if n < 175 then some (0, .left, 175) else (if n < 176 then
+  some (1, .left, 176) else some (0, .left, 177))) else (if n < 178 then some (0, .left, 17) else
+  (if n < 179 then some (0, .left, 179) else some (1, .left, 180)))) else (if n < 183 then (if n <
+  181 then some (0, .left, 181) else (if n < 182 then some (0, .left, 182) else some (0, .left,
+  183))) else (if n < 184 then some (0, .left, 70) else (if n < 185 then some (0, .right, 32) else
+  some (0, .right, 184)))))
+
+def _refTrans0_16 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 191 then (if n < 188 then (if n < 187 then some (0, .right, 185) else some (0, .right,
+  186)) else (if n < 189 then some (0, .right, 551) else (if n < 190 then some (0, .right, 188)
+  else some (0, .right, 639)))) else (if n < 194 then (if n < 192 then some (0, .right, 190) else
+  (if n < 193 then some (0, .right, 187) else some (0, .right, 714))) else (if n < 195 then some
+  (0, .right, 694) else (if n < 196 then some (0, .right, 193) else some (0, .right, 714)))))
+
+def _refTrans0_17 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 203 then (if n < 200 then (if n < 198 then some (0, .right, 652) else (if n < 199 then
+  some (0, .right, 195) else some (0, .right, 192))) else (if n < 201 then some (0, .right, 741)
+  else (if n < 202 then some (0, .right, 661) else some (0, .right, 547)))) else (if n < 206 then
+  (if n < 204 then some (0, .right, 546) else (if n < 205 then some (0, .right, 202) else some (0,
+  .right, 739))) else (if n < 207 then some (0, .right, 631) else (if n < 208 then some (0,
+  .right, 201) else some (0, .right, 115)))))
+
+def _refTrans0_18 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 214 then (if n < 211 then (if n < 210 then some (0, .right, 48) else some (0, .right,
+  208)) else (if n < 212 then some (0, .right, 210) else (if n < 213 then some (0, .right, 545)
+  else some (0, .right, 212)))) else (if n < 217 then (if n < 215 then some (0, .right, 213) else
+  (if n < 216 then some (0, .right, 211) else some (0, .right, 168))) else (if n < 218 then some
+  (0, .right, 156) else (if n < 219 then some (0, .right, 216) else some (0, .right, 737)))))
+
+def _refTrans0_19 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 226 then (if n < 223 then (if n < 221 then some (0, .right, 628) else (if n < 222 then
+  some (0, .right, 215) else some (0, .right, 207))) else (if n < 224 then some (0, .right, 199)
+  else (if n < 225 then some (0, .right, 174) else some (0, .right, 542)))) else (if n < 229 then
+  (if n < 227 then some (0, .right, 224) else (if n < 228 then some (0, .right, 226) else some (0,
+  .right, 54))) else (if n < 230 then some (0, .right, 228) else (if n < 231 then some (0, .right,
+  229) else some (0, .right, 227)))))
+
+def _refTrans0_20 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 237 then (if n < 234 then (if n < 233 then some (0, .right, 229) else some (0, .right,
+  232)) else (if n < 235 then some (0, .right, 231) else (if n < 236 then some (0, .right, 695)
+  else some (0, .right, 235)))) else (if n < 240 then (if n < 238 then some (0, .right, 200) else
+  (if n < 239 then some (0, .right, 236) else some (0, .right, 234))) else (if n < 241 then some
+  (0, .right, 546) else (if n < 242 then some (0, .right, 547) else some (0, .right, 240)))))
+
+def _refTrans0_21 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 249 then (if n < 246 then (if n < 244 then some (0, .right, 743) else (if n < 245 then
+  some (0, .right, 133) else some (0, .right, 148))) else (if n < 247 then some (0, .right, 244)
+  else (if n < 248 then some (0, .right, 246) else some (0, .right, 243)))) else (if n < 252 then
+  (if n < 250 then some (0, .right, 545) else (if n < 251 then some (0, .right, 249) else some (0,
+  .right, 250))) else (if n < 253 then some (0, .right, 251) else (if n < 254 then some (0,
+  .right, 248) else some (0, .right, 75)))))
+
+def _refTrans0_22 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 261 then (if n < 258 then (if n < 256 then some (0, .right, 156) else (if n < 257 then
+  some (0, .right, 254) else some (0, .right, 732))) else (if n < 259 then some (0, .right, 80)
+  else (if n < 260 then some (0, .right, 543) else some (0, .right, 258)))) else (if n < 264 then
+  (if n < 262 then some (0, .right, 260) else (if n < 263 then some (0, .right, 257) else some (0,
+  .right, 166))) else (if n < 265 then some (0, .right, 263) else (if n < 266 then some (0,
+  .right, 264) else some (0, .right, 551)))))
+
+def _refTrans0_23 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 273 then (if n < 270 then (if n < 268 then some (0, .right, 266) else (if n < 269 then
+  some (0, .right, 267) else some (0, .right, 265))) else (if n < 271 then some (0, .right, 262)
+  else (if n < 272 then some (0, .right, 253) else some (0, .right, 239)))) else (if n < 276 then
+  (if n < 274 then some (0, .right, 223) else (if n < 275 then some (0, .right, 542) else some (0,
+  .right, 274))) else (if n < 277 then some (0, .right, 716) else (if n < 278 then some (0,
+  .right, 671) else some (0, .right, 275)))))
+
+def _refTrans0_24 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 284 then (if n < 281 then (if n < 280 then some (0, .right, 278) else some (0, .right,
+  277)) else (if n < 282 then some (0, .right, 279) else (if n < 283 then some (0, .right, 280)
+  else some (0, .right, 281)))) else (if n < 287 then (if n < 285 then some (0, .right, 282) else
+  (if n < 286 then some (0, .right, 283) else some (0, .right, 284))) else (if n < 288 then some
+  (0, .right, 273) else (if n < 289 then some (0, .right, 285) else some (0, .right, 684)))))
+
+def _refTrans0_25 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 296 then (if n < 293 then (if n < 291 then some (0, .right, 278) else (if n < 292 then
+  some (0, .right, 552) else some (0, .right, 291))) else (if n < 294 then some (0, .right, 605)
+  else (if n < 295 then some (0, .right, 553) else some (0, .right, 294)))) else (if n < 299 then
+  (if n < 297 then some (0, .right, 616) else (if n < 298 then some (0, .right, 293) else some (0,
   .right, 290))) else (if n < 300 then some (0, .right, 709) else (if n < 301 then some (0,
-  .right, 619) else some (0, .right, 543)))))) else (if n < 313 then (if n < 307 then (if n < 304
-  then (if n < 303 then some (0, .right, 542) else some (0, .right, 301)) else (if n < 305 then
-  some (0, .right, 724) else (if n < 306 then some (0, .right, 658) else some (0, .right, 300))))
-  else (if n < 310 then (if n < 308 then some (0, .right, 298) else (if n < 309 then some (0,
-  .right, 158) else some (0, .right, 75))) else (if n < 311 then some (0, .right, 308) else (if n
-  < 312 then some (0, .right, 310) else some (0, .right, 39))))) else (if n < 319 then (if n < 316
-  then (if n < 314 then some (0, .right, 312) else (if n < 315 then some (0, .right, 313) else
-  some (0, .right, 311))) else (if n < 317 then some (0, .right, 542) else (if n < 318 then some
-  (0, .right, 316) else some (0, .right, 726)))) else (if n < 322 then (if n < 320 then some (0,
-  .right, 669) else (if n < 321 then some (0, .right, 315) else some (0, .right, 115))) else (if n
-  < 323 then some (0, .right, 321) else (if n < 324 then some (0, .right, 722) else some (0,
-  .right, 621))))))) else (if n < 348 then (if n < 336 then (if n < 330 then (if n < 327 then (if
-  n < 326 then some (0, .right, 690) else some (0, .right, 610)) else (if n < 328 then some (0,
-  .right, 324) else (if n < 329 then some (0, .right, 320) else some (0, .right, 307)))) else (if
-  n < 333 then (if n < 331 then some (0, .right, 715) else (if n < 332 then some (0, .right, 330)
-  else some (0, .right, 542))) else (if n < 334 then some (0, .right, 332) else (if n < 335 then
-  some (0, .right, 721) else some (0, .right, 334))))) else (if n < 342 then (if n < 339 then (if
-  n < 337 then some (0, .right, 331) else (if n < 338 then some (0, .right, 85) else some (0,
-  .right, 337))) else (if n < 340 then some (0, .right, 722) else (if n < 341 then some (0,
-  .right, 605) else some (0, .right, 339)))) else (if n < 345 then (if n < 343 then some (0,
-  .right, 553) else (if n < 344 then some (0, .right, 342) else some (0, .right, 343))) else (if n
-  < 346 then some (0, .right, 344) else (if n < 347 then some (0, .right, 341) else some (0,
-  .right, 336)))))) else (if n < 360 then (if n < 354 then (if n < 351 then (if n < 349 then some
-  (0, .right, 726) else (if n < 350 then some (0, .right, 348) else some (0, .right, 546))) else
-  (if n < 352 then some (0, .right, 350) else (if n < 353 then some (0, .right, 735) else some (0,
-  .right, 352)))) else (if n < 357 then (if n < 355 then some (0, .right, 349) else (if n < 356
-  then some (0, .right, 738) else some (0, .right, 545))) else (if n < 358 then some (0, .right,
-  543) else (if n < 359 then some (0, .right, 356) else some (0, .right, 698))))) else (if n < 366
-  then (if n < 363 then (if n < 361 then some (0, .right, 355) else (if n < 362 then some (0,
-  .right, 44) else some (0, .right, 361))) else (if n < 364 then some (0, .right, 362) else (if n
-  < 365 then some (0, .right, 702) else some (0, .right, 363)))) else (if n < 369 then (if n < 367
-  then some (0, .right, 360) else (if n < 368 then some (0, .right, 354) else some (0, .right,
-  347))) else (if n < 370 then some (0, .right, 329) else (if n < 371 then some (0, .right, 288)
-  else some (0, .right, 287)))))))))) else (if n < 558 then (if n < 465 then (if n < 418 then (if
-  n < 395 then (if n < 383 then (if n < 377 then (if n < 374 then (if n < 373 then some (0,
-  .right, 545) else some (0, .right, 372)) else (if n < 375 then some (0, .right, 685) else (if n
-  < 376 then some (0, .right, 576) else some (0, .right, 209)))) else (if n < 380 then (if n < 378
-  then some (0, .right, 685) else (if n < 379 then some (0, .right, 572) else some (0, .right,
-  375))) else (if n < 381 then some (0, .right, 570) else (if n < 382 then some (0, .right, 380)
-  else some (0, .right, 690))))) else (if n < 389 then (if n < 386 then (if n < 384 then some (0,
-  .right, 382) else (if n < 385 then some (0, .right, 381) else some (0, .right, 379))) else (if n
-  < 387 then some (0, .right, 245) else (if n < 388 then some (0, .right, 690) else some (0,
-  .right, 578)))) else (if n < 392 then (if n < 390 then some (0, .right, 387) else (if n < 391
-  then some (0, .right, 583) else some (0, .right, 557))) else (if n < 393 then some (0, .right,
-  391) else (if n < 394 then some (0, .right, 392) else some (0, .right, 390)))))) else (if n <
-  406 then (if n < 400 then (if n < 397 then (if n < 396 then some (0, .right, 389) else some (0,
-  .right, 295)) else (if n < 398 then some (0, .right, 396) else (if n < 399 then some (0, .right,
-  722) else some (0, .right, 398)))) else (if n < 403 then (if n < 401 then some (0, .right, 397)
-  else (if n < 402 then some (0, .right, 395) else some (0, .right, 385))) else (if n < 404 then
-  some (0, .right, 543) else (if n < 405 then some (0, .right, 356) else some (0, .right, 696)))))
-  else (if n < 412 then (if n < 409 then (if n < 407 then some (0, .right, 133) else (if n < 408
-  then some (0, .right, 105) else some (0, .right, 406))) else (if n < 410 then some (0, .right,
-  408) else (if n < 411 then some (0, .right, 405) else some (0, .right, 61)))) else (if n < 415
-  then (if n < 413 then some (0, .right, 411) else (if n < 414 then some (0, .right, 412) else
-  some (0, .right, 413))) else (if n < 416 then some (0, .right, 410) else (if n < 417 then some
-  (0, .right, 543) else some (0, .right, 416))))))) else (if n < 441 then (if n < 429 then (if n <
-  423 then (if n < 420 then (if n < 419 then some (0, .right, 687) else some (0, .right, 418))
-  else (if n < 421 then some (0, .right, 133) else (if n < 422 then some (0, .right, 420) else
-  some (0, .right, 691)))) else (if n < 426 then (if n < 424 then some (0, .right, 422) else (if n
-  < 425 then some (0, .right, 419) else some (0, .right, 415))) else (if n < 427 then some (0,
-  .right, 706) else (if n < 428 then some (0, .right, 719) else some (0, .right, 426))))) else (if
-  n < 435 then (if n < 432 then (if n < 430 then some (0, .right, 543) else (if n < 431 then some
-  (0, .right, 429) else some (0, .right, 688))) else (if n < 433 then some (0, .right, 597) else
-  (if n < 434 then some (0, .right, 428) else some (0, .right, 691)))) else (if n < 438 then (if n
-  < 436 then some (0, .right, 623) else (if n < 437 then some (0, .right, 595) else some (0,
+  .right, 619) else some (0, .right, 543)))))
+
+def _refTrans0_26 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 307 then (if n < 304 then (if n < 303 then some (0, .right, 542) else some (0, .right,
+  301)) else (if n < 305 then some (0, .right, 724) else (if n < 306 then some (0, .right, 658)
+  else some (0, .right, 300)))) else (if n < 310 then (if n < 308 then some (0, .right, 298) else
+  (if n < 309 then some (0, .right, 158) else some (0, .right, 75))) else (if n < 311 then some
+  (0, .right, 308) else (if n < 312 then some (0, .right, 310) else some (0, .right, 39)))))
+
+def _refTrans0_27 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 319 then (if n < 316 then (if n < 314 then some (0, .right, 312) else (if n < 315 then
+  some (0, .right, 313) else some (0, .right, 311))) else (if n < 317 then some (0, .right, 542)
+  else (if n < 318 then some (0, .right, 316) else some (0, .right, 726)))) else (if n < 322 then
+  (if n < 320 then some (0, .right, 669) else (if n < 321 then some (0, .right, 315) else some (0,
+  .right, 115))) else (if n < 323 then some (0, .right, 321) else (if n < 324 then some (0,
+  .right, 722) else some (0, .right, 621)))))
+
+def _refTrans0_28 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 330 then (if n < 327 then (if n < 326 then some (0, .right, 690) else some (0, .right,
+  610)) else (if n < 328 then some (0, .right, 324) else (if n < 329 then some (0, .right, 320)
+  else some (0, .right, 307)))) else (if n < 333 then (if n < 331 then some (0, .right, 715) else
+  (if n < 332 then some (0, .right, 330) else some (0, .right, 542))) else (if n < 334 then some
+  (0, .right, 332) else (if n < 335 then some (0, .right, 721) else some (0, .right, 334)))))
+
+def _refTrans0_29 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 342 then (if n < 339 then (if n < 337 then some (0, .right, 331) else (if n < 338 then
+  some (0, .right, 85) else some (0, .right, 337))) else (if n < 340 then some (0, .right, 722)
+  else (if n < 341 then some (0, .right, 605) else some (0, .right, 339)))) else (if n < 345 then
+  (if n < 343 then some (0, .right, 553) else (if n < 344 then some (0, .right, 342) else some (0,
+  .right, 343))) else (if n < 346 then some (0, .right, 344) else (if n < 347 then some (0,
+  .right, 341) else some (0, .right, 336)))))
+
+def _refTrans0_30 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 354 then (if n < 351 then (if n < 349 then some (0, .right, 726) else (if n < 350 then
+  some (0, .right, 348) else some (0, .right, 546))) else (if n < 352 then some (0, .right, 350)
+  else (if n < 353 then some (0, .right, 735) else some (0, .right, 352)))) else (if n < 357 then
+  (if n < 355 then some (0, .right, 349) else (if n < 356 then some (0, .right, 738) else some (0,
+  .right, 545))) else (if n < 358 then some (0, .right, 543) else (if n < 359 then some (0,
+  .right, 356) else some (0, .right, 698)))))
+
+def _refTrans0_31 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 366 then (if n < 363 then (if n < 361 then some (0, .right, 355) else (if n < 362 then
+  some (0, .right, 44) else some (0, .right, 361))) else (if n < 364 then some (0, .right, 362)
+  else (if n < 365 then some (0, .right, 702) else some (0, .right, 363)))) else (if n < 369 then
+  (if n < 367 then some (0, .right, 360) else (if n < 368 then some (0, .right, 354) else some (0,
+  .right, 347))) else (if n < 370 then some (0, .right, 329) else (if n < 371 then some (0,
+  .right, 288) else some (0, .right, 287)))))
+
+def _refTrans0_32 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 93 then (if n < 46 then (if n < 23 then (if n < 11 then _refTrans0_0 n else _refTrans0_1
+  n) else (if n < 34 then _refTrans0_2 n else _refTrans0_3 n)) else (if n < 69 then (if n < 57
+  then _refTrans0_4 n else _refTrans0_5 n) else (if n < 81 then _refTrans0_6 n else _refTrans0_7
+  n))) else (if n < 139 then (if n < 116 then (if n < 104 then _refTrans0_8 n else _refTrans0_9 n)
+  else (if n < 127 then _refTrans0_10 n else _refTrans0_11 n)) else (if n < 162 then (if n < 150
+  then _refTrans0_12 n else _refTrans0_13 n) else (if n < 174 then _refTrans0_14 n else
+  _refTrans0_15 n))))
+
+def _refTrans0_33 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 279 then (if n < 232 then (if n < 209 then (if n < 197 then _refTrans0_16 n else
+  _refTrans0_17 n) else (if n < 220 then _refTrans0_18 n else _refTrans0_19 n)) else (if n < 255
+  then (if n < 243 then _refTrans0_20 n else _refTrans0_21 n) else (if n < 267 then _refTrans0_22
+  n else _refTrans0_23 n))) else (if n < 325 then (if n < 302 then (if n < 290 then _refTrans0_24
+  n else _refTrans0_25 n) else (if n < 313 then _refTrans0_26 n else _refTrans0_27 n)) else (if n
+  < 348 then (if n < 336 then _refTrans0_28 n else _refTrans0_29 n) else (if n < 360 then
+  _refTrans0_30 n else _refTrans0_31 n))))
+
+def _refTrans0_34 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 377 then (if n < 374 then (if n < 373 then some (0, .right, 545) else some (0, .right,
+  372)) else (if n < 375 then some (0, .right, 685) else (if n < 376 then some (0, .right, 576)
+  else some (0, .right, 209)))) else (if n < 380 then (if n < 378 then some (0, .right, 685) else
+  (if n < 379 then some (0, .right, 572) else some (0, .right, 375))) else (if n < 381 then some
+  (0, .right, 570) else (if n < 382 then some (0, .right, 380) else some (0, .right, 690)))))
+
+def _refTrans0_35 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 389 then (if n < 386 then (if n < 384 then some (0, .right, 382) else (if n < 385 then
+  some (0, .right, 381) else some (0, .right, 379))) else (if n < 387 then some (0, .right, 245)
+  else (if n < 388 then some (0, .right, 690) else some (0, .right, 578)))) else (if n < 392 then
+  (if n < 390 then some (0, .right, 387) else (if n < 391 then some (0, .right, 583) else some (0,
+  .right, 557))) else (if n < 393 then some (0, .right, 391) else (if n < 394 then some (0,
+  .right, 392) else some (0, .right, 390)))))
+
+def _refTrans0_36 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 400 then (if n < 397 then (if n < 396 then some (0, .right, 389) else some (0, .right,
+  295)) else (if n < 398 then some (0, .right, 396) else (if n < 399 then some (0, .right, 722)
+  else some (0, .right, 398)))) else (if n < 403 then (if n < 401 then some (0, .right, 397) else
+  (if n < 402 then some (0, .right, 395) else some (0, .right, 385))) else (if n < 404 then some
+  (0, .right, 543) else (if n < 405 then some (0, .right, 356) else some (0, .right, 696)))))
+
+def _refTrans0_37 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 412 then (if n < 409 then (if n < 407 then some (0, .right, 133) else (if n < 408 then
+  some (0, .right, 105) else some (0, .right, 406))) else (if n < 410 then some (0, .right, 408)
+  else (if n < 411 then some (0, .right, 405) else some (0, .right, 61)))) else (if n < 415 then
+  (if n < 413 then some (0, .right, 411) else (if n < 414 then some (0, .right, 412) else some (0,
+  .right, 413))) else (if n < 416 then some (0, .right, 410) else (if n < 417 then some (0,
+  .right, 543) else some (0, .right, 416)))))
+
+def _refTrans0_38 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 423 then (if n < 420 then (if n < 419 then some (0, .right, 687) else some (0, .right,
+  418)) else (if n < 421 then some (0, .right, 133) else (if n < 422 then some (0, .right, 420)
+  else some (0, .right, 691)))) else (if n < 426 then (if n < 424 then some (0, .right, 422) else
+  (if n < 425 then some (0, .right, 419) else some (0, .right, 415))) else (if n < 427 then some
+  (0, .right, 706) else (if n < 428 then some (0, .right, 719) else some (0, .right, 426)))))
+
+def _refTrans0_39 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 435 then (if n < 432 then (if n < 430 then some (0, .right, 543) else (if n < 431 then
+  some (0, .right, 429) else some (0, .right, 688))) else (if n < 433 then some (0, .right, 597)
+  else (if n < 434 then some (0, .right, 428) else some (0, .right, 691)))) else (if n < 438 then
+  (if n < 436 then some (0, .right, 623) else (if n < 437 then some (0, .right, 595) else some (0,
   .right, 553))) else (if n < 439 then some (0, .right, 437) else (if n < 440 then some (0,
-  .right, 438) else some (0, .right, 436)))))) else (if n < 453 then (if n < 447 then (if n < 444
-  then (if n < 442 then some (0, .right, 435) else (if n < 443 then some (0, .right, 433) else
-  some (0, .right, 425))) else (if n < 445 then some (0, .right, 402) else (if n < 446 then some
-  (0, .right, 543) else some (0, .right, 445)))) else (if n < 450 then (if n < 448 then some (0,
-  .right, 687) else (if n < 449 then some (0, .right, 588) else some (0, .right, 687))) else (if n
-  < 451 then some (0, .right, 593) else (if n < 452 then some (0, .right, 448) else some (0,
-  .right, 583))))) else (if n < 459 then (if n < 456 then (if n < 454 then some (0, .right, 452)
-  else (if n < 455 then some (0, .right, 730) else some (0, .right, 454))) else (if n < 457 then
-  some (0, .right, 453) else (if n < 458 then some (0, .right, 451) else some (0, .right, 148))))
-  else (if n < 462 then (if n < 460 then some (0, .right, 101) else (if n < 461 then some (0,
-  .right, 458) else some (0, .right, 730))) else (if n < 463 then some (0, .right, 461) else (if n
-  < 464 then some (0, .right, 146) else some (0, .right, 463)))))))) else (if n < 511 then (if n <
-  488 then (if n < 476 then (if n < 470 then (if n < 467 then (if n < 466 then some (0, .right,
-  696) else some (0, .right, 465)) else (if n < 468 then some (0, .right, 462) else (if n < 469
-  then some (0, .right, 543) else some (0, .right, 468)))) else (if n < 473 then (if n < 471 then
-  some (0, .right, 688) else (if n < 472 then some (0, .right, 597) else some (0, .right, 688)))
-  else (if n < 474 then some (0, .right, 599) else (if n < 475 then some (0, .right, 471) else
-  some (0, .right, 467))))) else (if n < 482 then (if n < 479 then (if n < 477 then some (0,
-  .right, 457) else (if n < 478 then some (0, .right, 436) else some (0, .right, 688))) else (if n
-  < 480 then some (0, .right, 478) else (if n < 481 then some (0, .right, 477) else some (0,
-  .right, 688)))) else (if n < 485 then (if n < 483 then some (0, .right, 481) else (if n < 484
-  then some (0, .right, 685) else some (0, .right, 572))) else (if n < 486 then some (0, .right,
-  482) else (if n < 487 then some (0, .right, 480) else some (0, .right, 158)))))) else (if n <
-  499 then (if n < 493 then (if n < 490 then (if n < 489 then some (0, .right, 487) else some (0,
-  .right, 688)) else (if n < 491 then some (0, .right, 599) else (if n < 492 then some (0, .right,
-  729) else some (0, .right, 581)))) else (if n < 496 then (if n < 494 then some (0, .right, 490)
-  else (if n < 495 then some (0, .right, 115) else some (0, .right, 156))) else (if n < 497 then
-  some (0, .right, 494) else (if n < 498 then some (0, .right, 730) else some (0, .right, 591)))))
-  else (if n < 505 then (if n < 502 then (if n < 500 then some (0, .right, 174) else (if n < 501
-  then some (0, .right, 545) else some (0, .right, 499))) else (if n < 503 then some (0, .right,
-  501) else (if n < 504 then some (0, .right, 36) else some (0, .right, 503)))) else (if n < 508
-  then (if n < 506 then some (0, .right, 504) else (if n < 507 then some (0, .right, 502) else
-  some (0, .right, 498))) else (if n < 509 then some (0, .right, 493) else (if n < 510 then some
-  (0, .right, 486) else some (0, .right, 476))))))) else (if n < 534 then (if n < 522 then (if n <
-  516 then (if n < 513 then (if n < 512 then some (0, .right, 444) else some (0, .right, 89)) else
-  (if n < 514 then some (0, .right, 89) else (if n < 515 then some (0, .right, 512) else some (0,
-  .right, 514)))) else (if n < 519 then (if n < 517 then some (0, .right, 515) else (if n < 518
-  then some (0, .right, 516) else some (0, .right, 517))) else (if n < 520 then some (0, .right,
-  518) else (if n < 521 then some (0, .right, 519) else some (0, .right, 520))))) else (if n < 528
-  then (if n < 525 then (if n < 523 then some (0, .right, 511) else (if n < 524 then some (0,
-  .right, 371) else some (0, .left, 11))) else (if n < 526 then some (0, .left, 9) else (if n <
-  527 then some (0, .left, 15) else some (0, .left, 17)))) else (if n < 531 then (if n < 529 then
-  some (0, .left, 19) else (if n < 530 then some (0, .left, 21) else some (0, .left, 23))) else
-  (if n < 532 then some (0, .left, 25) else (if n < 533 then some (0, .left, 27) else some (0,
-  .right, 2)))))) else (if n < 546 then (if n < 540 then (if n < 537 then (if n < 535 then some
-  (0, .right, 533) else (if n < 536 then some (0, .right, 534) else some (0, .right, 549))) else
-  (if n < 538 then some (0, .right, 536) else (if n < 539 then some (0, .right, 537) else some (0,
-  .right, 538)))) else (if n < 543 then (if n < 541 then some (0, .right, 539) else (if n < 542
-  then some (0, .right, 540) else some (0, .right, 535))) else (if n < 544 then some (0, .right,
-  542) else (if n < 545 then some (0, .right, 543) else some (0, .right, 544))))) else (if n < 552
-  then (if n < 549 then (if n < 547 then some (0, .right, 545) else (if n < 548 then some (0,
-  .right, 546) else some (0, .right, 547))) else (if n < 550 then some (0, .right, 548) else (if n
-  < 551 then some (0, .right, 31) else some (0, .right, 550)))) else (if n < 555 then (if n < 553
-  then some (0, .right, 564) else (if n < 554 then some (0, .right, 552) else some (0, .right,
-  553))) else (if n < 556 then some (0, .right, 554) else (if n < 557 then some (0, .right, 555)
-  else some (0, .right, 556))))))))) else (if n < 651 then (if n < 604 then (if n < 581 then (if n
-  < 569 then (if n < 563 then (if n < 560 then (if n < 559 then some (0, .right, 188) else some
-  (0, .right, 648)) else (if n < 561 then some (0, .right, 559) else (if n < 562 then some (0,
-  .right, 560) else some (0, .right, 561)))) else (if n < 566 then (if n < 564 then some (0,
-  .right, 562) else (if n < 565 then some (0, .right, 563) else some (0, .left, 9))) else (if n <
-  567 then some (0, .left, 565) else (if n < 568 then some (0, .left, 524) else some (0, .left,
-  567))))) else (if n < 575 then (if n < 572 then (if n < 570 then some (0, .right, 538) else (if
-  n < 571 then some (0, .right, 569) else some (0, .right, 573))) else (if n < 573 then some (0,
-  .right, 571) else (if n < 574 then some (0, .right, 538) else some (0, .right, 560)))) else (if
-  n < 578 then (if n < 576 then some (0, .right, 573) else (if n < 577 then some (0, .right, 575)
-  else some (0, .right, 539))) else (if n < 579 then some (0, .right, 577) else (if n < 580 then
-  some (0, .right, 539) else some (0, .right, 579)))))) else (if n < 592 then (if n < 586 then (if
-  n < 583 then (if n < 582 then some (0, .right, 580) else some (0, .right, 540)) else (if n < 584
-  then some (0, .right, 582) else (if n < 585 then some (0, .right, 586) else some (0, .right,
-  584)))) else (if n < 589 then (if n < 587 then some (0, .right, 540) else (if n < 588 then some
-  (0, .right, 586) else some (0, .right, 587))) else (if n < 590 then some (0, .right, 648) else
-  (if n < 591 then some (0, .right, 586) else some (0, .right, 590))))) else (if n < 598 then (if
-  n < 595 then (if n < 593 then some (0, .right, 586) else (if n < 594 then some (0, .right, 592)
-  else some (0, .right, 541))) else (if n < 596 then some (0, .right, 594) else (if n < 597 then
-  some (0, .right, 600) else some (0, .right, 596)))) else (if n < 601 then (if n < 599 then some
-  (0, .right, 600) else (if n < 600 then some (0, .right, 598) else some (0, .right, 541))) else
-  (if n < 602 then some (0, .right, 560) else (if n < 603 then some (0, .right, 600) else some (0,
-  .right, 602))))))) else (if n < 627 then (if n < 615 then (if n < 609 then (if n < 606 then (if
-  n < 605 then some (0, .right, 536) else some (0, .right, 604)) else (if n < 607 then some (0,
-  .right, 608) else (if n < 608 then some (0, .right, 606) else some (0, .right, 536)))) else (if
-  n < 612 then (if n < 610 then some (0, .right, 608) else (if n < 611 then some (0, .right, 609)
-  else some (0, .right, 608))) else (if n < 613 then some (0, .right, 611) else (if n < 614 then
-  some (0, .right, 608) else some (0, .right, 613))))) else (if n < 621 then (if n < 618 then (if
-  n < 616 then some (0, .right, 537) else (if n < 617 then some (0, .right, 615) else some (0,
-  .right, 537))) else (if n < 619 then some (0, .right, 617) else (if n < 620 then some (0,
-  .right, 618) else some (0, .right, 617)))) else (if n < 624 then (if n < 622 then some (0,
-  .right, 620) else (if n < 623 then some (0, .right, 617) else some (0, .right, 622))) else (if n
-  < 625 then some (0, .right, 544) else (if n < 626 then some (0, .right, 624) else some (0,
-  .right, 648)))))) else (if n < 639 then (if n < 633 then (if n < 630 then (if n < 628 then some
-  (0, .right, 629) else (if n < 629 then some (0, .right, 627) else some (0, .right, 544))) else
-  (if n < 631 then some (0, .right, 629) else (if n < 632 then some (0, .right, 630) else some (0,
-  .left, 633)))) else (if n < 636 then (if n < 634 then some (0, .left, 634) else (if n < 635 then
-  some (0, .left, 14) else some (0, .left, 636))) else (if n < 637 then some (1, .left, 11) else
-  (if n < 638 then some (0, .right, 534) else some (0, .right, 632))))) else (if n < 645 then (if
-  n < 642 then (if n < 640 then some (0, .right, 637) else (if n < 641 then some (0, .left, 641)
-  else some (0, .left, 642))) else (if n < 643 then some (0, .left, 643) else (if n < 644 then
-  some (0, .left, 16) else some (0, .left, 645)))) else (if n < 648 then (if n < 646 then some (1,
-  .left, 646) else (if n < 647 then some (0, .left, 15) else some (0, .right, 534))) else (if n <
-  649 then some (0, .right, 558) else (if n < 650 then some (0, .right, 647) else some (0, .right,
-  640)))))))) else (if n < 697 then (if n < 674 then (if n < 662 then (if n < 656 then (if n < 653
-  then (if n < 652 then some (0, .right, 650) else some (0, .right, 649)) else (if n < 654 then
-  some (0, .right, 648) else (if n < 655 then some (0, .right, 647) else some (0, .right, 654))))
-  else (if n < 659 then (if n < 657 then some (0, .right, 648) else (if n < 658 then some (0,
-  .right, 647) else some (0, .right, 657))) else (if n < 660 then some (0, .right, 561) else (if n
-  < 661 then some (0, .right, 647) else some (0, .right, 660))))) else (if n < 668 then (if n <
-  665 then (if n < 663 then some (0, .right, 647) else (if n < 664 then some (0, .right, 662) else
-  some (0, .right, 549))) else (if n < 666 then some (0, .right, 664) else (if n < 667 then some
-  (0, .right, 549) else some (0, .right, 558)))) else (if n < 671 then (if n < 669 then some (0,
-  .right, 666) else (if n < 670 then some (0, .right, 668) else some (0, .right, 680))) else (if n
-  < 672 then some (0, .right, 670) else (if n < 673 then some (0, .right, 558) else some (0,
-  .right, 680)))))) else (if n < 685 then (if n < 679 then (if n < 676 then (if n < 675 then some
-  (0, .right, 673) else some (0, .right, 680)) else (if n < 677 then some (0, .right, 675) else
-  (if n < 678 then some (0, .right, 560) else some (0, .right, 680)))) else (if n < 682 then (if n
-  < 680 then some (0, .right, 678) else (if n < 681 then some (0, .right, 535) else some (0,
-  .right, 680))) else (if n < 683 then some (0, .right, 681) else (if n < 684 then some (0,
-  .right, 542) else some (0, .right, 683))))) else (if n < 691 then (if n < 688 then (if n < 686
-  then some (0, .right, 692) else (if n < 687 then some (0, .right, 556) else some (0, .right,
-  692))) else (if n < 689 then some (0, .right, 692) else (if n < 690 then some (0, .right, 552)
-  else some (0, .right, 692)))) else (if n < 694 then (if n < 692 then some (0, .right, 692) else
-  (if n < 693 then some (0, .right, 542) else some (0, .right, 559))) else (if n < 695 then some
-  (0, .right, 692) else (if n < 696 then some (0, .right, 692) else some (0, .right, 692)))))))
-  else (if n < 720 then (if n < 708 then (if n < 702 then (if n < 699 then (if n < 698 then some
-  (0, .right, 648) else some (0, .right, 692)) else (if n < 700 then some (0, .right, 543) else
-  (if n < 701 then some (0, .right, 699) else some (0, .right, 554)))) else (if n < 705 then (if n
-  < 703 then some (0, .right, 712) else (if n < 704 then some (0, .right, 555) else some (0,
-  .right, 712))) else (if n < 706 then some (0, .right, 557) else (if n < 707 then some (0,
-  .right, 712) else some (0, .right, 712))))) else (if n < 714 then (if n < 711 then (if n < 709
-  then some (0, .right, 553) else (if n < 710 then some (0, .right, 712) else some (0, .left,
-  711))) else (if n < 712 then some (0, .left, 646) else (if n < 713 then some (0, .right, 543)
-  else some (0, .right, 551)))) else (if n < 717 then (if n < 715 then some (0, .right, 712) else
-  (if n < 716 then some (0, .right, 712) else some (0, .right, 712))) else (if n < 718 then some
-  (0, .right, 545) else (if n < 719 then some (0, .right, 717) else some (0, .right, 723))))))
-  else (if n < 732 then (if n < 726 then (if n < 723 then (if n < 721 then some (0, .right, 723)
-  else (if n < 722 then some (0, .right, 723) else some (0, .right, 723))) else (if n < 724 then
-  some (0, .right, 545) else (if n < 725 then some (0, .right, 723) else some (0, .right, 564))))
-  else (if n < 729 then (if n < 727 then some (0, .right, 723) else (if n < 728 then some (0,
-  .right, 546) else some (0, .right, 727))) else (if n < 730 then some (0, .right, 731) else (if n
-  < 731 then some (0, .right, 731) else some (0, .right, 546))))) else (if n < 738 then (if n <
-  735 then (if n < 733 then some (0, .right, 731) else (if n < 734 then some (0, .right, 547) else
-  some (0, .right, 733))) else (if n < 736 then some (0, .right, 736) else (if n < 737 then some
-  (0, .right, 547) else some (0, .right, 736)))) else (if n < 741 then (if n < 739 then some (0,
-  .right, 736) else (if n < 740 then some (0, .right, 740) else some (0, .right, 548))) else (if n
-  < 742 then some (0, .right, 740) else (if n < 743 then some (0, .right, 188) else some (0,
-  .right, 740)))))))))))
-def refTrans1 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
-  (if n < 372 then (if n < 186 then (if n < 93 then (if n < 46 then (if n < 23 then (if n < 11
-  then (if n < 5 then (if n < 2 then (if n < 1 then some (1, .right, 523) else some (1, .right,
-  5)) else (if n < 3 then some (0, .right, 1) else (if n < 4 then some (1, .left, 566) else some
-  (1, .right, 5)))) else (if n < 8 then (if n < 6 then some (1, .right, 5) else (if n < 7 then
-  some (1, .left, 7) else some (0, .left, 8))) else (if n < 9 then some (1, .left, 8) else (if n <
-  10 then some (0, .left, 11) else some (1, .left, 14))))) else (if n < 17 then (if n < 14 then
-  (if n < 12 then some (0, .left, 15) else (if n < 13 then some (1, .left, 0) else some (0, .left,
-  0))) else (if n < 15 then some (1, .left, 16) else (if n < 16 then some (0, .left, 17) else some
-  (1, .left, 18)))) else (if n < 20 then (if n < 18 then some (0, .left, 19) else (if n < 19 then
-  some (1, .left, 20) else some (0, .left, 21))) else (if n < 21 then some (1, .left, 22) else (if
-  n < 22 then some (0, .left, 23) else some (1, .left, 24)))))) else (if n < 34 then (if n < 28
-  then (if n < 25 then (if n < 24 then some (0, .left, 25) else some (1, .left, 26)) else (if n <
-  26 then some (0, .left, 27) else (if n < 27 then some (1, .left, 28) else some (0, .left, 29))))
-  else (if n < 31 then (if n < 29 then some (1, .left, 12) else (if n < 30 then some (0, .left,
-  13) else some (0, .right, 31))) else (if n < 32 then some (1, .right, 31) else (if n < 33 then
-  some (1, .right, 33) else some (1, .right, 34))))) else (if n < 40 then (if n < 37 then (if n <
-  35 then some (1, .right, 35) else (if n < 36 then some (1, .right, 35) else some (1, .left,
-  37))) else (if n < 38 then some (1, .left, 38) else (if n < 39 then some (1, .left, 177) else
-  some (1, .left, 40)))) else (if n < 43 then (if n < 41 then some (0, .left, 41) else (if n < 42
-  then some (1, .left, 42) else some (0, .left, 43))) else (if n < 44 then some (0, .left, 59)
-  else (if n < 45 then some (1, .left, 45) else some (0, .left, 46))))))) else (if n < 69 then (if
-  n < 57 then (if n < 51 then (if n < 48 then (if n < 47 then some (0, .left, 47) else some (1,
-  .left, 172)) else (if n < 49 then some (1, .left, 49) else (if n < 50 then some (0, .left, 50)
-  else some (0, .left, 51)))) else (if n < 54 then (if n < 52 then some (1, .left, 52) else (if n
-  < 53 then some (1, .left, 53) else some (0, .left, 121))) else (if n < 55 then some (1, .left,
-  55) else (if n < 56 then some (0, .left, 56) else some (0, .left, 57))))) else (if n < 63 then
-  (if n < 60 then (if n < 58 then some (0, .left, 58) else (if n < 59 then some (1, .left, 59)
-  else some (1, .left, 60))) else (if n < 61 then some (1, .left, 23) else (if n < 62 then some
-  (1, .left, 62) else some (0, .left, 63)))) else (if n < 66 then (if n < 64 then some (1, .left,
-  57) else (if n < 65 then some (1, .left, 65) else some (1, .left, 66))) else (if n < 67 then
-  some (0, .left, 67) else (if n < 68 then some (1, .left, 68) else some (1, .left, 69)))))) else
-  (if n < 81 then (if n < 75 then (if n < 72 then (if n < 70 then some (1, .left, 70) else (if n <
-  71 then some (1, .left, 71) else some (1, .left, 72))) else (if n < 73 then some (0, .left, 26)
-  else (if n < 74 then some (1, .left, 74) else some (1, .left, 46)))) else (if n < 78 then (if n
-  < 76 then some (1, .left, 76) else (if n < 77 then some (0, .left, 77) else some (0, .left,
-  78))) else (if n < 79 then some (0, .left, 79) else (if n < 80 then some (0, .left, 120) else
-  some (1, .left, 81))))) else (if n < 87 then (if n < 84 then (if n < 82 then some (1, .left, 82)
-  else (if n < 83 then some (0, .left, 83) else some (0, .left, 84))) else (if n < 85 then some
-  (0, .left, 19) else (if n < 86 then some (1, .left, 86) else some (0, .left, 87)))) else (if n <
-  90 then (if n < 88 then some (0, .left, 88) else (if n < 89 then some (1, .left, 79) else some
-  (1, .left, 90))) else (if n < 91 then some (1, .left, 93) else (if n < 92 then some (0, .left,
-  92) else some (0, .left, 0)))))))) else (if n < 139 then (if n < 116 then (if n < 104 then (if n
-  < 98 then (if n < 95 then (if n < 94 then some (0, .left, 94) else some (1, .left, 95)) else (if
-  n < 96 then some (0, .left, 96) else (if n < 97 then some (1, .left, 97) else some (0, .left,
-  98)))) else (if n < 101 then (if n < 99 then some (0, .left, 99) else (if n < 100 then some (0,
-  .left, 100) else some (0, .left, 91))) else (if n < 102 then some (1, .left, 102) else (if n <
-  103 then some (1, .left, 103) else some (0, .left, 104))))) else (if n < 110 then (if n < 107
-  then (if n < 105 then some (1, .left, 84) else (if n < 106 then some (1, .left, 106) else some
-  (0, .left, 109))) else (if n < 108 then some (1, .left, 108) else (if n < 109 then some (1,
-  .left, 109) else some (0, .left, 113)))) else (if n < 113 then (if n < 111 then some (1, .left,
-  111) else (if n < 112 then some (0, .left, 112) else some (1, .left, 113))) else (if n < 114
-  then some (0, .left, 114) else (if n < 115 then some (1, .left, 19) else some (1, .left,
-  116)))))) else (if n < 127 then (if n < 121 then (if n < 118 then (if n < 117 then some (0,
-  .left, 117) else some (0, .left, 118)) else (if n < 119 then some (1, .left, 119) else (if n <
-  120 then some (1, .left, 120) else some (1, .left, 121)))) else (if n < 124 then (if n < 122
-  then some (0, .left, 22) else (if n < 123 then some (1, .left, 123) else some (1, .left, 124)))
-  else (if n < 125 then some (0, .left, 125) else (if n < 126 then some (1, .left, 114) else some
-  (1, .left, 127))))) else (if n < 133 then (if n < 130 then (if n < 128 then some (1, .left, 128)
-  else (if n < 129 then some (0, .left, 129) else some (1, .left, 130))) else (if n < 131 then
-  some (1, .left, 131) else (if n < 132 then some (1, .left, 132) else some (0, .left, 145))))
-  else (if n < 136 then (if n < 134 then some (1, .left, 134) else (if n < 135 then some (0,
-  .left, 135) else some (0, .left, 136))) else (if n < 137 then some (1, .left, 137) else (if n <
-  138 then some (0, .left, 173) else some (1, .left, 139))))))) else (if n < 162 then (if n < 150
-  then (if n < 144 then (if n < 141 then (if n < 140 then some (0, .left, 140) else some (0,
-  .left, 141)) else (if n < 142 then some (1, .left, 142) else (if n < 143 then some (1, .left,
-  143) else some (0, .left, 144)))) else (if n < 147 then (if n < 145 then some (1, .left, 145)
-  else (if n < 146 then some (0, .left, 72) else some (1, .left, 147))) else (if n < 148 then some
-  (1, .left, 135) else (if n < 149 then some (1, .left, 149) else some (0, .left, 150))))) else
+  .right, 438) else some (0, .right, 436)))))
+
+def _refTrans0_40 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 447 then (if n < 444 then (if n < 442 then some (0, .right, 435) else (if n < 443 then
+  some (0, .right, 433) else some (0, .right, 425))) else (if n < 445 then some (0, .right, 402)
+  else (if n < 446 then some (0, .right, 543) else some (0, .right, 445)))) else (if n < 450 then
+  (if n < 448 then some (0, .right, 687) else (if n < 449 then some (0, .right, 588) else some (0,
+  .right, 687))) else (if n < 451 then some (0, .right, 593) else (if n < 452 then some (0,
+  .right, 448) else some (0, .right, 583)))))
+
+def _refTrans0_41 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 459 then (if n < 456 then (if n < 454 then some (0, .right, 452) else (if n < 455 then
+  some (0, .right, 730) else some (0, .right, 454))) else (if n < 457 then some (0, .right, 453)
+  else (if n < 458 then some (0, .right, 451) else some (0, .right, 148)))) else (if n < 462 then
+  (if n < 460 then some (0, .right, 101) else (if n < 461 then some (0, .right, 458) else some (0,
+  .right, 730))) else (if n < 463 then some (0, .right, 461) else (if n < 464 then some (0,
+  .right, 146) else some (0, .right, 463)))))
+
+def _refTrans0_42 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 470 then (if n < 467 then (if n < 466 then some (0, .right, 696) else some (0, .right,
+  465)) else (if n < 468 then some (0, .right, 462) else (if n < 469 then some (0, .right, 543)
+  else some (0, .right, 468)))) else (if n < 473 then (if n < 471 then some (0, .right, 688) else
+  (if n < 472 then some (0, .right, 597) else some (0, .right, 688))) else (if n < 474 then some
+  (0, .right, 599) else (if n < 475 then some (0, .right, 471) else some (0, .right, 467)))))
+
+def _refTrans0_43 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 482 then (if n < 479 then (if n < 477 then some (0, .right, 457) else (if n < 478 then
+  some (0, .right, 436) else some (0, .right, 688))) else (if n < 480 then some (0, .right, 478)
+  else (if n < 481 then some (0, .right, 477) else some (0, .right, 688)))) else (if n < 485 then
+  (if n < 483 then some (0, .right, 481) else (if n < 484 then some (0, .right, 685) else some (0,
+  .right, 572))) else (if n < 486 then some (0, .right, 482) else (if n < 487 then some (0,
+  .right, 480) else some (0, .right, 158)))))
+
+def _refTrans0_44 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 493 then (if n < 490 then (if n < 489 then some (0, .right, 487) else some (0, .right,
+  688)) else (if n < 491 then some (0, .right, 599) else (if n < 492 then some (0, .right, 729)
+  else some (0, .right, 581)))) else (if n < 496 then (if n < 494 then some (0, .right, 490) else
+  (if n < 495 then some (0, .right, 115) else some (0, .right, 156))) else (if n < 497 then some
+  (0, .right, 494) else (if n < 498 then some (0, .right, 730) else some (0, .right, 591)))))
+
+def _refTrans0_45 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 505 then (if n < 502 then (if n < 500 then some (0, .right, 174) else (if n < 501 then
+  some (0, .right, 545) else some (0, .right, 499))) else (if n < 503 then some (0, .right, 501)
+  else (if n < 504 then some (0, .right, 36) else some (0, .right, 503)))) else (if n < 508 then
+  (if n < 506 then some (0, .right, 504) else (if n < 507 then some (0, .right, 502) else some (0,
+  .right, 498))) else (if n < 509 then some (0, .right, 493) else (if n < 510 then some (0,
+  .right, 486) else some (0, .right, 476)))))
+
+def _refTrans0_46 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 516 then (if n < 513 then (if n < 512 then some (0, .right, 444) else some (0, .right,
+  89)) else (if n < 514 then some (0, .right, 89) else (if n < 515 then some (0, .right, 512) else
+  some (0, .right, 514)))) else (if n < 519 then (if n < 517 then some (0, .right, 515) else (if n
+  < 518 then some (0, .right, 516) else some (0, .right, 517))) else (if n < 520 then some (0,
+  .right, 518) else (if n < 521 then some (0, .right, 519) else some (0, .right, 520)))))
+
+def _refTrans0_47 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 528 then (if n < 525 then (if n < 523 then some (0, .right, 511) else (if n < 524 then
+  some (0, .right, 371) else some (0, .left, 11))) else (if n < 526 then some (0, .left, 9) else
+  (if n < 527 then some (0, .left, 15) else some (0, .left, 17)))) else (if n < 531 then (if n <
+  529 then some (0, .left, 19) else (if n < 530 then some (0, .left, 21) else some (0, .left,
+  23))) else (if n < 532 then some (0, .left, 25) else (if n < 533 then some (0, .left, 27) else
+  some (0, .right, 2)))))
+
+def _refTrans0_48 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 540 then (if n < 537 then (if n < 535 then some (0, .right, 533) else (if n < 536 then
+  some (0, .right, 534) else some (0, .right, 549))) else (if n < 538 then some (0, .right, 536)
+  else (if n < 539 then some (0, .right, 537) else some (0, .right, 538)))) else (if n < 543 then
+  (if n < 541 then some (0, .right, 539) else (if n < 542 then some (0, .right, 540) else some (0,
+  .right, 535))) else (if n < 544 then some (0, .right, 542) else (if n < 545 then some (0,
+  .right, 543) else some (0, .right, 544)))))
+
+def _refTrans0_49 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 552 then (if n < 549 then (if n < 547 then some (0, .right, 545) else (if n < 548 then
+  some (0, .right, 546) else some (0, .right, 547))) else (if n < 550 then some (0, .right, 548)
+  else (if n < 551 then some (0, .right, 31) else some (0, .right, 550)))) else (if n < 555 then
+  (if n < 553 then some (0, .right, 564) else (if n < 554 then some (0, .right, 552) else some (0,
+  .right, 553))) else (if n < 556 then some (0, .right, 554) else (if n < 557 then some (0,
+  .right, 555) else some (0, .right, 556)))))
+
+def _refTrans0_50 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 563 then (if n < 560 then (if n < 559 then some (0, .right, 188) else some (0, .right,
+  648)) else (if n < 561 then some (0, .right, 559) else (if n < 562 then some (0, .right, 560)
+  else some (0, .right, 561)))) else (if n < 566 then (if n < 564 then some (0, .right, 562) else
+  (if n < 565 then some (0, .right, 563) else some (0, .left, 9))) else (if n < 567 then some (0,
+  .left, 565) else (if n < 568 then some (0, .left, 524) else some (0, .left, 567)))))
+
+def _refTrans0_51 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 575 then (if n < 572 then (if n < 570 then some (0, .right, 538) else (if n < 571 then
+  some (0, .right, 569) else some (0, .right, 573))) else (if n < 573 then some (0, .right, 571)
+  else (if n < 574 then some (0, .right, 538) else some (0, .right, 560)))) else (if n < 578 then
+  (if n < 576 then some (0, .right, 573) else (if n < 577 then some (0, .right, 575) else some (0,
+  .right, 539))) else (if n < 579 then some (0, .right, 577) else (if n < 580 then some (0,
+  .right, 539) else some (0, .right, 579)))))
+
+def _refTrans0_52 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 586 then (if n < 583 then (if n < 582 then some (0, .right, 580) else some (0, .right,
+  540)) else (if n < 584 then some (0, .right, 582) else (if n < 585 then some (0, .right, 586)
+  else some (0, .right, 584)))) else (if n < 589 then (if n < 587 then some (0, .right, 540) else
+  (if n < 588 then some (0, .right, 586) else some (0, .right, 587))) else (if n < 590 then some
+  (0, .right, 648) else (if n < 591 then some (0, .right, 586) else some (0, .right, 590)))))
+
+def _refTrans0_53 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 598 then (if n < 595 then (if n < 593 then some (0, .right, 586) else (if n < 594 then
+  some (0, .right, 592) else some (0, .right, 541))) else (if n < 596 then some (0, .right, 594)
+  else (if n < 597 then some (0, .right, 600) else some (0, .right, 596)))) else (if n < 601 then
+  (if n < 599 then some (0, .right, 600) else (if n < 600 then some (0, .right, 598) else some (0,
+  .right, 541))) else (if n < 602 then some (0, .right, 560) else (if n < 603 then some (0,
+  .right, 600) else some (0, .right, 602)))))
+
+def _refTrans0_54 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 609 then (if n < 606 then (if n < 605 then some (0, .right, 536) else some (0, .right,
+  604)) else (if n < 607 then some (0, .right, 608) else (if n < 608 then some (0, .right, 606)
+  else some (0, .right, 536)))) else (if n < 612 then (if n < 610 then some (0, .right, 608) else
+  (if n < 611 then some (0, .right, 609) else some (0, .right, 608))) else (if n < 613 then some
+  (0, .right, 611) else (if n < 614 then some (0, .right, 608) else some (0, .right, 613)))))
+
+def _refTrans0_55 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 621 then (if n < 618 then (if n < 616 then some (0, .right, 537) else (if n < 617 then
+  some (0, .right, 615) else some (0, .right, 537))) else (if n < 619 then some (0, .right, 617)
+  else (if n < 620 then some (0, .right, 618) else some (0, .right, 617)))) else (if n < 624 then
+  (if n < 622 then some (0, .right, 620) else (if n < 623 then some (0, .right, 617) else some (0,
+  .right, 622))) else (if n < 625 then some (0, .right, 544) else (if n < 626 then some (0,
+  .right, 624) else some (0, .right, 648)))))
+
+def _refTrans0_56 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 633 then (if n < 630 then (if n < 628 then some (0, .right, 629) else (if n < 629 then
+  some (0, .right, 627) else some (0, .right, 544))) else (if n < 631 then some (0, .right, 629)
+  else (if n < 632 then some (0, .right, 630) else some (0, .left, 633)))) else (if n < 636 then
+  (if n < 634 then some (0, .left, 634) else (if n < 635 then some (0, .left, 14) else some (0,
+  .left, 636))) else (if n < 637 then some (1, .left, 11) else (if n < 638 then some (0, .right,
+  534) else some (0, .right, 632)))))
+
+def _refTrans0_57 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 645 then (if n < 642 then (if n < 640 then some (0, .right, 637) else (if n < 641 then
+  some (0, .left, 641) else some (0, .left, 642))) else (if n < 643 then some (0, .left, 643) else
+  (if n < 644 then some (0, .left, 16) else some (0, .left, 645)))) else (if n < 648 then (if n <
+  646 then some (1, .left, 646) else (if n < 647 then some (0, .left, 15) else some (0, .right,
+  534))) else (if n < 649 then some (0, .right, 558) else (if n < 650 then some (0, .right, 647)
+  else some (0, .right, 640)))))
+
+def _refTrans0_58 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 656 then (if n < 653 then (if n < 652 then some (0, .right, 650) else some (0, .right,
+  649)) else (if n < 654 then some (0, .right, 648) else (if n < 655 then some (0, .right, 647)
+  else some (0, .right, 654)))) else (if n < 659 then (if n < 657 then some (0, .right, 648) else
+  (if n < 658 then some (0, .right, 647) else some (0, .right, 657))) else (if n < 660 then some
+  (0, .right, 561) else (if n < 661 then some (0, .right, 647) else some (0, .right, 660)))))
+
+def _refTrans0_59 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 668 then (if n < 665 then (if n < 663 then some (0, .right, 647) else (if n < 664 then
+  some (0, .right, 662) else some (0, .right, 549))) else (if n < 666 then some (0, .right, 664)
+  else (if n < 667 then some (0, .right, 549) else some (0, .right, 558)))) else (if n < 671 then
+  (if n < 669 then some (0, .right, 666) else (if n < 670 then some (0, .right, 668) else some (0,
+  .right, 680))) else (if n < 672 then some (0, .right, 670) else (if n < 673 then some (0,
+  .right, 558) else some (0, .right, 680)))))
+
+def _refTrans0_60 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 679 then (if n < 676 then (if n < 675 then some (0, .right, 673) else some (0, .right,
+  680)) else (if n < 677 then some (0, .right, 675) else (if n < 678 then some (0, .right, 560)
+  else some (0, .right, 680)))) else (if n < 682 then (if n < 680 then some (0, .right, 678) else
+  (if n < 681 then some (0, .right, 535) else some (0, .right, 680))) else (if n < 683 then some
+  (0, .right, 681) else (if n < 684 then some (0, .right, 542) else some (0, .right, 683)))))
+
+def _refTrans0_61 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 691 then (if n < 688 then (if n < 686 then some (0, .right, 692) else (if n < 687 then
+  some (0, .right, 556) else some (0, .right, 692))) else (if n < 689 then some (0, .right, 692)
+  else (if n < 690 then some (0, .right, 552) else some (0, .right, 692)))) else (if n < 694 then
+  (if n < 692 then some (0, .right, 692) else (if n < 693 then some (0, .right, 542) else some (0,
+  .right, 559))) else (if n < 695 then some (0, .right, 692) else (if n < 696 then some (0,
+  .right, 692) else some (0, .right, 692)))))
+
+def _refTrans0_62 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 702 then (if n < 699 then (if n < 698 then some (0, .right, 648) else some (0, .right,
+  692)) else (if n < 700 then some (0, .right, 543) else (if n < 701 then some (0, .right, 699)
+  else some (0, .right, 554)))) else (if n < 705 then (if n < 703 then some (0, .right, 712) else
+  (if n < 704 then some (0, .right, 555) else some (0, .right, 712))) else (if n < 706 then some
+  (0, .right, 557) else (if n < 707 then some (0, .right, 712) else some (0, .right, 712)))))
+
+def _refTrans0_63 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 714 then (if n < 711 then (if n < 709 then some (0, .right, 553) else (if n < 710 then
+  some (0, .right, 712) else some (0, .left, 711))) else (if n < 712 then some (0, .left, 646)
+  else (if n < 713 then some (0, .right, 543) else some (0, .right, 551)))) else (if n < 717 then
+  (if n < 715 then some (0, .right, 712) else (if n < 716 then some (0, .right, 712) else some (0,
+  .right, 712))) else (if n < 718 then some (0, .right, 545) else (if n < 719 then some (0,
+  .right, 717) else some (0, .right, 723)))))
+
+def _refTrans0_64 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 726 then (if n < 723 then (if n < 721 then some (0, .right, 723) else (if n < 722 then
+  some (0, .right, 723) else some (0, .right, 723))) else (if n < 724 then some (0, .right, 545)
+  else (if n < 725 then some (0, .right, 723) else some (0, .right, 564)))) else (if n < 729 then
+  (if n < 727 then some (0, .right, 723) else (if n < 728 then some (0, .right, 546) else some (0,
+  .right, 727))) else (if n < 730 then some (0, .right, 731) else (if n < 731 then some (0,
+  .right, 731) else some (0, .right, 546)))))
+
+def _refTrans0_65 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 738 then (if n < 735 then (if n < 733 then some (0, .right, 731) else (if n < 734 then
+  some (0, .right, 547) else some (0, .right, 733))) else (if n < 736 then some (0, .right, 736)
+  else (if n < 737 then some (0, .right, 547) else some (0, .right, 736)))) else (if n < 741 then
+  (if n < 739 then some (0, .right, 736) else (if n < 740 then some (0, .right, 740) else some (0,
+  .right, 548))) else (if n < 742 then some (0, .right, 740) else (if n < 743 then some (0,
+  .right, 188) else some (0, .right, 740)))))
+
+def _refTrans0_66 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 465 then (if n < 418 then (if n < 395 then (if n < 383 then _refTrans0_34 n else
+  _refTrans0_35 n) else (if n < 406 then _refTrans0_36 n else _refTrans0_37 n)) else (if n < 441
+  then (if n < 429 then _refTrans0_38 n else _refTrans0_39 n) else (if n < 453 then _refTrans0_40
+  n else _refTrans0_41 n))) else (if n < 511 then (if n < 488 then (if n < 476 then _refTrans0_42
+  n else _refTrans0_43 n) else (if n < 499 then _refTrans0_44 n else _refTrans0_45 n)) else (if n
+  < 534 then (if n < 522 then _refTrans0_46 n else _refTrans0_47 n) else (if n < 546 then
+  _refTrans0_48 n else _refTrans0_49 n))))
+
+def _refTrans0_67 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 651 then (if n < 604 then (if n < 581 then (if n < 569 then _refTrans0_50 n else
+  _refTrans0_51 n) else (if n < 592 then _refTrans0_52 n else _refTrans0_53 n)) else (if n < 627
+  then (if n < 615 then _refTrans0_54 n else _refTrans0_55 n) else (if n < 639 then _refTrans0_56
+  n else _refTrans0_57 n))) else (if n < 697 then (if n < 674 then (if n < 662 then _refTrans0_58
+  n else _refTrans0_59 n) else (if n < 685 then _refTrans0_60 n else _refTrans0_61 n)) else (if n
+  < 720 then (if n < 708 then _refTrans0_62 n else _refTrans0_63 n) else (if n < 732 then
+  _refTrans0_64 n else _refTrans0_65 n))))
+
+def refTrans0 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 372 then (if n < 186 then _refTrans0_32 n else _refTrans0_33 n) else (if n < 558 then
+  _refTrans0_66 n else _refTrans0_67 n))
+def _refTrans1_0 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 5 then (if n < 2 then (if n < 1 then some (1, .right, 523) else some (1, .right, 5))
+  else (if n < 3 then some (0, .right, 1) else (if n < 4 then some (1, .left, 566) else some (1,
+  .right, 5)))) else (if n < 8 then (if n < 6 then some (1, .right, 5) else (if n < 7 then some
+  (1, .left, 7) else some (0, .left, 8))) else (if n < 9 then some (1, .left, 8) else (if n < 10
+  then some (0, .left, 11) else some (1, .left, 14)))))
+
+def _refTrans1_1 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 17 then (if n < 14 then (if n < 12 then some (0, .left, 15) else (if n < 13 then some
+  (1, .left, 0) else some (0, .left, 0))) else (if n < 15 then some (1, .left, 16) else (if n < 16
+  then some (0, .left, 17) else some (1, .left, 18)))) else (if n < 20 then (if n < 18 then some
+  (0, .left, 19) else (if n < 19 then some (1, .left, 20) else some (0, .left, 21))) else (if n <
+  21 then some (1, .left, 22) else (if n < 22 then some (0, .left, 23) else some (1, .left,
+  24)))))
+
+def _refTrans1_2 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 28 then (if n < 25 then (if n < 24 then some (0, .left, 25) else some (1, .left, 26))
+  else (if n < 26 then some (0, .left, 27) else (if n < 27 then some (1, .left, 28) else some (0,
+  .left, 29)))) else (if n < 31 then (if n < 29 then some (1, .left, 12) else (if n < 30 then some
+  (0, .left, 13) else some (0, .right, 31))) else (if n < 32 then some (1, .right, 31) else (if n
+  < 33 then some (1, .right, 33) else some (1, .right, 34)))))
+
+def _refTrans1_3 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 40 then (if n < 37 then (if n < 35 then some (1, .right, 35) else (if n < 36 then some
+  (1, .right, 35) else some (1, .left, 37))) else (if n < 38 then some (1, .left, 38) else (if n <
+  39 then some (1, .left, 177) else some (1, .left, 40)))) else (if n < 43 then (if n < 41 then
+  some (0, .left, 41) else (if n < 42 then some (1, .left, 42) else some (0, .left, 43))) else (if
+  n < 44 then some (0, .left, 59) else (if n < 45 then some (1, .left, 45) else some (0, .left,
+  46)))))
+
+def _refTrans1_4 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 51 then (if n < 48 then (if n < 47 then some (0, .left, 47) else some (1, .left, 172))
+  else (if n < 49 then some (1, .left, 49) else (if n < 50 then some (0, .left, 50) else some (0,
+  .left, 51)))) else (if n < 54 then (if n < 52 then some (1, .left, 52) else (if n < 53 then some
+  (1, .left, 53) else some (0, .left, 121))) else (if n < 55 then some (1, .left, 55) else (if n <
+  56 then some (0, .left, 56) else some (0, .left, 57)))))
+
+def _refTrans1_5 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 63 then (if n < 60 then (if n < 58 then some (0, .left, 58) else (if n < 59 then some
+  (1, .left, 59) else some (1, .left, 60))) else (if n < 61 then some (1, .left, 23) else (if n <
+  62 then some (1, .left, 62) else some (0, .left, 63)))) else (if n < 66 then (if n < 64 then
+  some (1, .left, 57) else (if n < 65 then some (1, .left, 65) else some (1, .left, 66))) else (if
+  n < 67 then some (0, .left, 67) else (if n < 68 then some (1, .left, 68) else some (1, .left,
+  69)))))
+
+def _refTrans1_6 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 75 then (if n < 72 then (if n < 70 then some (1, .left, 70) else (if n < 71 then some
+  (1, .left, 71) else some (1, .left, 72))) else (if n < 73 then some (0, .left, 26) else (if n <
+  74 then some (1, .left, 74) else some (1, .left, 46)))) else (if n < 78 then (if n < 76 then
+  some (1, .left, 76) else (if n < 77 then some (0, .left, 77) else some (0, .left, 78))) else (if
+  n < 79 then some (0, .left, 79) else (if n < 80 then some (0, .left, 120) else some (1, .left,
+  81)))))
+
+def _refTrans1_7 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 87 then (if n < 84 then (if n < 82 then some (1, .left, 82) else (if n < 83 then some
+  (0, .left, 83) else some (0, .left, 84))) else (if n < 85 then some (0, .left, 19) else (if n <
+  86 then some (1, .left, 86) else some (0, .left, 87)))) else (if n < 90 then (if n < 88 then
+  some (0, .left, 88) else (if n < 89 then some (1, .left, 79) else some (1, .left, 90))) else (if
+  n < 91 then some (1, .left, 93) else (if n < 92 then some (0, .left, 92) else some (0, .left,
+  0)))))
+
+def _refTrans1_8 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 98 then (if n < 95 then (if n < 94 then some (0, .left, 94) else some (1, .left, 95))
+  else (if n < 96 then some (0, .left, 96) else (if n < 97 then some (1, .left, 97) else some (0,
+  .left, 98)))) else (if n < 101 then (if n < 99 then some (0, .left, 99) else (if n < 100 then
+  some (0, .left, 100) else some (0, .left, 91))) else (if n < 102 then some (1, .left, 102) else
+  (if n < 103 then some (1, .left, 103) else some (0, .left, 104)))))
+
+def _refTrans1_9 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 110 then (if n < 107 then (if n < 105 then some (1, .left, 84) else (if n < 106 then
+  some (1, .left, 106) else some (0, .left, 109))) else (if n < 108 then some (1, .left, 108) else
+  (if n < 109 then some (1, .left, 109) else some (0, .left, 113)))) else (if n < 113 then (if n <
+  111 then some (1, .left, 111) else (if n < 112 then some (0, .left, 112) else some (1, .left,
+  113))) else (if n < 114 then some (0, .left, 114) else (if n < 115 then some (1, .left, 19) else
+  some (1, .left, 116)))))
+
+def _refTrans1_10 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 121 then (if n < 118 then (if n < 117 then some (0, .left, 117) else some (0, .left,
+  118)) else (if n < 119 then some (1, .left, 119) else (if n < 120 then some (1, .left, 120) else
+  some (1, .left, 121)))) else (if n < 124 then (if n < 122 then some (0, .left, 22) else (if n <
+  123 then some (1, .left, 123) else some (1, .left, 124))) else (if n < 125 then some (0, .left,
+  125) else (if n < 126 then some (1, .left, 114) else some (1, .left, 127)))))
+
+def _refTrans1_11 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 133 then (if n < 130 then (if n < 128 then some (1, .left, 128) else (if n < 129 then
+  some (0, .left, 129) else some (1, .left, 130))) else (if n < 131 then some (1, .left, 131) else
+  (if n < 132 then some (1, .left, 132) else some (0, .left, 145)))) else (if n < 136 then (if n <
+  134 then some (1, .left, 134) else (if n < 135 then some (0, .left, 135) else some (0, .left,
+  136))) else (if n < 137 then some (1, .left, 137) else (if n < 138 then some (0, .left, 173)
+  else some (1, .left, 139)))))
+
+def _refTrans1_12 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 144 then (if n < 141 then (if n < 140 then some (0, .left, 140) else some (0, .left,
+  141)) else (if n < 142 then some (1, .left, 142) else (if n < 143 then some (1, .left, 143) else
+  some (0, .left, 144)))) else (if n < 147 then (if n < 145 then some (1, .left, 145) else (if n <
+  146 then some (0, .left, 72) else some (1, .left, 147))) else (if n < 148 then some (1, .left,
+  135) else (if n < 149 then some (1, .left, 149) else some (0, .left, 150)))))
+
+def _refTrans1_13 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
   (if n < 156 then (if n < 153 then (if n < 151 then some (0, .left, 151) else (if n < 152 then
   some (1, .left, 152) else some (0, .left, 153))) else (if n < 154 then some (1, .left, 154) else
   (if n < 155 then some (1, .left, 155) else some (0, .left, 24)))) else (if n < 159 then (if n <
   157 then some (1, .left, 157) else (if n < 158 then some (0, .left, 165) else some (1, .left,
   159))) else (if n < 160 then some (0, .left, 160) else (if n < 161 then some (0, .left, 161)
-  else some (1, .left, 162)))))) else (if n < 174 then (if n < 168 then (if n < 165 then (if n <
-  163 then some (1, .left, 153) else (if n < 164 then some (1, .left, 164) else some (1, .left,
-  165))) else (if n < 166 then some (1, .left, 15) else (if n < 167 then some (1, .left, 167) else
-  some (0, .left, 176)))) else (if n < 171 then (if n < 169 then some (1, .left, 169) else (if n <
-  170 then some (0, .left, 170) else some (0, .left, 171))) else (if n < 172 then some (0, .left,
-  172) else (if n < 173 then some (1, .left, 173) else some (0, .left, 20))))) else (if n < 180
-  then (if n < 177 then (if n < 175 then some (1, .left, 175) else (if n < 176 then some (1,
-  .left, 176) else some (0, .left, 177))) else (if n < 178 then some (0, .left, 17) else (if n <
-  179 then some (1, .left, 179) else some (1, .left, 180)))) else (if n < 183 then (if n < 181
-  then some (0, .left, 181) else (if n < 182 then some (0, .left, 182) else some (0, .left, 183)))
-  else (if n < 184 then some (0, .left, 70) else (if n < 185 then some (1, .right, 32) else some
-  (1, .right, 184))))))))) else (if n < 279 then (if n < 232 then (if n < 209 then (if n < 197
-  then (if n < 191 then (if n < 188 then (if n < 187 then some (1, .right, 185) else some (1,
-  .right, 186)) else (if n < 189 then some (1, .right, 188) else (if n < 190 then some (1, .right,
-  524) else some (1, .right, 189)))) else (if n < 194 then (if n < 192 then some (1, .right, 652)
-  else (if n < 193 then some (1, .right, 191) else some (1, .right, 625))) else (if n < 195 then
-  some (1, .right, 526) else (if n < 196 then some (1, .right, 194) else some (1, .right, 526)))))
-  else (if n < 203 then (if n < 200 then (if n < 198 then some (1, .right, 196) else (if n < 199
-  then some (1, .right, 197) else some (1, .right, 198))) else (if n < 201 then some (1, .right,
-  526) else (if n < 202 then some (1, .right, 200) else some (1, .right, 644)))) else (if n < 206
-  then (if n < 204 then some (1, .right, 163) else (if n < 205 then some (1, .right, 203) else
-  some (1, .right, 204))) else (if n < 207 then some (1, .right, 205) else (if n < 208 then some
-  (1, .right, 206) else some (1, .right, 560)))))) else (if n < 220 then (if n < 214 then (if n <
-  211 then (if n < 210 then some (1, .right, 525) else some (1, .right, 209)) else (if n < 212
-  then some (1, .right, 734) else (if n < 213 then some (1, .right, 64) else some (1, .right,
-  524)))) else (if n < 217 then (if n < 215 then some (1, .right, 526) else (if n < 216 then some
-  (1, .right, 214) else some (1, .right, 543))) else (if n < 218 then some (1, .right, 542) else
-  (if n < 219 then some (1, .right, 217) else some (1, .right, 218))))) else (if n < 226 then (if
-  n < 223 then (if n < 221 then some (1, .right, 219) else (if n < 222 then some (1, .right, 220)
-  else some (1, .right, 221))) else (if n < 224 then some (1, .right, 222) else (if n < 225 then
-  some (1, .right, 64) else some (1, .right, 80)))) else (if n < 229 then (if n < 227 then some
-  (1, .right, 225) else (if n < 228 then some (1, .right, 684) else some (1, .right, 525))) else
-  (if n < 230 then some (1, .right, 524) else (if n < 231 then some (1, .right, 700) else some (1,
-  .right, 230))))))) else (if n < 255 then (if n < 243 then (if n < 237 then (if n < 234 then (if
-  n < 233 then some (1, .right, 526) else some (1, .right, 655)) else (if n < 235 then some (1,
-  .right, 233) else (if n < 236 then some (1, .right, 526) else some (1, .right, 663)))) else (if
-  n < 240 then (if n < 238 then some (1, .right, 682) else (if n < 239 then some (1, .right, 237)
-  else some (1, .right, 238))) else (if n < 241 then some (1, .right, 644) else (if n < 242 then
-  some (1, .right, 163) else some (1, .right, 241))))) else (if n < 249 then (if n < 246 then (if
-  n < 244 then some (1, .right, 242) else (if n < 245 then some (1, .right, 560) else some (1,
-  .right, 525))) else (if n < 247 then some (1, .right, 245) else (if n < 248 then some (1,
-  .right, 728) else some (1, .right, 247)))) else (if n < 252 then (if n < 250 then some (1,
-  .right, 101) else (if n < 251 then some (1, .right, 524) else some (1, .right, 526))) else (if n
-  < 253 then some (1, .right, 674) else (if n < 254 then some (1, .right, 252) else some (1,
-  .right, 542)))))) else (if n < 267 then (if n < 261 then (if n < 258 then (if n < 256 then some
-  (1, .right, 543) else (if n < 257 then some (1, .right, 255) else some (1, .right, 256))) else
-  (if n < 259 then some (1, .right, 146) else (if n < 260 then some (1, .right, 110) else some (1,
-  .right, 259)))) else (if n < 264 then (if n < 262 then some (1, .right, 700) else (if n < 263
-  then some (1, .right, 261) else some (1, .right, 525))) else (if n < 265 then some (1, .right,
-  524) else (if n < 266 then some (1, .right, 684) else some (1, .right, 138))))) else (if n < 273
-  then (if n < 270 then (if n < 268 then some (1, .right, 524) else (if n < 269 then some (1,
-  .right, 526) else some (1, .right, 268))) else (if n < 271 then some (1, .right, 269) else (if n
-  < 272 then some (1, .right, 270) else some (1, .right, 271)))) else (if n < 276 then (if n < 274
-  then some (1, .right, 272) else (if n < 275 then some (1, .right, 89) else some (1, .right,
-  274))) else (if n < 277 then some (1, .right, 275) else (if n < 278 then some (1, .right, 276)
-  else some (1, .right, 275)))))))) else (if n < 325 then (if n < 302 then (if n < 290 then (if n
-  < 284 then (if n < 281 then (if n < 280 then some (1, .right, 278) else some (1, .right, 279))
-  else (if n < 282 then some (1, .right, 279) else (if n < 283 then some (1, .right, 281) else
-  some (1, .right, 281)))) else (if n < 287 then (if n < 285 then some (1, .right, 283) else (if n
-  < 286 then some (1, .right, 283) else some (1, .right, 285))) else (if n < 288 then some (1,
-  .right, 286) else (if n < 289 then some (1, .right, 285) else some (1, .right, 665))))) else (if
-  n < 296 then (if n < 293 then (if n < 291 then some (1, .right, 289) else (if n < 292 then some
-  (1, .right, 525) else some (1, .right, 524))) else (if n < 294 then some (1, .right, 292) else
-  (if n < 295 then some (1, .right, 525) else some (1, .right, 524)))) else (if n < 299 then (if n
-  < 297 then some (1, .right, 295) else (if n < 298 then some (1, .right, 296) else some (1,
+  else some (1, .left, 162)))))
+
+def _refTrans1_14 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 168 then (if n < 165 then (if n < 163 then some (1, .left, 153) else (if n < 164 then
+  some (1, .left, 164) else some (1, .left, 165))) else (if n < 166 then some (1, .left, 15) else
+  (if n < 167 then some (1, .left, 167) else some (0, .left, 176)))) else (if n < 171 then (if n <
+  169 then some (1, .left, 169) else (if n < 170 then some (0, .left, 170) else some (0, .left,
+  171))) else (if n < 172 then some (0, .left, 172) else (if n < 173 then some (1, .left, 173)
+  else some (0, .left, 20)))))
+
+def _refTrans1_15 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 180 then (if n < 177 then (if n < 175 then some (1, .left, 175) else (if n < 176 then
+  some (1, .left, 176) else some (0, .left, 177))) else (if n < 178 then some (0, .left, 17) else
+  (if n < 179 then some (1, .left, 179) else some (1, .left, 180)))) else (if n < 183 then (if n <
+  181 then some (0, .left, 181) else (if n < 182 then some (0, .left, 182) else some (0, .left,
+  183))) else (if n < 184 then some (0, .left, 70) else (if n < 185 then some (1, .right, 32) else
+  some (1, .right, 184)))))
+
+def _refTrans1_16 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 191 then (if n < 188 then (if n < 187 then some (1, .right, 185) else some (1, .right,
+  186)) else (if n < 189 then some (1, .right, 188) else (if n < 190 then some (1, .right, 524)
+  else some (1, .right, 189)))) else (if n < 194 then (if n < 192 then some (1, .right, 652) else
+  (if n < 193 then some (1, .right, 191) else some (1, .right, 625))) else (if n < 195 then some
+  (1, .right, 526) else (if n < 196 then some (1, .right, 194) else some (1, .right, 526)))))
+
+def _refTrans1_17 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 203 then (if n < 200 then (if n < 198 then some (1, .right, 196) else (if n < 199 then
+  some (1, .right, 197) else some (1, .right, 198))) else (if n < 201 then some (1, .right, 526)
+  else (if n < 202 then some (1, .right, 200) else some (1, .right, 644)))) else (if n < 206 then
+  (if n < 204 then some (1, .right, 163) else (if n < 205 then some (1, .right, 203) else some (1,
+  .right, 204))) else (if n < 207 then some (1, .right, 205) else (if n < 208 then some (1,
+  .right, 206) else some (1, .right, 560)))))
+
+def _refTrans1_18 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 214 then (if n < 211 then (if n < 210 then some (1, .right, 525) else some (1, .right,
+  209)) else (if n < 212 then some (1, .right, 734) else (if n < 213 then some (1, .right, 64)
+  else some (1, .right, 524)))) else (if n < 217 then (if n < 215 then some (1, .right, 526) else
+  (if n < 216 then some (1, .right, 214) else some (1, .right, 543))) else (if n < 218 then some
+  (1, .right, 542) else (if n < 219 then some (1, .right, 217) else some (1, .right, 218)))))
+
+def _refTrans1_19 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 226 then (if n < 223 then (if n < 221 then some (1, .right, 219) else (if n < 222 then
+  some (1, .right, 220) else some (1, .right, 221))) else (if n < 224 then some (1, .right, 222)
+  else (if n < 225 then some (1, .right, 64) else some (1, .right, 80)))) else (if n < 229 then
+  (if n < 227 then some (1, .right, 225) else (if n < 228 then some (1, .right, 684) else some (1,
+  .right, 525))) else (if n < 230 then some (1, .right, 524) else (if n < 231 then some (1,
+  .right, 700) else some (1, .right, 230)))))
+
+def _refTrans1_20 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 237 then (if n < 234 then (if n < 233 then some (1, .right, 526) else some (1, .right,
+  655)) else (if n < 235 then some (1, .right, 233) else (if n < 236 then some (1, .right, 526)
+  else some (1, .right, 663)))) else (if n < 240 then (if n < 238 then some (1, .right, 682) else
+  (if n < 239 then some (1, .right, 237) else some (1, .right, 238))) else (if n < 241 then some
+  (1, .right, 644) else (if n < 242 then some (1, .right, 163) else some (1, .right, 241)))))
+
+def _refTrans1_21 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 249 then (if n < 246 then (if n < 244 then some (1, .right, 242) else (if n < 245 then
+  some (1, .right, 560) else some (1, .right, 525))) else (if n < 247 then some (1, .right, 245)
+  else (if n < 248 then some (1, .right, 728) else some (1, .right, 247)))) else (if n < 252 then
+  (if n < 250 then some (1, .right, 101) else (if n < 251 then some (1, .right, 524) else some (1,
+  .right, 526))) else (if n < 253 then some (1, .right, 674) else (if n < 254 then some (1,
+  .right, 252) else some (1, .right, 542)))))
+
+def _refTrans1_22 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 261 then (if n < 258 then (if n < 256 then some (1, .right, 543) else (if n < 257 then
+  some (1, .right, 255) else some (1, .right, 256))) else (if n < 259 then some (1, .right, 146)
+  else (if n < 260 then some (1, .right, 110) else some (1, .right, 259)))) else (if n < 264 then
+  (if n < 262 then some (1, .right, 700) else (if n < 263 then some (1, .right, 261) else some (1,
+  .right, 525))) else (if n < 265 then some (1, .right, 524) else (if n < 266 then some (1,
+  .right, 684) else some (1, .right, 138)))))
+
+def _refTrans1_23 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 273 then (if n < 270 then (if n < 268 then some (1, .right, 524) else (if n < 269 then
+  some (1, .right, 526) else some (1, .right, 268))) else (if n < 271 then some (1, .right, 269)
+  else (if n < 272 then some (1, .right, 270) else some (1, .right, 271)))) else (if n < 276 then
+  (if n < 274 then some (1, .right, 272) else (if n < 275 then some (1, .right, 89) else some (1,
+  .right, 274))) else (if n < 277 then some (1, .right, 275) else (if n < 278 then some (1,
+  .right, 276) else some (1, .right, 275)))))
+
+def _refTrans1_24 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 284 then (if n < 281 then (if n < 280 then some (1, .right, 278) else some (1, .right,
+  279)) else (if n < 282 then some (1, .right, 279) else (if n < 283 then some (1, .right, 281)
+  else some (1, .right, 281)))) else (if n < 287 then (if n < 285 then some (1, .right, 283) else
+  (if n < 286 then some (1, .right, 283) else some (1, .right, 285))) else (if n < 288 then some
+  (1, .right, 286) else (if n < 289 then some (1, .right, 285) else some (1, .right, 665)))))
+
+def _refTrans1_25 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 296 then (if n < 293 then (if n < 291 then some (1, .right, 289) else (if n < 292 then
+  some (1, .right, 525) else some (1, .right, 524))) else (if n < 294 then some (1, .right, 292)
+  else (if n < 295 then some (1, .right, 525) else some (1, .right, 524)))) else (if n < 299 then
+  (if n < 297 then some (1, .right, 295) else (if n < 298 then some (1, .right, 296) else some (1,
   .right, 297))) else (if n < 300 then some (1, .right, 526) else (if n < 301 then some (1,
-  .right, 299) else some (1, .right, 644)))))) else (if n < 313 then (if n < 307 then (if n < 304
-  then (if n < 303 then some (1, .right, 107) else some (1, .right, 302)) else (if n < 305 then
-  some (1, .right, 303) else (if n < 306 then some (1, .right, 304) else some (1, .right, 305))))
-  else (if n < 310 then (if n < 308 then some (1, .right, 306) else (if n < 309 then some (1,
-  .right, 542) else some (1, .right, 525))) else (if n < 311 then some (1, .right, 309) else (if n
-  < 312 then some (1, .right, 684) else some (1, .right, 525))))) else (if n < 319 then (if n <
-  316 then (if n < 314 then some (1, .right, 524) else (if n < 315 then some (1, .right, 700) else
-  some (1, .right, 314))) else (if n < 317 then some (1, .right, 122) else (if n < 318 then some
-  (1, .right, 524) else some (1, .right, 317)))) else (if n < 322 then (if n < 320 then some (1,
-  .right, 318) else (if n < 321 then some (1, .right, 319) else some (1, .right, 525))) else (if n
-  < 323 then some (1, .right, 524) else (if n < 324 then some (1, .right, 322) else some (1,
-  .right, 323))))))) else (if n < 348 then (if n < 336 then (if n < 330 then (if n < 327 then (if
-  n < 326 then some (1, .right, 665) else some (1, .right, 325)) else (if n < 328 then some (1,
-  .right, 326) else (if n < 329 then some (1, .right, 327) else some (1, .right, 328)))) else (if
-  n < 333 then (if n < 331 then some (1, .right, 526) else (if n < 332 then some (1, .right, 607)
-  else some (1, .right, 101))) else (if n < 334 then some (1, .right, 524) else (if n < 335 then
-  some (1, .right, 333) else some (1, .right, 621))))) else (if n < 342 then (if n < 339 then (if
-  n < 337 then some (1, .right, 335) else (if n < 338 then some (1, .right, 525) else some (1,
-  .right, 524))) else (if n < 340 then some (1, .right, 338) else (if n < 341 then some (1,
-  .right, 707) else some (1, .right, 340)))) else (if n < 345 then (if n < 343 then some (1,
-  .right, 126) else (if n < 344 then some (1, .right, 524) else some (1, .right, 526))) else (if n
-  < 346 then some (1, .right, 669) else (if n < 347 then some (1, .right, 345) else some (1,
-  .right, 346)))))) else (if n < 360 then (if n < 354 then (if n < 351 then (if n < 349 then some
-  (1, .right, 526) else (if n < 350 then some (1, .right, 614) else some (1, .right, 101))) else
-  (if n < 352 then some (1, .right, 524) else (if n < 353 then some (1, .right, 351) else some (1,
-  .right, 679)))) else (if n < 357 then (if n < 355 then some (1, .right, 353) else (if n < 356
-  then some (1, .right, 338) else some (1, .right, 644))) else (if n < 358 then some (1, .right,
-  525) else (if n < 359 then some (1, .right, 357) else some (1, .right, 358))))) else (if n < 366
-  then (if n < 363 then (if n < 361 then some (1, .right, 359) else (if n < 362 then some (1,
-  .right, 525) else some (1, .right, 524))) else (if n < 364 then some (1, .right, 570) else (if n
-  < 365 then some (1, .right, 526) else some (1, .right, 364)))) else (if n < 369 then (if n < 367
-  then some (1, .right, 365) else (if n < 368 then some (1, .right, 366) else some (1, .right,
-  367))) else (if n < 370 then some (1, .right, 368) else (if n < 371 then some (1, .right, 369)
-  else some (1, .right, 370)))))))))) else (if n < 558 then (if n < 465 then (if n < 418 then (if
-  n < 395 then (if n < 383 then (if n < 377 then (if n < 374 then (if n < 373 then some (1,
-  .right, 126) else some (1, .right, 524)) else (if n < 375 then some (1, .right, 373) else (if n
-  < 376 then some (1, .right, 374) else some (1, .right, 524)))) else (if n < 380 then (if n < 378
-  then some (1, .right, 376) else (if n < 379 then some (1, .right, 377) else some (1, .right,
-  378))) else (if n < 381 then some (1, .right, 702) else (if n < 382 then some (1, .right, 612)
-  else some (1, .right, 250))))) else (if n < 389 then (if n < 386 then (if n < 384 then some (1,
-  .right, 610) else (if n < 385 then some (1, .right, 383) else some (1, .right, 384))) else (if n
-  < 387 then some (1, .right, 524) else (if n < 388 then some (1, .right, 386) else some (1,
-  .right, 704)))) else (if n < 392 then (if n < 390 then some (1, .right, 388) else (if n < 391
-  then some (1, .right, 595) else some (1, .right, 525))) else (if n < 393 then some (1, .right,
-  524) else (if n < 394 then some (1, .right, 616) else some (1, .right, 393)))))) else (if n <
-  406 then (if n < 400 then (if n < 397 then (if n < 396 then some (1, .right, 394) else some (1,
-  .right, 526)) else (if n < 398 then some (1, .right, 621) else (if n < 399 then some (1, .right,
-  526) else some (1, .right, 676)))) else (if n < 403 then (if n < 401 then some (1, .right, 399)
-  else (if n < 402 then some (1, .right, 400) else some (1, .right, 401))) else (if n < 404 then
-  some (1, .right, 80) else (if n < 405 then some (1, .right, 403) else some (1, .right, 404)))))
-  else (if n < 412 then (if n < 409 then (if n < 407 then some (1, .right, 543) else (if n < 408
-  then some (1, .right, 525) else some (1, .right, 407))) else (if n < 410 then some (1, .right,
-  700) else (if n < 411 then some (1, .right, 409) else some (1, .right, 525)))) else (if n < 415
-  then (if n < 413 then some (1, .right, 524) else (if n < 414 then some (1, .right, 718) else
-  some (1, .right, 588))) else (if n < 416 then some (1, .right, 414) else (if n < 417 then some
-  (1, .right, 101) else some (1, .right, 524))))))) else (if n < 441 then (if n < 429 then (if n <
-  423 then (if n < 420 then (if n < 419 then some (1, .right, 417) else some (1, .right, 623))
-  else (if n < 421 then some (1, .right, 525) else (if n < 422 then some (1, .right, 524) else
-  some (1, .right, 421)))) else (if n < 426 then (if n < 424 then some (1, .right, 603) else (if n
-  < 425 then some (1, .right, 423) else some (1, .right, 424))) else (if n < 427 then some (1,
-  .right, 583) else (if n < 428 then some (1, .right, 526) else some (1, .right, 427))))) else (if
-  n < 435 then (if n < 432 then (if n < 430 then some (1, .right, 122) else (if n < 431 then some
-  (1, .right, 524) else some (1, .right, 430))) else (if n < 433 then some (1, .right, 431) else
-  (if n < 434 then some (1, .right, 432) else some (1, .right, 322)))) else (if n < 438 then (if n
-  < 436 then some (1, .right, 434) else (if n < 437 then some (1, .right, 720) else some (1,
+  .right, 299) else some (1, .right, 644)))))
+
+def _refTrans1_26 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 307 then (if n < 304 then (if n < 303 then some (1, .right, 107) else some (1, .right,
+  302)) else (if n < 305 then some (1, .right, 303) else (if n < 306 then some (1, .right, 304)
+  else some (1, .right, 305)))) else (if n < 310 then (if n < 308 then some (1, .right, 306) else
+  (if n < 309 then some (1, .right, 542) else some (1, .right, 525))) else (if n < 311 then some
+  (1, .right, 309) else (if n < 312 then some (1, .right, 684) else some (1, .right, 525)))))
+
+def _refTrans1_27 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 319 then (if n < 316 then (if n < 314 then some (1, .right, 524) else (if n < 315 then
+  some (1, .right, 700) else some (1, .right, 314))) else (if n < 317 then some (1, .right, 122)
+  else (if n < 318 then some (1, .right, 524) else some (1, .right, 317)))) else (if n < 322 then
+  (if n < 320 then some (1, .right, 318) else (if n < 321 then some (1, .right, 319) else some (1,
+  .right, 525))) else (if n < 323 then some (1, .right, 524) else (if n < 324 then some (1,
+  .right, 322) else some (1, .right, 323)))))
+
+def _refTrans1_28 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 330 then (if n < 327 then (if n < 326 then some (1, .right, 665) else some (1, .right,
+  325)) else (if n < 328 then some (1, .right, 326) else (if n < 329 then some (1, .right, 327)
+  else some (1, .right, 328)))) else (if n < 333 then (if n < 331 then some (1, .right, 526) else
+  (if n < 332 then some (1, .right, 607) else some (1, .right, 101))) else (if n < 334 then some
+  (1, .right, 524) else (if n < 335 then some (1, .right, 333) else some (1, .right, 621)))))
+
+def _refTrans1_29 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 342 then (if n < 339 then (if n < 337 then some (1, .right, 335) else (if n < 338 then
+  some (1, .right, 525) else some (1, .right, 524))) else (if n < 340 then some (1, .right, 338)
+  else (if n < 341 then some (1, .right, 707) else some (1, .right, 340)))) else (if n < 345 then
+  (if n < 343 then some (1, .right, 126) else (if n < 344 then some (1, .right, 524) else some (1,
+  .right, 526))) else (if n < 346 then some (1, .right, 669) else (if n < 347 then some (1,
+  .right, 345) else some (1, .right, 346)))))
+
+def _refTrans1_30 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 354 then (if n < 351 then (if n < 349 then some (1, .right, 526) else (if n < 350 then
+  some (1, .right, 614) else some (1, .right, 101))) else (if n < 352 then some (1, .right, 524)
+  else (if n < 353 then some (1, .right, 351) else some (1, .right, 679)))) else (if n < 357 then
+  (if n < 355 then some (1, .right, 353) else (if n < 356 then some (1, .right, 338) else some (1,
+  .right, 644))) else (if n < 358 then some (1, .right, 525) else (if n < 359 then some (1,
+  .right, 357) else some (1, .right, 358)))))
+
+def _refTrans1_31 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 366 then (if n < 363 then (if n < 361 then some (1, .right, 359) else (if n < 362 then
+  some (1, .right, 525) else some (1, .right, 524))) else (if n < 364 then some (1, .right, 570)
+  else (if n < 365 then some (1, .right, 526) else some (1, .right, 364)))) else (if n < 369 then
+  (if n < 367 then some (1, .right, 365) else (if n < 368 then some (1, .right, 366) else some (1,
+  .right, 367))) else (if n < 370 then some (1, .right, 368) else (if n < 371 then some (1,
+  .right, 369) else some (1, .right, 370)))))
+
+def _refTrans1_32 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 93 then (if n < 46 then (if n < 23 then (if n < 11 then _refTrans1_0 n else _refTrans1_1
+  n) else (if n < 34 then _refTrans1_2 n else _refTrans1_3 n)) else (if n < 69 then (if n < 57
+  then _refTrans1_4 n else _refTrans1_5 n) else (if n < 81 then _refTrans1_6 n else _refTrans1_7
+  n))) else (if n < 139 then (if n < 116 then (if n < 104 then _refTrans1_8 n else _refTrans1_9 n)
+  else (if n < 127 then _refTrans1_10 n else _refTrans1_11 n)) else (if n < 162 then (if n < 150
+  then _refTrans1_12 n else _refTrans1_13 n) else (if n < 174 then _refTrans1_14 n else
+  _refTrans1_15 n))))
+
+def _refTrans1_33 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 279 then (if n < 232 then (if n < 209 then (if n < 197 then _refTrans1_16 n else
+  _refTrans1_17 n) else (if n < 220 then _refTrans1_18 n else _refTrans1_19 n)) else (if n < 255
+  then (if n < 243 then _refTrans1_20 n else _refTrans1_21 n) else (if n < 267 then _refTrans1_22
+  n else _refTrans1_23 n))) else (if n < 325 then (if n < 302 then (if n < 290 then _refTrans1_24
+  n else _refTrans1_25 n) else (if n < 313 then _refTrans1_26 n else _refTrans1_27 n)) else (if n
+  < 348 then (if n < 336 then _refTrans1_28 n else _refTrans1_29 n) else (if n < 360 then
+  _refTrans1_30 n else _refTrans1_31 n))))
+
+def _refTrans1_34 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 377 then (if n < 374 then (if n < 373 then some (1, .right, 126) else some (1, .right,
+  524)) else (if n < 375 then some (1, .right, 373) else (if n < 376 then some (1, .right, 374)
+  else some (1, .right, 524)))) else (if n < 380 then (if n < 378 then some (1, .right, 376) else
+  (if n < 379 then some (1, .right, 377) else some (1, .right, 378))) else (if n < 381 then some
+  (1, .right, 702) else (if n < 382 then some (1, .right, 612) else some (1, .right, 250)))))
+
+def _refTrans1_35 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 389 then (if n < 386 then (if n < 384 then some (1, .right, 610) else (if n < 385 then
+  some (1, .right, 383) else some (1, .right, 384))) else (if n < 387 then some (1, .right, 524)
+  else (if n < 388 then some (1, .right, 386) else some (1, .right, 704)))) else (if n < 392 then
+  (if n < 390 then some (1, .right, 388) else (if n < 391 then some (1, .right, 595) else some (1,
+  .right, 525))) else (if n < 393 then some (1, .right, 524) else (if n < 394 then some (1,
+  .right, 616) else some (1, .right, 393)))))
+
+def _refTrans1_36 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 400 then (if n < 397 then (if n < 396 then some (1, .right, 394) else some (1, .right,
+  526)) else (if n < 398 then some (1, .right, 621) else (if n < 399 then some (1, .right, 526)
+  else some (1, .right, 676)))) else (if n < 403 then (if n < 401 then some (1, .right, 399) else
+  (if n < 402 then some (1, .right, 400) else some (1, .right, 401))) else (if n < 404 then some
+  (1, .right, 80) else (if n < 405 then some (1, .right, 403) else some (1, .right, 404)))))
+
+def _refTrans1_37 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 412 then (if n < 409 then (if n < 407 then some (1, .right, 543) else (if n < 408 then
+  some (1, .right, 525) else some (1, .right, 407))) else (if n < 410 then some (1, .right, 700)
+  else (if n < 411 then some (1, .right, 409) else some (1, .right, 525)))) else (if n < 415 then
+  (if n < 413 then some (1, .right, 524) else (if n < 414 then some (1, .right, 718) else some (1,
+  .right, 588))) else (if n < 416 then some (1, .right, 414) else (if n < 417 then some (1,
+  .right, 101) else some (1, .right, 524)))))
+
+def _refTrans1_38 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 423 then (if n < 420 then (if n < 419 then some (1, .right, 417) else some (1, .right,
+  623)) else (if n < 421 then some (1, .right, 525) else (if n < 422 then some (1, .right, 524)
+  else some (1, .right, 421)))) else (if n < 426 then (if n < 424 then some (1, .right, 603) else
+  (if n < 425 then some (1, .right, 423) else some (1, .right, 424))) else (if n < 427 then some
+  (1, .right, 583) else (if n < 428 then some (1, .right, 526) else some (1, .right, 427)))))
+
+def _refTrans1_39 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 435 then (if n < 432 then (if n < 430 then some (1, .right, 122) else (if n < 431 then
+  some (1, .right, 524) else some (1, .right, 430))) else (if n < 433 then some (1, .right, 431)
+  else (if n < 434 then some (1, .right, 432) else some (1, .right, 322)))) else (if n < 438 then
+  (if n < 436 then some (1, .right, 434) else (if n < 437 then some (1, .right, 720) else some (1,
   .right, 178))) else (if n < 439 then some (1, .right, 524) else (if n < 440 then some (1,
-  .right, 526) else some (1, .right, 439)))))) else (if n < 453 then (if n < 447 then (if n < 444
-  then (if n < 442 then some (1, .right, 440) else (if n < 443 then some (1, .right, 441) else
-  some (1, .right, 442))) else (if n < 445 then some (1, .right, 443) else (if n < 446 then some
-  (1, .right, 126) else some (1, .right, 524)))) else (if n < 450 then (if n < 448 then some (1,
-  .right, 446) else (if n < 449 then some (1, .right, 447) else some (1, .right, 376))) else (if n
-  < 451 then some (1, .right, 449) else (if n < 452 then some (1, .right, 450) else some (1,
-  .right, 719))))) else (if n < 459 then (if n < 456 then (if n < 454 then some (1, .right, 585)
-  else (if n < 455 then some (1, .right, 333) else some (1, .right, 591))) else (if n < 457 then
-  some (1, .right, 455) else (if n < 458 then some (1, .right, 456) else some (1, .right, 543))))
-  else (if n < 462 then (if n < 460 then some (1, .right, 525) else (if n < 461 then some (1,
-  .right, 459) else some (1, .right, 460))) else (if n < 463 then some (1, .right, 676) else (if n
-  < 464 then some (1, .right, 525) else some (1, .right, 524)))))))) else (if n < 511 then (if n <
-  488 then (if n < 476 then (if n < 470 then (if n < 467 then (if n < 466 then some (1, .right,
-  464) else some (1, .right, 452)) else (if n < 468 then some (1, .right, 466) else (if n < 469
-  then some (1, .right, 64) else some (1, .right, 524)))) else (if n < 473 then (if n < 471 then
-  some (1, .right, 469) else (if n < 472 then some (1, .right, 470) else some (1, .right, 362)))
-  else (if n < 474 then some (1, .right, 472) else (if n < 475 then some (1, .right, 473) else
-  some (1, .right, 474))))) else (if n < 482 then (if n < 479 then (if n < 477 then some (1,
-  .right, 475) else (if n < 478 then some (1, .right, 597) else some (1, .right, 417))) else (if n
-  < 480 then some (1, .right, 599) else (if n < 481 then some (1, .right, 479) else some (1,
-  .right, 338)))) else (if n < 485 then (if n < 483 then some (1, .right, 436) else (if n < 484
-  then some (1, .right, 430) else some (1, .right, 483))) else (if n < 486 then some (1, .right,
-  484) else (if n < 487 then some (1, .right, 485) else some (1, .right, 525)))))) else (if n <
-  499 then (if n < 493 then (if n < 490 then (if n < 489 then some (1, .right, 524) else some (1,
-  .right, 488)) else (if n < 491 then some (1, .right, 489) else (if n < 492 then some (1, .right,
-  317) else some (1, .right, 491)))) else (if n < 496 then (if n < 494 then some (1, .right, 492)
-  else (if n < 495 then some (1, .right, 543) else some (1, .right, 545))) else (if n < 497 then
-  some (1, .right, 495) else (if n < 498 then some (1, .right, 496) else some (1, .right, 497)))))
-  else (if n < 505 then (if n < 502 then (if n < 500 then some (1, .right, 73) else (if n < 501
-  then some (1, .right, 89) else some (1, .right, 500))) else (if n < 503 then some (1, .right,
-  718) else (if n < 504 then some (1, .right, 525) else some (1, .right, 524)))) else (if n < 508
-  then (if n < 506 then some (1, .right, 700) else (if n < 507 then some (1, .right, 505) else
-  some (1, .right, 506))) else (if n < 509 then some (1, .right, 507) else (if n < 510 then some
-  (1, .right, 508) else some (1, .right, 509))))))) else (if n < 534 then (if n < 522 then (if n <
-  516 then (if n < 513 then (if n < 512 then some (1, .right, 510) else some (1, .right, 635))
-  else (if n < 514 then none else (if n < 515 then some (1, .right, 513) else some (1, .right,
-  526)))) else (if n < 519 then (if n < 517 then some (1, .right, 527) else (if n < 518 then some
-  (1, .right, 528) else some (1, .right, 529))) else (if n < 520 then some (1, .right, 530) else
-  (if n < 521 then some (1, .right, 531) else some (1, .right, 532))))) else (if n < 528 then (if
-  n < 525 then (if n < 523 then some (1, .right, 521) else (if n < 524 then some (1, .right, 522)
-  else some (1, .left, 11))) else (if n < 526 then some (1, .left, 9) else (if n < 527 then some
-  (1, .left, 15) else some (1, .left, 17)))) else (if n < 531 then (if n < 529 then some (1,
-  .left, 19) else (if n < 530 then some (1, .left, 21) else some (1, .left, 23))) else (if n < 532
-  then some (1, .left, 25) else (if n < 533 then some (1, .left, 27) else some (1, .right,
-  533)))))) else (if n < 546 then (if n < 540 then (if n < 537 then (if n < 535 then some (1,
-  .right, 534) else (if n < 536 then some (1, .right, 535) else some (1, .right, 536))) else (if n
-  < 538 then some (1, .right, 537) else (if n < 539 then some (1, .right, 538) else some (1,
-  .right, 539)))) else (if n < 543 then (if n < 541 then some (1, .right, 540) else (if n < 542
-  then some (1, .right, 541) else some (1, .right, 542))) else (if n < 544 then some (1, .right,
-  543) else (if n < 545 then some (1, .right, 544) else some (1, .right, 545))))) else (if n < 552
-  then (if n < 549 then (if n < 547 then some (1, .right, 546) else (if n < 548 then some (1,
-  .right, 547) else some (1, .right, 548))) else (if n < 550 then some (1, .right, 549) else (if n
-  < 551 then some (1, .right, 550) else some (1, .right, 551)))) else (if n < 555 then (if n < 553
-  then some (1, .right, 552) else (if n < 554 then some (1, .right, 553) else some (1, .right,
-  554))) else (if n < 556 then some (1, .right, 555) else (if n < 557 then some (1, .right, 556)
-  else some (1, .right, 557))))))))) else (if n < 651 then (if n < 604 then (if n < 581 then (if n
-  < 569 then (if n < 563 then (if n < 560 then (if n < 559 then some (1, .right, 558) else some
-  (1, .right, 559)) else (if n < 561 then some (1, .right, 560) else (if n < 562 then some (1,
-  .right, 561) else some (1, .right, 562)))) else (if n < 566 then (if n < 564 then some (1,
-  .right, 563) else (if n < 565 then some (1, .right, 564) else some (1, .left, 566))) else (if n
-  < 567 then some (1, .left, 566) else (if n < 568 then some (1, .left, 568) else some (1, .left,
-  568))))) else (if n < 575 then (if n < 572 then (if n < 570 then some (1, .right, 635) else (if
-  n < 571 then some (1, .right, 638) else some (1, .right, 653))) else (if n < 573 then some (1,
-  .right, 651) else (if n < 574 then some (1, .right, 644) else some (1, .right, 558)))) else (if
-  n < 578 then (if n < 576 then some (1, .right, 574) else (if n < 577 then some (1, .right, 651)
-  else some (1, .right, 635))) else (if n < 579 then some (1, .right, 638) else (if n < 580 then
-  some (1, .right, 644) else some (1, .right, 672)))))) else (if n < 592 then (if n < 586 then (if
-  n < 583 then (if n < 582 then some (1, .right, 651) else some (1, .right, 635)) else (if n < 584
-  then some (1, .right, 638) else (if n < 585 then some (1, .right, 672) else some (1, .right,
-  651)))) else (if n < 589 then (if n < 587 then some (1, .right, 644) else (if n < 588 then some
-  (1, .right, 653) else some (1, .right, 651))) else (if n < 590 then some (1, .right, 561) else
-  (if n < 591 then some (1, .right, 589) else some (1, .right, 651))))) else (if n < 598 then (if
-  n < 595 then (if n < 593 then some (1, .right, 574) else (if n < 594 then some (1, .right, 651)
-  else some (1, .right, 635))) else (if n < 596 then some (1, .right, 638) else (if n < 597 then
-  some (1, .right, 653) else some (1, .right, 651)))) else (if n < 601 then (if n < 599 then some
-  (1, .right, 574) else (if n < 600 then some (1, .right, 651) else some (1, .right, 644))) else
-  (if n < 602 then some (1, .right, 648) else (if n < 603 then some (1, .right, 601) else some (1,
-  .right, 651))))))) else (if n < 627 then (if n < 615 then (if n < 609 then (if n < 606 then (if
-  n < 605 then some (1, .right, 635) else some (1, .right, 638)) else (if n < 607 then some (1,
-  .right, 667) else (if n < 608 then some (1, .right, 651) else some (1, .right, 644)))) else (if
-  n < 612 then (if n < 610 then some (1, .right, 653) else (if n < 611 then some (1, .right, 651)
-  else some (1, .right, 574))) else (if n < 613 then some (1, .right, 651) else (if n < 614 then
-  some (1, .right, 562) else some (1, .right, 651))))) else (if n < 621 then (if n < 618 then (if
-  n < 616 then some (1, .right, 635) else (if n < 617 then some (1, .right, 638) else some (1,
-  .right, 644))) else (if n < 619 then some (1, .right, 648) else (if n < 620 then some (1,
-  .right, 651) else some (1, .right, 656)))) else (if n < 624 then (if n < 622 then some (1,
-  .right, 651) else (if n < 623 then some (1, .right, 574) else some (1, .right, 651))) else (if n
-  < 625 then some (1, .right, 635) else (if n < 626 then some (1, .right, 638) else some (1,
-  .right, 562)))))) else (if n < 639 then (if n < 633 then (if n < 630 then (if n < 628 then some
-  (1, .right, 626) else (if n < 629 then some (1, .right, 651) else some (1, .right, 644))) else
-  (if n < 631 then some (1, .right, 563) else (if n < 632 then some (1, .right, 651) else some (1,
-  .left, 633)))) else (if n < 636 then (if n < 634 then some (0, .left, 634) else (if n < 635 then
-  some (0, .left, 14) else some (1, .left, 636))) else (if n < 637 then some (1, .left, 11) else
-  (if n < 638 then some (1, .right, 635) else some (1, .right, 525))))) else (if n < 645 then (if
-  n < 642 then (if n < 640 then some (1, .right, 638) else (if n < 641 then some (1, .left, 641)
-  else some (0, .left, 642))) else (if n < 643 then some (0, .left, 643) else (if n < 644 then
-  some (0, .left, 16) else some (1, .left, 645)))) else (if n < 648 then (if n < 646 then some (1,
-  .left, 646) else (if n < 647 then some (0, .left, 15) else some (1, .right, 644))) else (if n <
-  649 then some (1, .right, 648) else (if n < 650 then some (1, .right, 648) else some (1, .right,
-  525)))))))) else (if n < 697 then (if n < 674 then (if n < 662 then (if n < 656 then (if n < 653
-  then (if n < 652 then some (1, .right, 524) else some (1, .right, 651)) else (if n < 654 then
-  some (1, .right, 558) else (if n < 655 then some (1, .right, 653) else some (1, .right, 651))))
-  else (if n < 659 then (if n < 657 then some (1, .right, 560) else (if n < 658 then some (1,
-  .right, 656) else some (1, .right, 651))) else (if n < 660 then some (1, .right, 563) else (if n
-  < 661 then some (1, .right, 659) else some (1, .right, 651))))) else (if n < 668 then (if n <
-  665 then (if n < 663 then some (1, .right, 563) else (if n < 664 then some (1, .right, 651) else
-  some (1, .right, 635))) else (if n < 666 then some (1, .right, 638) else (if n < 667 then some
-  (1, .right, 644) else some (1, .right, 560)))) else (if n < 671 then (if n < 669 then some (1,
-  .right, 667) else (if n < 670 then some (1, .right, 651) else some (1, .right, 648))) else (if n
-  < 672 then some (1, .right, 651) else (if n < 673 then some (1, .right, 561) else some (1,
-  .right, 672)))))) else (if n < 685 then (if n < 679 then (if n < 676 then (if n < 675 then some
-  (1, .right, 651) else some (1, .right, 574)) else (if n < 677 then some (1, .right, 651) else
-  (if n < 678 then some (1, .right, 562) else some (1, .right, 677)))) else (if n < 682 then (if n
-  < 680 then some (1, .right, 651) else (if n < 681 then some (1, .right, 644) else some (1,
-  .right, 659))) else (if n < 683 then some (1, .right, 651) else (if n < 684 then some (1,
-  .right, 635) else some (1, .right, 638))))) else (if n < 691 then (if n < 688 then (if n < 686
-  then some (1, .right, 701) else (if n < 687 then some (1, .right, 632) else some (1, .right,
-  686))) else (if n < 689 then some (1, .right, 705) else (if n < 690 then some (1, .right, 632)
-  else some (1, .right, 689)))) else (if n < 694 then (if n < 692 then some (1, .right, 708) else
-  (if n < 693 then some (1, .right, 710) else some (1, .right, 632))) else (if n < 695 then some
-  (1, .right, 693) else (if n < 696 then some (1, .right, 713) else some (1, .right, 742)))))))
-  else (if n < 720 then (if n < 708 then (if n < 702 then (if n < 699 then (if n < 698 then some
-  (1, .right, 632) else some (1, .right, 697)) else (if n < 700 then some (1, .right, 635) else
-  (if n < 701 then some (1, .right, 638) else some (1, .right, 632)))) else (if n < 705 then (if n
-  < 703 then some (1, .right, 701) else (if n < 704 then some (1, .right, 632) else some (1,
-  .right, 703))) else (if n < 706 then some (1, .right, 632) else (if n < 707 then some (1,
-  .right, 705) else some (1, .right, 689))))) else (if n < 714 then (if n < 711 then (if n < 709
-  then some (1, .right, 632) else (if n < 710 then some (1, .right, 708) else some (1, .left,
-  711))) else (if n < 712 then some (0, .left, 646) else (if n < 713 then some (1, .right, 710)
-  else some (1, .right, 632)))) else (if n < 717 then (if n < 715 then some (1, .right, 713) else
-  (if n < 716 then some (1, .right, 725) else some (1, .right, 742))) else (if n < 718 then some
-  (1, .right, 635) else (if n < 719 then some (1, .right, 638) else some (1, .right, 686))))))
-  else (if n < 732 then (if n < 726 then (if n < 723 then (if n < 721 then some (1, .right, 705)
-  else (if n < 722 then some (1, .right, 689) else some (1, .right, 708))) else (if n < 724 then
-  some (1, .right, 710) else (if n < 725 then some (1, .right, 713) else some (1, .right, 632))))
-  else (if n < 729 then (if n < 727 then some (1, .right, 725) else (if n < 728 then some (1,
-  .right, 635) else some (1, .right, 638))) else (if n < 730 then some (1, .right, 703) else (if n
-  < 731 then some (1, .right, 686) else some (1, .right, 710))))) else (if n < 738 then (if n <
-  735 then (if n < 733 then some (1, .right, 742) else (if n < 734 then some (1, .right, 635) else
-  some (1, .right, 638))) else (if n < 736 then some (1, .right, 689) else (if n < 737 then some
-  (1, .right, 710) else some (1, .right, 693)))) else (if n < 741 then (if n < 739 then some (1,
-  .right, 742) else (if n < 740 then some (1, .right, 693) else some (1, .right, 710))) else (if n
-  < 742 then some (1, .right, 713) else (if n < 743 then some (1, .right, 632) else some (1,
-  .right, 742)))))))))))
+  .right, 526) else some (1, .right, 439)))))
+
+def _refTrans1_40 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 447 then (if n < 444 then (if n < 442 then some (1, .right, 440) else (if n < 443 then
+  some (1, .right, 441) else some (1, .right, 442))) else (if n < 445 then some (1, .right, 443)
+  else (if n < 446 then some (1, .right, 126) else some (1, .right, 524)))) else (if n < 450 then
+  (if n < 448 then some (1, .right, 446) else (if n < 449 then some (1, .right, 447) else some (1,
+  .right, 376))) else (if n < 451 then some (1, .right, 449) else (if n < 452 then some (1,
+  .right, 450) else some (1, .right, 719)))))
+
+def _refTrans1_41 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 459 then (if n < 456 then (if n < 454 then some (1, .right, 585) else (if n < 455 then
+  some (1, .right, 333) else some (1, .right, 591))) else (if n < 457 then some (1, .right, 455)
+  else (if n < 458 then some (1, .right, 456) else some (1, .right, 543)))) else (if n < 462 then
+  (if n < 460 then some (1, .right, 525) else (if n < 461 then some (1, .right, 459) else some (1,
+  .right, 460))) else (if n < 463 then some (1, .right, 676) else (if n < 464 then some (1,
+  .right, 525) else some (1, .right, 524)))))
+
+def _refTrans1_42 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 470 then (if n < 467 then (if n < 466 then some (1, .right, 464) else some (1, .right,
+  452)) else (if n < 468 then some (1, .right, 466) else (if n < 469 then some (1, .right, 64)
+  else some (1, .right, 524)))) else (if n < 473 then (if n < 471 then some (1, .right, 469) else
+  (if n < 472 then some (1, .right, 470) else some (1, .right, 362))) else (if n < 474 then some
+  (1, .right, 472) else (if n < 475 then some (1, .right, 473) else some (1, .right, 474)))))
+
+def _refTrans1_43 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 482 then (if n < 479 then (if n < 477 then some (1, .right, 475) else (if n < 478 then
+  some (1, .right, 597) else some (1, .right, 417))) else (if n < 480 then some (1, .right, 599)
+  else (if n < 481 then some (1, .right, 479) else some (1, .right, 338)))) else (if n < 485 then
+  (if n < 483 then some (1, .right, 436) else (if n < 484 then some (1, .right, 430) else some (1,
+  .right, 483))) else (if n < 486 then some (1, .right, 484) else (if n < 487 then some (1,
+  .right, 485) else some (1, .right, 525)))))
+
+def _refTrans1_44 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 493 then (if n < 490 then (if n < 489 then some (1, .right, 524) else some (1, .right,
+  488)) else (if n < 491 then some (1, .right, 489) else (if n < 492 then some (1, .right, 317)
+  else some (1, .right, 491)))) else (if n < 496 then (if n < 494 then some (1, .right, 492) else
+  (if n < 495 then some (1, .right, 543) else some (1, .right, 545))) else (if n < 497 then some
+  (1, .right, 495) else (if n < 498 then some (1, .right, 496) else some (1, .right, 497)))))
+
+def _refTrans1_45 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 505 then (if n < 502 then (if n < 500 then some (1, .right, 73) else (if n < 501 then
+  some (1, .right, 89) else some (1, .right, 500))) else (if n < 503 then some (1, .right, 718)
+  else (if n < 504 then some (1, .right, 525) else some (1, .right, 524)))) else (if n < 508 then
+  (if n < 506 then some (1, .right, 700) else (if n < 507 then some (1, .right, 505) else some (1,
+  .right, 506))) else (if n < 509 then some (1, .right, 507) else (if n < 510 then some (1,
+  .right, 508) else some (1, .right, 509)))))
+
+def _refTrans1_46 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 516 then (if n < 513 then (if n < 512 then some (1, .right, 510) else some (1, .right,
+  635)) else (if n < 514 then none else (if n < 515 then some (1, .right, 513) else some (1,
+  .right, 526)))) else (if n < 519 then (if n < 517 then some (1, .right, 527) else (if n < 518
+  then some (1, .right, 528) else some (1, .right, 529))) else (if n < 520 then some (1, .right,
+  530) else (if n < 521 then some (1, .right, 531) else some (1, .right, 532)))))
+
+def _refTrans1_47 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 528 then (if n < 525 then (if n < 523 then some (1, .right, 521) else (if n < 524 then
+  some (1, .right, 522) else some (1, .left, 11))) else (if n < 526 then some (1, .left, 9) else
+  (if n < 527 then some (1, .left, 15) else some (1, .left, 17)))) else (if n < 531 then (if n <
+  529 then some (1, .left, 19) else (if n < 530 then some (1, .left, 21) else some (1, .left,
+  23))) else (if n < 532 then some (1, .left, 25) else (if n < 533 then some (1, .left, 27) else
+  some (1, .right, 533)))))
+
+def _refTrans1_48 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 540 then (if n < 537 then (if n < 535 then some (1, .right, 534) else (if n < 536 then
+  some (1, .right, 535) else some (1, .right, 536))) else (if n < 538 then some (1, .right, 537)
+  else (if n < 539 then some (1, .right, 538) else some (1, .right, 539)))) else (if n < 543 then
+  (if n < 541 then some (1, .right, 540) else (if n < 542 then some (1, .right, 541) else some (1,
+  .right, 542))) else (if n < 544 then some (1, .right, 543) else (if n < 545 then some (1,
+  .right, 544) else some (1, .right, 545)))))
+
+def _refTrans1_49 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 552 then (if n < 549 then (if n < 547 then some (1, .right, 546) else (if n < 548 then
+  some (1, .right, 547) else some (1, .right, 548))) else (if n < 550 then some (1, .right, 549)
+  else (if n < 551 then some (1, .right, 550) else some (1, .right, 551)))) else (if n < 555 then
+  (if n < 553 then some (1, .right, 552) else (if n < 554 then some (1, .right, 553) else some (1,
+  .right, 554))) else (if n < 556 then some (1, .right, 555) else (if n < 557 then some (1,
+  .right, 556) else some (1, .right, 557)))))
+
+def _refTrans1_50 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 563 then (if n < 560 then (if n < 559 then some (1, .right, 558) else some (1, .right,
+  559)) else (if n < 561 then some (1, .right, 560) else (if n < 562 then some (1, .right, 561)
+  else some (1, .right, 562)))) else (if n < 566 then (if n < 564 then some (1, .right, 563) else
+  (if n < 565 then some (1, .right, 564) else some (1, .left, 566))) else (if n < 567 then some
+  (1, .left, 566) else (if n < 568 then some (1, .left, 568) else some (1, .left, 568)))))
+
+def _refTrans1_51 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 575 then (if n < 572 then (if n < 570 then some (1, .right, 635) else (if n < 571 then
+  some (1, .right, 638) else some (1, .right, 653))) else (if n < 573 then some (1, .right, 651)
+  else (if n < 574 then some (1, .right, 644) else some (1, .right, 558)))) else (if n < 578 then
+  (if n < 576 then some (1, .right, 574) else (if n < 577 then some (1, .right, 651) else some (1,
+  .right, 635))) else (if n < 579 then some (1, .right, 638) else (if n < 580 then some (1,
+  .right, 644) else some (1, .right, 672)))))
+
+def _refTrans1_52 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 586 then (if n < 583 then (if n < 582 then some (1, .right, 651) else some (1, .right,
+  635)) else (if n < 584 then some (1, .right, 638) else (if n < 585 then some (1, .right, 672)
+  else some (1, .right, 651)))) else (if n < 589 then (if n < 587 then some (1, .right, 644) else
+  (if n < 588 then some (1, .right, 653) else some (1, .right, 651))) else (if n < 590 then some
+  (1, .right, 561) else (if n < 591 then some (1, .right, 589) else some (1, .right, 651)))))
+
+def _refTrans1_53 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 598 then (if n < 595 then (if n < 593 then some (1, .right, 574) else (if n < 594 then
+  some (1, .right, 651) else some (1, .right, 635))) else (if n < 596 then some (1, .right, 638)
+  else (if n < 597 then some (1, .right, 653) else some (1, .right, 651)))) else (if n < 601 then
+  (if n < 599 then some (1, .right, 574) else (if n < 600 then some (1, .right, 651) else some (1,
+  .right, 644))) else (if n < 602 then some (1, .right, 648) else (if n < 603 then some (1,
+  .right, 601) else some (1, .right, 651)))))
+
+def _refTrans1_54 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 609 then (if n < 606 then (if n < 605 then some (1, .right, 635) else some (1, .right,
+  638)) else (if n < 607 then some (1, .right, 667) else (if n < 608 then some (1, .right, 651)
+  else some (1, .right, 644)))) else (if n < 612 then (if n < 610 then some (1, .right, 653) else
+  (if n < 611 then some (1, .right, 651) else some (1, .right, 574))) else (if n < 613 then some
+  (1, .right, 651) else (if n < 614 then some (1, .right, 562) else some (1, .right, 651)))))
+
+def _refTrans1_55 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 621 then (if n < 618 then (if n < 616 then some (1, .right, 635) else (if n < 617 then
+  some (1, .right, 638) else some (1, .right, 644))) else (if n < 619 then some (1, .right, 648)
+  else (if n < 620 then some (1, .right, 651) else some (1, .right, 656)))) else (if n < 624 then
+  (if n < 622 then some (1, .right, 651) else (if n < 623 then some (1, .right, 574) else some (1,
+  .right, 651))) else (if n < 625 then some (1, .right, 635) else (if n < 626 then some (1,
+  .right, 638) else some (1, .right, 562)))))
+
+def _refTrans1_56 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 633 then (if n < 630 then (if n < 628 then some (1, .right, 626) else (if n < 629 then
+  some (1, .right, 651) else some (1, .right, 644))) else (if n < 631 then some (1, .right, 563)
+  else (if n < 632 then some (1, .right, 651) else some (1, .left, 633)))) else (if n < 636 then
+  (if n < 634 then some (0, .left, 634) else (if n < 635 then some (0, .left, 14) else some (1,
+  .left, 636))) else (if n < 637 then some (1, .left, 11) else (if n < 638 then some (1, .right,
+  635) else some (1, .right, 525)))))
+
+def _refTrans1_57 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 645 then (if n < 642 then (if n < 640 then some (1, .right, 638) else (if n < 641 then
+  some (1, .left, 641) else some (0, .left, 642))) else (if n < 643 then some (0, .left, 643) else
+  (if n < 644 then some (0, .left, 16) else some (1, .left, 645)))) else (if n < 648 then (if n <
+  646 then some (1, .left, 646) else (if n < 647 then some (0, .left, 15) else some (1, .right,
+  644))) else (if n < 649 then some (1, .right, 648) else (if n < 650 then some (1, .right, 648)
+  else some (1, .right, 525)))))
+
+def _refTrans1_58 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 656 then (if n < 653 then (if n < 652 then some (1, .right, 524) else some (1, .right,
+  651)) else (if n < 654 then some (1, .right, 558) else (if n < 655 then some (1, .right, 653)
+  else some (1, .right, 651)))) else (if n < 659 then (if n < 657 then some (1, .right, 560) else
+  (if n < 658 then some (1, .right, 656) else some (1, .right, 651))) else (if n < 660 then some
+  (1, .right, 563) else (if n < 661 then some (1, .right, 659) else some (1, .right, 651)))))
+
+def _refTrans1_59 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 668 then (if n < 665 then (if n < 663 then some (1, .right, 563) else (if n < 664 then
+  some (1, .right, 651) else some (1, .right, 635))) else (if n < 666 then some (1, .right, 638)
+  else (if n < 667 then some (1, .right, 644) else some (1, .right, 560)))) else (if n < 671 then
+  (if n < 669 then some (1, .right, 667) else (if n < 670 then some (1, .right, 651) else some (1,
+  .right, 648))) else (if n < 672 then some (1, .right, 651) else (if n < 673 then some (1,
+  .right, 561) else some (1, .right, 672)))))
+
+def _refTrans1_60 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 679 then (if n < 676 then (if n < 675 then some (1, .right, 651) else some (1, .right,
+  574)) else (if n < 677 then some (1, .right, 651) else (if n < 678 then some (1, .right, 562)
+  else some (1, .right, 677)))) else (if n < 682 then (if n < 680 then some (1, .right, 651) else
+  (if n < 681 then some (1, .right, 644) else some (1, .right, 659))) else (if n < 683 then some
+  (1, .right, 651) else (if n < 684 then some (1, .right, 635) else some (1, .right, 638)))))
+
+def _refTrans1_61 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 691 then (if n < 688 then (if n < 686 then some (1, .right, 701) else (if n < 687 then
+  some (1, .right, 632) else some (1, .right, 686))) else (if n < 689 then some (1, .right, 705)
+  else (if n < 690 then some (1, .right, 632) else some (1, .right, 689)))) else (if n < 694 then
+  (if n < 692 then some (1, .right, 708) else (if n < 693 then some (1, .right, 710) else some (1,
+  .right, 632))) else (if n < 695 then some (1, .right, 693) else (if n < 696 then some (1,
+  .right, 713) else some (1, .right, 742)))))
+
+def _refTrans1_62 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 702 then (if n < 699 then (if n < 698 then some (1, .right, 632) else some (1, .right,
+  697)) else (if n < 700 then some (1, .right, 635) else (if n < 701 then some (1, .right, 638)
+  else some (1, .right, 632)))) else (if n < 705 then (if n < 703 then some (1, .right, 701) else
+  (if n < 704 then some (1, .right, 632) else some (1, .right, 703))) else (if n < 706 then some
+  (1, .right, 632) else (if n < 707 then some (1, .right, 705) else some (1, .right, 689)))))
+
+def _refTrans1_63 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 714 then (if n < 711 then (if n < 709 then some (1, .right, 632) else (if n < 710 then
+  some (1, .right, 708) else some (1, .left, 711))) else (if n < 712 then some (0, .left, 646)
+  else (if n < 713 then some (1, .right, 710) else some (1, .right, 632)))) else (if n < 717 then
+  (if n < 715 then some (1, .right, 713) else (if n < 716 then some (1, .right, 725) else some (1,
+  .right, 742))) else (if n < 718 then some (1, .right, 635) else (if n < 719 then some (1,
+  .right, 638) else some (1, .right, 686)))))
+
+def _refTrans1_64 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 726 then (if n < 723 then (if n < 721 then some (1, .right, 705) else (if n < 722 then
+  some (1, .right, 689) else some (1, .right, 708))) else (if n < 724 then some (1, .right, 710)
+  else (if n < 725 then some (1, .right, 713) else some (1, .right, 632)))) else (if n < 729 then
+  (if n < 727 then some (1, .right, 725) else (if n < 728 then some (1, .right, 635) else some (1,
+  .right, 638))) else (if n < 730 then some (1, .right, 703) else (if n < 731 then some (1,
+  .right, 686) else some (1, .right, 710)))))
+
+def _refTrans1_65 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 738 then (if n < 735 then (if n < 733 then some (1, .right, 742) else (if n < 734 then
+  some (1, .right, 635) else some (1, .right, 638))) else (if n < 736 then some (1, .right, 689)
+  else (if n < 737 then some (1, .right, 710) else some (1, .right, 693)))) else (if n < 741 then
+  (if n < 739 then some (1, .right, 742) else (if n < 740 then some (1, .right, 693) else some (1,
+  .right, 710))) else (if n < 742 then some (1, .right, 713) else (if n < 743 then some (1,
+  .right, 632) else some (1, .right, 742)))))
+
+def _refTrans1_66 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 465 then (if n < 418 then (if n < 395 then (if n < 383 then _refTrans1_34 n else
+  _refTrans1_35 n) else (if n < 406 then _refTrans1_36 n else _refTrans1_37 n)) else (if n < 441
+  then (if n < 429 then _refTrans1_38 n else _refTrans1_39 n) else (if n < 453 then _refTrans1_40
+  n else _refTrans1_41 n))) else (if n < 511 then (if n < 488 then (if n < 476 then _refTrans1_42
+  n else _refTrans1_43 n) else (if n < 499 then _refTrans1_44 n else _refTrans1_45 n)) else (if n
+  < 534 then (if n < 522 then _refTrans1_46 n else _refTrans1_47 n) else (if n < 546 then
+  _refTrans1_48 n else _refTrans1_49 n))))
+
+def _refTrans1_67 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 651 then (if n < 604 then (if n < 581 then (if n < 569 then _refTrans1_50 n else
+  _refTrans1_51 n) else (if n < 592 then _refTrans1_52 n else _refTrans1_53 n)) else (if n < 627
+  then (if n < 615 then _refTrans1_54 n else _refTrans1_55 n) else (if n < 639 then _refTrans1_56
+  n else _refTrans1_57 n))) else (if n < 697 then (if n < 674 then (if n < 662 then _refTrans1_58
+  n else _refTrans1_59 n) else (if n < 685 then _refTrans1_60 n else _refTrans1_61 n)) else (if n
+  < 720 then (if n < 708 then _refTrans1_62 n else _refTrans1_63 n) else (if n < 732 then
+  _refTrans1_64 n else _refTrans1_65 n))))
+
+def refTrans1 (n : Nat) : Option (Fin 2 × Dir × Fin 744) :=
+  (if n < 372 then (if n < 186 then _refTrans1_32 n else _refTrans1_33 n) else (if n < 558 then
+  _refTrans1_66 n else _refTrans1_67 n))
 def refTrans (q : Fin 744) (b : Fin 2) : Option (Fin 2 × Dir × Fin 744) :=
   if b == 0 then refTrans0 q.val else refTrans1 q.val
 
-def candTrans0 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
-  (if n < 272 then (if n < 136 then (if n < 68 then (if n < 34 then (if n < 17 then (if n < 9 then
+def _candTrans0_0 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
   (if n < 5 then (if n < 3 then (if n < 2 then (if n < 1 then some (0, .right, 235) else some (0,
   .left, 31)) else some (0, .right, 1)) else (if n < 4 then some (0, .left, 5) else some (0,
   .right, 3))) else (if n < 7 then (if n < 6 then some (0, .left, 6) else some (0, .left, 385))
-  else (if n < 8 then some (1, .left, 6) else some (1, .left, 9)))) else (if n < 13 then (if n <
-  11 then (if n < 10 then some (0, .left, 12) else some (1, .left, 12)) else (if n < 12 then some
-  (1, .right, 353) else some (0, .left, 14))) else (if n < 15 then (if n < 14 then some (1, .left,
-  14) else some (0, .left, 16)) else (if n < 16 then some (1, .left, 16) else some (0, .left,
-  18))))) else (if n < 26 then (if n < 22 then (if n < 20 then (if n < 19 then (if n < 18 then
-  some (1, .left, 18) else some (0, .left, 20)) else some (1, .left, 20)) else (if n < 21 then
-  some (0, .left, 22) else some (1, .left, 22))) else (if n < 24 then (if n < 23 then some (0,
-  .left, 24) else some (1, .left, 24)) else (if n < 25 then some (0, .left, 26) else some (1,
-  .left, 26)))) else (if n < 30 then (if n < 28 then (if n < 27 then some (0, .left, 0) else some
-  (1, .left, 0)) else (if n < 29 then some (0, .left, 383) else some (1, .right, 28))) else (if n
-  < 32 then (if n < 31 then some (0, .right, 32) else some (1, .left, 384)) else (if n < 33 then
-  some (0, .right, 31) else some (0, .left, 34)))))) else (if n < 51 then (if n < 43 then (if n <
-  39 then (if n < 37 then (if n < 36 then (if n < 35 then some (1, .left, 38) else some (0, .left,
-  36)) else some (0, .left, 37)) else (if n < 38 then some (1, .left, 38) else some (1, .left,
-  39))) else (if n < 41 then (if n < 40 then some (1, .left, 21) else some (1, .left, 33)) else
-  (if n < 42 then some (0, .left, 42) else some (1, .left, 43)))) else (if n < 47 then (if n < 45
-  then (if n < 44 then some (0, .left, 17) else some (0, .left, 96)) else (if n < 46 then some (0,
-  .left, 66) else some (0, .left, 15))) else (if n < 49 then (if n < 48 then some (0, .left, 46)
-  else some (0, .left, 49)) else (if n < 50 then some (0, .right, 235) else some (0, .left,
-  51))))) else (if n < 60 then (if n < 56 then (if n < 54 then (if n < 53 then (if n < 52 then
-  some (1, .left, 52) else some (0, .left, 53)) else some (1, .left, 54)) else (if n < 55 then
-  some (0, .left, 55) else some (0, .left, 56))) else (if n < 58 then (if n < 57 then some (0,
-  .left, 57) else some (0, .left, 48)) else (if n < 59 then some (0, .left, 59) else some (1,
-  .left, 59)))) else (if n < 64 then (if n < 62 then (if n < 61 then some (0, .left, 13) else some
-  (0, .left, 43)) else (if n < 63 then some (1, .left, 66) else some (0, .left, 33))) else (if n <
-  66 then (if n < 65 then some (1, .left, 65) else some (1, .left, 3)) else (if n < 67 then some
-  (1, .left, 67) else some (1, .left, 68))))))) else (if n < 102 then (if n < 85 then (if n < 77
-  then (if n < 73 then (if n < 71 then (if n < 70 then (if n < 69 then some (1, .left, 33) else
-  some (0, .left, 70)) else some (1, .left, 62)) else (if n < 72 then some (0, .right, 30) else
-  some (0, .right, 71))) else (if n < 75 then (if n < 74 then some (0, .right, 72) else some (0,
-  .right, 73)) else (if n < 76 then some (0, .right, 371) else some (0, .right, 75)))) else (if n
-  < 81 then (if n < 79 then (if n < 78 then some (0, .right, 453) else some (0, .right, 77)) else
-  (if n < 80 then some (0, .right, 74) else some (0, .right, 513))) else (if n < 83 then (if n <
-  82 then some (0, .right, 499) else some (0, .right, 80)) else (if n < 84 then some (0, .right,
-  513) else some (0, .right, 458))))) else (if n < 94 then (if n < 90 then (if n < 88 then (if n <
-  87 then (if n < 86 then some (0, .right, 82) else some (0, .right, 79)) else some (0, .right,
-  540)) else (if n < 89 then some (0, .right, 467) else some (0, .right, 367))) else (if n < 92
-  then (if n < 91 then some (0, .right, 366) else some (0, .right, 89)) else (if n < 93 then some
-  (0, .right, 538) else some (0, .right, 449)))) else (if n < 98 then (if n < 96 then (if n < 95
-  then some (0, .right, 88) else some (0, .left, 69)) else (if n < 97 then some (0, .left, 40)
-  else some (0, .right, 95))) else (if n < 100 then (if n < 99 then some (0, .right, 97) else some
-  (0, .right, 365)) else (if n < 101 then some (0, .right, 99) else some (0, .right, 100))))))
-  else (if n < 119 then (if n < 111 then (if n < 107 then (if n < 105 then (if n < 104 then (if n
-  < 103 then some (0, .right, 98) else some (0, .left, 69)) else some (0, .left, 69)) else (if n <
-  106 then some (0, .right, 103) else some (0, .right, 536))) else (if n < 109 then (if n < 108
-  then some (0, .right, 446) else some (0, .right, 102)) else (if n < 110 then some (0, .right,
-  94) else some (0, .right, 86)))) else (if n < 115 then (if n < 113 then (if n < 112 then some
+  else (if n < 8 then some (1, .left, 6) else some (1, .left, 9))))
+
+def _candTrans0_1 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 22 then (if n < 20 then (if n < 19 then (if n < 18 then some (1, .left, 18) else some
+  (0, .left, 20)) else some (1, .left, 20)) else (if n < 21 then some (0, .left, 22) else some (1,
+  .left, 22))) else (if n < 24 then (if n < 23 then some (0, .left, 24) else some (1, .left, 24))
+  else (if n < 25 then some (0, .left, 26) else some (1, .left, 26))))
+
+def _candTrans0_2 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 9 then _candTrans0_0 n else (if n < 13 then (if n < 11 then (if n < 10 then some (0,
+  .left, 12) else some (1, .left, 12)) else (if n < 12 then some (1, .right, 353) else some (0,
+  .left, 14))) else (if n < 15 then (if n < 14 then some (1, .left, 14) else some (0, .left, 16))
+  else (if n < 16 then some (1, .left, 16) else some (0, .left, 18)))))
+
+def _candTrans0_3 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 26 then _candTrans0_1 n else (if n < 30 then (if n < 28 then (if n < 27 then some (0,
+  .left, 0) else some (1, .left, 0)) else (if n < 29 then some (0, .left, 383) else some (1,
+  .right, 28))) else (if n < 32 then (if n < 31 then some (0, .right, 32) else some (1, .left,
+  384)) else (if n < 33 then some (0, .right, 31) else some (0, .left, 34)))))
+
+def _candTrans0_4 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 39 then (if n < 37 then (if n < 36 then (if n < 35 then some (1, .left, 38) else some
+  (0, .left, 36)) else some (0, .left, 37)) else (if n < 38 then some (1, .left, 38) else some (1,
+  .left, 39))) else (if n < 41 then (if n < 40 then some (1, .left, 21) else some (1, .left, 33))
+  else (if n < 42 then some (0, .left, 42) else some (1, .left, 43))))
+
+def _candTrans0_5 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 56 then (if n < 54 then (if n < 53 then (if n < 52 then some (1, .left, 52) else some
+  (0, .left, 53)) else some (1, .left, 54)) else (if n < 55 then some (0, .left, 55) else some (0,
+  .left, 56))) else (if n < 58 then (if n < 57 then some (0, .left, 57) else some (0, .left, 48))
+  else (if n < 59 then some (0, .left, 59) else some (1, .left, 59))))
+
+def _candTrans0_6 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 43 then _candTrans0_4 n else (if n < 47 then (if n < 45 then (if n < 44 then some (0,
+  .left, 17) else some (0, .left, 96)) else (if n < 46 then some (0, .left, 66) else some (0,
+  .left, 15))) else (if n < 49 then (if n < 48 then some (0, .left, 46) else some (0, .left, 49))
+  else (if n < 50 then some (0, .right, 235) else some (0, .left, 51)))))
+
+def _candTrans0_7 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 60 then _candTrans0_5 n else (if n < 64 then (if n < 62 then (if n < 61 then some (0,
+  .left, 13) else some (0, .left, 43)) else (if n < 63 then some (1, .left, 66) else some (0,
+  .left, 33))) else (if n < 66 then (if n < 65 then some (1, .left, 65) else some (1, .left, 3))
+  else (if n < 67 then some (1, .left, 67) else some (1, .left, 68)))))
+
+def _candTrans0_8 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 73 then (if n < 71 then (if n < 70 then (if n < 69 then some (1, .left, 33) else some
+  (0, .left, 70)) else some (1, .left, 62)) else (if n < 72 then some (0, .right, 30) else some
+  (0, .right, 71))) else (if n < 75 then (if n < 74 then some (0, .right, 72) else some (0,
+  .right, 73)) else (if n < 76 then some (0, .right, 371) else some (0, .right, 75))))
+
+def _candTrans0_9 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 90 then (if n < 88 then (if n < 87 then (if n < 86 then some (0, .right, 82) else some
+  (0, .right, 79)) else some (0, .right, 540)) else (if n < 89 then some (0, .right, 467) else
+  some (0, .right, 367))) else (if n < 92 then (if n < 91 then some (0, .right, 366) else some (0,
+  .right, 89)) else (if n < 93 then some (0, .right, 538) else some (0, .right, 449))))
+
+def _candTrans0_10 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 77 then _candTrans0_8 n else (if n < 81 then (if n < 79 then (if n < 78 then some (0,
+  .right, 453) else some (0, .right, 77)) else (if n < 80 then some (0, .right, 74) else some (0,
+  .right, 513))) else (if n < 83 then (if n < 82 then some (0, .right, 499) else some (0, .right,
+  80)) else (if n < 84 then some (0, .right, 513) else some (0, .right, 458)))))
+
+def _candTrans0_11 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 94 then _candTrans0_9 n else (if n < 98 then (if n < 96 then (if n < 95 then some (0,
+  .right, 88) else some (0, .left, 69)) else (if n < 97 then some (0, .left, 40) else some (0,
+  .right, 95))) else (if n < 100 then (if n < 99 then some (0, .right, 97) else some (0, .right,
+  365)) else (if n < 101 then some (0, .right, 99) else some (0, .right, 100)))))
+
+def _candTrans0_12 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 107 then (if n < 105 then (if n < 104 then (if n < 103 then some (0, .right, 98) else
+  some (0, .left, 69)) else some (0, .left, 69)) else (if n < 106 then some (0, .right, 103) else
+  some (0, .right, 536))) else (if n < 109 then (if n < 108 then some (0, .right, 446) else some
+  (0, .right, 102)) else (if n < 110 then some (0, .right, 94) else some (0, .right, 86))))
+
+def _candTrans0_13 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 124 then (if n < 122 then (if n < 121 then (if n < 120 then some (0, .right, 116) else
+  some (0, .right, 119)) else some (0, .right, 118)) else (if n < 123 then some (0, .right, 500)
+  else some (0, .right, 122))) else (if n < 126 then (if n < 125 then some (0, .right, 87) else
+  some (0, .right, 123)) else (if n < 127 then some (0, .right, 121) else some (0, .right, 90))))
+
+def _candTrans0_14 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 111 then _candTrans0_12 n else (if n < 115 then (if n < 113 then (if n < 112 then some
   (1, .left, 47) else some (0, .right, 362)) else (if n < 114 then some (0, .right, 111) else some
   (0, .right, 113))) else (if n < 117 then (if n < 116 then some (0, .left, 35) else some (0,
-  .right, 115)) else (if n < 118 then some (0, .right, 116) else some (0, .right, 114))))) else
-  (if n < 128 then (if n < 124 then (if n < 122 then (if n < 121 then (if n < 120 then some (0,
-  .right, 116) else some (0, .right, 119)) else some (0, .right, 118)) else (if n < 123 then some
-  (0, .right, 500) else some (0, .right, 122))) else (if n < 126 then (if n < 125 then some (0,
-  .right, 87) else some (0, .right, 123)) else (if n < 127 then some (0, .right, 121) else some
-  (0, .right, 90)))) else (if n < 132 then (if n < 130 then (if n < 129 then some (0, .right, 542)
-  else some (0, .right, 97)) else (if n < 131 then some (0, .right, 128) else some (0, .right,
-  101))) else (if n < 134 then (if n < 133 then some (0, .right, 130) else some (0, .right, 104))
-  else (if n < 135 then some (0, .right, 531) else some (0, .right, 363)))))))) else (if n < 204
-  then (if n < 170 then (if n < 153 then (if n < 145 then (if n < 141 then (if n < 139 then (if n
-  < 138 then (if n < 137 then some (0, .right, 111) else some (0, .right, 136)) else some (0,
-  .right, 134)) else (if n < 140 then some (0, .left, 47) else some (0, .right, 139))) else (if n
-  < 143 then (if n < 142 then some (0, .right, 140) else some (0, .right, 371)) else (if n < 144
-  then some (0, .right, 142) else some (0, .right, 143)))) else (if n < 149 then (if n < 147 then
-  (if n < 146 then some (0, .right, 141) else some (0, .right, 138)) else (if n < 148 then some
-  (0, .right, 132) else some (0, .right, 126))) else (if n < 151 then (if n < 150 then some (0,
-  .right, 110) else some (0, .right, 362)) else (if n < 152 then some (0, .right, 150) else some
-  (0, .right, 515))))) else (if n < 162 then (if n < 158 then (if n < 156 then (if n < 155 then
-  (if n < 154 then some (0, .right, 477) else some (0, .right, 151)) else some (0, .right, 154))
-  else (if n < 157 then some (0, .right, 153) else some (0, .right, 155))) else (if n < 160 then
-  (if n < 159 then some (0, .right, 156) else some (0, .right, 157)) else (if n < 161 then some
-  (0, .right, 158) else some (0, .right, 159)))) else (if n < 166 then (if n < 164 then (if n <
-  163 then some (0, .right, 160) else some (0, .right, 149)) else (if n < 165 then some (0,
-  .right, 161) else some (0, .right, 490))) else (if n < 168 then (if n < 167 then some (0,
-  .right, 154) else some (0, .right, 372)) else (if n < 169 then some (0, .right, 167) else some
-  (0, .right, 423)))))) else (if n < 187 then (if n < 179 then (if n < 175 then (if n < 173 then
-  (if n < 172 then (if n < 171 then some (0, .right, 373) else some (0, .right, 170)) else some
-  (0, .right, 434)) else (if n < 174 then some (0, .right, 169) else some (0, .right, 166))) else
-  (if n < 177 then (if n < 176 then some (0, .right, 512) else some (0, .right, 437)) else (if n <
-  178 then some (0, .right, 363) else some (0, .right, 177)))) else (if n < 183 then (if n < 181
-  then (if n < 180 then some (0, .right, 523) else some (0, .right, 464)) else (if n < 182 then
-  some (0, .right, 176) else some (0, .right, 174))) else (if n < 185 then (if n < 184 then some
-  (0, .right, 104) else some (0, .right, 183)) else (if n < 186 then some (0, .right, 96) else
-  some (0, .right, 185))))) else (if n < 196 then (if n < 192 then (if n < 190 then (if n < 189
-  then (if n < 188 then some (0, .right, 184) else some (0, .right, 112)) else some (0, .right,
-  525)) else (if n < 191 then some (0, .right, 475) else some (0, .right, 187))) else (if n < 194
-  then (if n < 193 then some (0, .right, 521) else some (0, .right, 439)) else (if n < 195 then
-  some (0, .right, 495) else some (0, .right, 428)))) else (if n < 200 then (if n < 198 then (if n
-  < 197 then some (0, .right, 193) else some (0, .right, 191)) else (if n < 199 then some (0,
-  .right, 182) else some (0, .right, 514))) else (if n < 202 then (if n < 201 then some (0,
-  .right, 199) else some (0, .right, 520)) else (if n < 203 then some (0, .right, 201) else some
-  (0, .right, 200))))))) else (if n < 238 then (if n < 221 then (if n < 213 then (if n < 209 then
-  (if n < 207 then (if n < 206 then (if n < 205 then some (0, .right, 423) else some (0, .right,
-  192)) else some (0, .right, 373)) else (if n < 208 then some (0, .right, 206) else some (0,
-  .right, 207))) else (if n < 211 then (if n < 210 then some (0, .right, 208) else some (0,
-  .right, 205)) else (if n < 212 then some (0, .right, 203) else some (0, .right, 525)))) else (if
-  n < 217 then (if n < 215 then (if n < 214 then some (0, .right, 212) else some (0, .right, 366))
-  else (if n < 216 then some (0, .right, 214) else some (0, .right, 534))) else (if n < 219 then
-  (if n < 218 then some (0, .right, 216) else some (0, .right, 213)) else (if n < 220 then some
-  (0, .right, 537) else some (0, .right, 365))))) else (if n < 230 then (if n < 226 then (if n <
-  224 then (if n < 223 then (if n < 222 then some (0, .right, 363) else some (0, .right, 220))
-  else some (0, .right, 503)) else (if n < 225 then some (0, .right, 219) else some (0, .left,
-  69))) else (if n < 228 then (if n < 227 then some (0, .right, 225) else some (0, .right, 226))
-  else (if n < 229 then some (0, .right, 507) else some (0, .right, 227)))) else (if n < 234 then
-  (if n < 232 then (if n < 231 then some (0, .right, 224) else some (0, .right, 218)) else (if n <
-  233 then some (0, .right, 211) else some (0, .right, 198))) else (if n < 236 then (if n < 235
-  then some (0, .right, 164) else some (0, .right, 163)) else (if n < 237 then some (0, .right,
-  491) else some (0, .right, 394)))))) else (if n < 255 then (if n < 247 then (if n < 243 then (if
-  n < 241 then (if n < 240 then (if n < 239 then some (0, .right, 491) else some (0, .right, 390))
-  else some (0, .right, 237)) else (if n < 242 then some (0, .right, 388) else some (0, .right,
-  241))) else (if n < 245 then (if n < 244 then some (0, .right, 495) else some (0, .right, 243))
-  else (if n < 246 then some (0, .right, 242) else some (0, .right, 240)))) else (if n < 251 then
-  (if n < 249 then (if n < 248 then some (0, .right, 495) else some (0, .right, 396)) else (if n <
-  250 then some (0, .right, 247) else some (0, .right, 401))) else (if n < 253 then (if n < 252
-  then some (0, .right, 492) else some (0, .right, 251)) else (if n < 254 then some (0, .right,
-  252) else some (0, .right, 250))))) else (if n < 264 then (if n < 260 then (if n < 258 then (if
-  n < 257 then (if n < 256 then some (0, .right, 249) else some (0, .right, 171)) else some (0,
-  .right, 256)) else (if n < 259 then some (0, .right, 521) else some (0, .right, 258))) else (if
-  n < 262 then (if n < 261 then some (0, .right, 257) else some (0, .right, 255)) else (if n < 263
-  then some (0, .right, 246) else some (0, .right, 363)))) else (if n < 268 then (if n < 266 then
-  (if n < 265 then some (0, .right, 220) else some (0, .right, 501)) else (if n < 267 then some
-  (0, .right, 103) else some (0, .right, 266))) else (if n < 270 then (if n < 269 then some (0,
-  .right, 265) else some (0, .right, 185)) else (if n < 271 then some (0, .right, 269) else some
-  (0, .right, 268))))))))) else (if n < 408 then (if n < 340 then (if n < 306 then (if n < 289
-  then (if n < 281 then (if n < 277 then (if n < 275 then (if n < 274 then (if n < 273 then some
-  (0, .right, 263) else some (0, .right, 493)) else some (0, .right, 273)) else (if n < 276 then
-  some (0, .right, 496) else some (0, .right, 275))) else (if n < 279 then (if n < 278 then some
-  (0, .right, 274) else some (0, .right, 271)) else (if n < 280 then some (0, .right, 510) else
-  some (0, .right, 518)))) else (if n < 285 then (if n < 283 then (if n < 282 then some (0,
-  .right, 279) else some (0, .right, 494)) else (if n < 284 then some (0, .right, 415) else some
-  (0, .right, 281))) else (if n < 287 then (if n < 286 then some (0, .right, 441) else some (0,
-  .right, 413)) else (if n < 288 then some (0, .right, 373) else some (0, .right, 287))))) else
-  (if n < 298 then (if n < 294 then (if n < 292 then (if n < 291 then (if n < 290 then some (0,
-  .right, 288) else some (0, .right, 286)) else some (0, .right, 285)) else (if n < 293 then some
-  (0, .right, 284) else some (0, .right, 278))) else (if n < 296 then (if n < 295 then some (0,
-  .right, 262) else some (0, .right, 406)) else (if n < 297 then some (0, .right, 493) else some
-  (0, .right, 411)))) else (if n < 302 then (if n < 300 then (if n < 299 then some (0, .right,
-  295) else some (0, .right, 401)) else (if n < 301 then some (0, .right, 299) else some (0,
-  .right, 529))) else (if n < 304 then (if n < 303 then some (0, .right, 301) else some (0,
-  .right, 300)) else (if n < 305 then some (0, .right, 298) else some (0, .left, 47)))))) else (if
-  n < 323 then (if n < 315 then (if n < 311 then (if n < 309 then (if n < 308 then (if n < 307
-  then some (1, .left, 47) else some (0, .right, 305)) else some (0, .right, 529)) else (if n <
-  310 then some (0, .right, 308) else some (0, .right, 306))) else (if n < 313 then (if n < 312
-  then some (0, .right, 501) else some (0, .right, 311)) else (if n < 314 then some (0, .right,
-  309) else some (0, .right, 494)))) else (if n < 319 then (if n < 317 then (if n < 316 then some
+  .right, 115)) else (if n < 118 then some (0, .right, 116) else some (0, .right, 114)))))
+
+def _candTrans0_15 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 128 then _candTrans0_13 n else (if n < 132 then (if n < 130 then (if n < 129 then some
+  (0, .right, 542) else some (0, .right, 97)) else (if n < 131 then some (0, .right, 128) else
+  some (0, .right, 101))) else (if n < 134 then (if n < 133 then some (0, .right, 130) else some
+  (0, .right, 104)) else (if n < 135 then some (0, .right, 531) else some (0, .right, 363)))))
+
+def _candTrans0_16 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 141 then (if n < 139 then (if n < 138 then (if n < 137 then some (0, .right, 111) else
+  some (0, .right, 136)) else some (0, .right, 134)) else (if n < 140 then some (0, .left, 47)
+  else some (0, .right, 139))) else (if n < 143 then (if n < 142 then some (0, .right, 140) else
+  some (0, .right, 371)) else (if n < 144 then some (0, .right, 142) else some (0, .right, 143))))
+
+def _candTrans0_17 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 158 then (if n < 156 then (if n < 155 then (if n < 154 then some (0, .right, 477) else
+  some (0, .right, 151)) else some (0, .right, 154)) else (if n < 157 then some (0, .right, 153)
+  else some (0, .right, 155))) else (if n < 160 then (if n < 159 then some (0, .right, 156) else
+  some (0, .right, 157)) else (if n < 161 then some (0, .right, 158) else some (0, .right, 159))))
+
+def _candTrans0_18 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 145 then _candTrans0_16 n else (if n < 149 then (if n < 147 then (if n < 146 then some
+  (0, .right, 141) else some (0, .right, 138)) else (if n < 148 then some (0, .right, 132) else
+  some (0, .right, 126))) else (if n < 151 then (if n < 150 then some (0, .right, 110) else some
+  (0, .right, 362)) else (if n < 152 then some (0, .right, 150) else some (0, .right, 515)))))
+
+def _candTrans0_19 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 162 then _candTrans0_17 n else (if n < 166 then (if n < 164 then (if n < 163 then some
+  (0, .right, 160) else some (0, .right, 149)) else (if n < 165 then some (0, .right, 161) else
+  some (0, .right, 490))) else (if n < 168 then (if n < 167 then some (0, .right, 154) else some
+  (0, .right, 372)) else (if n < 169 then some (0, .right, 167) else some (0, .right, 423)))))
+
+def _candTrans0_20 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 175 then (if n < 173 then (if n < 172 then (if n < 171 then some (0, .right, 373) else
+  some (0, .right, 170)) else some (0, .right, 434)) else (if n < 174 then some (0, .right, 169)
+  else some (0, .right, 166))) else (if n < 177 then (if n < 176 then some (0, .right, 512) else
+  some (0, .right, 437)) else (if n < 178 then some (0, .right, 363) else some (0, .right, 177))))
+
+def _candTrans0_21 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 192 then (if n < 190 then (if n < 189 then (if n < 188 then some (0, .right, 184) else
+  some (0, .right, 112)) else some (0, .right, 525)) else (if n < 191 then some (0, .right, 475)
+  else some (0, .right, 187))) else (if n < 194 then (if n < 193 then some (0, .right, 521) else
+  some (0, .right, 439)) else (if n < 195 then some (0, .right, 495) else some (0, .right, 428))))
+
+def _candTrans0_22 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 179 then _candTrans0_20 n else (if n < 183 then (if n < 181 then (if n < 180 then some
+  (0, .right, 523) else some (0, .right, 464)) else (if n < 182 then some (0, .right, 176) else
+  some (0, .right, 174))) else (if n < 185 then (if n < 184 then some (0, .right, 104) else some
+  (0, .right, 183)) else (if n < 186 then some (0, .right, 96) else some (0, .right, 185)))))
+
+def _candTrans0_23 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 196 then _candTrans0_21 n else (if n < 200 then (if n < 198 then (if n < 197 then some
+  (0, .right, 193) else some (0, .right, 191)) else (if n < 199 then some (0, .right, 182) else
+  some (0, .right, 514))) else (if n < 202 then (if n < 201 then some (0, .right, 199) else some
+  (0, .right, 520)) else (if n < 203 then some (0, .right, 201) else some (0, .right, 200)))))
+
+def _candTrans0_24 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 209 then (if n < 207 then (if n < 206 then (if n < 205 then some (0, .right, 423) else
+  some (0, .right, 192)) else some (0, .right, 373)) else (if n < 208 then some (0, .right, 206)
+  else some (0, .right, 207))) else (if n < 211 then (if n < 210 then some (0, .right, 208) else
+  some (0, .right, 205)) else (if n < 212 then some (0, .right, 203) else some (0, .right, 525))))
+
+def _candTrans0_25 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 226 then (if n < 224 then (if n < 223 then (if n < 222 then some (0, .right, 363) else
+  some (0, .right, 220)) else some (0, .right, 503)) else (if n < 225 then some (0, .right, 219)
+  else some (0, .left, 69))) else (if n < 228 then (if n < 227 then some (0, .right, 225) else
+  some (0, .right, 226)) else (if n < 229 then some (0, .right, 507) else some (0, .right, 227))))
+
+def _candTrans0_26 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 213 then _candTrans0_24 n else (if n < 217 then (if n < 215 then (if n < 214 then some
+  (0, .right, 212) else some (0, .right, 366)) else (if n < 216 then some (0, .right, 214) else
+  some (0, .right, 534))) else (if n < 219 then (if n < 218 then some (0, .right, 216) else some
+  (0, .right, 213)) else (if n < 220 then some (0, .right, 537) else some (0, .right, 365)))))
+
+def _candTrans0_27 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 230 then _candTrans0_25 n else (if n < 234 then (if n < 232 then (if n < 231 then some
+  (0, .right, 224) else some (0, .right, 218)) else (if n < 233 then some (0, .right, 211) else
+  some (0, .right, 198))) else (if n < 236 then (if n < 235 then some (0, .right, 164) else some
+  (0, .right, 163)) else (if n < 237 then some (0, .right, 491) else some (0, .right, 394)))))
+
+def _candTrans0_28 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 243 then (if n < 241 then (if n < 240 then (if n < 239 then some (0, .right, 491) else
+  some (0, .right, 390)) else some (0, .right, 237)) else (if n < 242 then some (0, .right, 388)
+  else some (0, .right, 241))) else (if n < 245 then (if n < 244 then some (0, .right, 495) else
+  some (0, .right, 243)) else (if n < 246 then some (0, .right, 242) else some (0, .right, 240))))
+
+def _candTrans0_29 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 260 then (if n < 258 then (if n < 257 then (if n < 256 then some (0, .right, 249) else
+  some (0, .right, 171)) else some (0, .right, 256)) else (if n < 259 then some (0, .right, 521)
+  else some (0, .right, 258))) else (if n < 262 then (if n < 261 then some (0, .right, 257) else
+  some (0, .right, 255)) else (if n < 263 then some (0, .right, 246) else some (0, .right, 363))))
+
+def _candTrans0_30 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 247 then _candTrans0_28 n else (if n < 251 then (if n < 249 then (if n < 248 then some
+  (0, .right, 495) else some (0, .right, 396)) else (if n < 250 then some (0, .right, 247) else
+  some (0, .right, 401))) else (if n < 253 then (if n < 252 then some (0, .right, 492) else some
+  (0, .right, 251)) else (if n < 254 then some (0, .right, 252) else some (0, .right, 250)))))
+
+def _candTrans0_31 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 264 then _candTrans0_29 n else (if n < 268 then (if n < 266 then (if n < 265 then some
+  (0, .right, 220) else some (0, .right, 501)) else (if n < 267 then some (0, .right, 103) else
+  some (0, .right, 266))) else (if n < 270 then (if n < 269 then some (0, .right, 265) else some
+  (0, .right, 185)) else (if n < 271 then some (0, .right, 269) else some (0, .right, 268)))))
+
+def _candTrans0_32 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 277 then (if n < 275 then (if n < 274 then (if n < 273 then some (0, .right, 263) else
+  some (0, .right, 493)) else some (0, .right, 273)) else (if n < 276 then some (0, .right, 496)
+  else some (0, .right, 275))) else (if n < 279 then (if n < 278 then some (0, .right, 274) else
+  some (0, .right, 271)) else (if n < 280 then some (0, .right, 510) else some (0, .right, 518))))
+
+def _candTrans0_33 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 294 then (if n < 292 then (if n < 291 then (if n < 290 then some (0, .right, 288) else
+  some (0, .right, 286)) else some (0, .right, 285)) else (if n < 293 then some (0, .right, 284)
+  else some (0, .right, 278))) else (if n < 296 then (if n < 295 then some (0, .right, 262) else
+  some (0, .right, 406)) else (if n < 297 then some (0, .right, 493) else some (0, .right, 411))))
+
+def _candTrans0_34 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 281 then _candTrans0_32 n else (if n < 285 then (if n < 283 then (if n < 282 then some
+  (0, .right, 279) else some (0, .right, 494)) else (if n < 284 then some (0, .right, 415) else
+  some (0, .right, 281))) else (if n < 287 then (if n < 286 then some (0, .right, 441) else some
+  (0, .right, 413)) else (if n < 288 then some (0, .right, 373) else some (0, .right, 287)))))
+
+def _candTrans0_35 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 298 then _candTrans0_33 n else (if n < 302 then (if n < 300 then (if n < 299 then some
+  (0, .right, 295) else some (0, .right, 401)) else (if n < 301 then some (0, .right, 299) else
+  some (0, .right, 529))) else (if n < 304 then (if n < 303 then some (0, .right, 301) else some
+  (0, .right, 300)) else (if n < 305 then some (0, .right, 298) else some (0, .left, 47)))))
+
+def _candTrans0_36 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 311 then (if n < 309 then (if n < 308 then (if n < 307 then some (1, .left, 47) else
+  some (0, .right, 305)) else some (0, .right, 529)) else (if n < 310 then some (0, .right, 308)
+  else some (0, .right, 306))) else (if n < 313 then (if n < 312 then some (0, .right, 501) else
+  some (0, .right, 311)) else (if n < 314 then some (0, .right, 309) else some (0, .right, 494))))
+
+def _candTrans0_37 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 328 then (if n < 326 then (if n < 325 then (if n < 324 then some (0, .right, 491) else
+  some (0, .right, 390)) else some (0, .right, 322)) else (if n < 327 then some (0, .right, 321)
+  else some (0, .right, 528))) else (if n < 330 then (if n < 329 then some (0, .right, 399) else
+  some (0, .right, 315)) else (if n < 331 then some (0, .left, 69) else some (0, .right, 305))))
+
+def _candTrans0_38 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 315 then _candTrans0_36 n else (if n < 319 then (if n < 317 then (if n < 316 then some
   (0, .right, 417) else some (0, .right, 283)) else (if n < 318 then some (0, .right, 313) else
   some (0, .right, 304))) else (if n < 321 then (if n < 320 then some (0, .right, 286) else some
   (0, .right, 282)) else (if n < 322 then some (0, .right, 319) else some (0, .right, 314)))))
-  else (if n < 332 then (if n < 328 then (if n < 326 then (if n < 325 then (if n < 324 then some
-  (0, .right, 491) else some (0, .right, 390)) else some (0, .right, 322)) else (if n < 327 then
-  some (0, .right, 321) else some (0, .right, 528))) else (if n < 330 then (if n < 329 then some
-  (0, .right, 399) else some (0, .right, 315)) else (if n < 331 then some (0, .left, 69) else some
-  (0, .right, 305)))) else (if n < 336 then (if n < 334 then (if n < 333 then some (0, .right,
-  529) else some (0, .right, 409)) else (if n < 335 then some (0, .right, 365) else some (0,
-  .right, 111))) else (if n < 338 then (if n < 337 then some (0, .right, 335) else some (0,
-  .right, 336)) else (if n < 339 then some (0, .right, 333) else some (0, .right, 329))))))) else
-  (if n < 374 then (if n < 357 then (if n < 349 then (if n < 345 then (if n < 343 then (if n < 342
-  then (if n < 341 then some (0, .right, 326) else some (0, .right, 318)) else some (0, .right,
-  294)) else (if n < 344 then some (1, .left, 50) else some (1, .left, 50))) else (if n < 347 then
-  (if n < 346 then some (0, .right, 343) else some (0, .right, 345)) else (if n < 348 then some
-  (0, .right, 346) else some (0, .right, 347)))) else (if n < 353 then (if n < 351 then (if n <
-  350 then some (0, .right, 348) else some (0, .right, 349)) else (if n < 352 then some (0,
-  .right, 350) else some (0, .right, 351))) else (if n < 355 then (if n < 354 then some (0,
-  .right, 342) else some (0, .left, 10)) else (if n < 356 then some (0, .right, 2) else some (0,
-  .right, 355))))) else (if n < 366 then (if n < 362 then (if n < 360 then (if n < 359 then (if n
-  < 358 then some (0, .right, 356) else some (0, .right, 369)) else some (0, .right, 358)) else
-  (if n < 361 then some (0, .right, 359) else some (0, .right, 360))) else (if n < 364 then (if n
-  < 363 then some (0, .right, 357) else some (0, .right, 362)) else (if n < 365 then some (0,
-  .right, 363) else some (0, .right, 364)))) else (if n < 370 then (if n < 368 then (if n < 367
-  then some (0, .right, 365) else some (0, .right, 366)) else (if n < 369 then some (0, .right,
-  367) else some (0, .right, 368))) else (if n < 372 then (if n < 371 then some (0, .right, 29)
-  else some (0, .right, 370)) else (if n < 373 then some (0, .right, 382) else some (0, .right,
-  372)))))) else (if n < 391 then (if n < 383 then (if n < 379 then (if n < 377 then (if n < 376
-  then (if n < 375 then some (0, .right, 373) else some (0, .right, 374)) else some (0, .right,
-  75)) else (if n < 378 then some (0, .right, 456) else some (0, .right, 377))) else (if n < 381
-  then (if n < 380 then some (0, .right, 378) else some (0, .right, 379)) else (if n < 382 then
-  some (0, .right, 380) else some (0, .right, 381)))) else (if n < 387 then (if n < 385 then (if n
-  < 384 then some (0, .left, 8) else some (0, .left, 383)) else (if n < 386 then some (0, .left,
-  354) else some (0, .left, 385))) else (if n < 389 then (if n < 388 then some (0, .right, 360)
-  else some (0, .right, 387)) else (if n < 390 then some (0, .right, 391) else some (0, .right,
-  389))))) else (if n < 400 then (if n < 396 then (if n < 394 then (if n < 393 then (if n < 392
-  then some (0, .right, 360) else some (0, .right, 378)) else some (0, .right, 391)) else (if n <
-  395 then some (0, .right, 393) else some (0, .right, 361))) else (if n < 398 then (if n < 397
-  then some (0, .right, 395) else some (0, .right, 361)) else (if n < 399 then some (0, .right,
-  397) else some (0, .right, 398)))) else (if n < 404 then (if n < 402 then (if n < 401 then some
+
+def _candTrans0_39 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 332 then _candTrans0_37 n else (if n < 336 then (if n < 334 then (if n < 333 then some
+  (0, .right, 529) else some (0, .right, 409)) else (if n < 335 then some (0, .right, 365) else
+  some (0, .right, 111))) else (if n < 338 then (if n < 337 then some (0, .right, 335) else some
+  (0, .right, 336)) else (if n < 339 then some (0, .right, 333) else some (0, .right, 329)))))
+
+def _candTrans0_40 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 345 then (if n < 343 then (if n < 342 then (if n < 341 then some (0, .right, 326) else
+  some (0, .right, 318)) else some (0, .right, 294)) else (if n < 344 then some (1, .left, 50)
+  else some (1, .left, 50))) else (if n < 347 then (if n < 346 then some (0, .right, 343) else
+  some (0, .right, 345)) else (if n < 348 then some (0, .right, 346) else some (0, .right, 347))))
+
+def _candTrans0_41 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 362 then (if n < 360 then (if n < 359 then (if n < 358 then some (0, .right, 356) else
+  some (0, .right, 369)) else some (0, .right, 358)) else (if n < 361 then some (0, .right, 359)
+  else some (0, .right, 360))) else (if n < 364 then (if n < 363 then some (0, .right, 357) else
+  some (0, .right, 362)) else (if n < 365 then some (0, .right, 363) else some (0, .right, 364))))
+
+def _candTrans0_42 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 349 then _candTrans0_40 n else (if n < 353 then (if n < 351 then (if n < 350 then some
+  (0, .right, 348) else some (0, .right, 349)) else (if n < 352 then some (0, .right, 350) else
+  some (0, .right, 351))) else (if n < 355 then (if n < 354 then some (0, .right, 342) else some
+  (0, .left, 10)) else (if n < 356 then some (0, .right, 2) else some (0, .right, 355)))))
+
+def _candTrans0_43 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 366 then _candTrans0_41 n else (if n < 370 then (if n < 368 then (if n < 367 then some
+  (0, .right, 365) else some (0, .right, 366)) else (if n < 369 then some (0, .right, 367) else
+  some (0, .right, 368))) else (if n < 372 then (if n < 371 then some (0, .right, 29) else some
+  (0, .right, 370)) else (if n < 373 then some (0, .right, 382) else some (0, .right, 372)))))
+
+def _candTrans0_44 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 379 then (if n < 377 then (if n < 376 then (if n < 375 then some (0, .right, 373) else
+  some (0, .right, 374)) else some (0, .right, 75)) else (if n < 378 then some (0, .right, 456)
+  else some (0, .right, 377))) else (if n < 381 then (if n < 380 then some (0, .right, 378) else
+  some (0, .right, 379)) else (if n < 382 then some (0, .right, 380) else some (0, .right, 381))))
+
+def _candTrans0_45 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 396 then (if n < 394 then (if n < 393 then (if n < 392 then some (0, .right, 360) else
+  some (0, .right, 378)) else some (0, .right, 391)) else (if n < 395 then some (0, .right, 393)
+  else some (0, .right, 361))) else (if n < 398 then (if n < 397 then some (0, .right, 395) else
+  some (0, .right, 361)) else (if n < 399 then some (0, .right, 397) else some (0, .right, 398))))
+
+def _candTrans0_46 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 383 then _candTrans0_44 n else (if n < 387 then (if n < 385 then (if n < 384 then some
+  (0, .left, 8) else some (0, .left, 383)) else (if n < 386 then some (0, .left, 354) else some
+  (0, .left, 385))) else (if n < 389 then (if n < 388 then some (0, .right, 360) else some (0,
+  .right, 387)) else (if n < 390 then some (0, .right, 391) else some (0, .right, 389)))))
+
+def _candTrans0_47 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 400 then _candTrans0_45 n else (if n < 404 then (if n < 402 then (if n < 401 then some
   (0, .right, 395) else some (0, .right, 400)) else (if n < 403 then some (0, .right, 404) else
   some (0, .right, 402))) else (if n < 406 then (if n < 405 then some (0, .right, 395) else some
-  (0, .right, 404)) else (if n < 407 then some (0, .right, 405) else some (0, .right, 456))))))))
-  else (if n < 476 then (if n < 442 then (if n < 425 then (if n < 417 then (if n < 413 then (if n
-  < 411 then (if n < 410 then (if n < 409 then some (0, .right, 404) else some (0, .right, 408))
-  else some (0, .right, 404)) else (if n < 412 then some (0, .right, 410) else some (0, .right,
-  400))) else (if n < 415 then (if n < 414 then some (0, .right, 412) else some (0, .right, 418))
-  else (if n < 416 then some (0, .right, 414) else some (0, .right, 418)))) else (if n < 421 then
-  (if n < 419 then (if n < 418 then some (0, .right, 416) else some (0, .right, 400)) else (if n <
-  420 then some (0, .right, 378) else some (0, .right, 418))) else (if n < 423 then (if n < 422
-  then some (0, .right, 420) else some (0, .right, 358)) else (if n < 424 then some (0, .right,
-  422) else some (0, .right, 426))))) else (if n < 434 then (if n < 430 then (if n < 428 then (if
-  n < 427 then (if n < 426 then some (0, .right, 424) else some (0, .right, 358)) else some (0,
-  .right, 426)) else (if n < 429 then some (0, .right, 427) else some (0, .right, 426))) else (if
-  n < 432 then (if n < 431 then some (0, .right, 429) else some (0, .right, 426)) else (if n < 433
-  then some (0, .right, 431) else some (0, .right, 359)))) else (if n < 438 then (if n < 436 then
-  (if n < 435 then some (0, .right, 433) else some (0, .right, 359)) else (if n < 437 then some
-  (0, .right, 435) else some (0, .right, 436))) else (if n < 440 then (if n < 439 then some (0,
-  .right, 435) else some (0, .right, 438)) else (if n < 441 then some (0, .right, 435) else some
-  (0, .right, 440)))))) else (if n < 459 then (if n < 451 then (if n < 447 then (if n < 445 then
-  (if n < 444 then (if n < 443 then some (0, .right, 364) else some (0, .right, 442)) else some
-  (0, .right, 456)) else (if n < 446 then some (0, .right, 447) else some (0, .right, 445))) else
-  (if n < 449 then (if n < 448 then some (0, .right, 364) else some (0, .right, 447)) else (if n <
-  450 then some (0, .right, 448) else some (1, .left, 12)))) else (if n < 455 then (if n < 453
-  then (if n < 452 then some (0, .right, 356) else some (0, .left, 450)) else (if n < 454 then
-  some (0, .right, 451) else some (0, .left, 13))) else (if n < 457 then (if n < 456 then some (0,
-  .right, 356) else some (0, .right, 376)) else (if n < 458 then some (0, .right, 455) else some
-  (0, .right, 457))))) else (if n < 468 then (if n < 464 then (if n < 462 then (if n < 461 then
-  (if n < 460 then some (0, .right, 456) else some (0, .right, 455)) else some (0, .right, 460))
-  else (if n < 463 then some (0, .right, 456) else some (0, .right, 455))) else (if n < 466 then
-  (if n < 465 then some (0, .right, 463) else some (0, .right, 379)) else (if n < 467 then some
-  (0, .right, 455) else some (0, .right, 466)))) else (if n < 472 then (if n < 470 then (if n <
-  469 then some (0, .right, 455) else some (0, .right, 468)) else (if n < 471 then some (0,
-  .right, 369) else some (0, .right, 470))) else (if n < 474 then (if n < 473 then some (0,
-  .right, 369) else some (0, .right, 376)) else (if n < 475 then some (0, .right, 472) else some
-  (0, .right, 474))))))) else (if n < 510 then (if n < 493 then (if n < 485 then (if n < 481 then
-  (if n < 479 then (if n < 478 then (if n < 477 then some (0, .right, 486) else some (0, .right,
-  476)) else some (0, .right, 376)) else (if n < 480 then some (0, .right, 486) else some (0,
-  .right, 479))) else (if n < 483 then (if n < 482 then some (0, .right, 486) else some (0,
-  .right, 481)) else (if n < 484 then some (0, .right, 378) else some (0, .right, 486)))) else (if
-  n < 489 then (if n < 487 then (if n < 486 then some (0, .right, 484) else some (0, .right, 357))
-  else (if n < 488 then some (0, .right, 486) else some (0, .right, 487))) else (if n < 491 then
-  (if n < 490 then some (0, .right, 362) else some (0, .right, 489)) else (if n < 492 then some
-  (0, .right, 497) else some (0, .right, 508))))) else (if n < 502 then (if n < 498 then (if n <
-  496 then (if n < 495 then (if n < 494 then some (0, .right, 497) else some (0, .right, 497))
-  else some (0, .right, 497)) else (if n < 497 then some (0, .right, 497) else some (0, .right,
-  362))) else (if n < 500 then (if n < 499 then some (0, .right, 377) else some (0, .right, 497))
-  else (if n < 501 then some (0, .right, 497) else some (0, .right, 497)))) else (if n < 506 then
-  (if n < 504 then (if n < 503 then some (0, .right, 456) else some (0, .right, 497)) else (if n <
-  505 then some (0, .right, 363) else some (0, .right, 504))) else (if n < 508 then (if n < 507
-  then some (0, .right, 374) else some (0, .right, 135)) else (if n < 509 then some (0, .right,
-  375) else some (0, .right, 135)))))) else (if n < 527 then (if n < 519 then (if n < 515 then (if
-  n < 513 then (if n < 512 then (if n < 511 then some (0, .right, 135) else some (0, .right, 135))
-  else some (0, .right, 135)) else (if n < 514 then some (0, .right, 135) else some (0, .right,
-  135))) else (if n < 517 then (if n < 516 then some (0, .right, 135) else some (0, .right, 365))
-  else (if n < 518 then some (0, .right, 516) else some (0, .right, 522)))) else (if n < 523 then
-  (if n < 521 then (if n < 520 then some (0, .right, 522) else some (0, .right, 522)) else (if n <
-  522 then some (0, .right, 522) else some (0, .right, 365))) else (if n < 525 then (if n < 524
-  then some (0, .right, 522) else some (0, .right, 382)) else (if n < 526 then some (0, .right,
-  522) else some (0, .right, 366))))) else (if n < 535 then (if n < 531 then (if n < 529 then (if
-  n < 528 then some (0, .right, 526) else some (0, .right, 530)) else (if n < 530 then some (0,
-  .right, 530) else some (0, .right, 366))) else (if n < 533 then (if n < 532 then some (0,
-  .right, 530) else some (0, .right, 367)) else (if n < 534 then some (0, .right, 532) else some
-  (0, .right, 535)))) else (if n < 539 then (if n < 537 then (if n < 536 then some (0, .right,
-  367) else some (0, .right, 535)) else (if n < 538 then some (0, .right, 535) else some (0,
-  .right, 539))) else (if n < 541 then (if n < 540 then some (0, .right, 368) else some (0,
-  .right, 539)) else (if n < 542 then some (0, .right, 75) else some (0, .right, 539))))))))))
-def candTrans1 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
-  (if n < 272 then (if n < 136 then (if n < 68 then (if n < 34 then (if n < 17 then (if n < 9 then
+  (0, .right, 404)) else (if n < 407 then some (0, .right, 405) else some (0, .right, 456)))))
+
+def _candTrans0_48 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 413 then (if n < 411 then (if n < 410 then (if n < 409 then some (0, .right, 404) else
+  some (0, .right, 408)) else some (0, .right, 404)) else (if n < 412 then some (0, .right, 410)
+  else some (0, .right, 400))) else (if n < 415 then (if n < 414 then some (0, .right, 412) else
+  some (0, .right, 418)) else (if n < 416 then some (0, .right, 414) else some (0, .right, 418))))
+
+def _candTrans0_49 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 430 then (if n < 428 then (if n < 427 then (if n < 426 then some (0, .right, 424) else
+  some (0, .right, 358)) else some (0, .right, 426)) else (if n < 429 then some (0, .right, 427)
+  else some (0, .right, 426))) else (if n < 432 then (if n < 431 then some (0, .right, 429) else
+  some (0, .right, 426)) else (if n < 433 then some (0, .right, 431) else some (0, .right, 359))))
+
+def _candTrans0_50 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 417 then _candTrans0_48 n else (if n < 421 then (if n < 419 then (if n < 418 then some
+  (0, .right, 416) else some (0, .right, 400)) else (if n < 420 then some (0, .right, 378) else
+  some (0, .right, 418))) else (if n < 423 then (if n < 422 then some (0, .right, 420) else some
+  (0, .right, 358)) else (if n < 424 then some (0, .right, 422) else some (0, .right, 426)))))
+
+def _candTrans0_51 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 434 then _candTrans0_49 n else (if n < 438 then (if n < 436 then (if n < 435 then some
+  (0, .right, 433) else some (0, .right, 359)) else (if n < 437 then some (0, .right, 435) else
+  some (0, .right, 436))) else (if n < 440 then (if n < 439 then some (0, .right, 435) else some
+  (0, .right, 438)) else (if n < 441 then some (0, .right, 435) else some (0, .right, 440)))))
+
+def _candTrans0_52 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 447 then (if n < 445 then (if n < 444 then (if n < 443 then some (0, .right, 364) else
+  some (0, .right, 442)) else some (0, .right, 456)) else (if n < 446 then some (0, .right, 447)
+  else some (0, .right, 445))) else (if n < 449 then (if n < 448 then some (0, .right, 364) else
+  some (0, .right, 447)) else (if n < 450 then some (0, .right, 448) else some (1, .left, 12))))
+
+def _candTrans0_53 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 464 then (if n < 462 then (if n < 461 then (if n < 460 then some (0, .right, 456) else
+  some (0, .right, 455)) else some (0, .right, 460)) else (if n < 463 then some (0, .right, 456)
+  else some (0, .right, 455))) else (if n < 466 then (if n < 465 then some (0, .right, 463) else
+  some (0, .right, 379)) else (if n < 467 then some (0, .right, 455) else some (0, .right, 466))))
+
+def _candTrans0_54 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 451 then _candTrans0_52 n else (if n < 455 then (if n < 453 then (if n < 452 then some
+  (0, .right, 356) else some (0, .left, 450)) else (if n < 454 then some (0, .right, 451) else
+  some (0, .left, 13))) else (if n < 457 then (if n < 456 then some (0, .right, 356) else some (0,
+  .right, 376)) else (if n < 458 then some (0, .right, 455) else some (0, .right, 457)))))
+
+def _candTrans0_55 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 468 then _candTrans0_53 n else (if n < 472 then (if n < 470 then (if n < 469 then some
+  (0, .right, 455) else some (0, .right, 468)) else (if n < 471 then some (0, .right, 369) else
+  some (0, .right, 470))) else (if n < 474 then (if n < 473 then some (0, .right, 369) else some
+  (0, .right, 376)) else (if n < 475 then some (0, .right, 472) else some (0, .right, 474)))))
+
+def _candTrans0_56 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 481 then (if n < 479 then (if n < 478 then (if n < 477 then some (0, .right, 486) else
+  some (0, .right, 476)) else some (0, .right, 376)) else (if n < 480 then some (0, .right, 486)
+  else some (0, .right, 479))) else (if n < 483 then (if n < 482 then some (0, .right, 486) else
+  some (0, .right, 481)) else (if n < 484 then some (0, .right, 378) else some (0, .right, 486))))
+
+def _candTrans0_57 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 498 then (if n < 496 then (if n < 495 then (if n < 494 then some (0, .right, 497) else
+  some (0, .right, 497)) else some (0, .right, 497)) else (if n < 497 then some (0, .right, 497)
+  else some (0, .right, 362))) else (if n < 500 then (if n < 499 then some (0, .right, 377) else
+  some (0, .right, 497)) else (if n < 501 then some (0, .right, 497) else some (0, .right, 497))))
+
+def _candTrans0_58 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 485 then _candTrans0_56 n else (if n < 489 then (if n < 487 then (if n < 486 then some
+  (0, .right, 484) else some (0, .right, 357)) else (if n < 488 then some (0, .right, 486) else
+  some (0, .right, 487))) else (if n < 491 then (if n < 490 then some (0, .right, 362) else some
+  (0, .right, 489)) else (if n < 492 then some (0, .right, 497) else some (0, .right, 508)))))
+
+def _candTrans0_59 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 502 then _candTrans0_57 n else (if n < 506 then (if n < 504 then (if n < 503 then some
+  (0, .right, 456) else some (0, .right, 497)) else (if n < 505 then some (0, .right, 363) else
+  some (0, .right, 504))) else (if n < 508 then (if n < 507 then some (0, .right, 374) else some
+  (0, .right, 135)) else (if n < 509 then some (0, .right, 375) else some (0, .right, 135)))))
+
+def _candTrans0_60 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 515 then (if n < 513 then (if n < 512 then (if n < 511 then some (0, .right, 135) else
+  some (0, .right, 135)) else some (0, .right, 135)) else (if n < 514 then some (0, .right, 135)
+  else some (0, .right, 135))) else (if n < 517 then (if n < 516 then some (0, .right, 135) else
+  some (0, .right, 365)) else (if n < 518 then some (0, .right, 516) else some (0, .right, 522))))
+
+def _candTrans0_61 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 519 then _candTrans0_60 n else (if n < 523 then (if n < 521 then (if n < 520 then some
+  (0, .right, 522) else some (0, .right, 522)) else (if n < 522 then some (0, .right, 522) else
+  some (0, .right, 365))) else (if n < 525 then (if n < 524 then some (0, .right, 522) else some
+  (0, .right, 382)) else (if n < 526 then some (0, .right, 522) else some (0, .right, 366)))))
+
+def _candTrans0_62 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 535 then (if n < 531 then (if n < 529 then (if n < 528 then some (0, .right, 526) else
+  some (0, .right, 530)) else (if n < 530 then some (0, .right, 530) else some (0, .right, 366)))
+  else (if n < 533 then (if n < 532 then some (0, .right, 530) else some (0, .right, 367)) else
+  (if n < 534 then some (0, .right, 532) else some (0, .right, 535)))) else (if n < 539 then (if n
+  < 537 then (if n < 536 then some (0, .right, 367) else some (0, .right, 535)) else (if n < 538
+  then some (0, .right, 535) else some (0, .right, 539))) else (if n < 541 then (if n < 540 then
+  some (0, .right, 368) else some (0, .right, 539)) else (if n < 542 then some (0, .right, 75)
+  else some (0, .right, 539)))))
+
+def _candTrans0_63 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 136 then (if n < 68 then (if n < 34 then (if n < 17 then _candTrans0_2 n else
+  _candTrans0_3 n) else (if n < 51 then _candTrans0_6 n else _candTrans0_7 n)) else (if n < 102
+  then (if n < 85 then _candTrans0_10 n else _candTrans0_11 n) else (if n < 119 then
+  _candTrans0_14 n else _candTrans0_15 n))) else (if n < 204 then (if n < 170 then (if n < 153
+  then _candTrans0_18 n else _candTrans0_19 n) else (if n < 187 then _candTrans0_22 n else
+  _candTrans0_23 n)) else (if n < 238 then (if n < 221 then _candTrans0_26 n else _candTrans0_27
+  n) else (if n < 255 then _candTrans0_30 n else _candTrans0_31 n))))
+
+def _candTrans0_64 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 408 then (if n < 340 then (if n < 306 then (if n < 289 then _candTrans0_34 n else
+  _candTrans0_35 n) else (if n < 323 then _candTrans0_38 n else _candTrans0_39 n)) else (if n <
+  374 then (if n < 357 then _candTrans0_42 n else _candTrans0_43 n) else (if n < 391 then
+  _candTrans0_46 n else _candTrans0_47 n))) else (if n < 476 then (if n < 442 then (if n < 425
+  then _candTrans0_50 n else _candTrans0_51 n) else (if n < 459 then _candTrans0_54 n else
+  _candTrans0_55 n)) else (if n < 510 then (if n < 493 then _candTrans0_58 n else _candTrans0_59
+  n) else (if n < 527 then _candTrans0_61 n else _candTrans0_62 n))))
+
+def candTrans0 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 272 then _candTrans0_63 n else _candTrans0_64 n)
+def _candTrans1_0 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
   (if n < 5 then (if n < 3 then (if n < 2 then (if n < 1 then some (1, .right, 353) else some (1,
   .right, 4)) else some (0, .right, 1)) else (if n < 4 then some (1, .right, 4) else some (1,
   .right, 4))) else (if n < 7 then (if n < 6 then some (0, .left, 20) else some (0, .left, 7))
-  else (if n < 8 then some (1, .left, 7) else some (0, .left, 10)))) else (if n < 13 then (if n <
-  11 then (if n < 10 then some (1, .left, 12) else some (0, .left, 13)) else (if n < 12 then some
-  (0, .right, 235) else some (1, .left, 14))) else (if n < 15 then (if n < 14 then some (0, .left,
-  15) else some (1, .left, 16)) else (if n < 16 then some (0, .left, 17) else some (1, .left,
-  18))))) else (if n < 26 then (if n < 22 then (if n < 20 then (if n < 19 then (if n < 18 then
-  some (0, .left, 19) else some (1, .left, 20)) else some (0, .left, 21)) else (if n < 21 then
-  some (1, .left, 22) else some (0, .left, 23))) else (if n < 24 then (if n < 23 then some (1,
-  .left, 24) else some (0, .left, 25)) else (if n < 25 then some (1, .left, 26) else some (0,
-  .left, 27)))) else (if n < 30 then (if n < 28 then (if n < 27 then some (1, .left, 0) else some
-  (0, .left, 11)) else (if n < 29 then some (0, .right, 29) else some (1, .right, 29))) else (if n
-  < 32 then (if n < 31 then some (0, .left, 63) else some (1, .right, 32)) else (if n < 33 then
-  some (1, .right, 32) else some (0, .left, 24)))))) else (if n < 51 then (if n < 43 then (if n <
-  39 then (if n < 37 then (if n < 36 then (if n < 35 then some (0, .left, 38) else some (0, .left,
-  61)) else some (0, .left, 14)) else (if n < 38 then some (1, .left, 38) else some (1, .left,
-  39))) else (if n < 41 then (if n < 40 then none else some (0, .left, 64)) else (if n < 42 then
-  some (0, .left, 61) else some (1, .left, 43)))) else (if n < 47 then (if n < 45 then (if n < 44
-  then some (1, .left, 17) else some (1, .left, 33)) else (if n < 46 then some (1, .left, 66) else
-  some (1, .left, 45))) else (if n < 49 then (if n < 48 then some (0, .left, 42) else some (0,
-  .left, 49)) else (if n < 50 then some (0, .right, 235) else some (0, .left, 51))))) else (if n <
-  60 then (if n < 56 then (if n < 54 then (if n < 53 then (if n < 52 then some (1, .left, 52) else
-  some (0, .left, 53)) else some (1, .left, 54)) else (if n < 55 then some (0, .left, 55) else
-  some (0, .left, 56))) else (if n < 58 then (if n < 57 then some (0, .left, 57) else some (0,
-  .left, 48)) else (if n < 59 then some (0, .left, 12) else some (1, .left, 30)))) else (if n < 64
-  then (if n < 62 then (if n < 61 then some (1, .left, 61) else some (0, .left, 43)) else (if n <
-  63 then some (0, .left, 16) else some (1, .left, 55))) else (if n < 66 then (if n < 65 then some
-  (0, .left, 287) else some (0, .left, 66)) else (if n < 67 then some (0, .left, 18) else some (0,
-  .left, 20))))))) else (if n < 102 then (if n < 85 then (if n < 77 then (if n < 73 then (if n <
-  71 then (if n < 70 then (if n < 69 then some (0, .left, 22) else some (1, .left, 13)) else some
-  (0, .left, 45)) else (if n < 72 then some (1, .right, 30) else some (1, .right, 71))) else (if n
-  < 75 then (if n < 74 then some (1, .right, 72) else some (1, .right, 73)) else (if n < 76 then
-  some (1, .right, 75) else some (0, .left, 13)))) else (if n < 81 then (if n < 79 then (if n < 78
-  then some (1, .right, 76) else some (1, .right, 458)) else (if n < 80 then some (1, .right, 78)
-  else some (1, .right, 443))) else (if n < 83 then (if n < 82 then some (0, .left, 15) else some
-  (1, .right, 81)) else (if n < 84 then some (0, .left, 15) else some (1, .right, 83))))) else (if
-  n < 94 then (if n < 90 then (if n < 88 then (if n < 87 then (if n < 86 then some (1, .right, 84)
-  else some (1, .right, 85)) else some (0, .left, 15)) else (if n < 89 then some (1, .right, 87)
-  else some (1, .left, 454))) else (if n < 92 then (if n < 91 then some (1, .left, 454) else some
-  (1, .right, 90)) else (if n < 93 then some (1, .right, 91) else some (1, .right, 92)))) else (if
-  n < 98 then (if n < 96 then (if n < 95 then some (1, .right, 93) else some (1, .right, 378))
-  else (if n < 97 then some (0, .left, 10) else some (1, .right, 96))) else (if n < 100 then (if n
-  < 99 then some (1, .right, 533) else some (1, .left, 41)) else (if n < 101 then some (0, .left,
-  13) else some (0, .left, 15)))))) else (if n < 119 then (if n < 111 then (if n < 107 then (if n
-  < 105 then (if n < 104 then (if n < 103 then some (1, .right, 101) else some (1, .right, 363))
-  else some (1, .right, 362)) else (if n < 106 then some (1, .right, 104) else some (1, .right,
-  105))) else (if n < 109 then (if n < 108 then some (1, .right, 106) else some (1, .right, 107))
-  else (if n < 110 then some (1, .right, 108) else some (1, .right, 109)))) else (if n < 115 then
-  (if n < 113 then (if n < 112 then some (1, .left, 69) else some (1, .left, 41)) else (if n < 114
-  then some (1, .right, 112) else some (1, .right, 490))) else (if n < 117 then (if n < 116 then
-  some (0, .left, 10) else some (0, .left, 13)) else (if n < 118 then some (1, .right, 505) else
-  some (1, .right, 117))))) else (if n < 128 then (if n < 124 then (if n < 122 then (if n < 121
-  then (if n < 120 then some (0, .left, 15) else some (1, .right, 461)) else some (1, .right,
-  120)) else (if n < 123 then some (0, .left, 15) else some (1, .right, 469))) else (if n < 126
-  then (if n < 125 then some (1, .right, 488) else some (1, .right, 124)) else (if n < 127 then
-  some (1, .right, 125) else some (1, .right, 89)))) else (if n < 132 then (if n < 130 then (if n
-  < 129 then some (1, .right, 127) else some (1, .right, 527)) else (if n < 131 then some (1,
-  .right, 129) else some (1, .right, 480))) else (if n < 134 then (if n < 133 then some (1,
-  .right, 131) else some (1, .right, 103)) else (if n < 135 then some (1, .right, 133) else some
-  (0, .left, 60)))))))) else (if n < 204 then (if n < 170 then (if n < 153 then (if n < 145 then
+  else (if n < 8 then some (1, .left, 7) else some (0, .left, 10))))
+
+def _candTrans1_1 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 22 then (if n < 20 then (if n < 19 then (if n < 18 then some (0, .left, 19) else some
+  (1, .left, 20)) else some (0, .left, 21)) else (if n < 21 then some (1, .left, 22) else some (0,
+  .left, 23))) else (if n < 24 then (if n < 23 then some (1, .left, 24) else some (0, .left, 25))
+  else (if n < 25 then some (1, .left, 26) else some (0, .left, 27))))
+
+def _candTrans1_2 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 9 then _candTrans1_0 n else (if n < 13 then (if n < 11 then (if n < 10 then some (1,
+  .left, 12) else some (0, .left, 13)) else (if n < 12 then some (0, .right, 235) else some (1,
+  .left, 14))) else (if n < 15 then (if n < 14 then some (0, .left, 15) else some (1, .left, 16))
+  else (if n < 16 then some (0, .left, 17) else some (1, .left, 18)))))
+
+def _candTrans1_3 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 26 then _candTrans1_1 n else (if n < 30 then (if n < 28 then (if n < 27 then some (1,
+  .left, 0) else some (0, .left, 11)) else (if n < 29 then some (0, .right, 29) else some (1,
+  .right, 29))) else (if n < 32 then (if n < 31 then some (0, .left, 63) else some (1, .right,
+  32)) else (if n < 33 then some (1, .right, 32) else some (0, .left, 24)))))
+
+def _candTrans1_4 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 39 then (if n < 37 then (if n < 36 then (if n < 35 then some (0, .left, 38) else some
+  (0, .left, 61)) else some (0, .left, 14)) else (if n < 38 then some (1, .left, 38) else some (1,
+  .left, 39))) else (if n < 41 then (if n < 40 then none else some (0, .left, 64)) else (if n < 42
+  then some (0, .left, 61) else some (1, .left, 43))))
+
+def _candTrans1_5 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 56 then (if n < 54 then (if n < 53 then (if n < 52 then some (1, .left, 52) else some
+  (0, .left, 53)) else some (1, .left, 54)) else (if n < 55 then some (0, .left, 55) else some (0,
+  .left, 56))) else (if n < 58 then (if n < 57 then some (0, .left, 57) else some (0, .left, 48))
+  else (if n < 59 then some (0, .left, 12) else some (1, .left, 30))))
+
+def _candTrans1_6 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 43 then _candTrans1_4 n else (if n < 47 then (if n < 45 then (if n < 44 then some (1,
+  .left, 17) else some (1, .left, 33)) else (if n < 46 then some (1, .left, 66) else some (1,
+  .left, 45))) else (if n < 49 then (if n < 48 then some (0, .left, 42) else some (0, .left, 49))
+  else (if n < 50 then some (0, .right, 235) else some (0, .left, 51)))))
+
+def _candTrans1_7 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 60 then _candTrans1_5 n else (if n < 64 then (if n < 62 then (if n < 61 then some (1,
+  .left, 61) else some (0, .left, 43)) else (if n < 63 then some (0, .left, 16) else some (1,
+  .left, 55))) else (if n < 66 then (if n < 65 then some (0, .left, 287) else some (0, .left, 66))
+  else (if n < 67 then some (0, .left, 18) else some (0, .left, 20)))))
+
+def _candTrans1_8 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 73 then (if n < 71 then (if n < 70 then (if n < 69 then some (0, .left, 22) else some
+  (1, .left, 13)) else some (0, .left, 45)) else (if n < 72 then some (1, .right, 30) else some
+  (1, .right, 71))) else (if n < 75 then (if n < 74 then some (1, .right, 72) else some (1,
+  .right, 73)) else (if n < 76 then some (1, .right, 75) else some (0, .left, 13))))
+
+def _candTrans1_9 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 90 then (if n < 88 then (if n < 87 then (if n < 86 then some (1, .right, 84) else some
+  (1, .right, 85)) else some (0, .left, 15)) else (if n < 89 then some (1, .right, 87) else some
+  (1, .left, 454))) else (if n < 92 then (if n < 91 then some (1, .left, 454) else some (1,
+  .right, 90)) else (if n < 93 then some (1, .right, 91) else some (1, .right, 92))))
+
+def _candTrans1_10 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 77 then _candTrans1_8 n else (if n < 81 then (if n < 79 then (if n < 78 then some (1,
+  .right, 76) else some (1, .right, 458)) else (if n < 80 then some (1, .right, 78) else some (1,
+  .right, 443))) else (if n < 83 then (if n < 82 then some (0, .left, 15) else some (1, .right,
+  81)) else (if n < 84 then some (0, .left, 15) else some (1, .right, 83)))))
+
+def _candTrans1_11 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 94 then _candTrans1_9 n else (if n < 98 then (if n < 96 then (if n < 95 then some (1,
+  .right, 93) else some (1, .right, 378)) else (if n < 97 then some (0, .left, 10) else some (1,
+  .right, 96))) else (if n < 100 then (if n < 99 then some (1, .right, 533) else some (1, .left,
+  41)) else (if n < 101 then some (0, .left, 13) else some (0, .left, 15)))))
+
+def _candTrans1_12 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 107 then (if n < 105 then (if n < 104 then (if n < 103 then some (1, .right, 101) else
+  some (1, .right, 363)) else some (1, .right, 362)) else (if n < 106 then some (1, .right, 104)
+  else some (1, .right, 105))) else (if n < 109 then (if n < 108 then some (1, .right, 106) else
+  some (1, .right, 107)) else (if n < 110 then some (1, .right, 108) else some (1, .right, 109))))
+
+def _candTrans1_13 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 124 then (if n < 122 then (if n < 121 then (if n < 120 then some (0, .left, 15) else
+  some (1, .right, 461)) else some (1, .right, 120)) else (if n < 123 then some (0, .left, 15)
+  else some (1, .right, 469))) else (if n < 126 then (if n < 125 then some (1, .right, 488) else
+  some (1, .right, 124)) else (if n < 127 then some (1, .right, 125) else some (1, .right, 89))))
+
+def _candTrans1_14 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 111 then _candTrans1_12 n else (if n < 115 then (if n < 113 then (if n < 112 then some
+  (1, .left, 69) else some (1, .left, 41)) else (if n < 114 then some (1, .right, 112) else some
+  (1, .right, 490))) else (if n < 117 then (if n < 116 then some (0, .left, 10) else some (0,
+  .left, 13)) else (if n < 118 then some (1, .right, 505) else some (1, .right, 117)))))
+
+def _candTrans1_15 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 128 then _candTrans1_13 n else (if n < 132 then (if n < 130 then (if n < 129 then some
+  (1, .right, 127) else some (1, .right, 527)) else (if n < 131 then some (1, .right, 129) else
+  some (1, .right, 480))) else (if n < 134 then (if n < 133 then some (1, .right, 131) else some
+  (1, .right, 103)) else (if n < 135 then some (1, .right, 133) else some (0, .left, 60)))))
+
+def _candTrans1_16 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
   (if n < 141 then (if n < 139 then (if n < 138 then (if n < 137 then some (1, .right, 135) else
   some (1, .right, 505)) else some (1, .right, 137)) else (if n < 140 then some (0, .left, 10)
   else some (0, .left, 13))) else (if n < 143 then (if n < 142 then some (1, .right, 490) else
-  some (0, .left, 58)) else (if n < 144 then some (0, .left, 13) else some (0, .left, 15)))) else
-  (if n < 149 then (if n < 147 then (if n < 146 then some (1, .right, 144) else some (1, .right,
-  145)) else (if n < 148 then some (1, .right, 146) else some (1, .right, 147))) else (if n < 151
-  then (if n < 150 then some (1, .right, 148) else some (1, .left, 50)) else (if n < 152 then some
-  (1, .right, 150) else some (1, .right, 151))))) else (if n < 162 then (if n < 158 then (if n <
-  156 then (if n < 155 then (if n < 154 then some (1, .right, 152) else some (1, .right, 151))
-  else some (1, .right, 154)) else (if n < 157 then some (1, .right, 155) else some (1, .right,
-  155))) else (if n < 160 then (if n < 159 then some (1, .right, 157) else some (1, .right, 157))
-  else (if n < 161 then some (1, .right, 159) else some (1, .right, 159)))) else (if n < 166 then
-  (if n < 164 then (if n < 163 then some (1, .right, 161) else some (1, .right, 162)) else (if n <
-  165 then some (1, .right, 161) else some (1, .right, 471))) else (if n < 168 then (if n < 167
-  then some (1, .right, 165) else some (0, .left, 450)) else (if n < 169 then some (0, .left, 13)
-  else some (1, .right, 168)))))) else (if n < 187 then (if n < 179 then (if n < 175 then (if n <
-  173 then (if n < 172 then (if n < 171 then some (0, .left, 450) else some (0, .left, 13)) else
-  some (1, .right, 171)) else (if n < 174 then some (1, .right, 172) else some (1, .right, 173)))
-  else (if n < 177 then (if n < 176 then some (0, .left, 15) else some (1, .right, 175)) else (if
-  n < 178 then some (1, .left, 454) else some (1, .right, 112)))) else (if n < 183 then (if n <
-  181 then (if n < 180 then some (1, .right, 178) else some (1, .right, 179)) else (if n < 182
-  then some (1, .right, 180) else some (1, .right, 181))) else (if n < 185 then (if n < 184 then
-  some (1, .right, 115) else some (1, .right, 490)) else (if n < 186 then some (0, .left, 13) else
-  some (1, .right, 505))))) else (if n < 196 then (if n < 192 then (if n < 190 then (if n < 189
-  then (if n < 188 then some (1, .right, 186) else some (0, .left, 13)) else some (1, .right,
-  188)) else (if n < 191 then some (1, .right, 189) else some (1, .right, 190))) else (if n < 194
-  then (if n < 193 then some (1, .right, 140) else some (1, .right, 192)) else (if n < 195 then
-  some (1, .right, 471) else some (1, .right, 194)))) else (if n < 200 then (if n < 198 then (if n
-  < 197 then some (1, .right, 195) else some (1, .right, 196)) else (if n < 199 then some (1,
-  .right, 197) else some (0, .left, 15))) else (if n < 202 then (if n < 201 then some (1, .right,
-  425) else some (1, .right, 188)) else (if n < 203 then some (1, .right, 439) else some (1,
-  .right, 202))))))) else (if n < 238 then (if n < 221 then (if n < 213 then (if n < 209 then (if
-  n < 207 then (if n < 206 then (if n < 205 then some (1, .right, 511) else some (1, .right, 204))
-  else some (1, .left, 58)) else (if n < 208 then some (0, .left, 13) else some (0, .left, 15)))
-  else (if n < 211 then (if n < 210 then some (1, .right, 475) else some (1, .right, 209)) else
-  (if n < 212 then some (1, .right, 210) else some (0, .left, 15)))) else (if n < 217 then (if n <
-  215 then (if n < 214 then some (1, .right, 432) else some (1, .left, 41)) else (if n < 216 then
-  some (0, .left, 13) else some (1, .right, 215))) else (if n < 219 then (if n < 218 then some (1,
-  .right, 485) else some (1, .right, 217)) else (if n < 220 then some (1, .right, 140) else some
-  (1, .left, 454))))) else (if n < 230 then (if n < 226 then (if n < 224 then (if n < 223 then (if
-  n < 222 then some (0, .left, 10) else some (1, .right, 221)) else some (1, .right, 222)) else
-  (if n < 225 then some (1, .right, 223) else some (0, .left, 10))) else (if n < 228 then (if n <
-  227 then some (0, .left, 13) else some (1, .right, 388)) else (if n < 229 then some (0, .left,
-  15) else some (1, .right, 228)))) else (if n < 234 then (if n < 232 then (if n < 231 then some
+  some (0, .left, 58)) else (if n < 144 then some (0, .left, 13) else some (0, .left, 15))))
+
+def _candTrans1_17 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 158 then (if n < 156 then (if n < 155 then (if n < 154 then some (1, .right, 152) else
+  some (1, .right, 151)) else some (1, .right, 154)) else (if n < 157 then some (1, .right, 155)
+  else some (1, .right, 155))) else (if n < 160 then (if n < 159 then some (1, .right, 157) else
+  some (1, .right, 157)) else (if n < 161 then some (1, .right, 159) else some (1, .right, 159))))
+
+def _candTrans1_18 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 145 then _candTrans1_16 n else (if n < 149 then (if n < 147 then (if n < 146 then some
+  (1, .right, 144) else some (1, .right, 145)) else (if n < 148 then some (1, .right, 146) else
+  some (1, .right, 147))) else (if n < 151 then (if n < 150 then some (1, .right, 148) else some
+  (1, .left, 50)) else (if n < 152 then some (1, .right, 150) else some (1, .right, 151)))))
+
+def _candTrans1_19 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 162 then _candTrans1_17 n else (if n < 166 then (if n < 164 then (if n < 163 then some
+  (1, .right, 161) else some (1, .right, 162)) else (if n < 165 then some (1, .right, 161) else
+  some (1, .right, 471))) else (if n < 168 then (if n < 167 then some (1, .right, 165) else some
+  (0, .left, 450)) else (if n < 169 then some (0, .left, 13) else some (1, .right, 168)))))
+
+def _candTrans1_20 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 175 then (if n < 173 then (if n < 172 then (if n < 171 then some (0, .left, 450) else
+  some (0, .left, 13)) else some (1, .right, 171)) else (if n < 174 then some (1, .right, 172)
+  else some (1, .right, 173))) else (if n < 177 then (if n < 176 then some (0, .left, 15) else
+  some (1, .right, 175)) else (if n < 178 then some (1, .left, 454) else some (1, .right, 112))))
+
+def _candTrans1_21 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 192 then (if n < 190 then (if n < 189 then (if n < 188 then some (1, .right, 186) else
+  some (0, .left, 13)) else some (1, .right, 188)) else (if n < 191 then some (1, .right, 189)
+  else some (1, .right, 190))) else (if n < 194 then (if n < 193 then some (1, .right, 140) else
+  some (1, .right, 192)) else (if n < 195 then some (1, .right, 471) else some (1, .right, 194))))
+
+def _candTrans1_22 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 179 then _candTrans1_20 n else (if n < 183 then (if n < 181 then (if n < 180 then some
+  (1, .right, 178) else some (1, .right, 179)) else (if n < 182 then some (1, .right, 180) else
+  some (1, .right, 181))) else (if n < 185 then (if n < 184 then some (1, .right, 115) else some
+  (1, .right, 490)) else (if n < 186 then some (0, .left, 13) else some (1, .right, 505)))))
+
+def _candTrans1_23 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 196 then _candTrans1_21 n else (if n < 200 then (if n < 198 then (if n < 197 then some
+  (1, .right, 195) else some (1, .right, 196)) else (if n < 199 then some (1, .right, 197) else
+  some (0, .left, 15))) else (if n < 202 then (if n < 201 then some (1, .right, 425) else some (1,
+  .right, 188)) else (if n < 203 then some (1, .right, 439) else some (1, .right, 202)))))
+
+def _candTrans1_24 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 209 then (if n < 207 then (if n < 206 then (if n < 205 then some (1, .right, 511) else
+  some (1, .right, 204)) else some (1, .left, 58)) else (if n < 208 then some (0, .left, 13) else
+  some (0, .left, 15))) else (if n < 211 then (if n < 210 then some (1, .right, 475) else some (1,
+  .right, 209)) else (if n < 212 then some (1, .right, 210) else some (0, .left, 15))))
+
+def _candTrans1_25 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 226 then (if n < 224 then (if n < 223 then (if n < 222 then some (0, .left, 10) else
+  some (1, .right, 221)) else some (1, .right, 222)) else (if n < 225 then some (1, .right, 223)
+  else some (0, .left, 10))) else (if n < 228 then (if n < 227 then some (0, .left, 13) else some
+  (1, .right, 388)) else (if n < 229 then some (0, .left, 15) else some (1, .right, 228))))
+
+def _candTrans1_26 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 213 then _candTrans1_24 n else (if n < 217 then (if n < 215 then (if n < 214 then some
+  (1, .right, 432) else some (1, .left, 41)) else (if n < 216 then some (0, .left, 13) else some
+  (1, .right, 215))) else (if n < 219 then (if n < 218 then some (1, .right, 485) else some (1,
+  .right, 217)) else (if n < 220 then some (1, .right, 140) else some (1, .left, 454)))))
+
+def _candTrans1_27 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 230 then _candTrans1_25 n else (if n < 234 then (if n < 232 then (if n < 231 then some
   (1, .right, 229) else some (1, .right, 230)) else (if n < 233 then some (1, .right, 231) else
   some (1, .right, 232))) else (if n < 236 then (if n < 235 then some (1, .right, 233) else some
-  (1, .right, 234)) else (if n < 237 then some (1, .right, 100) else some (1, .right, 236))))))
-  else (if n < 255 then (if n < 247 then (if n < 243 then (if n < 241 then (if n < 240 then (if n
-  < 239 then some (1, .right, 140) else some (1, .right, 238)) else some (1, .right, 239)) else
-  (if n < 242 then some (1, .right, 507) else some (1, .right, 430))) else (if n < 245 then (if n
-  < 244 then some (1, .right, 100) else some (1, .right, 428)) else (if n < 246 then some (1,
-  .right, 244) else some (1, .right, 245)))) else (if n < 251 then (if n < 249 then (if n < 248
-  then some (1, .right, 140) else some (1, .right, 509)) else (if n < 250 then some (1, .right,
-  248) else some (1, .right, 413))) else (if n < 253 then (if n < 252 then some (0, .left, 450)
-  else some (0, .left, 13)) else (if n < 254 then some (1, .right, 434) else some (1, .right,
-  253))))) else (if n < 264 then (if n < 260 then (if n < 258 then (if n < 257 then (if n < 256
-  then some (1, .right, 254) else some (0, .left, 15)) else some (1, .right, 439)) else (if n <
-  259 then some (0, .left, 15) else some (1, .right, 482))) else (if n < 262 then (if n < 261 then
-  some (1, .right, 259) else some (1, .right, 260)) else (if n < 263 then some (1, .right, 261)
-  else some (1, .left, 41)))) else (if n < 268 then (if n < 266 then (if n < 265 then some (1,
-  .right, 263) else some (1, .right, 264)) else (if n < 267 then some (1, .right, 115) else some
-  (1, .right, 505))) else (if n < 270 then (if n < 269 then some (1, .right, 267) else some (1,
-  .right, 517)) else (if n < 271 then some (1, .right, 406) else some (1, .right, 270)))))))))
-  else (if n < 408 then (if n < 340 then (if n < 306 then (if n < 289 then (if n < 281 then (if n
-  < 277 then (if n < 275 then (if n < 274 then (if n < 273 then some (0, .left, 13) else some (1,
-  .right, 272)) else some (1, .right, 441)) else (if n < 276 then some (1, .right, 140) else some
-  (1, .right, 421))) else (if n < 279 then (if n < 278 then some (1, .right, 276) else some (1,
-  .right, 277)) else (if n < 280 then some (1, .right, 401) else some (0, .left, 15)))) else (if n
-  < 285 then (if n < 283 then (if n < 282 then some (1, .right, 280) else some (1, .right, 272))
-  else (if n < 284 then some (1, .right, 282) else some (1, .right, 283))) else (if n < 287 then
-  (if n < 286 then some (1, .right, 275) else some (1, .right, 519)) else (if n < 288 then some
-  (1, .left, 44) else some (0, .left, 13))))) else (if n < 298 then (if n < 294 then (if n < 292
-  then (if n < 291 then (if n < 290 then some (0, .left, 15) else some (1, .right, 289)) else some
-  (1, .right, 290)) else (if n < 293 then some (1, .right, 291) else some (1, .right, 292))) else
-  (if n < 296 then (if n < 295 then some (1, .right, 293) else some (1, .right, 273)) else (if n <
-  297 then some (1, .right, 140) else some (1, .right, 296)))) else (if n < 302 then (if n < 300
-  then (if n < 299 then some (1, .right, 297) else some (1, .right, 518)) else (if n < 301 then
-  some (1, .right, 403) else some (1, .right, 188))) else (if n < 304 then (if n < 303 then some
-  (1, .right, 409) else some (1, .right, 302)) else (if n < 305 then some (1, .right, 303) else
-  some (1, .right, 363)))))) else (if n < 323 then (if n < 315 then (if n < 311 then (if n < 309
-  then (if n < 308 then (if n < 307 then some (0, .left, 10) else some (1, .right, 306)) else some
-  (1, .right, 307)) else (if n < 310 then some (1, .right, 482) else some (0, .left, 13))) else
-  (if n < 313 then (if n < 312 then some (1, .right, 310) else some (1, .right, 299)) else (if n <
-  314 then some (1, .right, 312) else some (1, .right, 140)))) else (if n < 319 then (if n < 317
-  then (if n < 316 then some (1, .right, 314) else some (1, .right, 315)) else (if n < 318 then
-  some (1, .right, 316) else some (1, .right, 317))) else (if n < 321 then (if n < 320 then some
-  (1, .right, 415) else some (1, .right, 417)) else (if n < 322 then some (1, .right, 320) else
-  some (1, .right, 286))))) else (if n < 332 then (if n < 328 then (if n < 326 then (if n < 325
-  then (if n < 324 then some (1, .right, 272) else some (1, .right, 323)) else some (1, .right,
-  324)) else (if n < 327 then some (1, .right, 325) else some (1, .right, 188))) else (if n < 330
-  then (if n < 329 then some (1, .right, 327) else some (1, .right, 328)) else (if n < 331 then
-  some (1, .right, 365) else some (1, .right, 330)))) else (if n < 336 then (if n < 334 then (if n
-  < 333 then some (1, .right, 331) else some (1, .right, 332)) else (if n < 335 then some (1,
-  .left, 50) else some (1, .right, 334))) else (if n < 338 then (if n < 337 then some (1, .right,
-  517) else some (1, .right, 117)) else (if n < 339 then some (1, .right, 337) else some (1,
-  .right, 338))))))) else (if n < 374 then (if n < 357 then (if n < 349 then (if n < 345 then (if
-  n < 343 then (if n < 342 then (if n < 341 then some (1, .right, 339) else some (1, .right, 340))
-  else some (1, .right, 341)) else (if n < 344 then some (1, .left, 10) else none)) else (if n <
-  347 then (if n < 346 then some (1, .right, 344) else some (0, .left, 15)) else (if n < 348 then
-  some (0, .left, 17) else some (0, .left, 19)))) else (if n < 353 then (if n < 351 then (if n <
-  350 then some (0, .left, 21) else some (0, .left, 23)) else (if n < 352 then some (0, .left, 25)
-  else some (0, .left, 27))) else (if n < 355 then (if n < 354 then some (1, .right, 352) else
-  some (1, .left, 10)) else (if n < 356 then some (1, .right, 355) else some (1, .right, 356)))))
-  else (if n < 366 then (if n < 362 then (if n < 360 then (if n < 359 then (if n < 358 then some
-  (1, .right, 357) else some (1, .right, 358)) else some (1, .right, 359)) else (if n < 361 then
-  some (1, .right, 360) else some (1, .right, 361))) else (if n < 364 then (if n < 363 then some
-  (1, .right, 362) else some (1, .right, 363)) else (if n < 365 then some (1, .right, 364) else
-  some (1, .right, 365)))) else (if n < 370 then (if n < 368 then (if n < 367 then some (1,
-  .right, 366) else some (1, .right, 367)) else (if n < 369 then some (1, .right, 368) else some
-  (1, .right, 369))) else (if n < 372 then (if n < 371 then some (1, .right, 370) else some (1,
-  .right, 371)) else (if n < 373 then some (1, .right, 372) else some (1, .right, 373)))))) else
-  (if n < 391 then (if n < 383 then (if n < 379 then (if n < 377 then (if n < 376 then (if n < 375
-  then some (1, .right, 374) else some (1, .right, 375)) else some (1, .right, 376)) else (if n <
-  378 then some (1, .right, 377) else some (1, .right, 378))) else (if n < 381 then (if n < 380
-  then some (1, .right, 379) else some (1, .right, 380)) else (if n < 382 then some (1, .right,
-  381) else some (1, .right, 382)))) else (if n < 387 then (if n < 385 then (if n < 384 then some
+  (1, .right, 234)) else (if n < 237 then some (1, .right, 100) else some (1, .right, 236)))))
+
+def _candTrans1_28 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 243 then (if n < 241 then (if n < 240 then (if n < 239 then some (1, .right, 140) else
+  some (1, .right, 238)) else some (1, .right, 239)) else (if n < 242 then some (1, .right, 507)
+  else some (1, .right, 430))) else (if n < 245 then (if n < 244 then some (1, .right, 100) else
+  some (1, .right, 428)) else (if n < 246 then some (1, .right, 244) else some (1, .right, 245))))
+
+def _candTrans1_29 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 260 then (if n < 258 then (if n < 257 then (if n < 256 then some (1, .right, 254) else
+  some (0, .left, 15)) else some (1, .right, 439)) else (if n < 259 then some (0, .left, 15) else
+  some (1, .right, 482))) else (if n < 262 then (if n < 261 then some (1, .right, 259) else some
+  (1, .right, 260)) else (if n < 263 then some (1, .right, 261) else some (1, .left, 41))))
+
+def _candTrans1_30 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 247 then _candTrans1_28 n else (if n < 251 then (if n < 249 then (if n < 248 then some
+  (1, .right, 140) else some (1, .right, 509)) else (if n < 250 then some (1, .right, 248) else
+  some (1, .right, 413))) else (if n < 253 then (if n < 252 then some (0, .left, 450) else some
+  (0, .left, 13)) else (if n < 254 then some (1, .right, 434) else some (1, .right, 253)))))
+
+def _candTrans1_31 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 264 then _candTrans1_29 n else (if n < 268 then (if n < 266 then (if n < 265 then some
+  (1, .right, 263) else some (1, .right, 264)) else (if n < 267 then some (1, .right, 115) else
+  some (1, .right, 505))) else (if n < 270 then (if n < 269 then some (1, .right, 267) else some
+  (1, .right, 517)) else (if n < 271 then some (1, .right, 406) else some (1, .right, 270)))))
+
+def _candTrans1_32 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 277 then (if n < 275 then (if n < 274 then (if n < 273 then some (0, .left, 13) else
+  some (1, .right, 272)) else some (1, .right, 441)) else (if n < 276 then some (1, .right, 140)
+  else some (1, .right, 421))) else (if n < 279 then (if n < 278 then some (1, .right, 276) else
+  some (1, .right, 277)) else (if n < 280 then some (1, .right, 401) else some (0, .left, 15))))
+
+def _candTrans1_33 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 294 then (if n < 292 then (if n < 291 then (if n < 290 then some (0, .left, 15) else
+  some (1, .right, 289)) else some (1, .right, 290)) else (if n < 293 then some (1, .right, 291)
+  else some (1, .right, 292))) else (if n < 296 then (if n < 295 then some (1, .right, 293) else
+  some (1, .right, 273)) else (if n < 297 then some (1, .right, 140) else some (1, .right, 296))))
+
+def _candTrans1_34 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 281 then _candTrans1_32 n else (if n < 285 then (if n < 283 then (if n < 282 then some
+  (1, .right, 280) else some (1, .right, 272)) else (if n < 284 then some (1, .right, 282) else
+  some (1, .right, 283))) else (if n < 287 then (if n < 286 then some (1, .right, 275) else some
+  (1, .right, 519)) else (if n < 288 then some (1, .left, 44) else some (0, .left, 13)))))
+
+def _candTrans1_35 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 298 then _candTrans1_33 n else (if n < 302 then (if n < 300 then (if n < 299 then some
+  (1, .right, 297) else some (1, .right, 518)) else (if n < 301 then some (1, .right, 403) else
+  some (1, .right, 188))) else (if n < 304 then (if n < 303 then some (1, .right, 409) else some
+  (1, .right, 302)) else (if n < 305 then some (1, .right, 303) else some (1, .right, 363)))))
+
+def _candTrans1_36 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 311 then (if n < 309 then (if n < 308 then (if n < 307 then some (0, .left, 10) else
+  some (1, .right, 306)) else some (1, .right, 307)) else (if n < 310 then some (1, .right, 482)
+  else some (0, .left, 13))) else (if n < 313 then (if n < 312 then some (1, .right, 310) else
+  some (1, .right, 299)) else (if n < 314 then some (1, .right, 312) else some (1, .right, 140))))
+
+def _candTrans1_37 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 328 then (if n < 326 then (if n < 325 then (if n < 324 then some (1, .right, 272) else
+  some (1, .right, 323)) else some (1, .right, 324)) else (if n < 327 then some (1, .right, 325)
+  else some (1, .right, 188))) else (if n < 330 then (if n < 329 then some (1, .right, 327) else
+  some (1, .right, 328)) else (if n < 331 then some (1, .right, 365) else some (1, .right, 330))))
+
+def _candTrans1_38 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 315 then _candTrans1_36 n else (if n < 319 then (if n < 317 then (if n < 316 then some
+  (1, .right, 314) else some (1, .right, 315)) else (if n < 318 then some (1, .right, 316) else
+  some (1, .right, 317))) else (if n < 321 then (if n < 320 then some (1, .right, 415) else some
+  (1, .right, 417)) else (if n < 322 then some (1, .right, 320) else some (1, .right, 286)))))
+
+def _candTrans1_39 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 332 then _candTrans1_37 n else (if n < 336 then (if n < 334 then (if n < 333 then some
+  (1, .right, 331) else some (1, .right, 332)) else (if n < 335 then some (1, .left, 50) else some
+  (1, .right, 334))) else (if n < 338 then (if n < 337 then some (1, .right, 517) else some (1,
+  .right, 117)) else (if n < 339 then some (1, .right, 337) else some (1, .right, 338)))))
+
+def _candTrans1_40 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 345 then (if n < 343 then (if n < 342 then (if n < 341 then some (1, .right, 339) else
+  some (1, .right, 340)) else some (1, .right, 341)) else (if n < 344 then some (1, .left, 10)
+  else none)) else (if n < 347 then (if n < 346 then some (1, .right, 344) else some (0, .left,
+  15)) else (if n < 348 then some (0, .left, 17) else some (0, .left, 19))))
+
+def _candTrans1_41 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 362 then (if n < 360 then (if n < 359 then (if n < 358 then some (1, .right, 357) else
+  some (1, .right, 358)) else some (1, .right, 359)) else (if n < 361 then some (1, .right, 360)
+  else some (1, .right, 361))) else (if n < 364 then (if n < 363 then some (1, .right, 362) else
+  some (1, .right, 363)) else (if n < 365 then some (1, .right, 364) else some (1, .right, 365))))
+
+def _candTrans1_42 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 349 then _candTrans1_40 n else (if n < 353 then (if n < 351 then (if n < 350 then some
+  (0, .left, 21) else some (0, .left, 23)) else (if n < 352 then some (0, .left, 25) else some (0,
+  .left, 27))) else (if n < 355 then (if n < 354 then some (1, .right, 352) else some (1, .left,
+  10)) else (if n < 356 then some (1, .right, 355) else some (1, .right, 356)))))
+
+def _candTrans1_43 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 366 then _candTrans1_41 n else (if n < 370 then (if n < 368 then (if n < 367 then some
+  (1, .right, 366) else some (1, .right, 367)) else (if n < 369 then some (1, .right, 368) else
+  some (1, .right, 369))) else (if n < 372 then (if n < 371 then some (1, .right, 370) else some
+  (1, .right, 371)) else (if n < 373 then some (1, .right, 372) else some (1, .right, 373)))))
+
+def _candTrans1_44 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 379 then (if n < 377 then (if n < 376 then (if n < 375 then some (1, .right, 374) else
+  some (1, .right, 375)) else some (1, .right, 376)) else (if n < 378 then some (1, .right, 377)
+  else some (1, .right, 378))) else (if n < 381 then (if n < 380 then some (1, .right, 379) else
+  some (1, .right, 380)) else (if n < 382 then some (1, .right, 381) else some (1, .right, 382))))
+
+def _candTrans1_45 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 396 then (if n < 394 then (if n < 393 then (if n < 392 then some (1, .left, 454) else
+  some (1, .right, 376)) else some (1, .right, 392)) else (if n < 395 then some (1, .right, 116)
+  else some (1, .left, 10))) else (if n < 398 then (if n < 397 then some (1, .right, 452) else
+  some (1, .left, 454)) else (if n < 399 then some (1, .right, 478) else some (1, .right, 116))))
+
+def _candTrans1_46 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 383 then _candTrans1_44 n else (if n < 387 then (if n < 385 then (if n < 384 then some
   (1, .left, 384) else some (1, .left, 384)) else (if n < 386 then some (1, .left, 386) else some
   (1, .left, 386))) else (if n < 389 then (if n < 388 then some (1, .left, 10) else some (1,
-  .right, 452)) else (if n < 390 then some (1, .right, 459) else some (1, .right, 116))))) else
-  (if n < 400 then (if n < 396 then (if n < 394 then (if n < 393 then (if n < 392 then some (1,
-  .left, 454) else some (1, .right, 376)) else some (1, .right, 392)) else (if n < 395 then some
-  (1, .right, 116) else some (1, .left, 10))) else (if n < 398 then (if n < 397 then some (1,
-  .right, 452) else some (1, .left, 454)) else (if n < 399 then some (1, .right, 478) else some
-  (1, .right, 116)))) else (if n < 404 then (if n < 402 then (if n < 401 then some (1, .left, 10)
-  else some (1, .right, 452)) else (if n < 403 then some (1, .right, 478) else some (1, .right,
-  116))) else (if n < 406 then (if n < 405 then some (1, .left, 454) else some (1, .right, 459))
-  else (if n < 407 then some (1, .right, 116) else some (1, .right, 379)))))))) else (if n < 476
-  then (if n < 442 then (if n < 425 then (if n < 417 then (if n < 413 then (if n < 411 then (if n
-  < 410 then (if n < 409 then some (1, .right, 407) else some (1, .right, 116)) else some (1,
-  .right, 392)) else (if n < 412 then some (1, .right, 116) else some (1, .left, 10))) else (if n
-  < 415 then (if n < 414 then some (1, .right, 452) else some (1, .right, 459)) else (if n < 416
-  then some (1, .right, 116) else some (1, .right, 392)))) else (if n < 421 then (if n < 419 then
-  (if n < 418 then some (1, .right, 116) else some (1, .left, 454)) else (if n < 420 then some (1,
-  .right, 456) else some (1, .right, 419))) else (if n < 423 then (if n < 422 then some (1,
-  .right, 116) else some (1, .left, 10)) else (if n < 424 then some (1, .right, 452) else some (1,
-  .right, 473))))) else (if n < 434 then (if n < 430 then (if n < 428 then (if n < 427 then (if n
-  < 426 then some (1, .right, 116) else some (1, .left, 454)) else some (1, .right, 459)) else (if
-  n < 429 then some (1, .right, 116) else some (1, .right, 392))) else (if n < 432 then (if n <
-  431 then some (1, .right, 116) else some (1, .right, 380)) else (if n < 433 then some (1,
-  .right, 116) else some (1, .left, 10)))) else (if n < 438 then (if n < 436 then (if n < 435 then
-  some (1, .right, 452) else some (1, .left, 454)) else (if n < 437 then some (1, .right, 456)
-  else some (1, .right, 116))) else (if n < 440 then (if n < 439 then some (1, .right, 462) else
-  some (1, .right, 116)) else (if n < 441 then some (1, .right, 392) else some (1, .right,
-  116)))))) else (if n < 459 then (if n < 451 then (if n < 447 then (if n < 445 then (if n < 444
-  then (if n < 443 then some (1, .left, 10) else some (1, .right, 452)) else some (1, .right,
-  380)) else (if n < 446 then some (1, .right, 444) else some (1, .right, 116))) else (if n < 449
-  then (if n < 448 then some (1, .left, 454) else some (1, .right, 381)) else (if n < 450 then
-  some (1, .right, 116) else some (0, .left, 12)))) else (if n < 455 then (if n < 453 then (if n <
-  452 then some (1, .left, 10) else some (0, .left, 10)) else (if n < 454 then some (1, .right,
-  452) else some (1, .left, 13))) else (if n < 457 then (if n < 456 then some (1, .left, 454) else
-  some (1, .right, 456)) else (if n < 458 then some (1, .right, 456) else some (1, .right,
-  116))))) else (if n < 468 then (if n < 464 then (if n < 462 then (if n < 461 then (if n < 460
-  then some (1, .right, 376) else some (1, .right, 459)) else some (1, .right, 116)) else (if n <
-  463 then some (1, .right, 378) else some (1, .right, 462))) else (if n < 466 then (if n < 465
-  then some (1, .right, 116) else some (1, .right, 381)) else (if n < 467 then some (1, .right,
-  465) else some (1, .right, 116)))) else (if n < 472 then (if n < 470 then (if n < 469 then some
+  .right, 452)) else (if n < 390 then some (1, .right, 459) else some (1, .right, 116)))))
+
+def _candTrans1_47 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 400 then _candTrans1_45 n else (if n < 404 then (if n < 402 then (if n < 401 then some
+  (1, .left, 10) else some (1, .right, 452)) else (if n < 403 then some (1, .right, 478) else some
+  (1, .right, 116))) else (if n < 406 then (if n < 405 then some (1, .left, 454) else some (1,
+  .right, 459)) else (if n < 407 then some (1, .right, 116) else some (1, .right, 379)))))
+
+def _candTrans1_48 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 413 then (if n < 411 then (if n < 410 then (if n < 409 then some (1, .right, 407) else
+  some (1, .right, 116)) else some (1, .right, 392)) else (if n < 412 then some (1, .right, 116)
+  else some (1, .left, 10))) else (if n < 415 then (if n < 414 then some (1, .right, 452) else
+  some (1, .right, 459)) else (if n < 416 then some (1, .right, 116) else some (1, .right, 392))))
+
+def _candTrans1_49 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 430 then (if n < 428 then (if n < 427 then (if n < 426 then some (1, .right, 116) else
+  some (1, .left, 454)) else some (1, .right, 459)) else (if n < 429 then some (1, .right, 116)
+  else some (1, .right, 392))) else (if n < 432 then (if n < 431 then some (1, .right, 116) else
+  some (1, .right, 380)) else (if n < 433 then some (1, .right, 116) else some (1, .left, 10))))
+
+def _candTrans1_50 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 417 then _candTrans1_48 n else (if n < 421 then (if n < 419 then (if n < 418 then some
+  (1, .right, 116) else some (1, .left, 454)) else (if n < 420 then some (1, .right, 456) else
+  some (1, .right, 419))) else (if n < 423 then (if n < 422 then some (1, .right, 116) else some
+  (1, .left, 10)) else (if n < 424 then some (1, .right, 452) else some (1, .right, 473)))))
+
+def _candTrans1_51 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 434 then _candTrans1_49 n else (if n < 438 then (if n < 436 then (if n < 435 then some
+  (1, .right, 452) else some (1, .left, 454)) else (if n < 437 then some (1, .right, 456) else
+  some (1, .right, 116))) else (if n < 440 then (if n < 439 then some (1, .right, 462) else some
+  (1, .right, 116)) else (if n < 441 then some (1, .right, 392) else some (1, .right, 116)))))
+
+def _candTrans1_52 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 447 then (if n < 445 then (if n < 444 then (if n < 443 then some (1, .left, 10) else
+  some (1, .right, 452)) else some (1, .right, 380)) else (if n < 446 then some (1, .right, 444)
+  else some (1, .right, 116))) else (if n < 449 then (if n < 448 then some (1, .left, 454) else
+  some (1, .right, 381)) else (if n < 450 then some (1, .right, 116) else some (0, .left, 12))))
+
+def _candTrans1_53 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 464 then (if n < 462 then (if n < 461 then (if n < 460 then some (1, .right, 376) else
+  some (1, .right, 459)) else some (1, .right, 116)) else (if n < 463 then some (1, .right, 378)
+  else some (1, .right, 462))) else (if n < 466 then (if n < 465 then some (1, .right, 116) else
+  some (1, .right, 381)) else (if n < 467 then some (1, .right, 465) else some (1, .right, 116))))
+
+def _candTrans1_54 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 451 then _candTrans1_52 n else (if n < 455 then (if n < 453 then (if n < 452 then some
+  (1, .left, 10) else some (0, .left, 10)) else (if n < 454 then some (1, .right, 452) else some
+  (1, .left, 13))) else (if n < 457 then (if n < 456 then some (1, .left, 454) else some (1,
+  .right, 456)) else (if n < 458 then some (1, .right, 456) else some (1, .right, 116)))))
+
+def _candTrans1_55 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 468 then _candTrans1_53 n else (if n < 472 then (if n < 470 then (if n < 469 then some
   (1, .right, 381) else some (1, .right, 116)) else (if n < 471 then some (1, .left, 10) else some
   (1, .right, 452))) else (if n < 474 then (if n < 473 then some (1, .left, 454) else some (1,
-  .right, 378)) else (if n < 475 then some (1, .right, 473) else some (1, .right, 116))))))) else
-  (if n < 510 then (if n < 493 then (if n < 485 then (if n < 481 then (if n < 479 then (if n < 478
-  then (if n < 477 then some (1, .right, 456) else some (1, .right, 116)) else some (1, .right,
-  379)) else (if n < 480 then some (1, .right, 478) else some (1, .right, 116))) else (if n < 483
-  then (if n < 482 then some (1, .right, 392) else some (1, .right, 116)) else (if n < 484 then
-  some (1, .right, 380) else some (1, .right, 483)))) else (if n < 489 then (if n < 487 then (if n
-  < 486 then some (1, .right, 116) else some (1, .left, 454)) else (if n < 488 then some (1,
-  .right, 465) else some (1, .right, 116))) else (if n < 491 then (if n < 490 then some (1, .left,
-  10) else some (1, .right, 452)) else (if n < 492 then some (1, .right, 506) else some (0, .left,
-  450))))) else (if n < 502 then (if n < 498 then (if n < 496 then (if n < 495 then (if n < 494
-  then some (1, .right, 492) else some (1, .right, 251)) else some (1, .right, 167)) else (if n <
-  497 then some (1, .right, 170) else some (0, .left, 454))) else (if n < 500 then (if n < 499
-  then some (0, .left, 450) else some (1, .right, 498)) else (if n < 501 then some (1, .right,
-  142) else some (1, .right, 541)))) else (if n < 506 then (if n < 504 then (if n < 503 then some
+  .right, 378)) else (if n < 475 then some (1, .right, 473) else some (1, .right, 116)))))
+
+def _candTrans1_56 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 481 then (if n < 479 then (if n < 478 then (if n < 477 then some (1, .right, 456) else
+  some (1, .right, 116)) else some (1, .right, 379)) else (if n < 480 then some (1, .right, 478)
+  else some (1, .right, 116))) else (if n < 483 then (if n < 482 then some (1, .right, 392) else
+  some (1, .right, 116)) else (if n < 484 then some (1, .right, 380) else some (1, .right, 483))))
+
+def _candTrans1_57 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 498 then (if n < 496 then (if n < 495 then (if n < 494 then some (1, .right, 492) else
+  some (1, .right, 251)) else some (1, .right, 167)) else (if n < 497 then some (1, .right, 170)
+  else some (0, .left, 454))) else (if n < 500 then (if n < 499 then some (0, .left, 450) else
+  some (1, .right, 498)) else (if n < 501 then some (1, .right, 142) else some (1, .right, 541))))
+
+def _candTrans1_58 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 485 then _candTrans1_56 n else (if n < 489 then (if n < 487 then (if n < 486 then some
+  (1, .right, 116) else some (1, .left, 454)) else (if n < 488 then some (1, .right, 465) else
+  some (1, .right, 116))) else (if n < 491 then (if n < 490 then some (1, .left, 10) else some (1,
+  .right, 452)) else (if n < 492 then some (1, .right, 506) else some (0, .left, 450)))))
+
+def _candTrans1_59 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 502 then _candTrans1_57 n else (if n < 506 then (if n < 504 then (if n < 503 then some
   (0, .left, 450) else some (1, .right, 502)) else (if n < 505 then some (1, .left, 10) else some
   (1, .right, 452))) else (if n < 508 then (if n < 507 then some (0, .left, 450) else some (1,
-  .right, 506)) else (if n < 509 then some (0, .left, 450) else some (1, .right, 508)))))) else
-  (if n < 527 then (if n < 519 then (if n < 515 then (if n < 513 then (if n < 512 then (if n < 511
-  then some (1, .right, 251) else some (1, .right, 167)) else some (1, .right, 170)) else (if n <
-  514 then some (1, .right, 142) else some (1, .right, 524))) else (if n < 517 then (if n < 516
-  then some (1, .right, 541) else some (1, .left, 10)) else (if n < 518 then some (1, .right, 452)
-  else some (1, .right, 492)))) else (if n < 523 then (if n < 521 then (if n < 520 then some (1,
-  .right, 251) else some (1, .right, 167)) else (if n < 522 then some (1, .right, 170) else some
-  (0, .left, 454))) else (if n < 525 then (if n < 524 then some (1, .right, 142) else some (0,
-  .left, 450)) else (if n < 526 then some (1, .right, 524) else some (1, .left, 10))))) else (if n
-  < 535 then (if n < 531 then (if n < 529 then (if n < 528 then some (1, .right, 452) else some
-  (1, .right, 508)) else (if n < 530 then some (1, .right, 492) else some (0, .left, 454))) else
-  (if n < 533 then (if n < 532 then some (1, .right, 541) else some (1, .left, 10)) else (if n <
-  534 then some (1, .right, 452) else some (1, .right, 167)))) else (if n < 539 then (if n < 537
-  then (if n < 536 then some (0, .left, 454) else some (1, .right, 498)) else (if n < 538 then
+  .right, 506)) else (if n < 509 then some (0, .left, 450) else some (1, .right, 508)))))
+
+def _candTrans1_60 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 515 then (if n < 513 then (if n < 512 then (if n < 511 then some (1, .right, 251) else
+  some (1, .right, 167)) else some (1, .right, 170)) else (if n < 514 then some (1, .right, 142)
+  else some (1, .right, 524))) else (if n < 517 then (if n < 516 then some (1, .right, 541) else
+  some (1, .left, 10)) else (if n < 518 then some (1, .right, 452) else some (1, .right, 492))))
+
+def _candTrans1_61 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 519 then _candTrans1_60 n else (if n < 523 then (if n < 521 then (if n < 520 then some
+  (1, .right, 251) else some (1, .right, 167)) else (if n < 522 then some (1, .right, 170) else
+  some (0, .left, 454))) else (if n < 525 then (if n < 524 then some (1, .right, 142) else some
+  (0, .left, 450)) else (if n < 526 then some (1, .right, 524) else some (1, .left, 10)))))
+
+def _candTrans1_62 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 535 then (if n < 531 then (if n < 529 then (if n < 528 then some (1, .right, 452) else
+  some (1, .right, 508)) else (if n < 530 then some (1, .right, 492) else some (0, .left, 454)))
+  else (if n < 533 then (if n < 532 then some (1, .right, 541) else some (1, .left, 10)) else (if
+  n < 534 then some (1, .right, 452) else some (1, .right, 167)))) else (if n < 539 then (if n <
+  537 then (if n < 536 then some (0, .left, 454) else some (1, .right, 498)) else (if n < 538 then
   some (1, .right, 541) else some (1, .right, 498))) else (if n < 541 then (if n < 540 then some
   (0, .left, 454) else some (1, .right, 142)) else (if n < 542 then some (0, .left, 450) else some
-  (1, .right, 541))))))))))
+  (1, .right, 541)))))
+
+def _candTrans1_63 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 136 then (if n < 68 then (if n < 34 then (if n < 17 then _candTrans1_2 n else
+  _candTrans1_3 n) else (if n < 51 then _candTrans1_6 n else _candTrans1_7 n)) else (if n < 102
+  then (if n < 85 then _candTrans1_10 n else _candTrans1_11 n) else (if n < 119 then
+  _candTrans1_14 n else _candTrans1_15 n))) else (if n < 204 then (if n < 170 then (if n < 153
+  then _candTrans1_18 n else _candTrans1_19 n) else (if n < 187 then _candTrans1_22 n else
+  _candTrans1_23 n)) else (if n < 238 then (if n < 221 then _candTrans1_26 n else _candTrans1_27
+  n) else (if n < 255 then _candTrans1_30 n else _candTrans1_31 n))))
+
+def _candTrans1_64 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 408 then (if n < 340 then (if n < 306 then (if n < 289 then _candTrans1_34 n else
+  _candTrans1_35 n) else (if n < 323 then _candTrans1_38 n else _candTrans1_39 n)) else (if n <
+  374 then (if n < 357 then _candTrans1_42 n else _candTrans1_43 n) else (if n < 391 then
+  _candTrans1_46 n else _candTrans1_47 n))) else (if n < 476 then (if n < 442 then (if n < 425
+  then _candTrans1_50 n else _candTrans1_51 n) else (if n < 459 then _candTrans1_54 n else
+  _candTrans1_55 n)) else (if n < 510 then (if n < 493 then _candTrans1_58 n else _candTrans1_59
+  n) else (if n < 527 then _candTrans1_61 n else _candTrans1_62 n))))
+
+def candTrans1 (n : Nat) : Option (Fin 2 × Dir × Fin 543) :=
+  (if n < 272 then _candTrans1_63 n else _candTrans1_64 n)
 def candTrans (q : Fin 543) (b : Fin 2) : Option (Fin 2 × Dir × Fin 543) :=
   if b == 0 then candTrans0 q.val else candTrans1 q.val
 
-def isBounce0 (n : Nat) : Bool :=
-  (if n < 372 then (if n < 186 then (if n < 93 then (if n < 46 then (if n < 23 then (if n < 11
-  then (if n < 5 then (if n < 2 then (if n < 1 then false else false) else (if n < 3 then false
-  else (if n < 4 then false else false))) else (if n < 8 then (if n < 6 then false else (if n < 7
-  then false else false)) else (if n < 9 then false else (if n < 10 then false else false)))) else
+def _isBounce0_0 (n : Nat) : Bool :=
+  (if n < 5 then (if n < 2 then (if n < 1 then false else false) else (if n < 3 then false else
+  (if n < 4 then false else false))) else (if n < 8 then (if n < 6 then false else (if n < 7 then
+  false else false)) else (if n < 9 then false else (if n < 10 then false else false))))
+
+def _isBounce0_1 (n : Nat) : Bool :=
   (if n < 17 then (if n < 14 then (if n < 12 then false else (if n < 13 then true else true)) else
   (if n < 15 then false else (if n < 16 then false else false))) else (if n < 20 then (if n < 18
   then false else (if n < 19 then false else false)) else (if n < 21 then false else (if n < 22
-  then false else false))))) else (if n < 34 then (if n < 28 then (if n < 25 then (if n < 24 then
-  false else false) else (if n < 26 then false else (if n < 27 then false else false))) else (if n
-  < 31 then (if n < 29 then false else (if n < 30 then false else false)) else (if n < 32 then
-  false else (if n < 33 then false else false)))) else (if n < 40 then (if n < 37 then (if n < 35
-  then false else (if n < 36 then false else false)) else (if n < 38 then false else (if n < 39
-  then false else false))) else (if n < 43 then (if n < 41 then false else (if n < 42 then false
-  else false)) else (if n < 44 then false else (if n < 45 then false else false)))))) else (if n <
-  69 then (if n < 57 then (if n < 51 then (if n < 48 then (if n < 47 then false else false) else
-  (if n < 49 then false else (if n < 50 then false else false))) else (if n < 54 then (if n < 52
-  then false else (if n < 53 then false else false)) else (if n < 55 then false else (if n < 56
-  then false else false)))) else (if n < 63 then (if n < 60 then (if n < 58 then false else (if n
-  < 59 then false else false)) else (if n < 61 then false else (if n < 62 then false else false)))
-  else (if n < 66 then (if n < 64 then false else (if n < 65 then false else false)) else (if n <
-  67 then false else (if n < 68 then false else false))))) else (if n < 81 then (if n < 75 then
-  (if n < 72 then (if n < 70 then false else (if n < 71 then false else false)) else (if n < 73
-  then false else (if n < 74 then false else false))) else (if n < 78 then (if n < 76 then false
-  else (if n < 77 then false else false)) else (if n < 79 then false else (if n < 80 then false
-  else false)))) else (if n < 87 then (if n < 84 then (if n < 82 then false else (if n < 83 then
-  false else false)) else (if n < 85 then false else (if n < 86 then false else false))) else (if
-  n < 90 then (if n < 88 then false else (if n < 89 then false else false)) else (if n < 91 then
-  false else (if n < 92 then false else true))))))) else (if n < 139 then (if n < 116 then (if n <
-  104 then (if n < 98 then (if n < 95 then (if n < 94 then false else false) else (if n < 96 then
-  false else (if n < 97 then false else false))) else (if n < 101 then (if n < 99 then false else
-  (if n < 100 then false else false)) else (if n < 102 then false else (if n < 103 then false else
-  false)))) else (if n < 110 then (if n < 107 then (if n < 105 then false else (if n < 106 then
-  false else false)) else (if n < 108 then false else (if n < 109 then false else false))) else
-  (if n < 113 then (if n < 111 then false else (if n < 112 then false else false)) else (if n <
-  114 then false else (if n < 115 then false else false))))) else (if n < 127 then (if n < 121
-  then (if n < 118 then (if n < 117 then false else false) else (if n < 119 then false else (if n
-  < 120 then false else false))) else (if n < 124 then (if n < 122 then false else (if n < 123
-  then false else false)) else (if n < 125 then false else (if n < 126 then false else false))))
-  else (if n < 133 then (if n < 130 then (if n < 128 then false else (if n < 129 then false else
+  then false else false))))
+
+def _isBounce0_2 (n : Nat) : Bool :=
+  (if n < 28 then (if n < 25 then (if n < 24 then false else false) else (if n < 26 then false
+  else (if n < 27 then false else false))) else (if n < 31 then (if n < 29 then false else (if n <
+  30 then false else false)) else (if n < 32 then false else (if n < 33 then false else false))))
+
+def _isBounce0_3 (n : Nat) : Bool :=
+  (if n < 40 then (if n < 37 then (if n < 35 then false else (if n < 36 then false else false))
+  else (if n < 38 then false else (if n < 39 then false else false))) else (if n < 43 then (if n <
+  41 then false else (if n < 42 then false else false)) else (if n < 44 then false else (if n < 45
+  then false else false))))
+
+def _isBounce0_4 (n : Nat) : Bool :=
+  (if n < 51 then (if n < 48 then (if n < 47 then false else false) else (if n < 49 then false
+  else (if n < 50 then false else false))) else (if n < 54 then (if n < 52 then false else (if n <
+  53 then false else false)) else (if n < 55 then false else (if n < 56 then false else false))))
+
+def _isBounce0_5 (n : Nat) : Bool :=
+  (if n < 63 then (if n < 60 then (if n < 58 then false else (if n < 59 then false else false))
+  else (if n < 61 then false else (if n < 62 then false else false))) else (if n < 66 then (if n <
+  64 then false else (if n < 65 then false else false)) else (if n < 67 then false else (if n < 68
+  then false else false))))
+
+def _isBounce0_6 (n : Nat) : Bool :=
+  (if n < 75 then (if n < 72 then (if n < 70 then false else (if n < 71 then false else false))
+  else (if n < 73 then false else (if n < 74 then false else false))) else (if n < 78 then (if n <
+  76 then false else (if n < 77 then false else false)) else (if n < 79 then false else (if n < 80
+  then false else false))))
+
+def _isBounce0_7 (n : Nat) : Bool :=
+  (if n < 87 then (if n < 84 then (if n < 82 then false else (if n < 83 then false else false))
+  else (if n < 85 then false else (if n < 86 then false else false))) else (if n < 90 then (if n <
+  88 then false else (if n < 89 then false else false)) else (if n < 91 then false else (if n < 92
+  then false else true))))
+
+def _isBounce0_8 (n : Nat) : Bool :=
+  (if n < 98 then (if n < 95 then (if n < 94 then false else false) else (if n < 96 then false
+  else (if n < 97 then false else false))) else (if n < 101 then (if n < 99 then false else (if n
+  < 100 then false else false)) else (if n < 102 then false else (if n < 103 then false else
+  false))))
+
+def _isBounce0_9 (n : Nat) : Bool :=
+  (if n < 110 then (if n < 107 then (if n < 105 then false else (if n < 106 then false else
+  false)) else (if n < 108 then false else (if n < 109 then false else false))) else (if n < 113
+  then (if n < 111 then false else (if n < 112 then false else false)) else (if n < 114 then false
+  else (if n < 115 then false else false))))
+
+def _isBounce0_10 (n : Nat) : Bool :=
+  (if n < 121 then (if n < 118 then (if n < 117 then false else false) else (if n < 119 then false
+  else (if n < 120 then false else false))) else (if n < 124 then (if n < 122 then false else (if
+  n < 123 then false else false)) else (if n < 125 then false else (if n < 126 then false else
+  false))))
+
+def _isBounce0_11 (n : Nat) : Bool :=
+  (if n < 133 then (if n < 130 then (if n < 128 then false else (if n < 129 then false else
   false)) else (if n < 131 then false else (if n < 132 then false else false))) else (if n < 136
   then (if n < 134 then false else (if n < 135 then false else false)) else (if n < 137 then false
-  else (if n < 138 then false else false)))))) else (if n < 162 then (if n < 150 then (if n < 144
-  then (if n < 141 then (if n < 140 then false else false) else (if n < 142 then false else (if n
-  < 143 then false else false))) else (if n < 147 then (if n < 145 then false else (if n < 146
-  then false else false)) else (if n < 148 then false else (if n < 149 then false else false))))
-  else (if n < 156 then (if n < 153 then (if n < 151 then false else (if n < 152 then false else
+  else (if n < 138 then false else false))))
+
+def _isBounce0_12 (n : Nat) : Bool :=
+  (if n < 144 then (if n < 141 then (if n < 140 then false else false) else (if n < 142 then false
+  else (if n < 143 then false else false))) else (if n < 147 then (if n < 145 then false else (if
+  n < 146 then false else false)) else (if n < 148 then false else (if n < 149 then false else
+  false))))
+
+def _isBounce0_13 (n : Nat) : Bool :=
+  (if n < 156 then (if n < 153 then (if n < 151 then false else (if n < 152 then false else
   false)) else (if n < 154 then false else (if n < 155 then false else false))) else (if n < 159
   then (if n < 157 then false else (if n < 158 then false else false)) else (if n < 160 then false
-  else (if n < 161 then false else false))))) else (if n < 174 then (if n < 168 then (if n < 165
-  then (if n < 163 then false else (if n < 164 then false else false)) else (if n < 166 then false
-  else (if n < 167 then false else false))) else (if n < 171 then (if n < 169 then false else (if
-  n < 170 then false else false)) else (if n < 172 then false else (if n < 173 then false else
-  false)))) else (if n < 180 then (if n < 177 then (if n < 175 then false else (if n < 176 then
-  false else false)) else (if n < 178 then false else (if n < 179 then false else false))) else
-  (if n < 183 then (if n < 181 then false else (if n < 182 then false else false)) else (if n <
-  184 then false else (if n < 185 then false else false)))))))) else (if n < 279 then (if n < 232
-  then (if n < 209 then (if n < 197 then (if n < 191 then (if n < 188 then (if n < 187 then false
-  else false) else (if n < 189 then false else (if n < 190 then false else false))) else (if n <
-  194 then (if n < 192 then false else (if n < 193 then false else false)) else (if n < 195 then
-  false else (if n < 196 then false else false)))) else (if n < 203 then (if n < 200 then (if n <
-  198 then false else (if n < 199 then false else false)) else (if n < 201 then false else (if n <
-  202 then false else false))) else (if n < 206 then (if n < 204 then false else (if n < 205 then
-  false else false)) else (if n < 207 then false else (if n < 208 then false else true))))) else
-  (if n < 220 then (if n < 214 then (if n < 211 then (if n < 210 then true else false) else (if n
-  < 212 then false else (if n < 213 then false else false))) else (if n < 217 then (if n < 215
-  then false else (if n < 216 then false else true)) else (if n < 218 then true else (if n < 219
-  then false else false)))) else (if n < 226 then (if n < 223 then (if n < 221 then false else (if
-  n < 222 then false else false)) else (if n < 224 then false else (if n < 225 then true else
-  false))) else (if n < 229 then (if n < 227 then false else (if n < 228 then false else true))
-  else (if n < 230 then false else (if n < 231 then false else false)))))) else (if n < 255 then
-  (if n < 243 then (if n < 237 then (if n < 234 then (if n < 233 then false else false) else (if n
-  < 235 then false else (if n < 236 then false else false))) else (if n < 240 then (if n < 238
-  then false else (if n < 239 then false else false)) else (if n < 241 then false else (if n < 242
-  then false else false)))) else (if n < 249 then (if n < 246 then (if n < 244 then false else (if
-  n < 245 then true else true)) else (if n < 247 then false else (if n < 248 then false else
-  false))) else (if n < 252 then (if n < 250 then false else (if n < 251 then false else false))
-  else (if n < 253 then false else (if n < 254 then false else true))))) else (if n < 267 then (if
-  n < 261 then (if n < 258 then (if n < 256 then true else (if n < 257 then false else false))
+  else (if n < 161 then false else false))))
+
+def _isBounce0_14 (n : Nat) : Bool :=
+  (if n < 168 then (if n < 165 then (if n < 163 then false else (if n < 164 then false else
+  false)) else (if n < 166 then false else (if n < 167 then false else false))) else (if n < 171
+  then (if n < 169 then false else (if n < 170 then false else false)) else (if n < 172 then false
+  else (if n < 173 then false else false))))
+
+def _isBounce0_15 (n : Nat) : Bool :=
+  (if n < 180 then (if n < 177 then (if n < 175 then false else (if n < 176 then false else
+  false)) else (if n < 178 then false else (if n < 179 then false else false))) else (if n < 183
+  then (if n < 181 then false else (if n < 182 then false else false)) else (if n < 184 then false
+  else (if n < 185 then false else false))))
+
+def _isBounce0_16 (n : Nat) : Bool :=
+  (if n < 191 then (if n < 188 then (if n < 187 then false else false) else (if n < 189 then false
+  else (if n < 190 then false else false))) else (if n < 194 then (if n < 192 then false else (if
+  n < 193 then false else false)) else (if n < 195 then false else (if n < 196 then false else
+  false))))
+
+def _isBounce0_17 (n : Nat) : Bool :=
+  (if n < 203 then (if n < 200 then (if n < 198 then false else (if n < 199 then false else
+  false)) else (if n < 201 then false else (if n < 202 then false else false))) else (if n < 206
+  then (if n < 204 then false else (if n < 205 then false else false)) else (if n < 207 then false
+  else (if n < 208 then false else true))))
+
+def _isBounce0_18 (n : Nat) : Bool :=
+  (if n < 214 then (if n < 211 then (if n < 210 then true else false) else (if n < 212 then false
+  else (if n < 213 then false else false))) else (if n < 217 then (if n < 215 then false else (if
+  n < 216 then false else true)) else (if n < 218 then true else (if n < 219 then false else
+  false))))
+
+def _isBounce0_19 (n : Nat) : Bool :=
+  (if n < 226 then (if n < 223 then (if n < 221 then false else (if n < 222 then false else
+  false)) else (if n < 224 then false else (if n < 225 then true else false))) else (if n < 229
+  then (if n < 227 then false else (if n < 228 then false else true)) else (if n < 230 then false
+  else (if n < 231 then false else false))))
+
+def _isBounce0_20 (n : Nat) : Bool :=
+  (if n < 237 then (if n < 234 then (if n < 233 then false else false) else (if n < 235 then false
+  else (if n < 236 then false else false))) else (if n < 240 then (if n < 238 then false else (if
+  n < 239 then false else false)) else (if n < 241 then false else (if n < 242 then false else
+  false))))
+
+def _isBounce0_21 (n : Nat) : Bool :=
+  (if n < 249 then (if n < 246 then (if n < 244 then false else (if n < 245 then true else true))
+  else (if n < 247 then false else (if n < 248 then false else false))) else (if n < 252 then (if
+  n < 250 then false else (if n < 251 then false else false)) else (if n < 253 then false else (if
+  n < 254 then false else true))))
+
+def _isBounce0_22 (n : Nat) : Bool :=
+  (if n < 261 then (if n < 258 then (if n < 256 then true else (if n < 257 then false else false))
   else (if n < 259 then true else (if n < 260 then false else false))) else (if n < 264 then (if n
   < 262 then false else (if n < 263 then false else true)) else (if n < 265 then false else (if n
-  < 266 then false else false)))) else (if n < 273 then (if n < 270 then (if n < 268 then false
-  else (if n < 269 then false else false)) else (if n < 271 then false else (if n < 272 then false
-  else false))) else (if n < 276 then (if n < 274 then false else (if n < 275 then false else
-  false)) else (if n < 277 then false else (if n < 278 then false else false))))))) else (if n <
-  325 then (if n < 302 then (if n < 290 then (if n < 284 then (if n < 281 then (if n < 280 then
-  false else false) else (if n < 282 then false else (if n < 283 then false else false))) else (if
-  n < 287 then (if n < 285 then false else (if n < 286 then false else false)) else (if n < 288
-  then false else (if n < 289 then false else false)))) else (if n < 296 then (if n < 293 then (if
-  n < 291 then false else (if n < 292 then false else false)) else (if n < 294 then false else (if
-  n < 295 then false else false))) else (if n < 299 then (if n < 297 then false else (if n < 298
-  then false else false)) else (if n < 300 then false else (if n < 301 then false else false)))))
-  else (if n < 313 then (if n < 307 then (if n < 304 then (if n < 303 then false else false) else
-  (if n < 305 then false else (if n < 306 then false else false))) else (if n < 310 then (if n <
-  308 then false else (if n < 309 then true else true)) else (if n < 311 then false else (if n <
-  312 then false else true)))) else (if n < 319 then (if n < 316 then (if n < 314 then false else
-  (if n < 315 then false else false)) else (if n < 317 then false else (if n < 318 then false else
-  false))) else (if n < 322 then (if n < 320 then false else (if n < 321 then false else true))
-  else (if n < 323 then false else (if n < 324 then false else false)))))) else (if n < 348 then
-  (if n < 336 then (if n < 330 then (if n < 327 then (if n < 326 then false else false) else (if n
-  < 328 then false else (if n < 329 then false else false))) else (if n < 333 then (if n < 331
-  then false else (if n < 332 then false else false)) else (if n < 334 then false else (if n < 335
-  then false else false)))) else (if n < 342 then (if n < 339 then (if n < 337 then false else (if
-  n < 338 then true else false)) else (if n < 340 then false else (if n < 341 then false else
-  false))) else (if n < 345 then (if n < 343 then false else (if n < 344 then false else false))
-  else (if n < 346 then false else (if n < 347 then false else false))))) else (if n < 360 then
+  < 266 then false else false))))
+
+def _isBounce0_23 (n : Nat) : Bool :=
+  (if n < 273 then (if n < 270 then (if n < 268 then false else (if n < 269 then false else
+  false)) else (if n < 271 then false else (if n < 272 then false else false))) else (if n < 276
+  then (if n < 274 then false else (if n < 275 then false else false)) else (if n < 277 then false
+  else (if n < 278 then false else false))))
+
+def _isBounce0_24 (n : Nat) : Bool :=
+  (if n < 284 then (if n < 281 then (if n < 280 then false else false) else (if n < 282 then false
+  else (if n < 283 then false else false))) else (if n < 287 then (if n < 285 then false else (if
+  n < 286 then false else false)) else (if n < 288 then false else (if n < 289 then false else
+  false))))
+
+def _isBounce0_25 (n : Nat) : Bool :=
+  (if n < 296 then (if n < 293 then (if n < 291 then false else (if n < 292 then false else
+  false)) else (if n < 294 then false else (if n < 295 then false else false))) else (if n < 299
+  then (if n < 297 then false else (if n < 298 then false else false)) else (if n < 300 then false
+  else (if n < 301 then false else false))))
+
+def _isBounce0_26 (n : Nat) : Bool :=
+  (if n < 307 then (if n < 304 then (if n < 303 then false else false) else (if n < 305 then false
+  else (if n < 306 then false else false))) else (if n < 310 then (if n < 308 then false else (if
+  n < 309 then true else true)) else (if n < 311 then false else (if n < 312 then false else
+  true))))
+
+def _isBounce0_27 (n : Nat) : Bool :=
+  (if n < 319 then (if n < 316 then (if n < 314 then false else (if n < 315 then false else
+  false)) else (if n < 317 then false else (if n < 318 then false else false))) else (if n < 322
+  then (if n < 320 then false else (if n < 321 then false else true)) else (if n < 323 then false
+  else (if n < 324 then false else false))))
+
+def _isBounce0_28 (n : Nat) : Bool :=
+  (if n < 330 then (if n < 327 then (if n < 326 then false else false) else (if n < 328 then false
+  else (if n < 329 then false else false))) else (if n < 333 then (if n < 331 then false else (if
+  n < 332 then false else false)) else (if n < 334 then false else (if n < 335 then false else
+  false))))
+
+def _isBounce0_29 (n : Nat) : Bool :=
+  (if n < 342 then (if n < 339 then (if n < 337 then false else (if n < 338 then true else false))
+  else (if n < 340 then false else (if n < 341 then false else false))) else (if n < 345 then (if
+  n < 343 then false else (if n < 344 then false else false)) else (if n < 346 then false else (if
+  n < 347 then false else false))))
+
+def _isBounce0_30 (n : Nat) : Bool :=
   (if n < 354 then (if n < 351 then (if n < 349 then false else (if n < 350 then false else
   false)) else (if n < 352 then false else (if n < 353 then false else false))) else (if n < 357
   then (if n < 355 then false else (if n < 356 then false else false)) else (if n < 358 then false
-  else (if n < 359 then false else false)))) else (if n < 366 then (if n < 363 then (if n < 361
-  then false else (if n < 362 then true else false)) else (if n < 364 then false else (if n < 365
-  then false else false))) else (if n < 369 then (if n < 367 then false else (if n < 368 then
-  false else false)) else (if n < 370 then false else (if n < 371 then false else false)))))))))
-  else (if n < 558 then (if n < 465 then (if n < 418 then (if n < 395 then (if n < 383 then (if n
-  < 377 then (if n < 374 then (if n < 373 then false else false) else (if n < 375 then false else
-  (if n < 376 then false else false))) else (if n < 380 then (if n < 378 then false else (if n <
-  379 then false else false)) else (if n < 381 then false else (if n < 382 then false else
-  false)))) else (if n < 389 then (if n < 386 then (if n < 384 then false else (if n < 385 then
-  false else false)) else (if n < 387 then false else (if n < 388 then false else false))) else
-  (if n < 392 then (if n < 390 then false else (if n < 391 then false else false)) else (if n <
-  393 then false else (if n < 394 then false else false))))) else (if n < 406 then (if n < 400
-  then (if n < 397 then (if n < 396 then false else false) else (if n < 398 then false else (if n
-  < 399 then false else false))) else (if n < 403 then (if n < 401 then false else (if n < 402
-  then false else false)) else (if n < 404 then false else (if n < 405 then false else false))))
-  else (if n < 412 then (if n < 409 then (if n < 407 then true else (if n < 408 then true else
-  false)) else (if n < 410 then false else (if n < 411 then false else true))) else (if n < 415
-  then (if n < 413 then false else (if n < 414 then false else false)) else (if n < 416 then false
-  else (if n < 417 then false else false)))))) else (if n < 441 then (if n < 429 then (if n < 423
-  then (if n < 420 then (if n < 419 then false else false) else (if n < 421 then true else (if n <
-  422 then false else false))) else (if n < 426 then (if n < 424 then false else (if n < 425 then
-  false else false)) else (if n < 427 then false else (if n < 428 then false else false)))) else
+  else (if n < 359 then false else false))))
+
+def _isBounce0_31 (n : Nat) : Bool :=
+  (if n < 366 then (if n < 363 then (if n < 361 then false else (if n < 362 then true else false))
+  else (if n < 364 then false else (if n < 365 then false else false))) else (if n < 369 then (if
+  n < 367 then false else (if n < 368 then false else false)) else (if n < 370 then false else (if
+  n < 371 then false else false))))
+
+def _isBounce0_32 (n : Nat) : Bool :=
+  (if n < 93 then (if n < 46 then (if n < 23 then (if n < 11 then _isBounce0_0 n else _isBounce0_1
+  n) else (if n < 34 then _isBounce0_2 n else _isBounce0_3 n)) else (if n < 69 then (if n < 57
+  then _isBounce0_4 n else _isBounce0_5 n) else (if n < 81 then _isBounce0_6 n else _isBounce0_7
+  n))) else (if n < 139 then (if n < 116 then (if n < 104 then _isBounce0_8 n else _isBounce0_9 n)
+  else (if n < 127 then _isBounce0_10 n else _isBounce0_11 n)) else (if n < 162 then (if n < 150
+  then _isBounce0_12 n else _isBounce0_13 n) else (if n < 174 then _isBounce0_14 n else
+  _isBounce0_15 n))))
+
+def _isBounce0_33 (n : Nat) : Bool :=
+  (if n < 279 then (if n < 232 then (if n < 209 then (if n < 197 then _isBounce0_16 n else
+  _isBounce0_17 n) else (if n < 220 then _isBounce0_18 n else _isBounce0_19 n)) else (if n < 255
+  then (if n < 243 then _isBounce0_20 n else _isBounce0_21 n) else (if n < 267 then _isBounce0_22
+  n else _isBounce0_23 n))) else (if n < 325 then (if n < 302 then (if n < 290 then _isBounce0_24
+  n else _isBounce0_25 n) else (if n < 313 then _isBounce0_26 n else _isBounce0_27 n)) else (if n
+  < 348 then (if n < 336 then _isBounce0_28 n else _isBounce0_29 n) else (if n < 360 then
+  _isBounce0_30 n else _isBounce0_31 n))))
+
+def _isBounce0_34 (n : Nat) : Bool :=
+  (if n < 377 then (if n < 374 then (if n < 373 then false else false) else (if n < 375 then false
+  else (if n < 376 then false else false))) else (if n < 380 then (if n < 378 then false else (if
+  n < 379 then false else false)) else (if n < 381 then false else (if n < 382 then false else
+  false))))
+
+def _isBounce0_35 (n : Nat) : Bool :=
+  (if n < 389 then (if n < 386 then (if n < 384 then false else (if n < 385 then false else
+  false)) else (if n < 387 then false else (if n < 388 then false else false))) else (if n < 392
+  then (if n < 390 then false else (if n < 391 then false else false)) else (if n < 393 then false
+  else (if n < 394 then false else false))))
+
+def _isBounce0_36 (n : Nat) : Bool :=
+  (if n < 400 then (if n < 397 then (if n < 396 then false else false) else (if n < 398 then false
+  else (if n < 399 then false else false))) else (if n < 403 then (if n < 401 then false else (if
+  n < 402 then false else false)) else (if n < 404 then false else (if n < 405 then false else
+  false))))
+
+def _isBounce0_37 (n : Nat) : Bool :=
+  (if n < 412 then (if n < 409 then (if n < 407 then true else (if n < 408 then true else false))
+  else (if n < 410 then false else (if n < 411 then false else true))) else (if n < 415 then (if n
+  < 413 then false else (if n < 414 then false else false)) else (if n < 416 then false else (if n
+  < 417 then false else false))))
+
+def _isBounce0_38 (n : Nat) : Bool :=
+  (if n < 423 then (if n < 420 then (if n < 419 then false else false) else (if n < 421 then true
+  else (if n < 422 then false else false))) else (if n < 426 then (if n < 424 then false else (if
+  n < 425 then false else false)) else (if n < 427 then false else (if n < 428 then false else
+  false))))
+
+def _isBounce0_39 (n : Nat) : Bool :=
   (if n < 435 then (if n < 432 then (if n < 430 then false else (if n < 431 then false else
   false)) else (if n < 433 then false else (if n < 434 then false else false))) else (if n < 438
   then (if n < 436 then false else (if n < 437 then false else false)) else (if n < 439 then false
-  else (if n < 440 then false else false))))) else (if n < 453 then (if n < 447 then (if n < 444
-  then (if n < 442 then false else (if n < 443 then false else false)) else (if n < 445 then false
-  else (if n < 446 then false else false))) else (if n < 450 then (if n < 448 then false else (if
-  n < 449 then false else false)) else (if n < 451 then false else (if n < 452 then false else
-  false)))) else (if n < 459 then (if n < 456 then (if n < 454 then false else (if n < 455 then
-  false else false)) else (if n < 457 then false else (if n < 458 then false else true))) else (if
-  n < 462 then (if n < 460 then true else (if n < 461 then false else false)) else (if n < 463
-  then false else (if n < 464 then true else false))))))) else (if n < 511 then (if n < 488 then
-  (if n < 476 then (if n < 470 then (if n < 467 then (if n < 466 then false else false) else (if n
-  < 468 then false else (if n < 469 then false else false))) else (if n < 473 then (if n < 471
-  then false else (if n < 472 then false else false)) else (if n < 474 then false else (if n < 475
-  then false else false)))) else (if n < 482 then (if n < 479 then (if n < 477 then false else (if
-  n < 478 then false else false)) else (if n < 480 then false else (if n < 481 then false else
-  false))) else (if n < 485 then (if n < 483 then false else (if n < 484 then false else false))
-  else (if n < 486 then false else (if n < 487 then false else true))))) else (if n < 499 then (if
-  n < 493 then (if n < 490 then (if n < 489 then false else false) else (if n < 491 then false
+  else (if n < 440 then false else false))))
+
+def _isBounce0_40 (n : Nat) : Bool :=
+  (if n < 447 then (if n < 444 then (if n < 442 then false else (if n < 443 then false else
+  false)) else (if n < 445 then false else (if n < 446 then false else false))) else (if n < 450
+  then (if n < 448 then false else (if n < 449 then false else false)) else (if n < 451 then false
+  else (if n < 452 then false else false))))
+
+def _isBounce0_41 (n : Nat) : Bool :=
+  (if n < 459 then (if n < 456 then (if n < 454 then false else (if n < 455 then false else
+  false)) else (if n < 457 then false else (if n < 458 then false else true))) else (if n < 462
+  then (if n < 460 then true else (if n < 461 then false else false)) else (if n < 463 then false
+  else (if n < 464 then true else false))))
+
+def _isBounce0_42 (n : Nat) : Bool :=
+  (if n < 470 then (if n < 467 then (if n < 466 then false else false) else (if n < 468 then false
+  else (if n < 469 then false else false))) else (if n < 473 then (if n < 471 then false else (if
+  n < 472 then false else false)) else (if n < 474 then false else (if n < 475 then false else
+  false))))
+
+def _isBounce0_43 (n : Nat) : Bool :=
+  (if n < 482 then (if n < 479 then (if n < 477 then false else (if n < 478 then false else
+  false)) else (if n < 480 then false else (if n < 481 then false else false))) else (if n < 485
+  then (if n < 483 then false else (if n < 484 then false else false)) else (if n < 486 then false
+  else (if n < 487 then false else true))))
+
+def _isBounce0_44 (n : Nat) : Bool :=
+  (if n < 493 then (if n < 490 then (if n < 489 then false else false) else (if n < 491 then false
   else (if n < 492 then false else false))) else (if n < 496 then (if n < 494 then false else (if
   n < 495 then true else true)) else (if n < 497 then false else (if n < 498 then false else
-  false)))) else (if n < 505 then (if n < 502 then (if n < 500 then true else (if n < 501 then
-  false else false)) else (if n < 503 then false else (if n < 504 then true else false))) else (if
-  n < 508 then (if n < 506 then false else (if n < 507 then false else false)) else (if n < 509
-  then false else (if n < 510 then false else false)))))) else (if n < 534 then (if n < 522 then
+  false))))
+
+def _isBounce0_45 (n : Nat) : Bool :=
+  (if n < 505 then (if n < 502 then (if n < 500 then true else (if n < 501 then false else false))
+  else (if n < 503 then false else (if n < 504 then true else false))) else (if n < 508 then (if n
+  < 506 then false else (if n < 507 then false else false)) else (if n < 509 then false else (if n
+  < 510 then false else false))))
+
+def _isBounce0_46 (n : Nat) : Bool :=
   (if n < 516 then (if n < 513 then (if n < 512 then false else true) else (if n < 514 then true
   else (if n < 515 then false else false))) else (if n < 519 then (if n < 517 then false else (if
   n < 518 then false else false)) else (if n < 520 then false else (if n < 521 then false else
-  false)))) else (if n < 528 then (if n < 525 then (if n < 523 then false else (if n < 524 then
-  false else false)) else (if n < 526 then false else (if n < 527 then false else false))) else
-  (if n < 531 then (if n < 529 then false else (if n < 530 then false else false)) else (if n <
-  532 then false else (if n < 533 then false else false))))) else (if n < 546 then (if n < 540
-  then (if n < 537 then (if n < 535 then false else (if n < 536 then false else false)) else (if n
-  < 538 then false else (if n < 539 then false else false))) else (if n < 543 then (if n < 541
-  then false else (if n < 542 then false else false)) else (if n < 544 then false else (if n < 545
-  then false else false)))) else (if n < 552 then (if n < 549 then (if n < 547 then false else (if
-  n < 548 then false else false)) else (if n < 550 then false else (if n < 551 then false else
-  false))) else (if n < 555 then (if n < 553 then false else (if n < 554 then false else false))
-  else (if n < 556 then false else (if n < 557 then false else false)))))))) else (if n < 651 then
-  (if n < 604 then (if n < 581 then (if n < 569 then (if n < 563 then (if n < 560 then (if n < 559
-  then false else false) else (if n < 561 then false else (if n < 562 then false else false)))
-  else (if n < 566 then (if n < 564 then false else (if n < 565 then false else false)) else (if n
-  < 567 then false else (if n < 568 then false else false)))) else (if n < 575 then (if n < 572
-  then (if n < 570 then false else (if n < 571 then false else false)) else (if n < 573 then false
-  else (if n < 574 then false else false))) else (if n < 578 then (if n < 576 then false else (if
-  n < 577 then false else false)) else (if n < 579 then false else (if n < 580 then false else
-  false))))) else (if n < 592 then (if n < 586 then (if n < 583 then (if n < 582 then false else
-  false) else (if n < 584 then false else (if n < 585 then false else false))) else (if n < 589
-  then (if n < 587 then false else (if n < 588 then false else false)) else (if n < 590 then false
-  else (if n < 591 then false else false)))) else (if n < 598 then (if n < 595 then (if n < 593
-  then false else (if n < 594 then false else false)) else (if n < 596 then false else (if n < 597
-  then false else false))) else (if n < 601 then (if n < 599 then false else (if n < 600 then
-  false else false)) else (if n < 602 then false else (if n < 603 then false else false)))))) else
-  (if n < 627 then (if n < 615 then (if n < 609 then (if n < 606 then (if n < 605 then false else
-  false) else (if n < 607 then false else (if n < 608 then false else false))) else (if n < 612
-  then (if n < 610 then false else (if n < 611 then false else false)) else (if n < 613 then false
-  else (if n < 614 then false else false)))) else (if n < 621 then (if n < 618 then (if n < 616
-  then false else (if n < 617 then false else false)) else (if n < 619 then false else (if n < 620
-  then false else false))) else (if n < 624 then (if n < 622 then false else (if n < 623 then
-  false else false)) else (if n < 625 then false else (if n < 626 then false else false))))) else
-  (if n < 639 then (if n < 633 then (if n < 630 then (if n < 628 then false else (if n < 629 then
-  false else false)) else (if n < 631 then false else (if n < 632 then false else false))) else
-  (if n < 636 then (if n < 634 then false else (if n < 635 then false else false)) else (if n <
-  637 then false else (if n < 638 then false else true)))) else (if n < 645 then (if n < 642 then
-  (if n < 640 then false else (if n < 641 then false else false)) else (if n < 643 then false else
-  (if n < 644 then false else false))) else (if n < 648 then (if n < 646 then false else (if n <
-  647 then false else false)) else (if n < 649 then false else (if n < 650 then false else
-  true))))))) else (if n < 697 then (if n < 674 then (if n < 662 then (if n < 656 then (if n < 653
-  then (if n < 652 then false else false) else (if n < 654 then false else (if n < 655 then false
-  else false))) else (if n < 659 then (if n < 657 then false else (if n < 658 then false else
-  false)) else (if n < 660 then false else (if n < 661 then false else false)))) else (if n < 668
-  then (if n < 665 then (if n < 663 then false else (if n < 664 then false else false)) else (if n
-  < 666 then false else (if n < 667 then false else false))) else (if n < 671 then (if n < 669
-  then false else (if n < 670 then false else false)) else (if n < 672 then false else (if n < 673
-  then false else false))))) else (if n < 685 then (if n < 679 then (if n < 676 then (if n < 675
-  then false else false) else (if n < 677 then false else (if n < 678 then false else false)))
-  else (if n < 682 then (if n < 680 then false else (if n < 681 then false else false)) else (if n
-  < 683 then false else (if n < 684 then false else false)))) else (if n < 691 then (if n < 688
-  then (if n < 686 then false else (if n < 687 then false else false)) else (if n < 689 then false
-  else (if n < 690 then false else false))) else (if n < 694 then (if n < 692 then false else (if
-  n < 693 then false else false)) else (if n < 695 then false else (if n < 696 then false else
-  false)))))) else (if n < 720 then (if n < 708 then (if n < 702 then (if n < 699 then (if n < 698
-  then false else false) else (if n < 700 then false else (if n < 701 then false else false)))
-  else (if n < 705 then (if n < 703 then false else (if n < 704 then false else false)) else (if n
-  < 706 then false else (if n < 707 then false else false)))) else (if n < 714 then (if n < 711
-  then (if n < 709 then false else (if n < 710 then false else false)) else (if n < 712 then false
-  else (if n < 713 then false else false))) else (if n < 717 then (if n < 715 then false else (if
-  n < 716 then false else false)) else (if n < 718 then false else (if n < 719 then false else
-  false))))) else (if n < 732 then (if n < 726 then (if n < 723 then (if n < 721 then false else
-  (if n < 722 then false else false)) else (if n < 724 then false else (if n < 725 then false else
-  false))) else (if n < 729 then (if n < 727 then false else (if n < 728 then false else false))
-  else (if n < 730 then false else (if n < 731 then false else false)))) else (if n < 738 then (if
-  n < 735 then (if n < 733 then false else (if n < 734 then false else false)) else (if n < 736
-  then false else (if n < 737 then false else false))) else (if n < 741 then (if n < 739 then
-  false else (if n < 740 then false else false)) else (if n < 742 then false else (if n < 743 then
-  false else false))))))))))
-def isBounce1 (n : Nat) : Bool :=
-  (if n < 372 then (if n < 186 then (if n < 93 then (if n < 46 then (if n < 23 then (if n < 11
-  then (if n < 5 then (if n < 2 then (if n < 1 then false else false) else (if n < 3 then false
-  else (if n < 4 then false else false))) else (if n < 8 then (if n < 6 then false else (if n < 7
-  then false else false)) else (if n < 9 then false else (if n < 10 then false else false)))) else
-  (if n < 17 then (if n < 14 then (if n < 12 then false else (if n < 13 then true else true)) else
-  (if n < 15 then false else (if n < 16 then false else false))) else (if n < 20 then (if n < 18
-  then false else (if n < 19 then false else false)) else (if n < 21 then false else (if n < 22
-  then false else false))))) else (if n < 34 then (if n < 28 then (if n < 25 then (if n < 24 then
-  false else false) else (if n < 26 then false else (if n < 27 then false else false))) else (if n
-  < 31 then (if n < 29 then false else (if n < 30 then false else false)) else (if n < 32 then
-  false else (if n < 33 then false else false)))) else (if n < 40 then (if n < 37 then (if n < 35
-  then false else (if n < 36 then false else false)) else (if n < 38 then false else (if n < 39
-  then false else false))) else (if n < 43 then (if n < 41 then false else (if n < 42 then false
-  else false)) else (if n < 44 then false else (if n < 45 then false else false)))))) else (if n <
-  69 then (if n < 57 then (if n < 51 then (if n < 48 then (if n < 47 then false else false) else
-  (if n < 49 then false else (if n < 50 then false else false))) else (if n < 54 then (if n < 52
-  then false else (if n < 53 then false else false)) else (if n < 55 then false else (if n < 56
-  then false else false)))) else (if n < 63 then (if n < 60 then (if n < 58 then false else (if n
-  < 59 then false else false)) else (if n < 61 then false else (if n < 62 then false else false)))
-  else (if n < 66 then (if n < 64 then false else (if n < 65 then false else false)) else (if n <
-  67 then false else (if n < 68 then false else false))))) else (if n < 81 then (if n < 75 then
-  (if n < 72 then (if n < 70 then false else (if n < 71 then false else false)) else (if n < 73
-  then false else (if n < 74 then false else false))) else (if n < 78 then (if n < 76 then false
-  else (if n < 77 then false else false)) else (if n < 79 then false else (if n < 80 then false
-  else false)))) else (if n < 87 then (if n < 84 then (if n < 82 then false else (if n < 83 then
-  false else false)) else (if n < 85 then false else (if n < 86 then false else false))) else (if
-  n < 90 then (if n < 88 then false else (if n < 89 then false else false)) else (if n < 91 then
-  false else (if n < 92 then false else true))))))) else (if n < 139 then (if n < 116 then (if n <
-  104 then (if n < 98 then (if n < 95 then (if n < 94 then false else false) else (if n < 96 then
-  false else (if n < 97 then false else false))) else (if n < 101 then (if n < 99 then false else
-  (if n < 100 then false else false)) else (if n < 102 then false else (if n < 103 then false else
-  false)))) else (if n < 110 then (if n < 107 then (if n < 105 then false else (if n < 106 then
-  false else false)) else (if n < 108 then false else (if n < 109 then false else false))) else
-  (if n < 113 then (if n < 111 then false else (if n < 112 then false else false)) else (if n <
-  114 then false else (if n < 115 then false else false))))) else (if n < 127 then (if n < 121
-  then (if n < 118 then (if n < 117 then false else false) else (if n < 119 then false else (if n
-  < 120 then false else false))) else (if n < 124 then (if n < 122 then false else (if n < 123
-  then false else false)) else (if n < 125 then false else (if n < 126 then false else false))))
-  else (if n < 133 then (if n < 130 then (if n < 128 then false else (if n < 129 then false else
-  false)) else (if n < 131 then false else (if n < 132 then false else false))) else (if n < 136
-  then (if n < 134 then false else (if n < 135 then false else false)) else (if n < 137 then false
-  else (if n < 138 then false else false)))))) else (if n < 162 then (if n < 150 then (if n < 144
-  then (if n < 141 then (if n < 140 then false else false) else (if n < 142 then false else (if n
-  < 143 then false else false))) else (if n < 147 then (if n < 145 then false else (if n < 146
-  then false else false)) else (if n < 148 then false else (if n < 149 then false else false))))
-  else (if n < 156 then (if n < 153 then (if n < 151 then false else (if n < 152 then false else
-  false)) else (if n < 154 then false else (if n < 155 then false else false))) else (if n < 159
-  then (if n < 157 then false else (if n < 158 then false else false)) else (if n < 160 then false
-  else (if n < 161 then false else false))))) else (if n < 174 then (if n < 168 then (if n < 165
-  then (if n < 163 then false else (if n < 164 then false else false)) else (if n < 166 then false
-  else (if n < 167 then false else false))) else (if n < 171 then (if n < 169 then false else (if
-  n < 170 then false else false)) else (if n < 172 then false else (if n < 173 then false else
-  false)))) else (if n < 180 then (if n < 177 then (if n < 175 then false else (if n < 176 then
-  false else false)) else (if n < 178 then false else (if n < 179 then false else false))) else
-  (if n < 183 then (if n < 181 then false else (if n < 182 then false else false)) else (if n <
-  184 then false else (if n < 185 then false else false)))))))) else (if n < 279 then (if n < 232
-  then (if n < 209 then (if n < 197 then (if n < 191 then (if n < 188 then (if n < 187 then false
-  else false) else (if n < 189 then false else (if n < 190 then true else false))) else (if n <
-  194 then (if n < 192 then false else (if n < 193 then false else false)) else (if n < 195 then
-  true else (if n < 196 then false else true)))) else (if n < 203 then (if n < 200 then (if n <
-  198 then false else (if n < 199 then false else false)) else (if n < 201 then true else (if n <
-  202 then false else true))) else (if n < 206 then (if n < 204 then true else (if n < 205 then
-  false else false)) else (if n < 207 then false else (if n < 208 then false else false))))) else
-  (if n < 220 then (if n < 214 then (if n < 211 then (if n < 210 then true else false) else (if n
-  < 212 then false else (if n < 213 then true else true))) else (if n < 217 then (if n < 215 then
-  true else (if n < 216 then false else false)) else (if n < 218 then false else (if n < 219 then
-  false else false)))) else (if n < 226 then (if n < 223 then (if n < 221 then false else (if n <
-  222 then false else false)) else (if n < 224 then false else (if n < 225 then true else true)))
-  else (if n < 229 then (if n < 227 then false else (if n < 228 then false else true)) else (if n
-  < 230 then true else (if n < 231 then false else false)))))) else (if n < 255 then (if n < 243
-  then (if n < 237 then (if n < 234 then (if n < 233 then true else false) else (if n < 235 then
-  false else (if n < 236 then true else false))) else (if n < 240 then (if n < 238 then false else
-  (if n < 239 then false else false)) else (if n < 241 then true else (if n < 242 then true else
-  false)))) else (if n < 249 then (if n < 246 then (if n < 244 then false else (if n < 245 then
-  false else true)) else (if n < 247 then false else (if n < 248 then false else false))) else (if
-  n < 252 then (if n < 250 then true else (if n < 251 then true else true)) else (if n < 253 then
-  false else (if n < 254 then false else false))))) else (if n < 267 then (if n < 261 then (if n <
-  258 then (if n < 256 then false else (if n < 257 then false else false)) else (if n < 259 then
-  true else (if n < 260 then true else false))) else (if n < 264 then (if n < 262 then false else
-  (if n < 263 then false else true)) else (if n < 265 then true else (if n < 266 then false else
-  true)))) else (if n < 273 then (if n < 270 then (if n < 268 then true else (if n < 269 then true
-  else false)) else (if n < 271 then false else (if n < 272 then false else false))) else (if n <
-  276 then (if n < 274 then false else (if n < 275 then true else false)) else (if n < 277 then
-  false else (if n < 278 then false else false))))))) else (if n < 325 then (if n < 302 then (if n
-  < 290 then (if n < 284 then (if n < 281 then (if n < 280 then false else false) else (if n < 282
-  then false else (if n < 283 then false else false))) else (if n < 287 then (if n < 285 then
-  false else (if n < 286 then false else false)) else (if n < 288 then false else (if n < 289 then
-  false else false)))) else (if n < 296 then (if n < 293 then (if n < 291 then false else (if n <
-  292 then true else true)) else (if n < 294 then false else (if n < 295 then true else true)))
-  else (if n < 299 then (if n < 297 then false else (if n < 298 then false else false)) else (if n
-  < 300 then true else (if n < 301 then false else true))))) else (if n < 313 then (if n < 307
-  then (if n < 304 then (if n < 303 then true else false) else (if n < 305 then false else (if n <
-  306 then false else false))) else (if n < 310 then (if n < 308 then false else (if n < 309 then
-  false else true)) else (if n < 311 then false else (if n < 312 then false else true)))) else (if
-  n < 319 then (if n < 316 then (if n < 314 then true else (if n < 315 then false else false))
-  else (if n < 317 then true else (if n < 318 then true else false))) else (if n < 322 then (if n
-  < 320 then false else (if n < 321 then false else true)) else (if n < 323 then true else (if n <
-  324 then false else false)))))) else (if n < 348 then (if n < 336 then (if n < 330 then (if n <
-  327 then (if n < 326 then false else false) else (if n < 328 then false else (if n < 329 then
-  false else false))) else (if n < 333 then (if n < 331 then true else (if n < 332 then false else
-  true)) else (if n < 334 then true else (if n < 335 then false else false)))) else (if n < 342
-  then (if n < 339 then (if n < 337 then false else (if n < 338 then true else true)) else (if n <
-  340 then false else (if n < 341 then false else false))) else (if n < 345 then (if n < 343 then
-  true else (if n < 344 then true else true)) else (if n < 346 then false else (if n < 347 then
-  false else false))))) else (if n < 360 then (if n < 354 then (if n < 351 then (if n < 349 then
-  true else (if n < 350 then false else true)) else (if n < 352 then true else (if n < 353 then
-  false else false))) else (if n < 357 then (if n < 355 then false else (if n < 356 then false
-  else true)) else (if n < 358 then true else (if n < 359 then false else false)))) else (if n <
-  366 then (if n < 363 then (if n < 361 then false else (if n < 362 then true else true)) else (if
-  n < 364 then false else (if n < 365 then true else false))) else (if n < 369 then (if n < 367
-  then false else (if n < 368 then false else false)) else (if n < 370 then false else (if n < 371
-  then false else false))))))))) else (if n < 558 then (if n < 465 then (if n < 418 then (if n <
-  395 then (if n < 383 then (if n < 377 then (if n < 374 then (if n < 373 then true else true)
-  else (if n < 375 then false else (if n < 376 then false else true))) else (if n < 380 then (if n
-  < 378 then false else (if n < 379 then false else false)) else (if n < 381 then false else (if n
-  < 382 then false else false)))) else (if n < 389 then (if n < 386 then (if n < 384 then false
-  else (if n < 385 then false else false)) else (if n < 387 then true else (if n < 388 then false
-  else false))) else (if n < 392 then (if n < 390 then false else (if n < 391 then false else
-  true)) else (if n < 393 then true else (if n < 394 then false else false))))) else (if n < 406
-  then (if n < 400 then (if n < 397 then (if n < 396 then false else true) else (if n < 398 then
-  false else (if n < 399 then true else false))) else (if n < 403 then (if n < 401 then false else
-  (if n < 402 then false else false)) else (if n < 404 then true else (if n < 405 then false else
-  false)))) else (if n < 412 then (if n < 409 then (if n < 407 then false else (if n < 408 then
-  true else false)) else (if n < 410 then false else (if n < 411 then false else true))) else (if
-  n < 415 then (if n < 413 then true else (if n < 414 then false else false)) else (if n < 416
-  then false else (if n < 417 then true else true)))))) else (if n < 441 then (if n < 429 then (if
-  n < 423 then (if n < 420 then (if n < 419 then false else false) else (if n < 421 then true else
-  (if n < 422 then true else false))) else (if n < 426 then (if n < 424 then false else (if n <
-  425 then false else false)) else (if n < 427 then false else (if n < 428 then true else
-  false)))) else (if n < 435 then (if n < 432 then (if n < 430 then true else (if n < 431 then
-  true else false)) else (if n < 433 then false else (if n < 434 then false else false))) else (if
-  n < 438 then (if n < 436 then false else (if n < 437 then false else true)) else (if n < 439
-  then true else (if n < 440 then true else false))))) else (if n < 453 then (if n < 447 then (if
-  n < 444 then (if n < 442 then false else (if n < 443 then false else false)) else (if n < 445
-  then false else (if n < 446 then true else true))) else (if n < 450 then (if n < 448 then false
-  else (if n < 449 then false else false)) else (if n < 451 then false else (if n < 452 then false
-  else false)))) else (if n < 459 then (if n < 456 then (if n < 454 then false else (if n < 455
-  then false else false)) else (if n < 457 then false else (if n < 458 then false else false)))
-  else (if n < 462 then (if n < 460 then true else (if n < 461 then false else false)) else (if n
-  < 463 then false else (if n < 464 then true else true))))))) else (if n < 511 then (if n < 488
-  then (if n < 476 then (if n < 470 then (if n < 467 then (if n < 466 then false else false) else
-  (if n < 468 then false else (if n < 469 then true else true))) else (if n < 473 then (if n < 471
-  then false else (if n < 472 then false else false)) else (if n < 474 then false else (if n < 475
-  then false else false)))) else (if n < 482 then (if n < 479 then (if n < 477 then false else (if
-  n < 478 then false else false)) else (if n < 480 then false else (if n < 481 then false else
-  false))) else (if n < 485 then (if n < 483 then false else (if n < 484 then false else false))
-  else (if n < 486 then false else (if n < 487 then false else true))))) else (if n < 499 then (if
-  n < 493 then (if n < 490 then (if n < 489 then true else false) else (if n < 491 then false else
-  (if n < 492 then false else false))) else (if n < 496 then (if n < 494 then false else (if n <
-  495 then false else false)) else (if n < 497 then false else (if n < 498 then false else
-  false)))) else (if n < 505 then (if n < 502 then (if n < 500 then true else (if n < 501 then
-  true else false)) else (if n < 503 then false else (if n < 504 then true else true))) else (if n
-  < 508 then (if n < 506 then false else (if n < 507 then false else false)) else (if n < 509 then
-  false else (if n < 510 then false else false)))))) else (if n < 534 then (if n < 522 then (if n
-  < 516 then (if n < 513 then (if n < 512 then false else true) else (if n < 514 then false else
-  (if n < 515 then false else true))) else (if n < 519 then (if n < 517 then true else (if n < 518
-  then true else true)) else (if n < 520 then true else (if n < 521 then true else true)))) else
+  false))))
+
+def _isBounce0_47 (n : Nat) : Bool :=
   (if n < 528 then (if n < 525 then (if n < 523 then false else (if n < 524 then false else
   false)) else (if n < 526 then false else (if n < 527 then false else false))) else (if n < 531
   then (if n < 529 then false else (if n < 530 then false else false)) else (if n < 532 then false
-  else (if n < 533 then false else false))))) else (if n < 546 then (if n < 540 then (if n < 537
-  then (if n < 535 then false else (if n < 536 then false else false)) else (if n < 538 then false
-  else (if n < 539 then false else false))) else (if n < 543 then (if n < 541 then false else (if
-  n < 542 then false else false)) else (if n < 544 then false else (if n < 545 then false else
-  false)))) else (if n < 552 then (if n < 549 then (if n < 547 then false else (if n < 548 then
-  false else false)) else (if n < 550 then false else (if n < 551 then false else false))) else
-  (if n < 555 then (if n < 553 then false else (if n < 554 then false else false)) else (if n <
-  556 then false else (if n < 557 then false else false)))))))) else (if n < 651 then (if n < 604
-  then (if n < 581 then (if n < 569 then (if n < 563 then (if n < 560 then (if n < 559 then false
-  else false) else (if n < 561 then false else (if n < 562 then false else false))) else (if n <
-  566 then (if n < 564 then false else (if n < 565 then false else false)) else (if n < 567 then
-  false else (if n < 568 then false else false)))) else (if n < 575 then (if n < 572 then (if n <
-  570 then true else (if n < 571 then false else false)) else (if n < 573 then false else (if n <
-  574 then true else false))) else (if n < 578 then (if n < 576 then false else (if n < 577 then
-  false else true)) else (if n < 579 then false else (if n < 580 then true else false))))) else
-  (if n < 592 then (if n < 586 then (if n < 583 then (if n < 582 then false else true) else (if n
-  < 584 then false else (if n < 585 then false else false))) else (if n < 589 then (if n < 587
-  then true else (if n < 588 then false else false)) else (if n < 590 then false else (if n < 591
-  then false else false)))) else (if n < 598 then (if n < 595 then (if n < 593 then false else (if
-  n < 594 then false else true)) else (if n < 596 then false else (if n < 597 then false else
-  false))) else (if n < 601 then (if n < 599 then false else (if n < 600 then false else true))
-  else (if n < 602 then false else (if n < 603 then false else false)))))) else (if n < 627 then
-  (if n < 615 then (if n < 609 then (if n < 606 then (if n < 605 then true else false) else (if n
-  < 607 then false else (if n < 608 then false else true))) else (if n < 612 then (if n < 610 then
-  false else (if n < 611 then false else false)) else (if n < 613 then false else (if n < 614 then
-  false else false)))) else (if n < 621 then (if n < 618 then (if n < 616 then true else (if n <
-  617 then false else true)) else (if n < 619 then false else (if n < 620 then false else false)))
-  else (if n < 624 then (if n < 622 then false else (if n < 623 then false else false)) else (if n
-  < 625 then true else (if n < 626 then false else false))))) else (if n < 639 then (if n < 633
-  then (if n < 630 then (if n < 628 then false else (if n < 629 then false else true)) else (if n
-  < 631 then false else (if n < 632 then false else false))) else (if n < 636 then (if n < 634
-  then false else (if n < 635 then false else false)) else (if n < 637 then false else (if n < 638
-  then true else true)))) else (if n < 645 then (if n < 642 then (if n < 640 then false else (if n
-  < 641 then false else false)) else (if n < 643 then false else (if n < 644 then false else
-  false))) else (if n < 648 then (if n < 646 then false else (if n < 647 then false else true))
-  else (if n < 649 then false else (if n < 650 then false else true))))))) else (if n < 697 then
-  (if n < 674 then (if n < 662 then (if n < 656 then (if n < 653 then (if n < 652 then true else
-  false) else (if n < 654 then false else (if n < 655 then false else false))) else (if n < 659
-  then (if n < 657 then false else (if n < 658 then false else false)) else (if n < 660 then false
-  else (if n < 661 then false else false)))) else (if n < 668 then (if n < 665 then (if n < 663
-  then false else (if n < 664 then false else true)) else (if n < 666 then false else (if n < 667
-  then true else false))) else (if n < 671 then (if n < 669 then false else (if n < 670 then false
-  else false)) else (if n < 672 then false else (if n < 673 then false else false))))) else (if n
-  < 685 then (if n < 679 then (if n < 676 then (if n < 675 then false else false) else (if n < 677
-  then false else (if n < 678 then false else false))) else (if n < 682 then (if n < 680 then
-  false else (if n < 681 then true else false)) else (if n < 683 then false else (if n < 684 then
-  true else false)))) else (if n < 691 then (if n < 688 then (if n < 686 then false else (if n <
-  687 then true else false)) else (if n < 689 then false else (if n < 690 then true else false)))
-  else (if n < 694 then (if n < 692 then false else (if n < 693 then true else true)) else (if n <
-  695 then false else (if n < 696 then false else false)))))) else (if n < 720 then (if n < 708
-  then (if n < 702 then (if n < 699 then (if n < 698 then true else false) else (if n < 700 then
-  true else (if n < 701 then false else true))) else (if n < 705 then (if n < 703 then false else
-  (if n < 704 then true else false)) else (if n < 706 then true else (if n < 707 then false else
-  false)))) else (if n < 714 then (if n < 711 then (if n < 709 then true else (if n < 710 then
-  false else false)) else (if n < 712 then false else (if n < 713 then true else true))) else (if
-  n < 717 then (if n < 715 then false else (if n < 716 then false else false)) else (if n < 718
-  then true else (if n < 719 then false else false))))) else (if n < 732 then (if n < 726 then (if
-  n < 723 then (if n < 721 then false else (if n < 722 then false else false)) else (if n < 724
-  then true else (if n < 725 then false else true))) else (if n < 729 then (if n < 727 then false
-  else (if n < 728 then true else false)) else (if n < 730 then false else (if n < 731 then false
-  else true)))) else (if n < 738 then (if n < 735 then (if n < 733 then false else (if n < 734
-  then true else false)) else (if n < 736 then false else (if n < 737 then true else false))) else
-  (if n < 741 then (if n < 739 then false else (if n < 740 then false else true)) else (if n < 742
-  then false else (if n < 743 then true else false))))))))))
+  else (if n < 533 then false else false))))
+
+def _isBounce0_48 (n : Nat) : Bool :=
+  (if n < 540 then (if n < 537 then (if n < 535 then false else (if n < 536 then false else
+  false)) else (if n < 538 then false else (if n < 539 then false else false))) else (if n < 543
+  then (if n < 541 then false else (if n < 542 then false else false)) else (if n < 544 then false
+  else (if n < 545 then false else false))))
+
+def _isBounce0_49 (n : Nat) : Bool :=
+  (if n < 552 then (if n < 549 then (if n < 547 then false else (if n < 548 then false else
+  false)) else (if n < 550 then false else (if n < 551 then false else false))) else (if n < 555
+  then (if n < 553 then false else (if n < 554 then false else false)) else (if n < 556 then false
+  else (if n < 557 then false else false))))
+
+def _isBounce0_50 (n : Nat) : Bool :=
+  (if n < 563 then (if n < 560 then (if n < 559 then false else false) else (if n < 561 then false
+  else (if n < 562 then false else false))) else (if n < 566 then (if n < 564 then false else (if
+  n < 565 then false else false)) else (if n < 567 then false else (if n < 568 then false else
+  false))))
+
+def _isBounce0_51 (n : Nat) : Bool :=
+  (if n < 575 then (if n < 572 then (if n < 570 then false else (if n < 571 then false else
+  false)) else (if n < 573 then false else (if n < 574 then false else false))) else (if n < 578
+  then (if n < 576 then false else (if n < 577 then false else false)) else (if n < 579 then false
+  else (if n < 580 then false else false))))
+
+def _isBounce0_52 (n : Nat) : Bool :=
+  (if n < 586 then (if n < 583 then (if n < 582 then false else false) else (if n < 584 then false
+  else (if n < 585 then false else false))) else (if n < 589 then (if n < 587 then false else (if
+  n < 588 then false else false)) else (if n < 590 then false else (if n < 591 then false else
+  false))))
+
+def _isBounce0_53 (n : Nat) : Bool :=
+  (if n < 598 then (if n < 595 then (if n < 593 then false else (if n < 594 then false else
+  false)) else (if n < 596 then false else (if n < 597 then false else false))) else (if n < 601
+  then (if n < 599 then false else (if n < 600 then false else false)) else (if n < 602 then false
+  else (if n < 603 then false else false))))
+
+def _isBounce0_54 (n : Nat) : Bool :=
+  (if n < 609 then (if n < 606 then (if n < 605 then false else false) else (if n < 607 then false
+  else (if n < 608 then false else false))) else (if n < 612 then (if n < 610 then false else (if
+  n < 611 then false else false)) else (if n < 613 then false else (if n < 614 then false else
+  false))))
+
+def _isBounce0_55 (n : Nat) : Bool :=
+  (if n < 621 then (if n < 618 then (if n < 616 then false else (if n < 617 then false else
+  false)) else (if n < 619 then false else (if n < 620 then false else false))) else (if n < 624
+  then (if n < 622 then false else (if n < 623 then false else false)) else (if n < 625 then false
+  else (if n < 626 then false else false))))
+
+def _isBounce0_56 (n : Nat) : Bool :=
+  (if n < 633 then (if n < 630 then (if n < 628 then false else (if n < 629 then false else
+  false)) else (if n < 631 then false else (if n < 632 then false else false))) else (if n < 636
+  then (if n < 634 then false else (if n < 635 then false else false)) else (if n < 637 then false
+  else (if n < 638 then false else true))))
+
+def _isBounce0_57 (n : Nat) : Bool :=
+  (if n < 645 then (if n < 642 then (if n < 640 then false else (if n < 641 then false else
+  false)) else (if n < 643 then false else (if n < 644 then false else false))) else (if n < 648
+  then (if n < 646 then false else (if n < 647 then false else false)) else (if n < 649 then false
+  else (if n < 650 then false else true))))
+
+def _isBounce0_58 (n : Nat) : Bool :=
+  (if n < 656 then (if n < 653 then (if n < 652 then false else false) else (if n < 654 then false
+  else (if n < 655 then false else false))) else (if n < 659 then (if n < 657 then false else (if
+  n < 658 then false else false)) else (if n < 660 then false else (if n < 661 then false else
+  false))))
+
+def _isBounce0_59 (n : Nat) : Bool :=
+  (if n < 668 then (if n < 665 then (if n < 663 then false else (if n < 664 then false else
+  false)) else (if n < 666 then false else (if n < 667 then false else false))) else (if n < 671
+  then (if n < 669 then false else (if n < 670 then false else false)) else (if n < 672 then false
+  else (if n < 673 then false else false))))
+
+def _isBounce0_60 (n : Nat) : Bool :=
+  (if n < 679 then (if n < 676 then (if n < 675 then false else false) else (if n < 677 then false
+  else (if n < 678 then false else false))) else (if n < 682 then (if n < 680 then false else (if
+  n < 681 then false else false)) else (if n < 683 then false else (if n < 684 then false else
+  false))))
+
+def _isBounce0_61 (n : Nat) : Bool :=
+  (if n < 691 then (if n < 688 then (if n < 686 then false else (if n < 687 then false else
+  false)) else (if n < 689 then false else (if n < 690 then false else false))) else (if n < 694
+  then (if n < 692 then false else (if n < 693 then false else false)) else (if n < 695 then false
+  else (if n < 696 then false else false))))
+
+def _isBounce0_62 (n : Nat) : Bool :=
+  (if n < 702 then (if n < 699 then (if n < 698 then false else false) else (if n < 700 then false
+  else (if n < 701 then false else false))) else (if n < 705 then (if n < 703 then false else (if
+  n < 704 then false else false)) else (if n < 706 then false else (if n < 707 then false else
+  false))))
+
+def _isBounce0_63 (n : Nat) : Bool :=
+  (if n < 714 then (if n < 711 then (if n < 709 then false else (if n < 710 then false else
+  false)) else (if n < 712 then false else (if n < 713 then false else false))) else (if n < 717
+  then (if n < 715 then false else (if n < 716 then false else false)) else (if n < 718 then false
+  else (if n < 719 then false else false))))
+
+def _isBounce0_64 (n : Nat) : Bool :=
+  (if n < 726 then (if n < 723 then (if n < 721 then false else (if n < 722 then false else
+  false)) else (if n < 724 then false else (if n < 725 then false else false))) else (if n < 729
+  then (if n < 727 then false else (if n < 728 then false else false)) else (if n < 730 then false
+  else (if n < 731 then false else false))))
+
+def _isBounce0_65 (n : Nat) : Bool :=
+  (if n < 738 then (if n < 735 then (if n < 733 then false else (if n < 734 then false else
+  false)) else (if n < 736 then false else (if n < 737 then false else false))) else (if n < 741
+  then (if n < 739 then false else (if n < 740 then false else false)) else (if n < 742 then false
+  else (if n < 743 then false else false))))
+
+def _isBounce0_66 (n : Nat) : Bool :=
+  (if n < 465 then (if n < 418 then (if n < 395 then (if n < 383 then _isBounce0_34 n else
+  _isBounce0_35 n) else (if n < 406 then _isBounce0_36 n else _isBounce0_37 n)) else (if n < 441
+  then (if n < 429 then _isBounce0_38 n else _isBounce0_39 n) else (if n < 453 then _isBounce0_40
+  n else _isBounce0_41 n))) else (if n < 511 then (if n < 488 then (if n < 476 then _isBounce0_42
+  n else _isBounce0_43 n) else (if n < 499 then _isBounce0_44 n else _isBounce0_45 n)) else (if n
+  < 534 then (if n < 522 then _isBounce0_46 n else _isBounce0_47 n) else (if n < 546 then
+  _isBounce0_48 n else _isBounce0_49 n))))
+
+def _isBounce0_67 (n : Nat) : Bool :=
+  (if n < 651 then (if n < 604 then (if n < 581 then (if n < 569 then _isBounce0_50 n else
+  _isBounce0_51 n) else (if n < 592 then _isBounce0_52 n else _isBounce0_53 n)) else (if n < 627
+  then (if n < 615 then _isBounce0_54 n else _isBounce0_55 n) else (if n < 639 then _isBounce0_56
+  n else _isBounce0_57 n))) else (if n < 697 then (if n < 674 then (if n < 662 then _isBounce0_58
+  n else _isBounce0_59 n) else (if n < 685 then _isBounce0_60 n else _isBounce0_61 n)) else (if n
+  < 720 then (if n < 708 then _isBounce0_62 n else _isBounce0_63 n) else (if n < 732 then
+  _isBounce0_64 n else _isBounce0_65 n))))
+
+def isBounce0 (n : Nat) : Bool :=
+  (if n < 372 then (if n < 186 then _isBounce0_32 n else _isBounce0_33 n) else (if n < 558 then
+  _isBounce0_66 n else _isBounce0_67 n))
+def _isBounce1_0 (n : Nat) : Bool :=
+  (if n < 5 then (if n < 2 then (if n < 1 then false else false) else (if n < 3 then false else
+  (if n < 4 then false else false))) else (if n < 8 then (if n < 6 then false else (if n < 7 then
+  false else false)) else (if n < 9 then false else (if n < 10 then false else false))))
+
+def _isBounce1_1 (n : Nat) : Bool :=
+  (if n < 17 then (if n < 14 then (if n < 12 then false else (if n < 13 then true else true)) else
+  (if n < 15 then false else (if n < 16 then false else false))) else (if n < 20 then (if n < 18
+  then false else (if n < 19 then false else false)) else (if n < 21 then false else (if n < 22
+  then false else false))))
+
+def _isBounce1_2 (n : Nat) : Bool :=
+  (if n < 28 then (if n < 25 then (if n < 24 then false else false) else (if n < 26 then false
+  else (if n < 27 then false else false))) else (if n < 31 then (if n < 29 then false else (if n <
+  30 then false else false)) else (if n < 32 then false else (if n < 33 then false else false))))
+
+def _isBounce1_3 (n : Nat) : Bool :=
+  (if n < 40 then (if n < 37 then (if n < 35 then false else (if n < 36 then false else false))
+  else (if n < 38 then false else (if n < 39 then false else false))) else (if n < 43 then (if n <
+  41 then false else (if n < 42 then false else false)) else (if n < 44 then false else (if n < 45
+  then false else false))))
+
+def _isBounce1_4 (n : Nat) : Bool :=
+  (if n < 51 then (if n < 48 then (if n < 47 then false else false) else (if n < 49 then false
+  else (if n < 50 then false else false))) else (if n < 54 then (if n < 52 then false else (if n <
+  53 then false else false)) else (if n < 55 then false else (if n < 56 then false else false))))
+
+def _isBounce1_5 (n : Nat) : Bool :=
+  (if n < 63 then (if n < 60 then (if n < 58 then false else (if n < 59 then false else false))
+  else (if n < 61 then false else (if n < 62 then false else false))) else (if n < 66 then (if n <
+  64 then false else (if n < 65 then false else false)) else (if n < 67 then false else (if n < 68
+  then false else false))))
+
+def _isBounce1_6 (n : Nat) : Bool :=
+  (if n < 75 then (if n < 72 then (if n < 70 then false else (if n < 71 then false else false))
+  else (if n < 73 then false else (if n < 74 then false else false))) else (if n < 78 then (if n <
+  76 then false else (if n < 77 then false else false)) else (if n < 79 then false else (if n < 80
+  then false else false))))
+
+def _isBounce1_7 (n : Nat) : Bool :=
+  (if n < 87 then (if n < 84 then (if n < 82 then false else (if n < 83 then false else false))
+  else (if n < 85 then false else (if n < 86 then false else false))) else (if n < 90 then (if n <
+  88 then false else (if n < 89 then false else false)) else (if n < 91 then false else (if n < 92
+  then false else true))))
+
+def _isBounce1_8 (n : Nat) : Bool :=
+  (if n < 98 then (if n < 95 then (if n < 94 then false else false) else (if n < 96 then false
+  else (if n < 97 then false else false))) else (if n < 101 then (if n < 99 then false else (if n
+  < 100 then false else false)) else (if n < 102 then false else (if n < 103 then false else
+  false))))
+
+def _isBounce1_9 (n : Nat) : Bool :=
+  (if n < 110 then (if n < 107 then (if n < 105 then false else (if n < 106 then false else
+  false)) else (if n < 108 then false else (if n < 109 then false else false))) else (if n < 113
+  then (if n < 111 then false else (if n < 112 then false else false)) else (if n < 114 then false
+  else (if n < 115 then false else false))))
+
+def _isBounce1_10 (n : Nat) : Bool :=
+  (if n < 121 then (if n < 118 then (if n < 117 then false else false) else (if n < 119 then false
+  else (if n < 120 then false else false))) else (if n < 124 then (if n < 122 then false else (if
+  n < 123 then false else false)) else (if n < 125 then false else (if n < 126 then false else
+  false))))
+
+def _isBounce1_11 (n : Nat) : Bool :=
+  (if n < 133 then (if n < 130 then (if n < 128 then false else (if n < 129 then false else
+  false)) else (if n < 131 then false else (if n < 132 then false else false))) else (if n < 136
+  then (if n < 134 then false else (if n < 135 then false else false)) else (if n < 137 then false
+  else (if n < 138 then false else false))))
+
+def _isBounce1_12 (n : Nat) : Bool :=
+  (if n < 144 then (if n < 141 then (if n < 140 then false else false) else (if n < 142 then false
+  else (if n < 143 then false else false))) else (if n < 147 then (if n < 145 then false else (if
+  n < 146 then false else false)) else (if n < 148 then false else (if n < 149 then false else
+  false))))
+
+def _isBounce1_13 (n : Nat) : Bool :=
+  (if n < 156 then (if n < 153 then (if n < 151 then false else (if n < 152 then false else
+  false)) else (if n < 154 then false else (if n < 155 then false else false))) else (if n < 159
+  then (if n < 157 then false else (if n < 158 then false else false)) else (if n < 160 then false
+  else (if n < 161 then false else false))))
+
+def _isBounce1_14 (n : Nat) : Bool :=
+  (if n < 168 then (if n < 165 then (if n < 163 then false else (if n < 164 then false else
+  false)) else (if n < 166 then false else (if n < 167 then false else false))) else (if n < 171
+  then (if n < 169 then false else (if n < 170 then false else false)) else (if n < 172 then false
+  else (if n < 173 then false else false))))
+
+def _isBounce1_15 (n : Nat) : Bool :=
+  (if n < 180 then (if n < 177 then (if n < 175 then false else (if n < 176 then false else
+  false)) else (if n < 178 then false else (if n < 179 then false else false))) else (if n < 183
+  then (if n < 181 then false else (if n < 182 then false else false)) else (if n < 184 then false
+  else (if n < 185 then false else false))))
+
+def _isBounce1_16 (n : Nat) : Bool :=
+  (if n < 191 then (if n < 188 then (if n < 187 then false else false) else (if n < 189 then false
+  else (if n < 190 then true else false))) else (if n < 194 then (if n < 192 then false else (if n
+  < 193 then false else false)) else (if n < 195 then true else (if n < 196 then false else
+  true))))
+
+def _isBounce1_17 (n : Nat) : Bool :=
+  (if n < 203 then (if n < 200 then (if n < 198 then false else (if n < 199 then false else
+  false)) else (if n < 201 then true else (if n < 202 then false else true))) else (if n < 206
+  then (if n < 204 then true else (if n < 205 then false else false)) else (if n < 207 then false
+  else (if n < 208 then false else false))))
+
+def _isBounce1_18 (n : Nat) : Bool :=
+  (if n < 214 then (if n < 211 then (if n < 210 then true else false) else (if n < 212 then false
+  else (if n < 213 then true else true))) else (if n < 217 then (if n < 215 then true else (if n <
+  216 then false else false)) else (if n < 218 then false else (if n < 219 then false else
+  false))))
+
+def _isBounce1_19 (n : Nat) : Bool :=
+  (if n < 226 then (if n < 223 then (if n < 221 then false else (if n < 222 then false else
+  false)) else (if n < 224 then false else (if n < 225 then true else true))) else (if n < 229
+  then (if n < 227 then false else (if n < 228 then false else true)) else (if n < 230 then true
+  else (if n < 231 then false else false))))
+
+def _isBounce1_20 (n : Nat) : Bool :=
+  (if n < 237 then (if n < 234 then (if n < 233 then true else false) else (if n < 235 then false
+  else (if n < 236 then true else false))) else (if n < 240 then (if n < 238 then false else (if n
+  < 239 then false else false)) else (if n < 241 then true else (if n < 242 then true else
+  false))))
+
+def _isBounce1_21 (n : Nat) : Bool :=
+  (if n < 249 then (if n < 246 then (if n < 244 then false else (if n < 245 then false else true))
+  else (if n < 247 then false else (if n < 248 then false else false))) else (if n < 252 then (if
+  n < 250 then true else (if n < 251 then true else true)) else (if n < 253 then false else (if n
+  < 254 then false else false))))
+
+def _isBounce1_22 (n : Nat) : Bool :=
+  (if n < 261 then (if n < 258 then (if n < 256 then false else (if n < 257 then false else
+  false)) else (if n < 259 then true else (if n < 260 then true else false))) else (if n < 264
+  then (if n < 262 then false else (if n < 263 then false else true)) else (if n < 265 then true
+  else (if n < 266 then false else true))))
+
+def _isBounce1_23 (n : Nat) : Bool :=
+  (if n < 273 then (if n < 270 then (if n < 268 then true else (if n < 269 then true else false))
+  else (if n < 271 then false else (if n < 272 then false else false))) else (if n < 276 then (if
+  n < 274 then false else (if n < 275 then true else false)) else (if n < 277 then false else (if
+  n < 278 then false else false))))
+
+def _isBounce1_24 (n : Nat) : Bool :=
+  (if n < 284 then (if n < 281 then (if n < 280 then false else false) else (if n < 282 then false
+  else (if n < 283 then false else false))) else (if n < 287 then (if n < 285 then false else (if
+  n < 286 then false else false)) else (if n < 288 then false else (if n < 289 then false else
+  false))))
+
+def _isBounce1_25 (n : Nat) : Bool :=
+  (if n < 296 then (if n < 293 then (if n < 291 then false else (if n < 292 then true else true))
+  else (if n < 294 then false else (if n < 295 then true else true))) else (if n < 299 then (if n
+  < 297 then false else (if n < 298 then false else false)) else (if n < 300 then true else (if n
+  < 301 then false else true))))
+
+def _isBounce1_26 (n : Nat) : Bool :=
+  (if n < 307 then (if n < 304 then (if n < 303 then true else false) else (if n < 305 then false
+  else (if n < 306 then false else false))) else (if n < 310 then (if n < 308 then false else (if
+  n < 309 then false else true)) else (if n < 311 then false else (if n < 312 then false else
+  true))))
+
+def _isBounce1_27 (n : Nat) : Bool :=
+  (if n < 319 then (if n < 316 then (if n < 314 then true else (if n < 315 then false else false))
+  else (if n < 317 then true else (if n < 318 then true else false))) else (if n < 322 then (if n
+  < 320 then false else (if n < 321 then false else true)) else (if n < 323 then true else (if n <
+  324 then false else false))))
+
+def _isBounce1_28 (n : Nat) : Bool :=
+  (if n < 330 then (if n < 327 then (if n < 326 then false else false) else (if n < 328 then false
+  else (if n < 329 then false else false))) else (if n < 333 then (if n < 331 then true else (if n
+  < 332 then false else true)) else (if n < 334 then true else (if n < 335 then false else
+  false))))
+
+def _isBounce1_29 (n : Nat) : Bool :=
+  (if n < 342 then (if n < 339 then (if n < 337 then false else (if n < 338 then true else true))
+  else (if n < 340 then false else (if n < 341 then false else false))) else (if n < 345 then (if
+  n < 343 then true else (if n < 344 then true else true)) else (if n < 346 then false else (if n
+  < 347 then false else false))))
+
+def _isBounce1_30 (n : Nat) : Bool :=
+  (if n < 354 then (if n < 351 then (if n < 349 then true else (if n < 350 then false else true))
+  else (if n < 352 then true else (if n < 353 then false else false))) else (if n < 357 then (if n
+  < 355 then false else (if n < 356 then false else true)) else (if n < 358 then true else (if n <
+  359 then false else false))))
+
+def _isBounce1_31 (n : Nat) : Bool :=
+  (if n < 366 then (if n < 363 then (if n < 361 then false else (if n < 362 then true else true))
+  else (if n < 364 then false else (if n < 365 then true else false))) else (if n < 369 then (if n
+  < 367 then false else (if n < 368 then false else false)) else (if n < 370 then false else (if n
+  < 371 then false else false))))
+
+def _isBounce1_32 (n : Nat) : Bool :=
+  (if n < 93 then (if n < 46 then (if n < 23 then (if n < 11 then _isBounce1_0 n else _isBounce1_1
+  n) else (if n < 34 then _isBounce1_2 n else _isBounce1_3 n)) else (if n < 69 then (if n < 57
+  then _isBounce1_4 n else _isBounce1_5 n) else (if n < 81 then _isBounce1_6 n else _isBounce1_7
+  n))) else (if n < 139 then (if n < 116 then (if n < 104 then _isBounce1_8 n else _isBounce1_9 n)
+  else (if n < 127 then _isBounce1_10 n else _isBounce1_11 n)) else (if n < 162 then (if n < 150
+  then _isBounce1_12 n else _isBounce1_13 n) else (if n < 174 then _isBounce1_14 n else
+  _isBounce1_15 n))))
+
+def _isBounce1_33 (n : Nat) : Bool :=
+  (if n < 279 then (if n < 232 then (if n < 209 then (if n < 197 then _isBounce1_16 n else
+  _isBounce1_17 n) else (if n < 220 then _isBounce1_18 n else _isBounce1_19 n)) else (if n < 255
+  then (if n < 243 then _isBounce1_20 n else _isBounce1_21 n) else (if n < 267 then _isBounce1_22
+  n else _isBounce1_23 n))) else (if n < 325 then (if n < 302 then (if n < 290 then _isBounce1_24
+  n else _isBounce1_25 n) else (if n < 313 then _isBounce1_26 n else _isBounce1_27 n)) else (if n
+  < 348 then (if n < 336 then _isBounce1_28 n else _isBounce1_29 n) else (if n < 360 then
+  _isBounce1_30 n else _isBounce1_31 n))))
+
+def _isBounce1_34 (n : Nat) : Bool :=
+  (if n < 377 then (if n < 374 then (if n < 373 then true else true) else (if n < 375 then false
+  else (if n < 376 then false else true))) else (if n < 380 then (if n < 378 then false else (if n
+  < 379 then false else false)) else (if n < 381 then false else (if n < 382 then false else
+  false))))
+
+def _isBounce1_35 (n : Nat) : Bool :=
+  (if n < 389 then (if n < 386 then (if n < 384 then false else (if n < 385 then false else
+  false)) else (if n < 387 then true else (if n < 388 then false else false))) else (if n < 392
+  then (if n < 390 then false else (if n < 391 then false else true)) else (if n < 393 then true
+  else (if n < 394 then false else false))))
+
+def _isBounce1_36 (n : Nat) : Bool :=
+  (if n < 400 then (if n < 397 then (if n < 396 then false else true) else (if n < 398 then false
+  else (if n < 399 then true else false))) else (if n < 403 then (if n < 401 then false else (if n
+  < 402 then false else false)) else (if n < 404 then true else (if n < 405 then false else
+  false))))
+
+def _isBounce1_37 (n : Nat) : Bool :=
+  (if n < 412 then (if n < 409 then (if n < 407 then false else (if n < 408 then true else false))
+  else (if n < 410 then false else (if n < 411 then false else true))) else (if n < 415 then (if n
+  < 413 then true else (if n < 414 then false else false)) else (if n < 416 then false else (if n
+  < 417 then true else true))))
+
+def _isBounce1_38 (n : Nat) : Bool :=
+  (if n < 423 then (if n < 420 then (if n < 419 then false else false) else (if n < 421 then true
+  else (if n < 422 then true else false))) else (if n < 426 then (if n < 424 then false else (if n
+  < 425 then false else false)) else (if n < 427 then false else (if n < 428 then true else
+  false))))
+
+def _isBounce1_39 (n : Nat) : Bool :=
+  (if n < 435 then (if n < 432 then (if n < 430 then true else (if n < 431 then true else false))
+  else (if n < 433 then false else (if n < 434 then false else false))) else (if n < 438 then (if
+  n < 436 then false else (if n < 437 then false else true)) else (if n < 439 then true else (if n
+  < 440 then true else false))))
+
+def _isBounce1_40 (n : Nat) : Bool :=
+  (if n < 447 then (if n < 444 then (if n < 442 then false else (if n < 443 then false else
+  false)) else (if n < 445 then false else (if n < 446 then true else true))) else (if n < 450
+  then (if n < 448 then false else (if n < 449 then false else false)) else (if n < 451 then false
+  else (if n < 452 then false else false))))
+
+def _isBounce1_41 (n : Nat) : Bool :=
+  (if n < 459 then (if n < 456 then (if n < 454 then false else (if n < 455 then false else
+  false)) else (if n < 457 then false else (if n < 458 then false else false))) else (if n < 462
+  then (if n < 460 then true else (if n < 461 then false else false)) else (if n < 463 then false
+  else (if n < 464 then true else true))))
+
+def _isBounce1_42 (n : Nat) : Bool :=
+  (if n < 470 then (if n < 467 then (if n < 466 then false else false) else (if n < 468 then false
+  else (if n < 469 then true else true))) else (if n < 473 then (if n < 471 then false else (if n
+  < 472 then false else false)) else (if n < 474 then false else (if n < 475 then false else
+  false))))
+
+def _isBounce1_43 (n : Nat) : Bool :=
+  (if n < 482 then (if n < 479 then (if n < 477 then false else (if n < 478 then false else
+  false)) else (if n < 480 then false else (if n < 481 then false else false))) else (if n < 485
+  then (if n < 483 then false else (if n < 484 then false else false)) else (if n < 486 then false
+  else (if n < 487 then false else true))))
+
+def _isBounce1_44 (n : Nat) : Bool :=
+  (if n < 493 then (if n < 490 then (if n < 489 then true else false) else (if n < 491 then false
+  else (if n < 492 then false else false))) else (if n < 496 then (if n < 494 then false else (if
+  n < 495 then false else false)) else (if n < 497 then false else (if n < 498 then false else
+  false))))
+
+def _isBounce1_45 (n : Nat) : Bool :=
+  (if n < 505 then (if n < 502 then (if n < 500 then true else (if n < 501 then true else false))
+  else (if n < 503 then false else (if n < 504 then true else true))) else (if n < 508 then (if n
+  < 506 then false else (if n < 507 then false else false)) else (if n < 509 then false else (if n
+  < 510 then false else false))))
+
+def _isBounce1_46 (n : Nat) : Bool :=
+  (if n < 516 then (if n < 513 then (if n < 512 then false else true) else (if n < 514 then false
+  else (if n < 515 then false else true))) else (if n < 519 then (if n < 517 then true else (if n
+  < 518 then true else true)) else (if n < 520 then true else (if n < 521 then true else true))))
+
+def _isBounce1_47 (n : Nat) : Bool :=
+  (if n < 528 then (if n < 525 then (if n < 523 then false else (if n < 524 then false else
+  false)) else (if n < 526 then false else (if n < 527 then false else false))) else (if n < 531
+  then (if n < 529 then false else (if n < 530 then false else false)) else (if n < 532 then false
+  else (if n < 533 then false else false))))
+
+def _isBounce1_48 (n : Nat) : Bool :=
+  (if n < 540 then (if n < 537 then (if n < 535 then false else (if n < 536 then false else
+  false)) else (if n < 538 then false else (if n < 539 then false else false))) else (if n < 543
+  then (if n < 541 then false else (if n < 542 then false else false)) else (if n < 544 then false
+  else (if n < 545 then false else false))))
+
+def _isBounce1_49 (n : Nat) : Bool :=
+  (if n < 552 then (if n < 549 then (if n < 547 then false else (if n < 548 then false else
+  false)) else (if n < 550 then false else (if n < 551 then false else false))) else (if n < 555
+  then (if n < 553 then false else (if n < 554 then false else false)) else (if n < 556 then false
+  else (if n < 557 then false else false))))
+
+def _isBounce1_50 (n : Nat) : Bool :=
+  (if n < 563 then (if n < 560 then (if n < 559 then false else false) else (if n < 561 then false
+  else (if n < 562 then false else false))) else (if n < 566 then (if n < 564 then false else (if
+  n < 565 then false else false)) else (if n < 567 then false else (if n < 568 then false else
+  false))))
+
+def _isBounce1_51 (n : Nat) : Bool :=
+  (if n < 575 then (if n < 572 then (if n < 570 then true else (if n < 571 then false else false))
+  else (if n < 573 then false else (if n < 574 then true else false))) else (if n < 578 then (if n
+  < 576 then false else (if n < 577 then false else true)) else (if n < 579 then false else (if n
+  < 580 then true else false))))
+
+def _isBounce1_52 (n : Nat) : Bool :=
+  (if n < 586 then (if n < 583 then (if n < 582 then false else true) else (if n < 584 then false
+  else (if n < 585 then false else false))) else (if n < 589 then (if n < 587 then true else (if n
+  < 588 then false else false)) else (if n < 590 then false else (if n < 591 then false else
+  false))))
+
+def _isBounce1_53 (n : Nat) : Bool :=
+  (if n < 598 then (if n < 595 then (if n < 593 then false else (if n < 594 then false else true))
+  else (if n < 596 then false else (if n < 597 then false else false))) else (if n < 601 then (if
+  n < 599 then false else (if n < 600 then false else true)) else (if n < 602 then false else (if
+  n < 603 then false else false))))
+
+def _isBounce1_54 (n : Nat) : Bool :=
+  (if n < 609 then (if n < 606 then (if n < 605 then true else false) else (if n < 607 then false
+  else (if n < 608 then false else true))) else (if n < 612 then (if n < 610 then false else (if n
+  < 611 then false else false)) else (if n < 613 then false else (if n < 614 then false else
+  false))))
+
+def _isBounce1_55 (n : Nat) : Bool :=
+  (if n < 621 then (if n < 618 then (if n < 616 then true else (if n < 617 then false else true))
+  else (if n < 619 then false else (if n < 620 then false else false))) else (if n < 624 then (if
+  n < 622 then false else (if n < 623 then false else false)) else (if n < 625 then true else (if
+  n < 626 then false else false))))
+
+def _isBounce1_56 (n : Nat) : Bool :=
+  (if n < 633 then (if n < 630 then (if n < 628 then false else (if n < 629 then false else true))
+  else (if n < 631 then false else (if n < 632 then false else false))) else (if n < 636 then (if
+  n < 634 then false else (if n < 635 then false else false)) else (if n < 637 then false else (if
+  n < 638 then true else true))))
+
+def _isBounce1_57 (n : Nat) : Bool :=
+  (if n < 645 then (if n < 642 then (if n < 640 then false else (if n < 641 then false else
+  false)) else (if n < 643 then false else (if n < 644 then false else false))) else (if n < 648
+  then (if n < 646 then false else (if n < 647 then false else true)) else (if n < 649 then false
+  else (if n < 650 then false else true))))
+
+def _isBounce1_58 (n : Nat) : Bool :=
+  (if n < 656 then (if n < 653 then (if n < 652 then true else false) else (if n < 654 then false
+  else (if n < 655 then false else false))) else (if n < 659 then (if n < 657 then false else (if
+  n < 658 then false else false)) else (if n < 660 then false else (if n < 661 then false else
+  false))))
+
+def _isBounce1_59 (n : Nat) : Bool :=
+  (if n < 668 then (if n < 665 then (if n < 663 then false else (if n < 664 then false else true))
+  else (if n < 666 then false else (if n < 667 then true else false))) else (if n < 671 then (if n
+  < 669 then false else (if n < 670 then false else false)) else (if n < 672 then false else (if n
+  < 673 then false else false))))
+
+def _isBounce1_60 (n : Nat) : Bool :=
+  (if n < 679 then (if n < 676 then (if n < 675 then false else false) else (if n < 677 then false
+  else (if n < 678 then false else false))) else (if n < 682 then (if n < 680 then false else (if
+  n < 681 then true else false)) else (if n < 683 then false else (if n < 684 then true else
+  false))))
+
+def _isBounce1_61 (n : Nat) : Bool :=
+  (if n < 691 then (if n < 688 then (if n < 686 then false else (if n < 687 then true else false))
+  else (if n < 689 then false else (if n < 690 then true else false))) else (if n < 694 then (if n
+  < 692 then false else (if n < 693 then true else true)) else (if n < 695 then false else (if n <
+  696 then false else false))))
+
+def _isBounce1_62 (n : Nat) : Bool :=
+  (if n < 702 then (if n < 699 then (if n < 698 then true else false) else (if n < 700 then true
+  else (if n < 701 then false else true))) else (if n < 705 then (if n < 703 then false else (if n
+  < 704 then true else false)) else (if n < 706 then true else (if n < 707 then false else
+  false))))
+
+def _isBounce1_63 (n : Nat) : Bool :=
+  (if n < 714 then (if n < 711 then (if n < 709 then true else (if n < 710 then false else false))
+  else (if n < 712 then false else (if n < 713 then true else true))) else (if n < 717 then (if n
+  < 715 then false else (if n < 716 then false else false)) else (if n < 718 then true else (if n
+  < 719 then false else false))))
+
+def _isBounce1_64 (n : Nat) : Bool :=
+  (if n < 726 then (if n < 723 then (if n < 721 then false else (if n < 722 then false else
+  false)) else (if n < 724 then true else (if n < 725 then false else true))) else (if n < 729
+  then (if n < 727 then false else (if n < 728 then true else false)) else (if n < 730 then false
+  else (if n < 731 then false else true))))
+
+def _isBounce1_65 (n : Nat) : Bool :=
+  (if n < 738 then (if n < 735 then (if n < 733 then false else (if n < 734 then true else false))
+  else (if n < 736 then false else (if n < 737 then true else false))) else (if n < 741 then (if n
+  < 739 then false else (if n < 740 then false else true)) else (if n < 742 then false else (if n
+  < 743 then true else false))))
+
+def _isBounce1_66 (n : Nat) : Bool :=
+  (if n < 465 then (if n < 418 then (if n < 395 then (if n < 383 then _isBounce1_34 n else
+  _isBounce1_35 n) else (if n < 406 then _isBounce1_36 n else _isBounce1_37 n)) else (if n < 441
+  then (if n < 429 then _isBounce1_38 n else _isBounce1_39 n) else (if n < 453 then _isBounce1_40
+  n else _isBounce1_41 n))) else (if n < 511 then (if n < 488 then (if n < 476 then _isBounce1_42
+  n else _isBounce1_43 n) else (if n < 499 then _isBounce1_44 n else _isBounce1_45 n)) else (if n
+  < 534 then (if n < 522 then _isBounce1_46 n else _isBounce1_47 n) else (if n < 546 then
+  _isBounce1_48 n else _isBounce1_49 n))))
+
+def _isBounce1_67 (n : Nat) : Bool :=
+  (if n < 651 then (if n < 604 then (if n < 581 then (if n < 569 then _isBounce1_50 n else
+  _isBounce1_51 n) else (if n < 592 then _isBounce1_52 n else _isBounce1_53 n)) else (if n < 627
+  then (if n < 615 then _isBounce1_54 n else _isBounce1_55 n) else (if n < 639 then _isBounce1_56
+  n else _isBounce1_57 n))) else (if n < 697 then (if n < 674 then (if n < 662 then _isBounce1_58
+  n else _isBounce1_59 n) else (if n < 685 then _isBounce1_60 n else _isBounce1_61 n)) else (if n
+  < 720 then (if n < 708 then _isBounce1_62 n else _isBounce1_63 n) else (if n < 732 then
+  _isBounce1_64 n else _isBounce1_65 n))))
+
+def isBounce1 (n : Nat) : Bool :=
+  (if n < 372 then (if n < 186 then _isBounce1_32 n else _isBounce1_33 n) else (if n < 558 then
+  _isBounce1_66 n else _isBounce1_67 n))
 def isBounce (q : Fin 744) (b : Fin 2) : Bool :=
   if b == 0 then isBounce0 q.val else isBounce1 q.val
 

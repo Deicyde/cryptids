@@ -620,28 +620,31 @@ def verify_riemann_543_derivation(
   )
 
   def extract_bst_array(fn_name: str) -> list[int]:
-    m = re.search(
-        rf"def {fn_name} \(n : (?:Nat|ℕ)\).*?:=\s*(.*?)(?=\ndef |\ntheorem )",
+    blocks = re.findall(
+        rf"def (?:_{fn_name}_\d+|{fn_name}) \(n : (?:Nat|ℕ)\).*?:=\s*(.*?)(?=\ndef |\ntheorem )",
         proof_text,
         re.DOTALL,
     )
-    assert m is not None, f"Missing {fn_name} in Cryptids/Riemann543.lean"
-    vals = [int(x) for x in re.findall(r"(?:then|else)\s+(\d+)", m.group(1))]
+    assert blocks, f"Missing {fn_name} in Cryptids/Riemann543.lean"
+    vals = [
+        int(x) for blk in blocks for x in re.findall(r"(?:then|else)\s+(\d+)", blk)
+    ]
     assert (
         len(vals) == 744
     ), f"Expected 744 leaves in {fn_name}, got {len(vals)}"
     return vals
 
   def extract_bst_bool_array(fn_name: str) -> list[bool]:
-    m = re.search(
-        rf"def {fn_name} \(n : (?:Nat|ℕ)\).*?:=\s*(.*?)(?=\ndef |\ntheorem )",
+    blocks = re.findall(
+        rf"def (?:_{fn_name}_\d+|{fn_name}) \(n : (?:Nat|ℕ)\).*?:=\s*(.*?)(?=\ndef |\ntheorem )",
         proof_text,
         re.DOTALL,
     )
-    assert m is not None, f"Missing {fn_name} in Cryptids/Riemann543.lean"
+    assert blocks, f"Missing {fn_name} in Cryptids/Riemann543.lean"
     vals = [
         x == "true"
-        for x in re.findall(r"(?:then|else)\s+(true|false)", m.group(1))
+        for blk in blocks
+        for x in re.findall(r"(?:then|else)\s+(true|false)", blk)
     ]
     assert (
         len(vals) == 744
