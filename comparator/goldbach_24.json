@@ -1,5 +1,5 @@
 {
-  "challenge_module": "Challenge.Goldbach24",
+  "challenge_module": "Challenge",
   "solution_module": "Cryptids.Goldbach24",
   "theorem_names": [
     "ConjectureMachines.Goldbach24.candidate_fewer_states",

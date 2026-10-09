@@ -1,5 +1,5 @@
 {
-  "challenge_module": "Challenge.Zf429",
+  "challenge_module": "Challenge",
   "solution_module": "Cryptids.Zf429",
   "theorem_names": [
     "ConjectureMachines.Zf429.candidate_fewer_states",

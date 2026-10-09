@@ -1,5 +1,5 @@
 {
-  "challenge_module": "Challenge.Goldbach24",
+  "challenge_module": "Challenge",
   "solution_module": "Cryptids.Semantics.Goldbach",
   "theorem_names": [
     "ConjectureMachines.Goldbach24.Semantics.halts_reference_iff_not_goldbach",

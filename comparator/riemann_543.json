@@ -1,5 +1,5 @@
 {
-  "challenge_module": "Challenge.Riemann543",
+  "challenge_module": "Challenge",
   "solution_module": "Cryptids.Riemann543",
   "theorem_names": [
     "ConjectureMachines.Riemann543.candidate_fewer_states",

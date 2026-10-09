@@ -1,5 +1,5 @@
 {
-  "challenge_module": "Challenge.Riemann543",
+  "challenge_module": "Challenge",
   "solution_module": "Cryptids.Semantics.Riemann",
   "theorem_names": [
     "ConjectureMachines.Riemann543.Semantics.halts_reference_iff_exists_counterexample",

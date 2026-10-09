@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import Mathlib.Computability.TuringMachine.PostTuringMachine
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.Algebra.GCDMonoid.Finset
 public import Mathlib.Order.Interval.Finset.Nat

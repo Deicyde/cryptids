@@ -70,7 +70,7 @@ PINNED_BASELINES = {
         "canonical_machine_sha256": (
             "da5bdb63c1ad0d0e3e97f8ca75addc2b6622dea483b3e3cdfbd2fc55363a5a67"
         ),
-        "lean_file": "Cryptids/Machines/Goldbach25.lean",
+        "lean_file": "Cryptids/Machines.lean",
         "lean_def": "goldbach25",
         "format": "standard",
         "states": 25,
@@ -88,7 +88,7 @@ PINNED_BASELINES = {
         "canonical_machine_sha256": (
             "cb9ffd320f7360b5e0e49181a6201286b408d1f8c168d61fafc51d1ca8b86702"
         ),
-        "lean_file": "Cryptids/Machines/Zf432.lean",
+        "lean_file": "Cryptids/Machines.lean",
         "lean_def": "zf432",
         "format": "tursi",
         "states": 432,
@@ -106,7 +106,7 @@ PINNED_BASELINES = {
         "canonical_machine_sha256": (
             "4f629ed5be1715747f3d467dbb35bded647a25dc740a80b5208c14f65d7d5f44"
         ),
-        "lean_file": "Cryptids/Machines/Riemann744.lean",
+        "lean_file": "Cryptids/Machines.lean",
         "lean_def": "riemann744",
         "format": "nql",
         "states": 744,
@@ -119,10 +119,10 @@ CANDIDATES = [
         "id": "goldbach_24",
         "instance": "goldbach",
         "path": "artifacts/goldbach_24",
-        "lean_file": "Cryptids/Machines/Goldbach24.lean",
+        "lean_file": "Cryptids/Machines.lean",
         "lean_def": "goldbach24",
         "proof_path": "Cryptids/Goldbach24.lean",
-        "challenge_path": "Challenge/Goldbach24.lean",
+        "challenge_path": "Challenge.lean",
         "states": 24,
         "baseline_states": 25,
         "machine_sha256": (
@@ -133,10 +133,10 @@ CANDIDATES = [
         "id": "zf_431",
         "instance": "zf",
         "path": "artifacts/zf_431",
-        "lean_file": "Cryptids/Machines/Zf431.lean",
+        "lean_file": "Cryptids/Machines.lean",
         "lean_def": "zf431",
         "proof_path": "Cryptids/Zf431.lean",
-        "challenge_path": "Challenge/Zf431.lean",
+        "challenge_path": "Challenge.lean",
         "states": 431,
         "baseline_states": 432,
         "machine_sha256": (
@@ -147,10 +147,10 @@ CANDIDATES = [
         "id": "zf_430",
         "instance": "zf",
         "path": "artifacts/zf_430",
-        "lean_file": "Cryptids/Machines/Zf430.lean",
+        "lean_file": "Cryptids/Machines.lean",
         "lean_def": "zf430",
         "proof_path": "Cryptids/Zf430.lean",
-        "challenge_path": "Challenge/Zf430.lean",
+        "challenge_path": "Challenge.lean",
         "states": 430,
         "baseline_states": 432,
         "machine_sha256": (
@@ -161,10 +161,10 @@ CANDIDATES = [
         "id": "zf_429",
         "instance": "zf",
         "path": "artifacts/zf_429",
-        "lean_file": "Cryptids/Machines/Zf429.lean",
+        "lean_file": "Cryptids/Machines.lean",
         "lean_def": "zf429",
         "proof_path": "Cryptids/Zf429.lean",
-        "challenge_path": "Challenge/Zf429.lean",
+        "challenge_path": "Challenge.lean",
         "states": 429,
         "baseline_states": 432,
         "machine_sha256": (
@@ -175,10 +175,10 @@ CANDIDATES = [
         "id": "riemann_543",
         "instance": "riemann",
         "path": "artifacts/riemann_543",
-        "lean_file": "Cryptids/Machines/Riemann543.lean",
+        "lean_file": "Cryptids/Machines.lean",
         "lean_def": "riemann543",
         "proof_path": "Cryptids/Riemann543.lean",
-        "challenge_path": "Challenge/Riemann543.lean",
+        "challenge_path": "Challenge.lean",
         "states": 543,
         "baseline_states": 744,
         "machine_sha256": (
@@ -369,8 +369,9 @@ def parse_lean_machine_def(
           f" {table_path!r}"
       )
     assert (
-        "public import Cryptids.Machines.FromFile" in lean_text
-    ), f"{def_name}: missing `public import Cryptids.Machines.FromFile`"
+        'elab "load_machine_rows% "' in lean_text
+        or "public import Cryptids.Machines.FromFile" in lean_text
+    ), f"{def_name}: missing load_machine_rows% elaborator"
     assert (
         f"def {def_name} : Machine {expected_states} 2 := Machine.ofRows {def_name}Rows"
         in lean_text
@@ -972,10 +973,7 @@ def run_verification(
       " (step M) init).Dom"
       in machines_lean_text
   )
-  from_file_text = (ROOT / "Cryptids/Machines/FromFile.lean").read_text(
-      encoding="utf-8"
-  )
-  assert 'elab "load_machine_rows% " path:str : term' in from_file_text
+  assert 'elab "load_machine_rows% " path:str : term' in machines_lean_text
   if verbose:
     print(
         f"[PASS] Cryptids/Machines.lean verified ({machines_lean_sha[:16]}...)"
