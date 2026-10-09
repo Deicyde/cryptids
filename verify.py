@@ -352,8 +352,37 @@ def derive_machine_from_source(source_text: str, fmt: str) -> Machine:
   return parse_canonical_machine("\n".join(out_lines) + "\n")
 
 
-def parse_lean_machine_def(lean_text: str, def_name: str) -> Machine:
-  """Parses a `Machine N 2` definition (`Machine.ofRows [...]` or `Machine.ofRows <def_name>Rows`) from a Lean file."""
+def parse_lean_machine_def(
+    lean_text: str, def_name: str, expected_table_path: str | None = None
+) -> Machine:
+  """Parses a `Machine N 2` definition (`load_machine_rows%`, `Machine.ofRows <def_name>Rows`, or inline `Machine.ofRows [...]`) from a Lean file."""
+  m_load = re.search(
+      rf'def {def_name}Rows : List \(List \(Option \(Fin 2 × Dir × Fin (\d+)\)\)\) :=\s*load_machine_rows%\s*"([^"]+)"',
+      lean_text,
+  )
+  if m_load is not None:
+    expected_states = int(m_load.group(1))
+    table_path = m_load.group(2)
+    if expected_table_path is not None:
+      assert table_path == expected_table_path, (
+          f"{def_name}: expected load_machine_rows% {expected_table_path!r}, got"
+          f" {table_path!r}"
+      )
+    assert (
+        "public import Cryptids.Machines.FromFile" in lean_text
+    ), f"{def_name}: missing `public import Cryptids.Machines.FromFile`"
+    assert (
+        f"def {def_name} : Machine {expected_states} 2 := Machine.ofRows {def_name}Rows"
+        in lean_text
+    ), f"Missing `def {def_name} : Machine {expected_states} 2 := Machine.ofRows {def_name}Rows`"
+    loaded = parse_canonical_machine(
+        (ROOT / table_path).read_text(encoding="utf-8")
+    )
+    assert (
+        loaded.states == expected_states
+    ), f"{def_name}: expected {expected_states} states, got {loaded.states} in {table_path}"
+    return loaded
+
   m_rows = re.search(
       rf"def {def_name}Rows : List \(List \(Option \(Fin 2 × Dir × Fin (\d+)\)\)\) := \[\s*(.*?)\]\]",
       lean_text,
@@ -934,7 +963,7 @@ def run_verification(
     print("CONJECTURE MACHINES: ZERO-DEPENDENCY FIRST-PRINCIPLES VERIFICATION")
     print("=" * 78)
 
-  # 1. Verify Cryptids/Machines.lean formal Halts definition
+  # 1. Verify Cryptids/Machines.lean formal Halts definition and FromFile.lean elaborator
   machines_lean_bytes = (ROOT / "Cryptids/Machines.lean").read_bytes()
   machines_lean_sha = sha256_bytes(machines_lean_bytes)
   machines_lean_text = machines_lean_bytes.decode("utf-8")
@@ -943,6 +972,10 @@ def run_verification(
       " (step M) init).Dom"
       in machines_lean_text
   )
+  from_file_text = (ROOT / "Cryptids/Machines/FromFile.lean").read_text(
+      encoding="utf-8"
+  )
+  assert 'elab "load_machine_rows% " path:str : term' in from_file_text
   if verbose:
     print(
         f"[PASS] Cryptids/Machines.lean verified ({machines_lean_sha[:16]}...)"
@@ -978,7 +1011,11 @@ def run_verification(
     assert m.states == spec["states"] and m.symbols == spec["symbols"]
     ref_lean_text = (ROOT / str(spec["lean_file"])).read_text(encoding="utf-8")
     assert (
-        parse_lean_machine_def(ref_lean_text, str(spec["lean_def"])).table
+        parse_lean_machine_def(
+            ref_lean_text,
+            str(spec["lean_def"]),
+            expected_table_path=str(spec["table_file"]),
+        ).table
         == m.table
     ), f"{spec['lean_file']} table mismatch"
     baseline_machines[inst_name] = m
@@ -1018,7 +1055,11 @@ def run_verification(
         m.sha256 == cspec["machine_sha256"]
     ), f"{cid} machine SHA-256 mismatch: {m.sha256}"
     assert (
-        parse_lean_machine_def(m_lean_text, str(cspec["lean_def"])).table
+        parse_lean_machine_def(
+            m_lean_text,
+            str(cspec["lean_def"]),
+            expected_table_path=f"{cspec['path']}/machine.txt",
+        ).table
         == m.table
     ), f"{cspec['lean_file']} candidate table mismatch"
 

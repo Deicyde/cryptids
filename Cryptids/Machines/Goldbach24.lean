@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Cryptids.Machines
+public import Cryptids.Machines.FromFile
 
 /-!
 # 24-State Goldbach Candidate Turing Machine (`goldbach_24`)
@@ -23,32 +24,10 @@ namespace ConjectureMachines.Machines
 
 open Turing
 
-/-- Transition rows of `goldbach24` (24 states, 2 symbols). -/
-def goldbach24Rows : List (List (Option (Fin 2 × Dir × Fin 24))) := [
-  [some (1, .right, 1), some (1, .right, 3)],
-  [some (1, .right, 17), some (1, .right, 1)],
-  [some (0, .right, 0), some (1, .left, 2)],
-  [some (0, .left, 5), some (1, .right, 4)],
-  [some (0, .left, 15), some (1, .right, 6)],
-  [some (0, .left, 2), some (1, .left, 5)],
-  [some (0, .left, 5), some (0, .left, 7)],
-  [some (1, .left, 15), some (1, .left, 21)],
-  [some (1, .right, 9), some (0, .left, 8)],
-  [some (0, .right, 10), some (0, .right, 17)],
-  [some (1, .right, 10), some (0, .right, 11)],
-  [some (1, .right, 12), some (1, .right, 11)],
-  [some (0, .left, 13), some (0, .left, 19)],
-  [some (0, .left, 14), some (1, .left, 13)],
-  [some (1, .right, 7), some (1, .left, 22)],
-  [some (1, .left, 16), some (1, .left, 15)],
-  [some (0, .right, 9), some (0, .left, 18)],
-  [some (1, .left, 16), some (1, .right, 17)],
-  [none, some (1, .right, 2)],
-  [some (1, .left, 20), some (1, .left, 19)],
-  [some (0, .left, 21), some (0, .left, 8)],
-  [some (0, .right, 9), some (0, .left, 21)],
-  [some (1, .right, 23), some (1, .left, 22)],
-  [some (1, .right, 4), some (1, .right, 23)]]
+/-- Transition rows of `goldbach24` (24 states, 2 symbols), loaded from
+`artifacts/goldbach_24/machine.txt`. -/
+def goldbach24Rows : List (List (Option (Fin 2 × Dir × Fin 24))) :=
+  load_machine_rows% "artifacts/goldbach_24/machine.txt"
 
 /-- `goldbach24` (24 states, 2 symbols,
 SHA-256 `9b8b92a609ca9ae891856957b21a4d5ff9ba4317c27835e31265a249d236b2dc`). -/
