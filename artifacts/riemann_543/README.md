@@ -2,7 +2,7 @@
 
 * **Domain:** `riemann` (2-symbol deterministic Turing machine halting if and only if the Riemann Hypothesis is false, starting from Matiyasevich, Davis, and O'Rear's 2016 744-state NQL-compiled machine [`baselines/sources/riemann_744_sorear.tm`](../../baselines/sources/riemann_744_sorear.tm))
 * **State Reduction:** `744 -> 543` states (`-201` states, `-27.02%`)
-* **Secondary Runtime Trade-off:** `-3.69%` step reduction (`1.038300x` speedup: `240,702` candidate steps vs `249,921` baseline steps at outer-loop checkpoint `3,254`, saving `9,219` steps while preserving 100% bit-exact relative tape equality at every outer-loop entry)
+* **Runtime Steps:** `-3.69%` step reduction (`1.038300x` speedup: `240,702` candidate steps vs. `249,921` baseline steps at outer-loop checkpoint `3,254`, saving `9,219` steps while preserving 100% bit-exact relative tape equality at every outer-loop entry)
 * **Machine SHA-256:** `14c7d827a8ef5ff7671f4642fe31d956c4880a0ce8270c74286b453313f4824e` ([`machine.txt`](machine.txt))
 * **Formal Equivalence Proof:** [`Cryptids/Riemann543.lean`](../../Cryptids/Riemann543.lean) (Lean 4 kernel, standard axioms `{propext, Classical.choice, Quot.sound}`)
 

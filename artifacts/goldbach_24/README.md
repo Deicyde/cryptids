@@ -3,6 +3,7 @@
 * **Instance:** `goldbach`
 * **Reference Machine:** `25` states, `2` symbols ([`baselines/tables/goldbach_25.txt`](../../baselines/tables/goldbach_25.txt), SHA-256: `da5bdb63c1ad0d0e3e97f8ca75addc2b6622dea483b3e3cdfbd2fc55363a5a67`)
 * **Candidate Machine:** `24` states, `2` symbols ([`machine.txt`](machine.txt), SHA-256: `9b8b92a609ca9ae891856957b21a4d5ff9ba4317c27835e31265a249d236b2dc`)
+* **Runtime Steps:** `+11.74%` steps (`232,580` candidate steps vs. `208,135` baseline steps at outer-loop checkpoint `155`, due to the `+1` unary shift)
 * **Formal Equivalence Proof:** [`Cryptids/Goldbach24.lean`](../../Cryptids/Goldbach24.lean) (`0` axioms beyond `{propext, Classical.choice, Quot.sound}`)
 * **End-to-End Semantics Proof:** [`Cryptids/Semantics/Goldbach.lean`](../../Cryptids/Semantics/Goldbach.lean) (`Halts candidate ↔ ¬ GoldbachConjecture`)
 

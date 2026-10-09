@@ -2,7 +2,7 @@
 
 * **Domain:** `zf` (2-symbol deterministic Turing machine halting if and only if Zermelo-Fraenkel set theory is inconsistent, starting from Andrew Wade's 2025 432-state machine [`baselines/sources/zf_432_wade.tm`](../../baselines/sources/zf_432_wade.tm))
 * **State Reduction:** `432 -> 429` states (`-3` states, `-0.69%`)
-* **Secondary Runtime Trade-off:** `0.00%` step overhead (`1.000000x` speedup; exact 1-to-1 step-by-step head movement, bit writes, and tape configurations at every step $t \ge 0$)
+* **Runtime Steps:** `0.00%` step overhead (`1.000000x` speedup; exact 1-to-1 step-by-step head movement, bit writes, and tape configurations at every step $t \ge 0$)
 * **Machine SHA-256:** `041919e91a6a5cb2afee60ecdf97975a57811c0c8e0cff52c771d66501f7f730` ([`machine.txt`](machine.txt))
 * **Formal Equivalence Proof:** [`Cryptids/Zf429.lean`](../../Cryptids/Zf429.lean) (Lean 4 kernel, standard axioms `{propext, Classical.choice, Quot.sound}`)
 
