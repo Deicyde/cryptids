@@ -1,0 +1,15 @@
+{
+  "challenge_module": "Challenge.Riemann543",
+  "solution_module": "Cryptids.Semantics.Riemann",
+  "theorem_names": [
+    "ConjectureMachines.Riemann543.Semantics.halts_reference_iff_exists_counterexample",
+    "ConjectureMachines.Riemann543.Semantics.halts_candidate_iff_exists_counterexample",
+    "ConjectureMachines.Riemann543.Semantics.halts_reference_iff_not_riemannHypothesis",
+    "ConjectureMachines.Riemann543.Semantics.halts_candidate_iff_not_riemannHypothesis"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}

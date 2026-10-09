@@ -1,0 +1,435 @@
+# Formal Semantics of Conjecture Turing Machines (`Cryptids/Semantics/`)
+
+This directory contains formal Lean 4 proofs connecting the Turing machines in `Cryptids/` to the
+mathematical conjectures they encode, along with full provenance and attribution for the underlying
+constructions.
+
+---
+
+## 1. Goldbach's Conjecture ([`Goldbach.lean`](./Goldbach.lean))
+
+### Main Theorems
+
+In [`Cryptids/Semantics/Goldbach.lean`](./Goldbach.lean) (~620 lines), we define Goldbach's
+conjecture in standard mathematical terms on top of Mathlib's `Nat.Prime`:
+
+```lean
+def GoldbachConjecture : Prop :=
+  ∀ n : ℕ, 2 < n → Even n → ∃ p q : ℕ, Nat.Prime p ∧ Nat.Prime q ∧ n = p + q
+```
+
+and prove that both the 25-state baseline machine `reference` (`goldbach_25`) and the 24-state
+compressed machine `candidate` (`goldbach_24`) halt on the blank tape if and only if Goldbach's
+conjecture is false:
+
+```lean
+theorem halts_reference_iff_not_goldbach :
+    Halts reference ↔ ¬ GoldbachConjecture
+
+theorem halts_candidate_iff_not_goldbach :
+    Halts candidate ↔ ¬ GoldbachConjecture
+```
+
+### Provenance and Attribution
+
+1. **Original 27-state (26-state reachable) Goldbach Turing machine (2016)**
+   - **Author**: Anonymous (`gist.github.com/anonymous/a64213f391339236c2fe31f8749a0df6`),
+     popularized by Scott Aaronson and the Busy Beaver Challenge community
+     ([bbchallenge Cryptids wiki](https://wiki.bbchallenge.org/wiki/Cryptids)).
+2. **25-state optimization and first Lean 4 verification (`goldbach_25`, 2024)**
+   - **Author**: Yijun Leng ([`github.com/lengyijun/goldbach_tm`](https://github.com/lengyijun/goldbach_tm), Apache-2.0 License).
+   - Yijun Leng compressed the 26-state machine to 25 states (`goldbach_25`, which is the
+     `reference` machine in [`Cryptids/Goldbach24.lean`](../Goldbach24.lean)) and gave the first
+     Lean 4 formalization proving that the 25-state machine halts iff Goldbach's conjecture is
+     false.
+3. **24-state reduction and halting-equivalence proof (`goldbach_24`, 2026)**
+   - **Authors**: Maxence Faldor, using Gemini Argon ([`Cryptids/Goldbach24.lean`](../Goldbach24.lean)).
+   - Compressed the machine to 24 states (`candidate`) and proved
+     `Halts candidate ↔ Halts reference` via lockstep zipper simulation (`BaseTr`).
+4. **This formalization ([`Cryptids/Semantics/Goldbach.lean`](./Goldbach.lean))**
+   - **Authors**: Maxence Faldor and Moritz Firsching, using Gemini Argon.
+   - Written from scratch directly on top of the symbolic execution lemmas in
+     [`Cryptids/Goldbach24.lean`](../Goldbach24.lean) (no code copied from external repositories),
+     proving `Halts reference ↔ ¬ GoldbachConjecture` and combining it with `candidate_equivalent`
+     to obtain `Halts candidate ↔ ¬ GoldbachConjecture`.
+
+### Proof Architecture
+
+The proof decomposes the execution of `reference` into five layers:
+
+1. **Canonical Configurations (`cfg0`, `cfg6`, `cfg11`, `cfgExit`)**:
+   Represents the machine's unary tape state at the four checkpoints of each primality test and
+   partition search.
+2. **Inner Division Loop (`cfg11_drain`)**:
+   Shows that State `11` drains the remaining unary block `r` while maintaining the counter sum
+   `A + B = k + 1` and the divisibility invariant `(k + 2) ∣ B + m + 2`, deciding whether the
+   trial divisor `d = k + 2` divides `p = k + 4 + r'`.
+3. **Trial Division Loop (`cfg6_eval`)**:
+   By induction on `r`, proves that State `6` reaches `cfgExit` with boolean flag
+   `decide (NoFactorFrom k (k + 3 + r))`.
+4. **Primality Test (`cfg0_eval`)**:
+   Combines `p = 1`, `p = 2`, and `p ≥ 3` with Mathlib's `Nat.prime_def_lt'` to prove that
+   `cfg0 is_right q p` reaches `cfgExit is_right (decide (Nat.Prime p)) q p`.
+5. **Goldbach Partition Search & Multi-Stage Equivalence (`stage_advance`, `stage_halt`)**:
+   Shows that stage `w` (`stageCfg w = cfg0 true (2 * w + 2) 1`, testing partitions of `2 * w + 4`)
+   advances to `stageCfg (w + 1)` if `2 * w + 4` is a sum of two primes, and halts at State `19`
+   otherwise.
+
+---
+
+## 2. Riemann Hypothesis ([`Riemann.lean`](./Riemann.lean) & [`Riemann/`](./Riemann/))
+
+### Main Theorems
+
+In [`Cryptids/Semantics/Riemann.lean`](./Riemann.lean) and its submodules under
+[`Cryptids/Semantics/Riemann/`](./Riemann/) (~5,000 lines total), we connect the 744-state baseline
+machine `reference` (`riemann_744`) and the 543-state compressed machine `candidate` (`riemann_543`)
+to Mathlib's `RiemannHypothesis` (`Mathlib.NumberTheory.LSeries.RiemannZeta`):
+
+```lean
+theorem halts_reference_iff_exists_counterexample :
+    Halts reference ↔ ∃ x : ℕ, MatiyasevichRiemannCounterexample x
+
+theorem exists_counterexample_iff_not_riemannHypothesis :
+    (∃ x : ℕ, MatiyasevichRiemannCounterexample x) ↔ ¬ RiemannHypothesis
+
+theorem halts_reference_iff_not_riemannHypothesis :
+    Halts reference ↔ ¬ RiemannHypothesis
+
+theorem halts_candidate_iff_not_riemannHypothesis :
+    Halts candidate ↔ ¬ RiemannHypothesis
+```
+
+Here `MatiyasevichRiemannCounterexample (x : ℕ) : Prop` is the elementary integer inequality tested
+at stage $x > 253$ by the compiled NQL program `riemann.nql`:
+
+```lean
+def harmNum : ℕ → ℕ
+  | 0 => 0
+  | n + 1 => harmNum n * (n + 1) + n.factorial
+
+def MatiyasevichRiemannCounterexample (x : ℕ) : Prop :=
+  253 < x ∧
+  let lcm := (Finset.Icc 1 x).lcm id
+  let a := (harmNum lcm - lcm.factorial * x) ^ 2
+  let b := lcm.factorial ^ 2
+  let c := harmNum x ^ 4 * x
+  let d := x.factorial ^ 4
+  b * c < a * d
+```
+
+Over $\mathbb{Q}$ and $\mathbb{R}$, since $\operatorname{harmNum}(n) / n! = H_n = \sum_{k=1}^n 1/k$
+(`Mathlib`'s `harmonic n`), the cross-multiplied integer inequality $b \cdot c < a \cdot d$ is
+equivalent to (`matiyasevichRiemannCounterexample_iff_harmonic`,
+`matiyasevichRiemannCounterexample_iff_sqrt_lt`):
+
+$$x > 253 \;\wedge\; \sqrt{x}\, H_x^2 < H_{\operatorname{lcm}(1, \dots, x)} - x.$$
+
+### Provenance and Attribution
+
+1. **744-state Riemann Hypothesis Turing machine (`riemann_744`, 2016)**
+   - **Authors**: Yuri Matiyasevich, Scott Aaronson, and Stefan O'Rear
+     ([`sorear/metamath-turing-machines`](https://github.com/sorear/metamath-turing-machines/tree/master/machines/2016-riemann-matiyasevich-aaronson-744),
+     `riemann.nql`, `riemann.subs`, and `compiler/framework.py`).
+   - Built on Lowell Schoenfeld's explicit bound for Chebyshev's $\psi(x)$ under the Riemann
+     Hypothesis ([*Math. Comp.* **30** (1976), 337–360](https://doi.org/10.1090/S0025-5718-1976-0457374-X)),
+     Erhard Schmidt's oscillation theorem ([*Math. Ann.* **57** (1903), 195–204](https://doi.org/10.1007/BF01444344)),
+     and Jeffrey Lagarias's harmonic-number criterion ([*Amer. Math. Monthly* **109** (2002), 534–543](https://doi.org/10.1080/00029890.2002.11919883)).
+2. **543-state reduction and halting-equivalence proof (`riemann_543`, 2026)**
+   - **Authors**: Maxence Faldor, using Gemini Argon ([`Cryptids/Riemann543.lean`](../Riemann543.lean)).
+   - Eliminated 201 states (`-27.02%`) and `-3.69%` runtime steps by removing unreachable states,
+     dead transition branches, and pass-bounce intermediaries, and formally proved
+     `Halts candidate ↔ Halts reference`.
+3. **This formalization ([`Cryptids/Semantics/Riemann.lean`](./Riemann.lean) & [`Cryptids/Semantics/Riemann/`](./Riemann/))**
+   - **Authors**: Maxence Faldor and Moritz Firsching, using Gemini Argon.
+
+---
+
+### Proof Architecture
+
+The formalization separates the discrete verification of the 744-state Turing machine and its
+16-register NQL program (**Part I**) from the number-theoretic and real-analytic equivalence with
+`RiemannHypothesis` (**Part II**).
+
+```
+Halts candidate (riemann_543)
+  │
+  │  candidate_equivalent (Cryptids/Riemann543.lean, 0 sorry)
+  ▼
+Halts reference (riemann_744)
+  │
+  │  Layer 1 + Layer 2: halts_reference_iff_regHalts (0 sorry)
+  │  (Cryptids/Semantics/Riemann/Gadgets.lean & Dispatcher.lean)
+  ▼
+RegHalts (16-register NQL machine, 1,540 active instructions)
+  │
+  │  Layer 3: regHalts_iff_exists_counterexample
+  │  (Cryptids/Semantics/Riemann/RegisterMachine.lean)
+  ▼
+∃ x : ℕ, MatiyasevichRiemannCounterexample x
+  │
+  │  Part II: exists_counterexample_iff_not_riemannHypothesis
+  │  (Cryptids/Semantics/Riemann/Analytic.lean)
+  ▼
+¬ RiemannHypothesis (Mathlib.NumberTheory.LSeries.RiemannZeta)
+```
+
+#### Part I: Turing Machine ↔ Elementary Counterexample (`halts_reference_iff_exists_counterexample`)
+
+In `compiler/framework.py`, the 744-state machine `reference` (`riemann_744`) simulates a
+16-register counter machine with an 11-bit program counter (`0 ≤ pc < 2048`, with active program
+`0 ≤ pc ≤ 1539`).
+
+##### Layer 1: Canonical Tape Layout & Primitive Gadgets ([`Riemann/Gadgets.lean`](./Riemann/Gadgets.lean), `0 sorry`s)
+
+1. **Canonical Tape Layout (`entryCfg`, `postPcCfg`)**:
+   At State `0` (`!ENTRY`), the tape to the right of the head consists of:
+   - An **11-bit binary Program Counter** `pcBits 11 pc` in big-endian order ($b_{10}, b_9, \dots, b_0$).
+   - A **two-zero fence** `[0, 0]`.
+   - A **bank of unary registers** `regs : List ℕ`, where each register value $r \in \mathbb{N}$ is
+     encoded as $r + 1$ ones followed by a single zero delimiter (`encodeReg r = 1^{r+1} ++ [0]`).
+   We prove `entryCfg_zero_nil : entryCfg 0 [] = init`, showing that the blank tape `init` is the
+   exact canonical entry configuration for `pc = 0` and zero initialized registers (`regs = []`).
+2. **Return Scan Gadgets (`return1_scan_regs`, `return2_scan_regs`)**:
+   After modifying register $k$, the head returns leftward across registers $k, k-1, \dots, 0$ and
+   the `[0, 0]` fence:
+   - States `565`/`566` (`return.0`/`return.1`) scan left to State `9` (`dispatch.0.carry`),
+     preparing to add $+1$ to `pc`.
+   - States `567`/`568` (`return2.0`/`return2.1`) scan left to State `524` (`nextstate_2`), which
+     steps over bit $b_0$ to State `11` (`dispatch.1.carry`), preparing to add $+2$ to `pc`.
+3. **11-Bit Ripple-Carry PC Adder (`dispatch_from_9_entryCfg`, `dispatch_from_524_entryCfg`)**:
+   States `9..29, 12, 13` sweep left across the 11 bits of `pc`, propagating the binary carry bit
+   and landing at `entryCfg (pc + 1) regs` (from State `9`) or `entryCfg (pc + 2) regs` (from
+   State `524`).
+4. **Primitive Register Gadgets (`reg_init_eval`, `reg_incr_eval`, `reg_decr_eval`)**:
+   Starting from `postPcCfg q pc regs` (with the head on the first `0` of the `[0, 0]` fence after
+   scanning the 11-bit PC):
+   - **`reg_init_eval` (`q = 32`)**: Scans right to the first double-zero at the end of `regs`,
+     writes `1` to append a new register initialized to `0`, and returns to
+     `entryCfg (pc + 1) (regs ++ [0])`.
+   - **`reg_incr_eval` (`q = regIncrState k`, $0 \le k < 16$)**: Counts $k$ register-delimiter `0`s
+     while shifting the suffix `regs[k..]` right by 1 cell via a 2-state shift gadget
+     (`States 569..570`) to insert an extra `1` into register $k$, returning to
+     `entryCfg (pc + 1) (regs.set k (regs[k] + 1))`.
+   - **`reg_decr_eval` (`q = regDecrState k`, $0 \le k < 16$)**: Counts $k$ register-delimiter `0`s
+     to reach register $k$. If `regs[k] = 0` (a single `1` followed by `0`), it leaves the tape
+     unchanged and returns via `State 566` to `entryCfg (pc + 1) regs`. If `regs[k] > 0`, it shifts
+     the suffix `regs[k..]` left by 1 cell via `States 33..35` (`uninit`) to delete one `1` and
+     returns via `State 568` to `entryCfg (pc + 2) (regs.set k (regs[k] - 1))`.
+
+##### Layer 2: BDD Instruction Dispatcher & Halting Simulation ([`Riemann/Dispatcher.lean`](./Riemann/Dispatcher.lean), `0 sorry`s)
+
+1. **Bounded-Window Symbolic Evaluator (`WinState`, `winStep_sound`, `winRunToEntry_sound`)**:
+   In `entryCfgR pc R`, the 13 tape cells `0 :: pcBits 11 pc ++ [0, 0]` precede the register tape
+   `R : ListBlank (Fin 2)`. Any execution that stays within the first 12 cells (before the second
+   `0` of the `[0, 0]` fence) is completely independent of `R`. We formalize a finite-window state
+   `WinState` with a 1-step runner `winStep` and prove its soundness for arbitrary `R : ListBlank (Fin 2)`.
+2. **Complete 2,048-Entry Instruction Decoder (`program : ℕ → Instr`, `allPcs_valid`)**:
+   Decodes the 339-state binary decision tree (`State 0 → 523 → ...`), jump chains (`States 36..183`),
+   and `noop` chains (`States 524..532`) into an explicit instruction table `program : ℕ → Instr`
+   (`.initReg`, `.incr k`, `.decr k`, `.jump target`, `.halt`), and verifies all 2,048 11-bit PC
+   paths via a single kernel `decide` proof (`allPcs_valid`).
+3. **Reachable Invariant & Halting Equivalence (`RegInv`, `halts_reference_iff_regHalts`)**:
+   Establishes the reachable invariant `RegInv c` (`c.pc < 16 ∧ c.regs.length = c.pc` during register
+   allocation, and `16 ≤ c.pc < 1540 ∧ c.regs.length = 16` thereafter) and proves both forward and
+   backward halting simulations between `reference` and the abstract 16-register machine (`RegHalts`).
+
+##### Layer 3: Verification of the 16-Register NQL Machine ([`Riemann/RegisterMachine.lean`](./Riemann/RegisterMachine.lean))
+
+Verifies the 1,540-instruction register program compiled from `riemann.nql` (`riemann.subs`):
+
+- **Register Allocation & Bootstrap (`PC 0..38`)**: Allocates 16 registers (`r0..r15`) and initializes
+   $x = r_2 = 253$ (`254` at the start of the first main loop iteration).
+- **Parametric Arithmetic Subroutines (`0 sorry`s)**:
+  - `exec_transfer1`, `exec_transfer2`, `exec_transfer3`: Destructive additive transfers
+    $d_i \mathrel{+}= s,\; s \gets 0$.
+  - `exec_copy_add`: Non-destructive register addition $d \mathrel{+}= s$ using a temporary register.
+  - `exec_mul_loop`: Nested multiplication loop $d_1 \mathrel{+}= s_1 \cdot s_2$.
+  - `exec_decr_pair_le`, `exec_decr_pair_gt`: Paired decrement loop comparing two registers.
+  - `exec_div_loop`, `exec_sub_loop`: Euclidean division/remainder and saturating subtraction loops.
+- **Main Counterexample Search Loop (`PC 38..1539`)**:
+  For each $x = 254, 255, \dots$:
+  1. Computes $L_x = \operatorname{lcm}(1, \dots, x)$ iteratively via $\operatorname{lcm}(L_{x-1}, x)$
+     using trial division (`PC 44..256`).
+  2. Unrolls 254 decrements to enforce $x > 253$ (`PC 268..780`).
+  3. Computes $\operatorname{harmNum}(L_x)$ and $L_x!$ (`PC 780..946`), then forms
+     $a = (\operatorname{harmNum}(L_x) - L_x!\, x)^2$ and $b = (L_x!)^2$ (`PC 946..1104`).
+  4. Computes $\operatorname{harmNum}(x)$ and $x!$ (`PC 1104..1274`), then forms
+     $c = \operatorname{harmNum}(x)^4 \cdot x$ and $d = (x!)^4$ (`PC 1274..1474`).
+  5. Evaluates $b \cdot c < a \cdot d$ (`PC 1474..1539`), halting at `PC = 1539` if the inequality
+     holds (`MatiyasevichRiemannCounterexample x`) and looping back to `PC = 38` for $x + 1$
+     otherwise.
+
+#### Part II: Elementary Counterexample ↔ Riemann Hypothesis ([`Riemann/Analytic.lean`](./Riemann/Analytic.lean))
+
+1. **Chebyshev's $\psi(x)$ and $\operatorname{lcm}(1, \dots, x)$ (`0 sorry`s)**:
+   Using Mathlib's `Chebyshev.psi` and `Nat.log_lcmUpto_eq_sum_mangoldt`, we prove:
+   ```lean
+   theorem psi_eq_log_lcmUpTo (x : ℕ) :
+       Chebyshev.psi (x : ℝ) = Real.log (lcmUpTo x : ℝ)
+
+   theorem exp_psi_eq_lcmUpTo (x : ℕ) :
+       Real.exp (Chebyshev.psi (x : ℝ)) = (lcmUpTo x : ℝ)
+   ```
+2. **Harmonic–Logarithmic & Euler–Mascheroni Reduction (`0 sorry`s)**:
+   Using `Mathlib.NumberTheory.Harmonic.Bounds` and `Mathlib.NumberTheory.EulerMascheroni`, we prove:
+   - `psi_add_eulerMascheroniConstant_lt_harmonic_lcmUpTo`:
+     $\psi(x) + \gamma < H_{\operatorname{lcm}(1, \dots, x)}$ for all $x \ge 1$.
+   - `harmonic_lcmUpTo_lt_psi_add_two_thirds`:
+     $H_{\operatorname{lcm}(1, \dots, x)} < \psi(x) + \tfrac{2}{3}$ for all $x \ge 254$.
+   - `not_matiyasevichRiemannCounterexample_of_schoenfeldPsiBound`:
+     Proves with `0 sorry`s that Schoenfeld's bound
+     $|\psi(x) - x| \le \sqrt{x}\,(\log x)^2 / (8\pi)$ implies
+     `¬ MatiyasevichRiemannCounterexample x` because
+     $$H_{L_x} - x < \psi(x) - x + \tfrac{2}{3} < \sqrt{x}\,(\log x)^2 < \sqrt{x}\, H_x^2.$$
+   - `matiyasevichRiemannCounterexample_of_sqrt_mul_one_add_log_sq_le_psi_sub`:
+     Proves with `0 sorry`s that $\psi(x) - x \ge \sqrt{x}\,(1 + \log x)^2$ for $x > 253$ implies
+     `MatiyasevichRiemannCounterexample x` because
+     $$\sqrt{x}\, H_x^2 \le \sqrt{x}\,(1 + \log x)^2 \le \psi(x) - x < H_{L_x} - x.$$
+3. **Analytic Number Theory: Schmidt's Oscillation Theorem & Schoenfeld's Explicit Bound (`0 sorry`s)**:
+   Both classical analytic number theory theorems connecting `RiemannHypothesis` (zeros of $\zeta(s)$)
+   to Chebyshev's $\psi(x)$ are fully formalized with **zero `sorry`s**:
+   - `not_riemannHypothesis_imp_exists_psi_sub_ge_sqrt_mul_one_add_log_sq`
+     ([`Riemann/Schmidt.lean`](./Riemann/Schmidt.lean), `0 sorry`s):
+     Formalizes Schmidt's (1903) oscillation theorem via Landau's (1905) real-analytic Mellin
+     positivity method (`Mathlib.Analysis.Complex.TaylorSeries`, Tonelli's theorem `lintegral_tsum`,
+     and the identity theorem on half-planes `{s : ℂ | σ < s.re}`), showing that if
+     `¬ RiemannHypothesis`, there exists $x > 253$ with
+     $\psi(x) - x \ge \sqrt{x}\,(1 + \log x)^2$.
+   - `riemannHypothesis_imp_schoenfeldPsiBound`
+     ([`Riemann/DigammaBinet.lean`](./Riemann/DigammaBinet.lean),
+      [`Riemann/HorizontalBounds.lean`](./Riemann/HorizontalBounds.lean),
+      [`Riemann/WeightedStieltjes.lean`](./Riemann/WeightedStieltjes.lean),
+      [`Riemann/VonMangoldtCount.lean`](./Riemann/VonMangoldtCount.lean), and
+      [`Riemann/ExplicitLarge.lean`](./Riemann/ExplicitLarge.lean), `0 sorry`s):
+     Proves that under `RiemannHypothesis`, $|\psi(x) - x| \le \sqrt{x}\,(\log x)^2 / (8\pi)$ for all
+     $x > 253$ by combining:
+     - Unconditional Chebyshev/numeric bounds for $253 < x \le 6000$ (`Analytic.lean`),
+     - Binet / Euler–Maclaurin formula for $\psi_0(z) = \Gamma'(z)/\Gamma(z)$ and vertical line
+       estimates along $\operatorname{Re}(s) = -1/4$ (`DigammaBinet.lean`),
+     - Local zero counting, symmetric zero-free heights, and Borel–Carathéodory + functional
+       equation horizontal segment bounds (`HorizontalBounds.lean`),
+     - Smoothed Perron integral for $\psi_1(x) = \int_0^x \psi(t)\,dt$, rectangle residue theorem
+       on $[-1/4, 2] \times [-U, U]$, and multiplicity-weighted Stieltjes integration by parts
+       (`WeightedStieltjes.lean`),
+     - Fourth-order Euler–Maclaurin `quarticKernel` identity, zero-free region $|\operatorname{Im}(\rho)| > 6$,
+       and Jensen multiplicity bound $N_w(t) \le \frac{16}{5} t \log t + \frac{11}{5} t$ for $t \ge 6$
+       (`VonMangoldtCount.lean`), and
+     - Large-$x$ explicit assembly for $x \ge 5000$ (`ExplicitLarge.lean`).
+
+---
+
+## 3. ZF Set Theory Consistency ([`Zf.lean`](./Zf.lean) & [`Zf/`](./Zf/), `0 sorry`s)
+
+### Main Theorems
+
+In [`Cryptids/Semantics/Zf.lean`](./Zf.lean) and its six submodules under
+[`Cryptids/Semantics/Zf/`](./Zf/) (~7,000 lines total, **zero `sorry`s**), we formalize both:
+1. O'Rear's Tarski $S_2$ + Metamath ZF Hilbert system `ZFProvable` (`ZFInconsistent := ZFProvable (zfMem 0 0)`) and its full soundness in Mathlib's cumulative hierarchy `ZFSet.{0}` ([`Zf/Soundness.lean`](./Zf/Soundness.lean)), and
+2. The exact 20-clause deductive system `WadeZFProvable` (`WadeZFInconsistent := WadeZFProvable (zfMem 0 0)`) enumerated by Andrew Wade's `zf_432_wade.tm` (`ConjectureMachines.Zf429.reference`), proving with **zero `sorry`s** that the 432-state baseline (`zf_432`) and the 431-, 430-, and 429-state compressed machines (`zf_431`, `zf_430`, `zf_429`) halt on the blank tape if and only if `WadeZFInconsistent` holds:
+
+```lean
+theorem halts_reference_iff_wadeZFInconsistent :
+    Halts ConjectureMachines.Zf429.reference ↔ WadeZFInconsistent
+
+theorem halts_candidate_431_iff_wadeZFInconsistent :
+    Halts ConjectureMachines.Zf431.candidate ↔ WadeZFInconsistent
+
+theorem halts_candidate_430_iff_wadeZFInconsistent :
+    Halts ConjectureMachines.Zf430.candidate ↔ WadeZFInconsistent
+
+theorem halts_candidate_429_iff_wadeZFInconsistent :
+    Halts ConjectureMachines.Zf429.candidate ↔ WadeZFInconsistent
+
+theorem zfProvable_sound_zfSet (φ : ZFFormula) (h : ZFProvable φ.code)
+    (v : ℕ → ZFSet.{0}) : φ.Holds v
+
+theorem not_zfInconsistent : ¬ ZFInconsistent
+```
+
+### Formal Discovery of the `B6a` Register-Restoration Bug in `zf_432_wade.tm`
+
+During the formal verification of `main().0..134` in [`Zf/Subroutines.lean`](./Zf/Subroutines.lean),
+we discovered that the baseline Turing machine `baselines/sources/zf_432_wade.tm` was compiled from
+Andrew Wade's `zf2.py` prior to his August 31, 2025 bugfix commit `10fcf152b3`
+(*"Bugfix for B6a where correct variables were not being restored"*):
+
+- In `zf_432_wade.tm`, `main().n_140.1` (State `299`) transitions on `0` to State `403`
+  (`while_decnz(scratch1, 3.param1.inc).0`) instead of State `407`
+  (`while_decnz(scratch1, 3.param3.inc).0`).
+- Consequently, during the first distinctness check (`param1 ≠ param3`) of Clause 9 (`B6a`),
+  `param3` is drained into `param1` (`param1 := p1 + p3, param3 := 0`), so the second check
+  compares `param2` against `param3 = 0` (`p2 ≠ 0` instead of `p2 ≠ p3`), and subsequent clauses
+  (`ac = 10..17`) see `param1 = p1 + p3` and `param3 = 0`.
+- `WadeZFProvable` ([`Zf/RegisterMachine.lean`](./Zf/RegisterMachine.lean)) captures the exact
+  20-clause deductive system enumerated by `zf_432_wade.tm`, while `ZFProvable`
+  ([`Zf/Soundness.lean`](./Zf/Soundness.lean)) captures O'Rear's `zf2.nql` / Wade's post-`10fcf152b3`
+  Hilbert system and proves its soundness in Mathlib's `ZFSet.{0}` (`not_zfInconsistent`).
+
+### Provenance and Attribution
+
+1. **Tarski's minimal substitution-free first-order system $S_2$ (1965) & `zf2.nql` (2016–2017)**
+   - **Authors**: Alfred Tarski (*Z. Math. Logik Grundlag. Math.* **11** (1965), 207–230);
+     Stefan O'Rear and CatIsFluffy ([`sorear/metamath-turing-machines`](https://github.com/sorear/metamath-turing-machines),
+     `zf2.nql`).
+2. **432-state ZF Turing machine (`zf_432_wade.tm`, 2025)**
+   - **Author**: Andrew Wade ([`ajwade/turing_machine_explorer`](https://codeberg.org/ajwade/turing_machine_explorer),
+     `zf2.py` and `TMBuilder.py`).
+3. **431-, 430-, and 429-state reductions and halting-equivalence proofs (`zf_431`, `zf_430`, `zf_429`, 2026)**
+   - **Authors**: Maxence Faldor, using Gemini Argon ([`Cryptids/Zf431.lean`](../Zf431.lean),
+     [`Cryptids/Zf430.lean`](../Zf430.lean), [`Cryptids/Zf429.lean`](../Zf429.lean)).
+4. **This formalization ([`Cryptids/Semantics/Zf.lean`](./Zf.lean) & [`Cryptids/Semantics/Zf/`](./Zf/))**
+   - **Authors**: Maxence Faldor and Moritz Firsching, using Gemini Argon.
+
+### Proof Architecture
+
+```
+Halts candidate (zf_429 / zf_430 / zf_431)
+  │
+  │  candidate_equivalent (Cryptids/Zf429.lean, 0 sorry)
+  ▼
+Halts reference (zf_432_wade.tm)
+  │
+  │  Layer 1 + Layer 1b + Layer 2: halts_reference_iff_zfRegHalts_unconditional (0 sorry)
+  │  (Cryptids/Semantics/Zf/Gadgets.lean, Boot.lean, Dispatcher.lean)
+  ▼
+ZfRegHalts (11-register call-stack machine, 336-state decision tree)
+  │
+  │  Layer 3b: zfRegHalts_iff_mainLoopHalts (0 sorry)
+  │  (Cryptids/Semantics/Zf/Subroutines.lean)
+  ▼
+MainLoopHalts (zf_432_wade.tm outer proof-enumeration loop)
+  │
+  │  Layer 3: mainLoopHalts_iff_wadeZFInconsistent (0 sorry)
+  │  (Cryptids/Semantics/Zf/RegisterMachine.lean)
+  ▼
+WadeZFInconsistent (WadeZFProvable (zfMem 0 0))
+
+ZFProvable (zfMem 0 0) (ZFInconsistent, O'Rear's zf2.nql / post-10fcf152b3 Hilbert system)
+  │
+  │  Part II: zfProvable_sound_zfSet & not_zfInconsistent (0 sorry)
+  │  (Cryptids/Semantics/Zf/Soundness.lean)
+  ▼
+False (via Mathlib.SetTheory.ZFC.Basic, ZFSet.mem_irrefl)
+```
+
+1. **Part II — Gödel Numbering, Hilbert System, & Soundness in `ZFSet.{0}` ([`Zf/Soundness.lean`](./Zf/Soundness.lean), `0 sorry`s)**:
+   Proves the Cantor pairing bijection `cantorUnpair (cantorPair x y) = (x, y)`, defines a total
+   well-founded Tarski satisfaction predicate `zfHolds : ℕ → (ℕ → ZFSet.{u}) → Prop` on all natural
+   numbers `n : ℕ`, and proves soundness of all 19 constructors of `ZFProvable` (`moot`, `mp`,
+   `gen`, `b1..b8c`, `ext`, `rep`, `pow`, `uni`, `inf`) in `ZFSet.{0}`.
+2. **Layer 1 & 1b — Tape Layout, Bootstrapping, & Register Gadgets ([`Zf/Gadgets.lean`](./Zf/Gadgets.lean) & [`Zf/Boot.lean`](./Zf/Boot.lean), `0 sorry`s)**:
+   Proves that starting from `init = ⟨0, default⟩`, `reference` executes all 8 exponential rounds
+   of `0a.boot1.A..E` (2,133,492 steps) and 1,909 cycles of `0b.boot2` to reach the canonical root
+   configuration `zfRootCfg 3821 [] (List.replicate 1909 0)` at `main().0` (State `126`), and
+   verifies the two-pass unary register increment (`stage3_inc_pass2`) and conditional decrement
+   (`stage3_decnz_pass2_zero`, `stage3_decnz_pass2_pos`) gadgets.
+3. **Layer 2 — Call-Stack Decision-Tree Dispatcher ([`Zf/Dispatcher.lean`](./Zf/Dispatcher.lean), `0 sorry`s)**:
+   Verifies the 336-state unary call-stack decision tree (`States 96..431`), proves universal
+   tree-walk soundness (`walkTape_sound`) and stack-bound invariance (`validStack`), and establishes
+   the lockstep halting bisimulation `halts_reference_iff_zfRegHalts : Halts reference ↔ ZfRegHalts`.
+4. **Layer 3 & 3b — 11-Register Machine, Subroutines, & Wff-Stack Verification ([`Zf/RegisterMachine.lean`](./Zf/RegisterMachine.lean) & [`Zf/Subroutines.lean`](./Zf/Subroutines.lean), `0 sorry`s)**:
+   Verifies all 336 decision-tree subroutine states (`while_decnz`, `pair`, `unpair`, `cparam`,
+   `if_eq`, `select`, and the 61 composite RPN formula subroutines) and all 135 steps of the outer
+   `main()` spine (`main().0..134`), proving `zfRegHalts_iff_mainLoopHalts : ZfRegHalts ↔ MainLoopHalts`
+   and `mainLoopHalts_iff_wadeZFInconsistent : MainLoopHalts ↔ WadeZFInconsistent`.
