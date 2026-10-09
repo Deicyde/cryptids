@@ -8,7 +8,9 @@ This repository contains smaller, formally verified 2-symbol Turing machines for
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Goldbach's Conjecture** | `goldbach_25` (`25` states, Yao / Leng) | `goldbach_24` (`24` states) | `-1` (`-4.0%`) | `+11.7%` | [`Goldbach24.lean`](Cryptids/Goldbach24.lean), [`Semantics/Goldbach.lean`](Cryptids/Semantics/Goldbach.lean) |
 | **ZF Consistency** | `zf_432` (`432` states, Wade 2025) | `zf_429` (`429` states, via `431`, `430`) | `-3` (`-0.7%`) | `0.0%` | [`Zf429.lean`](Cryptids/Zf429.lean), [`Semantics/Zf.lean`](Cryptids/Semantics/Zf.lean) |
-| **Riemann Hypothesis** | `riemann_744` (`744` states, Matiyasevich–Davis–O'Rear 2016) | `riemann_543` (`543` states) | `-201` (`-27.0%`) | `-3.7%` | [`Riemann543.lean`](Cryptids/Riemann543.lean), [`Semantics/Riemann.lean`](Cryptids/Semantics/Riemann.lean) |
+| **Riemann Hypothesis** | `riemann_744` (`744` states, Matiyasevich–O'Rear–Aaronson 2016) | `riemann_543` (`543` states) | `-201` (`-27.0%`) | `-3.7%` | [`Riemann543.lean`](Cryptids/Riemann543.lean), [`Semantics/Riemann.lean`](Cryptids/Semantics/Riemann.lean) |
+
+> **Scope of state-count claims:** While `goldbach_24` (`24` states) improves on the smallest known 2-symbol Goldbach machine (`goldbach_25`), **for ZF Consistency and the Riemann Hypothesis we do not claim to have found the smallest Turing machines overall.** Recent compiler and algorithmic reworks by Andrew Wade ([`turing_machine_explorer`](https://codeberg.org/ajwade/turing_machine_explorer), commit `9c5c2e82`, Aug 2026; `393` states for ZF) and Joseph M. Shunia ([`arXiv:2609.30306`](https://arxiv.org/abs/2609.30306), Sept 2026; `120` states for RH) reach smaller unformalized state counts by changing the register microcode, axiom order, or number-theoretic algorithm. Here, `zf_429` (`432 -> 429`) and `riemann_543` (`744 -> 543`) are formally certified pure state-space reductions of the fixed `zf_432` (2025) and `riemann_744` (2016) baselines, providing the first Lean 4 formalizations of ZF-consistency and Riemann Hypothesis Turing machines. See [`RELATED_WORK.md`](RELATED_WORK.md) for the full literature lineage.
 
 ## What Is Formally Proved
 

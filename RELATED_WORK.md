@@ -16,6 +16,11 @@ All baselines and candidate reductions in this repository adhere to the standard
 
 ## Historical Progression by Domain
 
+Community records for conjecture-checking and ZFC-independent Turing machines are tracked on the Busy Beaver Challenge wiki ([Larger Cryptids](https://wiki.bbchallenge.org/wiki/Cryptids#Larger_Cryptids) and [Logical Independence](https://wiki.bbchallenge.org/wiki/Logical_independence)).
+
+- **Goldbach (`goldbach_24`):** Improves on the smallest known `(Q, 2)` Turing machine (`25 -> 24` states).
+- **ZF Consistency (`zf_429`) & Riemann Hypothesis (`riemann_543`):** **We do not claim that `zf_429` (`429` states) or `riemann_543` (`543` states) are the smallest Turing machines overall** for these problems. Recent compiler and algorithmic reworks by Andrew Wade (`393` states for ZF, Aug 2026) and Joseph M. Shunia (`120` states for RH, Sept 2026) achieve smaller unformalized state counts by changing the register microcode, axiom order, or underlying number-theoretic algorithm. Rather, `zf_429` and `riemann_543` are certified pure state-space compressions of the historical `zf_432` (2025) and `riemann_744` (2016) baseline machines that preserve their underlying algorithms and provide the **first proof-assistant (Lean 4) formalizations** of any ZF-consistency or Riemann Hypothesis Turing machine.
+
 ### 1. Goldbach's Conjecture (`goldbach`)
 
 Searches even integers $2n \ge 4$ for a counterexample to Goldbach's conjecture (an even integer that cannot be written as the sum of two primes) and halts if and only if a counterexample exists.
@@ -37,14 +42,17 @@ Enumerates deductions in a finite axiomatization of ZF (or metamath `set.mm` / T
 | 2016 | Stefan O'Rear (`sorear/metamath-turing-machines`) | `748` | NQL-compiled Metamath `set.mm` verifier | Compiler pipeline |
 | 2023 | Riebel | `745` | State-merging pass on O'Rear's 748-state machine | Informal |
 | 2024 | Ridenour | `643` | Optimized NQL compilation + dead-branch pruning | Informal |
-| 2025 | Andrew Wade (`ajwade/turing_machine_explorer`, `zf_432_wade.tm`) | `432` | Tarski minimal first-order ZF encoding (`zf_432`) | Compiler pipeline |
-| **2026** | **Faldor & Firsching, using Gemini Argon (`zf_429`)** | **`429`** | **Moore merge (`42->13`), head-symbol merge (`95->331`), and 4-cell window contextual split (`91->{46,93,94}`)** | **Lean 4 proofs ([`Cryptids/Zf429.lean`](Cryptids/Zf429.lean), [`Cryptids/Semantics/Zf.lean`](Cryptids/Semantics/Zf.lean))** |
+| 2025 | Andrew Wade ([`ajwade/turing_machine_explorer`](https://codeberg.org/ajwade/turing_machine_explorer), commit `33b30300`, `zf_432_wade.tm`) | `432` | Tarski minimal first-order ZF encoding (`zf_432`, `bbchallenge` benchmark) | Compiler pipeline |
+| **2026** | **Faldor & Firsching, using Gemini Argon (`zf_429`)** | **`429`** | **Certified pure state reduction of `zf_432` (`432 -> 431 -> 430 -> 429`): Moore merge (`42->13`), head-symbol merge (`95->331`), and 4-cell window split (`91->{46,93,94}`)** | **Lean 4 proofs ([`Cryptids/Zf429.lean`](Cryptids/Zf429.lean), [`Cryptids/Semantics/Zf.lean`](Cryptids/Semantics/Zf.lean))** |
+| 2026 | Andrew Wade ([`ajwade/turing_machine_explorer`](https://codeberg.org/ajwade/turing_machine_explorer), commit `9c5c2e82`, Aug 2026) | `393` | Reworked register microcode (`00` moving marker), run-length dispatch, and axiom-order search (`69` framework + `324` decision DAG) | Compiler pipeline (unformalized) |
 
 ### 3. Riemann Hypothesis (`riemann`)
 
-Enumerates positive integers $n$ and tests Matiyasevich's / Robin's / Lagarias's elementary inequality equivalent to the Riemann Hypothesis across all $n \ge 1$.
+Enumerates positive integers $n$ and tests an elementary arithmetic inequality equivalent to the Riemann Hypothesis across all $n \ge 1$.
 
 | Year | Authors / Source | States (`(Q, 2)`) | Construction / Reduction Method | Formal Equivalence Proof |
 | :--- | :--- | :--- | :--- | :--- |
-| 2016 | Matiyasevich, Davis & O'Rear (`riemann_744_sorear.tm`) | `744` | NQL-compiled integer inequality checker (`riemann_744`) | Compiler pipeline |
-| **2026** | **Faldor & Firsching, using Gemini Argon (`riemann_543`)** | **`543`** | **25-cell window invariant (`m0Nat`/`m1Nat`), pass-bounce macro-step elimination (`140` bounces), and `52` `SyncCountdown` chains** | **Lean 4 proofs ([`Cryptids/Riemann543.lean`](Cryptids/Riemann543.lean), [`Cryptids/Semantics/Riemann.lean`](Cryptids/Semantics/Riemann.lean))** |
+| 2016 | Matiyasevich, O'Rear & Aaronson (`riemann_744_sorear.tm`) | `744` | NQL-compiled Matiyasevich–Schoenfeld harmonic-LCM checker (`riemann_744`) | Compiler pipeline |
+| **2026** | **Faldor & Firsching, using Gemini Argon (`riemann_543`)** | **`543`** | **Certified pure state reduction of `riemann_744`: 25-cell window invariant (`m0Nat`/`m1Nat`), pass-bounce macro-step elimination (`140` bounces), and `52` `SyncCountdown` chains** | **Lean 4 proofs ([`Cryptids/Riemann543.lean`](Cryptids/Riemann543.lean), [`Cryptids/Semantics/Riemann.lean`](Cryptids/Semantics/Riemann.lean))** |
+| 2026 | Joseph M. Shunia ([`arXiv:2609.30306`](https://arxiv.org/abs/2609.30306), Sept 2026) | `120` | 5-register self-sieving recurrence + base-$n$ offset digit count via specialized `TMBuilder` backend | Computer-assisted (unformalized) |
+

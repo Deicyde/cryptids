@@ -7,9 +7,14 @@ project:
     Formal Lean 4 verification of state-reduced 2-symbol Turing machines for
     Goldbach's Conjecture (25 -> 24 states), ZF Set Theory Consistency
     (432 -> 429 states, via 431 and 430), and the Riemann Hypothesis
-    (744 -> 543 states), proving halting equivalence with the published
-    baseline machines and connecting each machine's halting behavior to the
-    corresponding mathematical statement in Mathlib.
+    (744 -> 543 states), proving halting equivalence with the historical
+    baseline machines (zf_432 from 2025 and riemann_744 from 2016) and
+    connecting each machine's halting behavior to the corresponding statement
+    in Mathlib. While goldbach_24 improves on the smallest known binary
+    Goldbach machine, for ZF Consistency and the Riemann Hypothesis we do not
+    claim the smallest overall state counts (smaller unformalized machines with
+    393 and 120 states were recently constructed by Wade and Shunia via
+    compiler and algorithmic reworks).
   authors:
     - "Maxence Faldor"
     - "Moritz Firsching"
@@ -38,9 +43,10 @@ sources:
     relationship: "other"
     note: >-
       Original state reductions (goldbach_25 -> 24, zf_432 -> 431/430/429,
-      riemann_744 -> 543), halting-equivalence proofs, and end-to-end Lean 4
-      semantics proofs, including the formal discovery of the B6a
-      register-restoration bug in zf_432_wade.tm.
+      riemann_744 -> 543), halting-equivalence proofs, and first Lean 4
+      semantics proofs for ZF and RH Turing machines, including the formal
+      discovery of the B6a register-restoration bug in zf_432_wade.tm. For ZF
+      and RH we do not claim overall record state counts.
   - title: "A Relatively Small Turing Machine Whose Behavior Is Independent of ZFC"
     authors:
       - "Adam Yedidia"
@@ -58,13 +64,29 @@ sources:
     type: "software"
     relationship: "background"
     author_endorsement: "not-contacted"
-  - title: "turing_machine_explorer (zf2.py / zf_432)"
+  - title: "turing_machine_explorer (zf2.py / zf_432 and Aug 2026 393-state update)"
     authors:
       - "Andrew Wade"
     id: "https://codeberg.org/ajwade/turing_machine_explorer"
     type: "software"
     relationship: "background"
     author_endorsement: "not-contacted"
+    note: >-
+      Provides the August 2025 432-state baseline zf_432_wade.tm (commit
+      33b30300) formalized and reduced here to 429 states; a later August 2026
+      compiler and axiom-order rework (commit 9c5c2e82) reaches 393 states
+      (unformalized).
+  - title: "A 120-State Binary Turing Machine Equivalent to the Riemann Hypothesis"
+    authors:
+      - "Joseph M. Shunia"
+    id: "https://arxiv.org/abs/2609.30306"
+    type: "article"
+    relationship: "background"
+    author_endorsement: "not-contacted"
+    note: >-
+      Constructs an unformalized 120-state binary Turing machine equivalent to
+      the Riemann Hypothesis via a 5-register self-sieving recurrence on a
+      specialized TMBuilder backend (September 2026).
   - title: "Sharper bounds for the Chebyshev functions theta(x) and psi(x). II"
     authors:
       - "Lowell Schoenfeld"
