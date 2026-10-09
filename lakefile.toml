@@ -11,6 +11,11 @@ weak.linter.style.header = false
 maxSynthPendingDepth = 3
 
 [[require]]
+name = "verso"
+git = "https://github.com/mo271/verso.git"
+rev = "f4d699f67d8856d57ae8ed859edb610460f17591"
+
+[[require]]
 name = "mathlib"
 scope = "leanprover-community"
 rev = "v4.34.1"

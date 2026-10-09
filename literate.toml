@@ -1,0 +1,24 @@
+landing_page = "Cryptids"
+
+[metadata]
+title = "Cryptids"
+description = "Smaller Turing machines whose halting problem is equivalent to major open problems in mathematics, formalized in Lean 4."
+
+[[targets]]
+library = "Cryptids"
+
+[order_children]
+"Cryptids" = [
+  "Cryptids.Propositions",
+  "Cryptids.Machines",
+  "Cryptids.Goldbach24",
+  "Cryptids.Zf431",
+  "Cryptids.Zf430",
+  "Cryptids.Zf429",
+  "Cryptids.Riemann543",
+]
+"Cryptids.Semantics" = [
+  "Cryptids.Semantics.Goldbach",
+  "Cryptids.Semantics.Zf",
+  "Cryptids.Semantics.Riemann",
+]

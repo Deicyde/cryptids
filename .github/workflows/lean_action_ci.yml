@@ -18,4 +18,40 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
-      - uses: leanprover-community/docgen-action@v1
+
+      - name: Cache Verso literate build
+        uses: actions/cache@v4
+        with:
+          path: |
+            .lake/packages/verso/.lake/build
+            .lake/packages/subverso/.lake/build
+            .lake/packages/MD4Lean/.lake/build
+            .lake/packages/illuminate/.lake/build
+            .lake/build/literate
+          key: verso-literate-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            verso-literate-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      - name: Build Verso literate HTML
+        id: verso
+        run: |
+          path=$(lake query :literateHtml)
+          echo "path=$path" >> "$GITHUB_OUTPUT"
+
+      - name: Upload Pages artifact
+        if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ steps.verso.outputs.path }}
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
