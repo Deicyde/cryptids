@@ -70,6 +70,8 @@ PINNED_BASELINES = {
         "canonical_machine_sha256": (
             "da5bdb63c1ad0d0e3e97f8ca75addc2b6622dea483b3e3cdfbd2fc55363a5a67"
         ),
+        "lean_file": "Cryptids/Machines/Goldbach25.lean",
+        "lean_def": "goldbach25",
         "format": "standard",
         "states": 25,
         "symbols": 2,
@@ -86,6 +88,8 @@ PINNED_BASELINES = {
         "canonical_machine_sha256": (
             "cb9ffd320f7360b5e0e49181a6201286b408d1f8c168d61fafc51d1ca8b86702"
         ),
+        "lean_file": "Cryptids/Machines/Zf432.lean",
+        "lean_def": "zf432",
         "format": "tursi",
         "states": 432,
         "symbols": 2,
@@ -102,6 +106,8 @@ PINNED_BASELINES = {
         "canonical_machine_sha256": (
             "4f629ed5be1715747f3d467dbb35bded647a25dc740a80b5208c14f65d7d5f44"
         ),
+        "lean_file": "Cryptids/Machines/Riemann744.lean",
+        "lean_def": "riemann744",
         "format": "nql",
         "states": 744,
         "symbols": 2,
@@ -113,6 +119,8 @@ CANDIDATES = [
         "id": "goldbach_24",
         "instance": "goldbach",
         "path": "artifacts/goldbach_24",
+        "lean_file": "Cryptids/Machines/Goldbach24.lean",
+        "lean_def": "goldbach24",
         "proof_path": "Cryptids/Goldbach24.lean",
         "challenge_path": "Challenge/Goldbach24.lean",
         "states": 24,
@@ -125,6 +133,8 @@ CANDIDATES = [
         "id": "zf_431",
         "instance": "zf",
         "path": "artifacts/zf_431",
+        "lean_file": "Cryptids/Machines/Zf431.lean",
+        "lean_def": "zf431",
         "proof_path": "Cryptids/Zf431.lean",
         "challenge_path": "Challenge/Zf431.lean",
         "states": 431,
@@ -137,6 +147,8 @@ CANDIDATES = [
         "id": "zf_430",
         "instance": "zf",
         "path": "artifacts/zf_430",
+        "lean_file": "Cryptids/Machines/Zf430.lean",
+        "lean_def": "zf430",
         "proof_path": "Cryptids/Zf430.lean",
         "challenge_path": "Challenge/Zf430.lean",
         "states": 430,
@@ -149,6 +161,8 @@ CANDIDATES = [
         "id": "zf_429",
         "instance": "zf",
         "path": "artifacts/zf_429",
+        "lean_file": "Cryptids/Machines/Zf429.lean",
+        "lean_def": "zf429",
         "proof_path": "Cryptids/Zf429.lean",
         "challenge_path": "Challenge/Zf429.lean",
         "states": 429,
@@ -161,6 +175,8 @@ CANDIDATES = [
         "id": "riemann_543",
         "instance": "riemann",
         "path": "artifacts/riemann_543",
+        "lean_file": "Cryptids/Machines/Riemann543.lean",
+        "lean_def": "riemann543",
         "proof_path": "Cryptids/Riemann543.lean",
         "challenge_path": "Challenge/Riemann543.lean",
         "states": 543,
@@ -337,17 +353,30 @@ def derive_machine_from_source(source_text: str, fmt: str) -> Machine:
 
 
 def parse_lean_machine_def(lean_text: str, def_name: str) -> Machine:
-  """Parses `def <def_name> : Machine N 2 := Machine.ofRows [...]` from a Lean file."""
-  m = re.search(
-      rf"def {def_name} : Machine (\d+) 2 := Machine\.ofRows \[\s*(.*?)\]\]",
+  """Parses a `Machine N 2` definition (`Machine.ofRows [...]` or `Machine.ofRows <def_name>Rows`) from a Lean file."""
+  m_rows = re.search(
+      rf"def {def_name}Rows : List \(List \(Option \(Fin 2 × Dir × Fin (\d+)\)\)\) := \[\s*(.*?)\]\]",
       lean_text,
       re.DOTALL,
   )
-  assert (
-      m is not None
-  ), f"Missing `def {def_name} : Machine _ 2 := Machine.ofRows [...]`"
-  expected_states = int(m.group(1))
-  body = m.group(2) + "]"
+  if m_rows is not None:
+    expected_states = int(m_rows.group(1))
+    assert (
+        f"def {def_name} : Machine {expected_states} 2 := Machine.ofRows {def_name}Rows"
+        in lean_text
+    ), f"Missing `def {def_name} : Machine {expected_states} 2 := Machine.ofRows {def_name}Rows`"
+    body = m_rows.group(2) + "]"
+  else:
+    m = re.search(
+        rf"def {def_name} : Machine (\d+) 2 := Machine\.ofRows \[\s*(.*?)\]\]",
+        lean_text,
+        re.DOTALL,
+    )
+    assert (
+        m is not None
+    ), f"Missing `def {def_name} : Machine _ 2 := Machine.ofRows [...]`"
+    expected_states = int(m.group(1))
+    body = m.group(2) + "]"
   row_matches = re.findall(
       r"\[\s*(none|some \(\d+, \.(?:left|right), \d+\))\s*,\s*(none|some \(\d+,"
       r" \.(?:left|right), \d+\))\s*\]",
@@ -947,6 +976,11 @@ def run_verification(
         m.sha256 == spec["canonical_machine_sha256"]
     ), f"{inst_name}: canonical machine SHA-256 mismatch: {m.sha256}"
     assert m.states == spec["states"] and m.symbols == spec["symbols"]
+    ref_lean_text = (ROOT / str(spec["lean_file"])).read_text(encoding="utf-8")
+    assert (
+        parse_lean_machine_def(ref_lean_text, str(spec["lean_def"])).table
+        == m.table
+    ), f"{spec['lean_file']} table mismatch"
     baseline_machines[inst_name] = m
     report["baselines"][inst_name] = {
         "states": m.states,
@@ -958,16 +992,17 @@ def run_verification(
     if verbose:
       print(
           f"[PASS] Baseline {inst_name:<8}: {m.states:>3} states | "
-          f"source->table re-derived byte-for-byte ({tbl_sha[:16]}...)"
+          f"source->table->Lean verified ({spec['lean_file']})"
       )
 
-  # 3. Parse and verify all 5 candidate directories and Lean proof files
+  # 3. Parse and verify all 5 candidate directories, standalone machine files, and Lean proof files
   cand_machines: dict[str, Machine] = {}
   for cspec in CANDIDATES:
     cid = str(cspec["id"])
     inst = str(cspec["instance"])
     cdir = ROOT / str(cspec["path"])
     m_text = (cdir / "machine.txt").read_text(encoding="utf-8")
+    m_lean_text = (ROOT / str(cspec["lean_file"])).read_text(encoding="utf-8")
     p_path = ROOT / str(cspec["proof_path"])
     p_bytes = p_path.read_bytes()
     p_text = p_bytes.decode("utf-8")
@@ -983,19 +1018,31 @@ def run_verification(
         m.sha256 == cspec["machine_sha256"]
     ), f"{cid} machine SHA-256 mismatch: {m.sha256}"
     assert (
-        parse_lean_machine_def(p_text, "reference").table
-        == baseline_machines[inst].table
-    ), f"{cspec['proof_path']} reference table mismatch"
+        parse_lean_machine_def(m_lean_text, str(cspec["lean_def"])).table
+        == m.table
+    ), f"{cspec['lean_file']} candidate table mismatch"
+
+    ref_def = str(PINNED_BASELINES[inst]["lean_def"])
+    cand_def = str(cspec["lean_def"])
+    b_states = int(cspec["baseline_states"])
+    expected_ref_alias = (
+        f"abbrev reference : Machine {b_states} 2 := Machines.{ref_def}"
+    )
+    expected_cand_alias = (
+        f"abbrev candidate : Machine {m.states} 2 := Machines.{cand_def}"
+    )
     assert (
-        parse_lean_machine_def(p_text, "candidate").table == m.table
-    ), f"{cspec['proof_path']} candidate table mismatch"
+        expected_ref_alias in p_text
+    ), f"{cspec['proof_path']} missing `{expected_ref_alias}`"
     assert (
-        parse_lean_machine_def(c_text, "reference").table
-        == baseline_machines[inst].table
-    ), f"{cspec['challenge_path']} reference table mismatch"
+        expected_cand_alias in p_text
+    ), f"{cspec['proof_path']} missing `{expected_cand_alias}`"
     assert (
-        parse_lean_machine_def(c_text, "candidate").table == m.table
-    ), f"{cspec['challenge_path']} candidate table mismatch"
+        expected_ref_alias in c_text
+    ), f"{cspec['challenge_path']} missing `{expected_ref_alias}`"
+    assert (
+        expected_cand_alias in c_text
+    ), f"{cspec['challenge_path']} missing `{expected_cand_alias}`"
     cand_machines[cid] = m
 
     b_states = int(cspec["baseline_states"])
