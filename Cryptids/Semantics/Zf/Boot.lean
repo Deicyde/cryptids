@@ -2,8 +2,10 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Zf429
-import Cryptids.Semantics.Riemann.Gadgets
+module
+
+public import Cryptids.Zf429
+public import Cryptids.Semantics.Riemann.Gadgets
 
 /-!
 # Boot Verification (`0a.boot1` & `0b.boot2`) for `zf_432_wade.tm` (`Zf429.reference`)
@@ -12,6 +14,8 @@ This file proves `boot_to_root`, showing that starting from the blank initial co
 `init = ⟨0, default⟩`, `ConjectureMachines.Zf429.reference` (`zf_432_wade.tm`) reaches
 `zfRootCfg 3821 [] (List.replicate 1909 0)` at `main().0` (State `126`).
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Zf429.Boot
 

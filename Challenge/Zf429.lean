@@ -2,14 +2,18 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Machines
-import Mathlib.SetTheory.ZFC.Basic
+module
+
+public import Cryptids.Machines
+public import Mathlib.SetTheory.ZFC.Basic
 
 /-!
 # Challenge.Zf429
 
 429-state ZF Turing machine challenge specification.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Zf429
 

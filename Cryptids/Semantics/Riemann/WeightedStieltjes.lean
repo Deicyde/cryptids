@@ -2,35 +2,37 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.LSeries.RiemannZeta
-import Mathlib.NumberTheory.LSeries.Nonvanishing
-import Mathlib.NumberTheory.LSeries.Positivity
-import Mathlib.NumberTheory.LSeries.Dirichlet
-import Mathlib.NumberTheory.Harmonic.EulerMascheroni
-import Mathlib.Analysis.Complex.TaylorSeries
-import Mathlib.Analysis.Complex.Positivity
-import Mathlib.Analysis.Calculus.ParametricIntegral
-import Mathlib.Analysis.Convex.Topology
-import Mathlib.NumberTheory.LSeries.ZetaZeros
-import Mathlib.NumberTheory.LSeries.RiemannZetaLogDeriv
-import Mathlib.NumberTheory.LSeries.SumCoeff
-import Mathlib.NumberTheory.AbelSummation
-import Mathlib.NumberTheory.Harmonic.ZetaAsymp
-import Mathlib.Analysis.MellinTransform
-import Mathlib.Analysis.Complex.RemovableSingularity
-import Mathlib.Analysis.Complex.CauchyIntegral
-import Mathlib.Analysis.Analytic.Order
-import Mathlib.Analysis.Calculus.DSlope
-import Mathlib.Analysis.Calculus.ParametricIntervalIntegral
-import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
-import Mathlib.Analysis.SpecialFunctions.Log.Deriv
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.ArctanDeriv
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
-import Mathlib.MeasureTheory.Integral.DominatedConvergence
+module
+
+public import Mathlib.NumberTheory.Chebyshev
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import Mathlib.NumberTheory.LSeries.Nonvanishing
+public import Mathlib.NumberTheory.LSeries.Positivity
+public import Mathlib.NumberTheory.LSeries.Dirichlet
+public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
+public import Mathlib.Analysis.Complex.TaylorSeries
+public import Mathlib.Analysis.Complex.Positivity
+public import Mathlib.Analysis.Calculus.ParametricIntegral
+public import Mathlib.Analysis.Convex.Topology
+public import Mathlib.NumberTheory.LSeries.ZetaZeros
+public import Mathlib.NumberTheory.LSeries.RiemannZetaLogDeriv
+public import Mathlib.NumberTheory.LSeries.SumCoeff
+public import Mathlib.NumberTheory.AbelSummation
+public import Mathlib.NumberTheory.Harmonic.ZetaAsymp
+public import Mathlib.Analysis.MellinTransform
+public import Mathlib.Analysis.Complex.RemovableSingularity
+public import Mathlib.Analysis.Complex.CauchyIntegral
+public import Mathlib.Analysis.Analytic.Order
+public import Mathlib.Analysis.Calculus.DSlope
+public import Mathlib.Analysis.Calculus.ParametricIntervalIntegral
+public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.ArctanDeriv
+public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
+public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
 # Smoothed Perron Formula for $\psi_1(x)$, Vertical Tail Bound at $c = 2$, and Rectangle Contour
@@ -73,6 +75,8 @@ Vertical Tail at $c = 2$**:
      (`abs_psi1_sub_main_add_log_two_pi_sub_zeroSum_le_of_neg`,
      `abs_psi1_sub_main_sub_zeroSum_le_of_neg`, and `abs_psi1_sub_main_sub_zeroSum_le_of_pos`).
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Riemann543.Semantics.WeightedStieltjes
 

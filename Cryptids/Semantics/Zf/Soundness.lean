@@ -2,8 +2,10 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.SetTheory.ZFC.Basic
-import Mathlib.Tactic.Ring
+module
+
+public import Mathlib.SetTheory.ZFC.Basic
+public import Mathlib.Tactic.Ring
 
 /-!
 # Gödel Numbering, Hilbert System, and Soundness of `zf2.nql` in Mathlib's `ZFSet`
@@ -24,6 +26,8 @@ This module formalizes the logical core of Stefan O'Rear's `zf2.nql` ZF proof en
    (`ZFSet.ext`, `ZFSet.powerset`, `ZFSet.sUnion`, `ZFSet.sep`/`ZFSet.image` for Replacement,
    and an explicit singleton-closed witness for Infinity).
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Semantics.Zf
 

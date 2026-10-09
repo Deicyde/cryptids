@@ -2,10 +2,12 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.LSeries.RiemannZeta
+module
+
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.NumberTheory.Chebyshev
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
 
 /-!
 # Large-`x` Real-Analytic Inequality (`x ≥ 5000`) for Explicit Chebyshev `ψ` Bound
@@ -20,6 +22,8 @@ for all `x ≥ 5000`, the explicit upper bound from
 satisfies the side conditions `1 ≤ x - h`, `0 < h`, `6 ≤ T` and is bounded above by
 `(7 / 8) * Real.sqrt x * (Real.log x) ^ 2`.
 -/
+
+@[expose] public section
 
 open Real
 

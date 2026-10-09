@@ -2,17 +2,21 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Machines
-import Mathlib.Algebra.GCDMonoid.Finset
-import Mathlib.Data.Nat.Factorial.Basic
-import Mathlib.NumberTheory.LSeries.RiemannZeta
-import Mathlib.Order.Interval.Finset.Nat
+module
+
+public import Cryptids.Machines
+public import Mathlib.Algebra.GCDMonoid.Finset
+public import Mathlib.Data.Nat.Factorial.Basic
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import Mathlib.Order.Interval.Finset.Nat
 
 /-!
 # Challenge.Riemann543
 
 543-state Riemann Hypothesis Turing machine challenge specification.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Riemann543
 

@@ -2,7 +2,9 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.Computability.TuringMachine.PostTuringMachine
+module
+
+public import Mathlib.Computability.TuringMachine.PostTuringMachine
 
 /-!
 # Turing Machine Definitions
@@ -14,6 +16,8 @@ halts the machine. The step function, the tape and the notion of evaluation are
 Mathlib's, so Mathlib's simulation machinery (`StateTransition.Respects`,
 `StateTransition.tr_eval_dom`) applies to these machines unchanged.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines
 

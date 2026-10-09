@@ -2,19 +2,23 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.LSeries.RiemannZeta
-import Mathlib.NumberTheory.LSeries.Nonvanishing
-import Mathlib.NumberTheory.LSeries.SumCoeff
-import Mathlib.NumberTheory.LSeries.Positivity
-import Mathlib.NumberTheory.LSeries.Dirichlet
-import Mathlib.NumberTheory.LSeries.ZetaZeros
-import Mathlib.NumberTheory.Harmonic.ZetaAsymp
-import Mathlib.Analysis.Complex.TaylorSeries
-import Mathlib.Analysis.Complex.Positivity
-import Mathlib.Analysis.Calculus.ParametricIntegral
-import Mathlib.Analysis.MellinTransform
-import Mathlib.Analysis.Convex.Topology
+module
+
+public import Mathlib.NumberTheory.Chebyshev
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import Mathlib.NumberTheory.LSeries.Nonvanishing
+public import Mathlib.NumberTheory.LSeries.SumCoeff
+public import Mathlib.NumberTheory.LSeries.Positivity
+public import Mathlib.NumberTheory.LSeries.Dirichlet
+public import Mathlib.NumberTheory.LSeries.ZetaZeros
+public import Mathlib.NumberTheory.Harmonic.ZetaAsymp
+public import Mathlib.Analysis.Complex.TaylorSeries
+public import Mathlib.Analysis.Complex.Positivity
+public import Mathlib.Analysis.Calculus.ParametricIntegral
+public import Mathlib.Analysis.MellinTransform
+public import Mathlib.Analysis.Convex.Topology
+
+@[expose] public section
 
 open Complex Finset Filter MeasureTheory Asymptotics Set Topology
 open scoped Real Topology Nat ENNReal LSeries.notation ArithmeticFunction

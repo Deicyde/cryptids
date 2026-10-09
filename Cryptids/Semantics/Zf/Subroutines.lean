@@ -2,8 +2,10 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Semantics.Zf.Dispatcher
-import Cryptids.Semantics.Zf.RegisterMachine
+module
+
+public import Cryptids.Semantics.Zf.Dispatcher
+public import Cryptids.Semantics.Zf.RegisterMachine
 
 /-!
 # Call-Stack Subroutine Verification for `zf_432_wade.tm`
@@ -12,6 +14,8 @@ This module bridges the abstract call-stack + register machine (`Layer2.ZfRegHal
 `Cryptids.Semantics.Zf.Dispatcher`) and the functional main-loop model (`MainLoopHalts` in
 `Cryptids.Semantics.Zf.RegisterMachine`).
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Semantics.Zf
 

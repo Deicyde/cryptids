@@ -2,10 +2,12 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Semantics.Riemann.Gadgets
-import Cryptids.Semantics.Riemann.Dispatcher
-import Cryptids.Semantics.Riemann.RegisterMachine
-import Cryptids.Semantics.Riemann.Analytic
+module
+
+public import Cryptids.Semantics.Riemann.Gadgets
+public import Cryptids.Semantics.Riemann.Dispatcher
+public import Cryptids.Semantics.Riemann.RegisterMachine
+public import Cryptids.Semantics.Riemann.Analytic
 
 /-!
 # Semantics of the Riemann Hypothesis Turing Machines (`riemann_744` and `riemann_543`)
@@ -49,6 +51,8 @@ The equivalence is factored through the elementary integer predicate
    harmonic bounds, and the reduction to Schoenfeld's (1976) explicit bound and Schmidt's (1903)
    oscillation theorem.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Riemann543.Semantics
 

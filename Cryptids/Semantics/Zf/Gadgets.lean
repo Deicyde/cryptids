@@ -2,8 +2,10 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Zf429
-import Cryptids.Semantics.Riemann.Gadgets
+module
+
+public import Cryptids.Zf429
+public import Cryptids.Semantics.Riemann.Gadgets
 
 /-!
 # Layer 1: Tape Layout, Boot, & Register Gadgets for `zf_432_wade.tm` (`Zf429.reference`)
@@ -47,6 +49,8 @@ This file formalizes the Layer 1 infrastructure of the 432-state ZF Turing machi
    - Full Pass 2 + Cleanup to `zfRootCfg`: `stage3_inc_pass2_to_root`,
      `stage3_decnz_pass2_zero_to_root`, `stage3_decnz_pass2_pos_to_root`.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Zf429.Layer1
 

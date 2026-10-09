@@ -2,12 +2,14 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Semantics.Riemann.Dispatcher
-import Mathlib.NumberTheory.Harmonic.Defs
-import Mathlib.Algebra.GCDMonoid.Finset
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Order.Interval.Finset.Nat
-import Mathlib.Tactic.Ring
+module
+
+public import Cryptids.Semantics.Riemann.Dispatcher
+public import Mathlib.NumberTheory.Harmonic.Defs
+public import Mathlib.Algebra.GCDMonoid.Finset
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Order.Interval.Finset.Nat
+public import Mathlib.Tactic.Ring
 
 /-!
 # Layer 3: NQL Register Machine Verification for `riemann_744`
@@ -16,6 +18,8 @@ This file formalizes the 16-register machine compiled from `riemann.nql` (`riema
 that starting from `regInit = ⟨0, []⟩`, it halts if and only if there exists `x : ℕ` satisfying
 `MatiyasevichRiemannCounterexample x`.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Riemann543.Semantics
 

@@ -2,7 +2,9 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Riemann543
+module
+
+public import Cryptids.Riemann543
 
 /-!
 # Layer 1: Tape Layout and Primitive Register Gadgets for `riemann_744`
@@ -11,6 +13,8 @@ This file formalizes the canonical tape layout, unary register encodings, return
 11-bit PC carry chain, and primitive register operations (`reg_init`, `reg_incr`, `reg_decr`)
 for the 744-state Riemann Hypothesis Turing machine `reference` (`riemann_744`).
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Riemann543.Layer1
 

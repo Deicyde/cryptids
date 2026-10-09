@@ -2,17 +2,19 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.NumberTheory.LSeries.HurwitzZetaValues
-import Mathlib.NumberTheory.LSeries.RiemannZeta
-import Mathlib.NumberTheory.LSeries.ZetaZeros
-import Mathlib.NumberTheory.Harmonic.ZetaAsymp
-import Mathlib.NumberTheory.LSeries.Nonvanishing
-import Mathlib.NumberTheory.LSeries.SumCoeff
-import Mathlib.Analysis.MellinTransform
-import Mathlib.Analysis.Complex.JensenFormula
-import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+module
+
+public import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.NumberTheory.LSeries.HurwitzZetaValues
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import Mathlib.NumberTheory.LSeries.ZetaZeros
+public import Mathlib.NumberTheory.Harmonic.ZetaAsymp
+public import Mathlib.NumberTheory.LSeries.Nonvanishing
+public import Mathlib.NumberTheory.LSeries.SumCoeff
+public import Mathlib.Analysis.MellinTransform
+public import Mathlib.Analysis.Complex.JensenFormula
+public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
 # Fourth-Order Euler–Maclaurin Zero-Free Region, Local Jensen Bounds, and Zero Counting
@@ -60,6 +62,8 @@ This file proves (with **zero `sorry`s**):
    - Proves `weightedZeroCountingFunction_le_sixteen_fifths` and
      `zeroCountingFunction_le_sixteen_fifths` for all `6 ≤ t` under `RiemannHypothesis`.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Riemann543.Semantics.VonMangoldtCount
 

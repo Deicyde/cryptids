@@ -2,13 +2,17 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Machines
+module
+
+public import Cryptids.Machines
 
 /-!
 # Zf429
 
 429-state Turing machine halting-equivalent to the 432-state ZF machine.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Zf429
 

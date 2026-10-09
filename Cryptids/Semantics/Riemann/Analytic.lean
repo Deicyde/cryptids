@@ -2,19 +2,21 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.NumberTheory.Harmonic.Defs
-import Cryptids.Semantics.Riemann.RegisterMachine
-import Mathlib.NumberTheory.Harmonic.Bounds
-import Mathlib.NumberTheory.Harmonic.Int
-import Mathlib.NumberTheory.Harmonic.EulerMascheroni
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.LSeries.RiemannZeta
-import Cryptids.Semantics.Riemann.Schmidt
-import Cryptids.Semantics.Riemann.DigammaBinet
-import Cryptids.Semantics.Riemann.HorizontalBounds
-import Cryptids.Semantics.Riemann.WeightedStieltjes
-import Cryptids.Semantics.Riemann.VonMangoldtCount
-import Cryptids.Semantics.Riemann.ExplicitLarge
+module
+
+public import Mathlib.NumberTheory.Harmonic.Defs
+public import Cryptids.Semantics.Riemann.RegisterMachine
+public import Mathlib.NumberTheory.Harmonic.Bounds
+public import Mathlib.NumberTheory.Harmonic.Int
+public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
+public import Mathlib.NumberTheory.Chebyshev
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import Cryptids.Semantics.Riemann.Schmidt
+public import Cryptids.Semantics.Riemann.DigammaBinet
+public import Cryptids.Semantics.Riemann.HorizontalBounds
+public import Cryptids.Semantics.Riemann.WeightedStieltjes
+public import Cryptids.Semantics.Riemann.VonMangoldtCount
+public import Cryptids.Semantics.Riemann.ExplicitLarge
 
 /-!
 # Part II: Number-Theoretic & Analytic Bridge for `riemann_744` and `riemann_543`
@@ -65,6 +67,8 @@ of Schoenfeld (1976) and Schmidt (1903):
    - `not_riemannHypothesis_imp_exists_psi_oscillation`: under `¬ RiemannHypothesis`,
      there exists $x > 253$ with $\sqrt{x} H_x^2 \le \psi(x) - x + \gamma$.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Riemann543.Semantics
 

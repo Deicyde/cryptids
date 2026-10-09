@@ -2,9 +2,11 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Semantics.Zf.Soundness
-import Cryptids.Zf429
-import Mathlib.Tactic.Ring
+module
+
+public import Cryptids.Semantics.Zf.Soundness
+public import Cryptids.Zf429
+public import Mathlib.Tactic.Ring
 
 /-!
 # Layer 3: 11-Register Machine & Wff-Stack Verification for `zf_432_wade.tm` (`zf2.py`)
@@ -33,6 +35,8 @@ enumerator as compiled by Andrew Wade's `zf2.py` (prior to commit `10fcf152b3`) 
      Since `nextproof` enumerates all natural numbers `0, 1, 2, ...` whenever `prooflist` drains
      to `0`, `WadeZFInconsistent` implies `MainLoopHalts`.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Semantics.Zf
 

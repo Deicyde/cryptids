@@ -2,18 +2,20 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
-import Mathlib.Analysis.SpecialFunctions.Gamma.BohrMollerup
-import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
-import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.ArctanDeriv
-import Mathlib.Analysis.Calculus.ParametricIntegral
-import Mathlib.Analysis.Complex.CauchyIntegral
-import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.MeasureTheory.Integral.IntegralEqImproper
-import Mathlib.NumberTheory.Harmonic.GammaDeriv
-import Mathlib.NumberTheory.LSeries.RiemannZetaLogDeriv
-import Mathlib.NumberTheory.LSeries.Dirichlet
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
+public import Mathlib.Analysis.SpecialFunctions.Gamma.BohrMollerup
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
+public import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.ArctanDeriv
+public import Mathlib.Analysis.Calculus.ParametricIntegral
+public import Mathlib.Analysis.Complex.CauchyIntegral
+public import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+public import Mathlib.NumberTheory.Harmonic.GammaDeriv
+public import Mathlib.NumberTheory.LSeries.RiemannZetaLogDeriv
+public import Mathlib.NumberTheory.LSeries.Dirichlet
 
 /-!
 # Binet / Euler–Maclaurin Formula for `Complex.digamma` & Left-Vertical `logDeriv riemannZeta` Bound
@@ -61,6 +63,8 @@ explicit vertical-growth bound on `‖logDeriv riemannZeta (-1 / 4 + t * I)‖` 
      $$\left\|\frac{\zeta'}{\zeta}\!\left(-\frac{1}{4} + t i\right)\right\|
        \le \log(|t| + 2) + C_{\text{left}}.$$
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Riemann543.Semantics.DigammaBinet
 

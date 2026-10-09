@@ -2,7 +2,9 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Riemann543
+module
+
+public import Cryptids.Riemann543
 
 /-!
 # Layer 2: BDD Dispatcher & Abstract Register Machine Step for `riemann_744`
@@ -13,6 +15,8 @@ of the 744-state Turing machine `reference` (`riemann_744`), connecting the Turi
 configuration `entryCfgR`
 to the 16-register abstract machine program `program : ℕ → Instr`.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Riemann543.Semantics
 

@@ -2,8 +2,10 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Goldbach24
-import Mathlib.Data.Nat.Prime.Basic
+module
+
+public import Cryptids.Goldbach24
+public import Mathlib.Data.Nat.Prime.Basic
 
 /-!
 # Semantics of the Goldbach Turing Machines (`goldbach_25` and `goldbach_24`)
@@ -33,6 +35,8 @@ written as the sum of two primes).
   `Cryptids.Goldbach24`, establishing `Halts reference ↔ ¬ GoldbachConjecture` and consequently
   `Halts candidate ↔ ¬ GoldbachConjecture`.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Goldbach24.Semantics
 

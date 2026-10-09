@@ -2,15 +2,17 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Zf431
-import Cryptids.Zf430
-import Cryptids.Zf429
-import Cryptids.Semantics.Zf.Gadgets
-import Cryptids.Semantics.Zf.Boot
-import Cryptids.Semantics.Zf.Dispatcher
-import Cryptids.Semantics.Zf.Soundness
-import Cryptids.Semantics.Zf.RegisterMachine
-import Cryptids.Semantics.Zf.Subroutines
+module
+
+public import Cryptids.Zf431
+public import Cryptids.Zf430
+public import Cryptids.Zf429
+public import Cryptids.Semantics.Zf.Gadgets
+public import Cryptids.Semantics.Zf.Boot
+public import Cryptids.Semantics.Zf.Dispatcher
+public import Cryptids.Semantics.Zf.Soundness
+public import Cryptids.Semantics.Zf.RegisterMachine
+public import Cryptids.Semantics.Zf.Subroutines
 
 /-!
 # End-to-End Mathematical Semantics of `zf_432`, `zf_431`, `zf_430`, and `zf_429`
@@ -88,6 +90,8 @@ Andrew Wade's `zf2.py` prior to his August 31, 2025 bugfix commit `10fcf152b3`
   (`Cryptids.Semantics.Zf.Soundness`) captures O'Rear's `zf2.nql` / Wade's post-`10fcf152b3`
   Hilbert system and proves its soundness in Mathlib's `ZFSet.{0}` (`not_zfInconsistent`).
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Semantics.Zf
 

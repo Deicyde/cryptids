@@ -2,19 +2,21 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.NumberTheory.Harmonic.ZetaAsymp
-import Mathlib.NumberTheory.LSeries.Nonvanishing
-import Mathlib.NumberTheory.LSeries.SumCoeff
-import Mathlib.NumberTheory.LSeries.ZetaZeros
-import Mathlib.NumberTheory.LSeries.RiemannZetaLogDeriv
-import Mathlib.Analysis.MellinTransform
-import Mathlib.Analysis.Complex.BorelCaratheodory
-import Mathlib.Analysis.Complex.HasPrimitives
-import Mathlib.Analysis.Complex.Liouville
-import Mathlib.Analysis.Complex.JensenFormula
-import Mathlib.Analysis.SpecialFunctions.Gamma.BohrMollerup
-import Mathlib.Analysis.Calculus.ParametricIntegral
-import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+module
+
+public import Mathlib.NumberTheory.Harmonic.ZetaAsymp
+public import Mathlib.NumberTheory.LSeries.Nonvanishing
+public import Mathlib.NumberTheory.LSeries.SumCoeff
+public import Mathlib.NumberTheory.LSeries.ZetaZeros
+public import Mathlib.NumberTheory.LSeries.RiemannZetaLogDeriv
+public import Mathlib.Analysis.MellinTransform
+public import Mathlib.Analysis.Complex.BorelCaratheodory
+public import Mathlib.Analysis.Complex.HasPrimitives
+public import Mathlib.Analysis.Complex.Liouville
+public import Mathlib.Analysis.Complex.JensenFormula
+public import Mathlib.Analysis.SpecialFunctions.Gamma.BohrMollerup
+public import Mathlib.Analysis.Calculus.ParametricIntegral
+public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 
 /-!
 # Local Zero-Counting, Symmetric Zero-Free Heights, and Full Horizontal `ζ'/ζ` Bounds
@@ -51,6 +53,8 @@ This standalone file proves with **zero `sorry`s**:
      entire horizontal segment `σ ∈ [-1 / 4, 2]`, and bounds the horizontal integrals of the
      smoothed Perron integrand across `[-1 / 4, 2] ± U * I`.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Riemann543.Semantics.HorizontalBounds
 

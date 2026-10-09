@@ -2,8 +2,10 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Zf429
-import Cryptids.Semantics.Riemann.Gadgets
+module
+
+public import Cryptids.Zf429
+public import Cryptids.Semantics.Riemann.Gadgets
 
 /-!
 # Layer 2: Call-Stack Dispatcher & Abstract Machine Simulation for `zf_432_wade.tm`
@@ -14,6 +16,8 @@ continuations (`6.continue.0..3`, `6.break.0..2`), and two-pass register dispatc
 (`zf_432_wade.tm`), establishing the lockstep simulation and halting equivalence with the
 11-register abstract machine `zfRegStep`.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Zf429.Layer2
 

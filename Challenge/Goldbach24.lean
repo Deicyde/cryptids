@@ -2,14 +2,18 @@
 Copyright (c) 2026 Google LLC. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Cryptids.Machines
-import Mathlib.Data.Nat.Prime.Basic
+module
+
+public import Cryptids.Machines
+public import Mathlib.Data.Nat.Prime.Basic
 
 /-!
 # Challenge.Goldbach24
 
 24-state Goldbach Turing machine challenge specification.
 -/
+
+@[expose] public section
 
 namespace ConjectureMachines.Goldbach24
 
