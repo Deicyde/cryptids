@@ -5,8 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Cryptids.Machines
-public import Cryptids.Machines.Riemann744
-public import Cryptids.Machines.Riemann543
 
 /-!
 # Riemann543

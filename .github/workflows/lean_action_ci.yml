@@ -50,7 +50,7 @@ jobs:
         run: |
           # Work around Verso v4.35.0-rc4 passing `module`-mode setup.importArts (which omits
           # `.olean.private`) to `importModules (level := .private)` in `verso-literate`.
-          sed -i 's/importArts := setup.importArts/importArts := {}/' .lake/packages/verso/src/verso-literate/VersoLiterateMain.lean
+          sed -i 's/let setup ← ModuleSetup.load file/let _setup ← ModuleSetup.load file/; s/importArts := setup.importArts/importArts := {}/' .lake/packages/verso/src/verso-literate/VersoLiterateMain.lean
           path=$(lake query :literateHtml)
           echo "path=$path" >> "$GITHUB_OUTPUT"
 

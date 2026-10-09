@@ -26,7 +26,7 @@ and end-to-end mathematical semantics:
 - `Cryptids.Propositions` — Shared definitions of `GoldbachConjecture`,
   `MatiyasevichRiemannCounterexample`, `ZFInconsistent`, and `WadeZFInconsistent`.
 - `Cryptids.Machines` — Turing machine execution model, bundled machines (`BundledMachine`), and
-  standalone reference and candidate machine definitions (`Cryptids.Machines.*`).
+  all reference and candidate machine definitions (`ConjectureMachines.Machines.*`).
 - `Cryptids.Goldbach24`, `Cryptids.Zf431`, `Cryptids.Zf430`, `Cryptids.Zf429`,
   `Cryptids.Riemann543` — Proofs of `candidate.states < reference.states` and
   `Halts candidate ↔ Halts reference`.

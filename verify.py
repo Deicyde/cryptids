@@ -370,7 +370,6 @@ def parse_lean_machine_def(
       )
     assert (
         'elab "load_machine_rows% "' in lean_text
-        or "public import Cryptids.Machines.FromFile" in lean_text
     ), f"{def_name}: missing load_machine_rows% elaborator"
     assert (
         f"def {def_name} : Machine {expected_states} 2 := Machine.ofRows {def_name}Rows"
