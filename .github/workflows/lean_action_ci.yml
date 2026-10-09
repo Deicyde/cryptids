@@ -45,7 +45,12 @@ jobs:
 
       - name: Build Verso literate HTML
         id: verso
+        env:
+          LEAN_NUM_THREADS: "2"
         run: |
+          # Work around Verso v4.35.0-rc4 passing `module`-mode setup.importArts (which omits
+          # `.olean.private`) to `importModules (level := .private)` in `verso-literate`.
+          sed -i 's/importArts := setup.importArts/importArts := {}/' .lake/packages/verso/src/verso-literate/VersoLiterateMain.lean
           path=$(lake query :literateHtml)
           echo "path=$path" >> "$GITHUB_OUTPUT"
 
