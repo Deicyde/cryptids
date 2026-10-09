@@ -42,7 +42,7 @@ lake build
 Independently audit the proofs against the unproved [`Challenge/`](Challenge/) specifications with [`leanprover/comparator`](comparator/README.md):
 
 ```bash
-lake env comparator comparator/all.json
+lake comparator --config comparator/all.json
 ```
 
 Run the standalone zero-dependency Python verifier (re-compiles upstream baseline sources, checks SHA-256 digests and transition tables, and simulates `250,000` steps per domain):
