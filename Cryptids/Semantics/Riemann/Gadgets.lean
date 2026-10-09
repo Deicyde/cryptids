@@ -81,6 +81,41 @@ theorem nSteps_eval_dom {K : ℕ} [NeZero K] {M : Machine K 2} {n : ℕ} {c c' :
     (eval (step M) c).Dom ↔ (eval (step M) c').Dom := by
   rw [StateTransition.reaches_eval (nSteps_reaches h)]
 
+theorem nSteps_reaches₁ {K : ℕ} [NeZero K] {M : Machine K 2} {n : ℕ} {c₁ c₂ : Cfg K 2}
+    (hn : 1 ≤ n) (h : nSteps M n c₁ = some c₂) :
+    Reaches₁ (step M) c₁ c₂ := by
+  cases n with
+  | zero => omega
+  | succ n =>
+    rw [nSteps_succ] at h
+    rcases hs : step M c₁ with _ | c'
+    · rw [hs] at h; cases h
+    · rw [hs, Option.bind_some] at h
+      exact Relation.TransGen.head' hs (nSteps_reaches h)
+
+theorem nSteps_of_halt {K : ℕ} [NeZero K] {M : Machine K 2} {c : Cfg K 2}
+    (h : step M c = none) {k : ℕ} (hk : 1 ≤ k) :
+    nSteps M k c = none := by
+  cases k with
+  | zero => omega
+  | succ k => simp [nSteps_succ, h]
+
+theorem mem_eval_iff_nSteps {K : ℕ} [NeZero K] {M : Machine K 2} {c₀ ch : Cfg K 2} :
+    ch ∈ eval (step M) c₀ ↔ ∃ N, nSteps M N c₀ = some ch ∧ step M ch = none := by
+  constructor
+  · intro h
+    refine StateTransition.evalInduction h fun a ha ih => ?_
+    rcases hs : step M a with _ | a'
+    · have hmem : a ∈ eval (step M) a :=
+        StateTransition.mem_eval.mpr ⟨Relation.ReflTransGen.refl, hs⟩
+      have heq : ch = a := Part.mem_unique ha hmem
+      subst heq
+      exact ⟨0, rfl, hs⟩
+    · obtain ⟨N, hN, hnone⟩ := ih a' hs
+      exact ⟨N + 1, by rw [nSteps_succ, hs, Option.bind_some, hN], hnone⟩
+  · rintro ⟨N, hN, hnone⟩
+    exact StateTransition.mem_eval.mpr ⟨nSteps_reaches hN, hnone⟩
+
 theorem mk_append_replicate_zero (l : List (Fin 2)) (n : ℕ) :
     ListBlank.mk (l ++ List.replicate n 0) = ListBlank.mk l :=
   Quotient.sound' (Or.inr ⟨n, rfl⟩)

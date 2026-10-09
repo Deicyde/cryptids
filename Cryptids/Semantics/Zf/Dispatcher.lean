@@ -5,14 +5,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Cryptids.Zf429
-public import Cryptids.Semantics.Riemann.Gadgets
-
+public import Cryptids.Semantics.Zf.Gadgets
 /-!
 # Layer 2: Call-Stack Dispatcher & Abstract Machine Simulation for `zf_432_wade.tm`
 
 This module formalizes the unary call-stack decision tree (`States 96..431`), stack-popping
 continuations (`6.continue.0..3`, `6.break.0..2`), and two-pass register dispatch (`3.<reg>.inc`,
-`3.<reg>.decnz`) of the 432-state Turing machine `ConjectureMachines.Zf429.reference`
+`3.<reg>.decnz`) of the 432-state Turing machine `ConjectureMachines.Zf429.Machines.zf432`
 (`zf_432_wade.tm`), establishing the lockstep simulation and halting equivalence with the
 11-register abstract machine `zfRegStep`.
 -/
@@ -23,10 +22,17 @@ namespace ConjectureMachines.Zf429.Layer2
 
 open Turing StateTransition ConjectureMachines.Zf429
 
-abbrev reference : Machine 432 2 := Machines.zf432
+export ConjectureMachines.Zf429.Layer1
+  (refTrans refTrans_eq step_mk'_right step_mk'_left step_mkL_left step_mkL_right
+   nSteps_mkL_left_scan nSteps_mk'_right_scan rootLeft rootLeft_eq_append
+   stackLeft stackLeft_nil stackLeft_eq_append stackLeft_append stackLeft_append_singleton
+   regIncStage3 regDecnzStage3 zfRootCfg zfDispatchState zfDispatch_trans_zero
+   zfDispatch_trans_one step_zfDispatch zfDispatch_scan_list zfDispatch_bounce_default
+   root_scan_to_main dispatch_return_to_main continue0_return prep_pass1_eval)
 open ConjectureMachines.Riemann543.Layer1
   (nSteps nSteps_zero nSteps_succ nSteps_add nSteps_bind_eq step_nSteps step_one
-   nSteps_reaches nSteps_eval_dom mk_append_replicate_zero default_eq_mk_nil
+    nSteps_reaches nSteps_eval_dom nSteps_of_halt mem_eval_iff_nSteps
+    mk_append_replicate_zero default_eq_mk_nil
    default_cons_zero append_replicate_zero_default fin2_cases
    Tape.mkL Tape.mkL_cons Tape.mk'_cons Tape.mkL_default
    append_replicate_cons append_cons_snoc append_reverse_cons
@@ -41,602 +47,13 @@ set_option maxRecDepth 200000
 ## 1. Fast Transition Lookup, Multi-Step Execution, and Canonical Tape Configurations
 -/
 
-/-- Fast binary-search transition function for `ConjectureMachines.Zf429.reference`. -/
-def refTrans (q : Fin 432) (a : Fin 2) : Option (Fin 2 × Dir × Fin 432) :=
-  (if q.val < 216 then (if q.val < 108 then (if q.val < 54 then (if q.val < 27 then (if q.val < 13
-    then (if q.val < 6 then (if q.val < 3 then (if q.val < 1 then (if a.val == 0 then some (1,
-      .right, 1) else some (1, .left, 2)) else (if q.val < 2 then (if a.val == 0 then some (0,
-        .left, 0) else some (0, .left, 3)) else (if a.val == 0 then some (1, .left,
-          0) else some (1, .right, 60)))) else (if q.val < 4 then (if a.val == 0 then some (1,
-            .left, 1) else some (1, .right,
-              4)) else (if q.val < 5 then (if a.val == 0 then some (0, .right, 3) else some (0,
-                .right, 1)) else (if a.val == 0 then some (1, .left, 92) else some (1, .right,
-                  6))))) else (if q.val < 9 then (if q.val < 7 then (if a.val == 0 then some (0,
-                    .right, 5) else some (1, .right,
-                      7)) else (if q.val < 8 then (if a.val == 0 then some (0, .right,
-                        60) else some (1, .right, 59)) else (if a.val == 0 then some (0, .right,
-                          9) else none))) else (if q.val < 11 then (if q.val < 10 then (if a.val ==
-                            0 then some (1, .right, 9) else some (1, .left,
-                              92)) else (if a.val == 0 then some (0, .right, 12) else some (1,
-                                .right, 10))) else (if q.val < 12 then (if a.val == 0 then some (0,
-                                  .right, 13) else some (1, .right,
-                                    11)) else (if a.val == 0 then some (1, .left,
-                                      45) else some (0, .right,
-                                        36)))))) else (if q.val < 20 then (if q.val < 16 then (if
-                                          q.val < 14 then (if a.val == 0 then some (1, .right,
-                                            41) else some (1, .right,
-                                              13)) else (if q.val < 15 then (if a.val == 0 then
-                                                some (0, .right, 10) else some (1, .right,
-                                                  14)) else (if a.val == 0 then some (0, .right,
-                                                    11) else some (1, .right,
-                                                      15)))) else (if q.val < 18 then (if q.val <
-                                                        17 then (if a.val == 0 then some (0,
-                                                          .right, 14) else some (1, .right,
-                                                            16)) else (if a.val == 0 then some (0,
-                                                              .right, 15) else some (1, .right,
-                                                                17))) else (if q.val < 19 then (if
-                                                                  a.val == 0 then some (0, .right,
-                                                                    34) else some (1, .right,
-                                                                      18)) else (if a.val == 0 then
-                                                                        some (0, .right,
-                                                                          35) else some (1,
-                                                                            .right, 19))))) else
-                                                                              (if q.val < 23 then
-                                                                                (if q.val < 21 then
-                                                                                  (if a.val == 0
-                                                                                    then some (0,
-                                                                                      .right, 16)
-                                                                                        else some
-                                                                                          (1,
-                                                                                            .right,
-                                                                                              20))
-                                                                                                else
-  (if q.val < 22 then (if a.val == 0 then some (0, .right, 17) else some (1, .right, 21)) else (if
-  a.val == 0 then some (0, .right, 20) else some (1, .right, 22)))) else (if q.val < 25 then (if
-  q.val < 24 then (if a.val == 0 then some (0, .right, 21) else some (1, .right, 23)) else (if a.val
-  == 0 then some (0, .right, 22) else some (1, .right, 24))) else (if q.val < 26 then (if a.val == 0
-  then some (0, .right, 23) else some (1, .right, 25)) else (if a.val == 0 then some (0, .right, 24)
-  else some (1, .right, 26))))))) else (if q.val < 40 then (if q.val < 33 then (if q.val < 30 then
-  (if q.val < 28 then (if a.val == 0 then some (0, .right, 25) else some (1, .right, 27)) else (if
-  q.val < 29 then (if a.val == 0 then some (0, .right, 26) else some (1, .right, 28)) else (if a.val
-  == 0 then some (0, .right, 27) else some (1, .right, 29)))) else (if q.val < 31 then (if a.val ==
-  0 then some (0, .right, 28) else some (1, .right, 30)) else (if q.val < 32 then (if a.val == 0
-  then some (0, .right, 29) else some (1, .right, 31)) else (if a.val == 0 then some (0, .right, 30)
-  else some (1, .right, 32))))) else (if q.val < 36 then (if q.val < 34 then (if a.val == 0 then
-  some (0, .right, 31) else some (1, .right, 33)) else (if q.val < 35 then (if a.val == 0 then some
-  (0, .right, 32) else some (1, .right, 34)) else (if a.val == 0 then some (0, .right, 33) else some
-  (1, .right, 35)))) else (if q.val < 38 then (if q.val < 37 then (if a.val == 0 then some (0,
-  .left, 12) else some (1, .right, 37)) else (if a.val == 0 then some (0, .right, 38) else some (1,
-  .right, 37))) else (if q.val < 39 then (if a.val == 0 then some (0, .left, 39) else some (1,
-  .right, 37)) else (if a.val == 0 then some (1, .left, 40) else some (1, .left, 39)))))) else (if
-  q.val < 47 then (if q.val < 43 then (if q.val < 41 then (if a.val == 0 then some (0, .left, 43)
-  else some (0, .left, 39)) else (if q.val < 42 then (if a.val == 0 then some (0, .left, 43) else
-  some (0, .right, 42)) else (if a.val == 0 then some (1, .right, 41) else some (1, .right, 42))))
-  else (if q.val < 45 then (if q.val < 44 then (if a.val == 0 then some (0, .left, 44) else some (1,
-  .left, 43)) else (if a.val == 0 then some (0, .left, 89) else some (1, .left, 43))) else (if q.val
-  < 46 then (if a.val == 0 then some (0, .left, 46) else some (1, .left, 45)) else (if a.val == 0
-  then some (0, .left, 90) else some (1, .left, 45))))) else (if q.val < 50 then (if q.val < 48 then
-  (if a.val == 0 then some (0, .right, 47) else some (0, .right, 48)) else (if q.val < 49 then (if
-  a.val == 0 then some (0, .left, 5) else some (0, .right, 48)) else (if a.val == 0 then some (1,
-  .right, 8) else some (0, .right, 24)))) else (if q.val < 52 then (if q.val < 51 then (if a.val ==
-  0 then some (1, .right, 8) else some (0, .right, 25)) else (if a.val == 0 then some (1, .right, 8)
-  else some (0, .right, 16))) else (if q.val < 53 then (if a.val == 0 then some (1, .right, 8) else
-  some (0, .right, 17)) else (if a.val == 0 then some (1, .right, 8) else some (0, .right,
-  26)))))))) else (if q.val < 81 then (if q.val < 67 then (if q.val < 60 then (if q.val < 57 then
-  (if q.val < 55 then (if a.val == 0 then some (1, .right, 8) else some (0, .right, 27)) else (if
-  q.val < 56 then (if a.val == 0 then some (1, .right, 8) else some (0, .right, 28)) else (if a.val
-  == 0 then some (1, .right, 8) else some (0, .right, 29)))) else (if q.val < 58 then (if a.val == 0
-  then some (1, .right, 8) else some (0, .right, 30)) else (if q.val < 59 then (if a.val == 0 then
-  some (1, .right, 8) else some (0, .right, 31)) else (if a.val == 0 then some (1, .right, 8) else
-  some (0, .right, 14))))) else (if q.val < 63 then (if q.val < 61 then (if a.val == 0 then some (1,
-  .right, 8) else some (0, .right, 15)) else (if q.val < 62 then (if a.val == 0 then some (1,
-  .right, 8) else some (0, .right, 32)) else (if a.val == 0 then some (1, .right, 8) else some (0,
-  .right, 33)))) else (if q.val < 65 then (if q.val < 64 then (if a.val == 0 then some (1, .right,
-  8) else some (0, .right, 34)) else (if a.val == 0 then some (1, .right, 8) else some (0, .right,
-  35))) else (if q.val < 66 then (if a.val == 0 then some (1, .right, 8) else some (0, .right, 18))
-  else (if a.val == 0 then some (1, .right, 8) else some (0, .right, 19)))))) else (if q.val < 74
-  then (if q.val < 70 then (if q.val < 68 then (if a.val == 0 then some (1, .right, 8) else some (0,
-  .right, 20)) else (if q.val < 69 then (if a.val == 0 then some (1, .right, 8) else some (0,
-  .right, 21)) else (if a.val == 0 then some (1, .right, 8) else some (0, .right, 22)))) else (if
-  q.val < 72 then (if q.val < 71 then (if a.val == 0 then some (1, .right, 8) else some (0, .right,
-  23)) else (if a.val == 0 then some (0, .left, 86) else some (1, .left, 71))) else (if q.val < 73
-  then (if a.val == 0 then some (0, .left, 71) else some (1, .left, 72)) else (if a.val == 0 then
-  some (0, .left, 85) else some (1, .left, 73))))) else (if q.val < 77 then (if q.val < 75 then (if
-  a.val == 0 then some (0, .left, 73) else some (1, .left, 74)) else (if q.val < 76 then (if a.val
-  == 0 then some (0, .left, 74) else some (1, .left, 75)) else (if a.val == 0 then some (0, .left,
-  75) else some (1, .left, 76)))) else (if q.val < 79 then (if q.val < 78 then (if a.val == 0 then
-  some (0, .left, 76) else some (1, .left, 77)) else (if a.val == 0 then some (0, .left, 72) else
-  some (1, .left, 78))) else (if q.val < 80 then (if a.val == 0 then some (0, .left, 78) else some
-  (1, .left, 79)) else (if a.val == 0 then some (0, .left, 79) else some (1, .left, 80))))))) else
-  (if q.val < 94 then (if q.val < 87 then (if q.val < 84 then (if q.val < 82 then (if a.val == 0
-  then some (0, .left, 80) else some (1, .left, 81)) else (if q.val < 83 then (if a.val == 0 then
-  some (0, .left, 81) else some (1, .left, 82)) else (if a.val == 0 then some (0, .left, 82) else
-  some (1, .left, 83)))) else (if q.val < 85 then (if a.val == 0 then some (0, .left, 83) else some
-  (1, .left, 84)) else (if q.val < 86 then (if a.val == 0 then some (0, .left, 84) else some (1,
-  .left, 85)) else (if a.val == 0 then some (0, .right, 86) else some (1, .right, 87))))) else (if
-  q.val < 90 then (if q.val < 88 then (if a.val == 0 then some (0, .right, 5) else some (1, .right,
-  88)) else (if q.val < 89 then some (0, .right, 126) else (if a.val == 0 then some (1, .right, 47)
-  else some (0, .left, 89)))) else (if q.val < 92 then (if q.val < 91 then (if a.val == 0 then some
-  (0, .left, 89) else some (0, .left, 90)) else (if a.val == 0 then some (0, .left, 90) else some
-  (0, .left, 91))) else (if q.val < 93 then (if a.val == 0 then some (0, .left, 92) else some (1,
-  .left, 77)) else (if a.val == 0 then some (0, .left, 93) else some (0, .left, 92)))))) else (if
-  q.val < 101 then (if q.val < 97 then (if q.val < 95 then (if a.val == 0 then some (0, .left, 94)
-  else some (0, .left, 93)) else (if q.val < 96 then (if a.val == 0 then some (0, .left, 95) else
-  some (0, .left, 94)) else (if a.val == 0 then some (0, .right, 328) else some (1, .right, 97))))
-  else (if q.val < 99 then (if q.val < 98 then (if a.val == 0 then some (0, .right, 333) else some
-  (1, .right, 418)) else (if a.val == 0 then some (0, .right, 99) else some (0, .left, 90))) else
-  (if q.val < 100 then (if a.val == 0 then some (0, .right, 49) else some (1, .right, 100)) else (if
-  a.val == 0 then some (0, .right, 101) else some (1, .right, 104))))) else (if q.val < 104 then (if
-  q.val < 102 then (if a.val == 0 then some (0, .right, 49) else some (1, .right, 102)) else (if
-  q.val < 103 then (if a.val == 0 then some (0, .right, 103) else some (0, .left, 90)) else (if
-  a.val == 0 then some (0, .right, 50) else some (1, .right, 50)))) else (if q.val < 106 then (if
-  q.val < 105 then (if a.val == 0 then some (0, .right, 105) else some (0, .left, 90)) else (if
-  a.val == 0 then some (0, .right, 50) else some (1, .right, 328))) else (if q.val < 107 then (if
-  a.val == 0 then some (0, .right, 98) else some (1, .right, 107)) else (if a.val == 0 then some (0,
-  .right, 391) else some (1, .right, 405))))))))) else (if q.val < 162 then (if q.val < 135 then (if
-  q.val < 121 then (if q.val < 114 then (if q.val < 111 then (if q.val < 109 then (if a.val == 0
-  then some (0, .right, 98) else some (1, .right, 109)) else (if q.val < 110 then (if a.val == 0
-  then some (0, .right, 395) else some (1, .right, 407)) else (if a.val == 0 then some (0, .right,
-  49) else some (1, .right, 111)))) else (if q.val < 112 then (if a.val == 0 then some (0, .right,
-  421) else some (1, .right, 410)) else (if q.val < 113 then (if a.val == 0 then some (0, .right,
-  113) else some (1, .right, 117)) else (if a.val == 0 then some (0, .right, 63) else some (1,
-  .right, 114))))) else (if q.val < 117 then (if q.val < 115 then (if a.val == 0 then some (0,
-  .right, 115) else some (1, .right, 116)) else (if q.val < 116 then (if a.val == 0 then some (0,
-  .right, 65) else some (0, .left, 93)) else (if a.val == 0 then some (0, .right, 415) else some (0,
-  .left, 91)))) else (if q.val < 119 then (if q.val < 118 then (if a.val == 0 then some (0, .right,
-  65) else some (1, .right, 118)) else (if a.val == 0 then some (0, .right, 420) else some (0,
-  .left, 90))) else (if q.val < 120 then (if a.val == 0 then some (0, .right, 112) else some (1,
-  .right, 120)) else (if a.val == 0 then some (0, .right, 388) else some (1, .right, 403)))))) else
-  (if q.val < 128 then (if q.val < 124 then (if q.val < 122 then (if a.val == 0 then some (0,
-  .right, 112) else some (1, .right, 421)) else (if q.val < 123 then (if a.val == 0 then some (0,
-  .right, 123) else some (1, .right, 124)) else (if a.val == 0 then some (0, .right, 59) else some
-  (0, .left, 90)))) else (if q.val < 126 then (if q.val < 125 then (if a.val == 0 then some (0,
-  .right, 382) else some (1, .right, 125)) else (if a.val == 0 then some (0, .right, 401) else some
-  (1, .right, 52))) else (if q.val < 127 then (if a.val == 0 then some (0, .right, 122) else some
-  (1, .right, 127)) else (if a.val == 0 then some (0, .right, 381) else some (1, .right, 176)))))
-  else (if q.val < 131 then (if q.val < 129 then (if a.val == 0 then some (0, .right, 405) else some
-  (1, .right, 139)) else (if q.val < 130 then (if a.val == 0 then some (0, .right, 277) else some
-  (1, .right, 130)) else (if a.val == 0 then some (0, .right, 288) else some (1, .right, 131))))
-  else (if q.val < 133 then (if q.val < 132 then (if a.val == 0 then some (0, .right, 362) else some
-  (1, .right, 132)) else (if a.val == 0 then some (0, .right, 315) else some (1, .right, 133))) else
-  (if q.val < 134 then (if a.val == 0 then some (0, .right, 320) else some (1, .right, 134)) else
-  (if a.val == 0 then some (0, .right, 316) else some (1, .right, 135))))))) else (if q.val < 148
-  then (if q.val < 141 then (if q.val < 138 then (if q.val < 136 then (if a.val == 0 then some (0,
-  .right, 360) else some (1, .right, 136)) else (if q.val < 137 then (if a.val == 0 then some (0,
-  .right, 317) else some (1, .right, 137)) else (if a.val == 0 then some (0, .right, 289) else some
-  (1, .right, 138)))) else (if q.val < 139 then (if a.val == 0 then some (0, .right, 319) else some
-  (1, .right, 140)) else (if q.val < 140 then (if a.val == 0 then some (0, .right, 310) else some
-  (1, .right, 150)) else (if a.val == 0 then some (0, .right, 280) else some (1, .right, 141)))))
-  else (if q.val < 144 then (if q.val < 142 then (if a.val == 0 then some (0, .right, 359) else some
-  (1, .right, 142)) else (if q.val < 143 then (if a.val == 0 then some (0, .right, 317) else some
-  (1, .right, 143)) else (if a.val == 0 then some (0, .right, 360) else some (1, .right, 144))))
-  else (if q.val < 146 then (if q.val < 145 then (if a.val == 0 then some (0, .right, 289) else some
-  (1, .right, 145)) else (if a.val == 0 then some (0, .right, 318) else some (1, .right, 146))) else
-  (if q.val < 147 then (if a.val == 0 then some (0, .right, 280) else some (1, .right, 147)) else
-  (if a.val == 0 then some (0, .right, 301) else some (1, .right, 148)))))) else (if q.val < 155
-  then (if q.val < 151 then (if q.val < 149 then (if a.val == 0 then some (0, .right, 343) else some
-  (1, .right, 149)) else (if q.val < 150 then (if a.val == 0 then some (0, .right, 301) else some
-  (1, .right, 151)) else (if a.val == 0 then some (0, .right, 407) else some (1, .right, 161))))
-  else (if q.val < 153 then (if q.val < 152 then (if a.val == 0 then some (0, .right, 290) else some
-  (1, .right, 152)) else (if a.val == 0 then some (0, .right, 358) else some (1, .right, 153))) else
-  (if q.val < 154 then (if a.val == 0 then some (0, .right, 316) else some (1, .right, 154)) else
-  (if a.val == 0 then some (0, .right, 366) else some (1, .right, 155))))) else (if q.val < 158 then
-  (if q.val < 156 then (if a.val == 0 then some (0, .right, 302) else some (1, .right, 156)) else
-  (if q.val < 157 then (if a.val == 0 then some (0, .right, 429) else some (1, .right, 157)) else
-  (if a.val == 0 then some (0, .right, 302) else some (1, .right, 158)))) else (if q.val < 160 then
-  (if q.val < 159 then (if a.val == 0 then some (0, .right, 316) else some (1, .right, 159)) else
-  (if a.val == 0 then some (0, .right, 291) else some (1, .right, 160))) else (if q.val < 161 then
-  (if a.val == 0 then some (0, .right, 318) else some (1, .right, 162)) else (if a.val == 0 then
-  some (0, .right, 343) else some (1, .right, 170)))))))) else (if q.val < 189 then (if q.val < 175
-  then (if q.val < 168 then (if q.val < 165 then (if q.val < 163 then (if a.val == 0 then some (0,
-  .right, 319) else some (1, .right, 163)) else (if q.val < 164 then (if a.val == 0 then some (0,
-  .right, 318) else some (1, .right, 164)) else (if a.val == 0 then some (0, .right, 344) else some
-  (1, .right, 165)))) else (if q.val < 166 then (if a.val == 0 then some (0, .right, 67) else some
-  (1, .right, 166)) else (if q.val < 167 then (if a.val == 0 then some (0, .right, 167) else none)
-  else (if a.val == 0 then some (0, .right, 67) else some (1, .right, 168))))) else (if q.val < 171
-  then (if q.val < 169 then (if a.val == 0 then some (0, .right, 169) else some (0, .left, 90)) else
-  (if q.val < 170 then (if a.val == 0 then some (0, .right, 68) else some (1, .right, 68)) else (if
-  a.val == 0 then some (0, .right, 108) else some (1, .right, 171)))) else (if q.val < 173 then (if
-  q.val < 172 then (if a.val == 0 then some (0, .right, 106) else some (1, .right, 172)) else (if
-  a.val == 0 then some (0, .right, 341) else some (1, .right, 173))) else (if q.val < 174 then (if
-  a.val == 0 then some (0, .right, 312) else some (1, .right, 174)) else (if a.val == 0 then some
-  (0, .right, 427) else some (1, .right, 175)))))) else (if q.val < 182 then (if q.val < 178 then
-  (if q.val < 176 then (if a.val == 0 then some (0, .right, 394) else some (1, .right, 177)) else
-  (if q.val < 177 then (if a.val == 0 then some (0, .right, 385) else some (1, .right, 187)) else
-  (if a.val == 0 then some (0, .right, 405) else some (1, .right, 178)))) else (if q.val < 180 then
-  (if q.val < 179 then (if a.val == 0 then some (0, .right, 119) else some (1, .right, 179)) else
-  (if a.val == 0 then some (0, .right, 344) else some (1, .right, 180))) else (if q.val < 181 then
-  (if a.val == 0 then some (0, .right, 108) else some (1, .right, 181)) else (if a.val == 0 then
-  some (0, .right, 296) else some (1, .right, 182))))) else (if q.val < 185 then (if q.val < 183
-  then (if a.val == 0 then some (0, .right, 306) else some (1, .right, 183)) else (if q.val < 184
-  then (if a.val == 0 then some (0, .right, 429) else some (1, .right, 184)) else (if a.val == 0
-  then some (0, .right, 339) else some (1, .right, 185)))) else (if q.val < 187 then (if q.val < 186
-  then (if a.val == 0 then some (0, .right, 311) else some (1, .right, 186)) else (if a.val == 0
-  then some (0, .right, 337) else some (1, .right, 188))) else (if q.val < 188 then (if a.val == 0
-  then some (0, .right, 391) else some (1, .right, 198)) else (if a.val == 0 then some (0, .right,
-  311) else some (1, .right, 189))))))) else (if q.val < 202 then (if q.val < 195 then (if q.val <
-  192 then (if q.val < 190 then (if a.val == 0 then some (0, .right, 295) else some (1, .right,
-  190)) else (if q.val < 191 then (if a.val == 0 then some (0, .right, 431) else some (1, .right,
-  191)) else (if a.val == 0 then some (0, .right, 312) else some (1, .right, 192)))) else (if q.val
-  < 193 then (if a.val == 0 then some (0, .right, 337) else some (1, .right, 193)) else (if q.val <
-  194 then (if a.val == 0 then some (0, .right, 294) else some (1, .right, 194)) else (if a.val == 0
-  then some (0, .right, 431) else some (1, .right, 195))))) else (if q.val < 198 then (if q.val <
-  196 then (if a.val == 0 then some (0, .right, 339) else some (1, .right, 196)) else (if q.val <
-  197 then (if a.val == 0 then some (0, .right, 287) else some (1, .right, 197)) else (if a.val == 0
-  then some (0, .right, 311) else some (1, .right, 199)))) else (if q.val < 200 then (if q.val < 199
-  then (if a.val == 0 then some (0, .right, 395) else some (1, .right, 209)) else (if a.val == 0
-  then some (0, .right, 364) else some (1, .right, 200))) else (if q.val < 201 then (if a.val == 0
-  then some (0, .right, 321) else some (1, .right, 201)) else (if a.val == 0 then some (0, .right,
-  364) else some (1, .right, 202)))))) else (if q.val < 209 then (if q.val < 205 then (if q.val <
-  203 then (if a.val == 0 then some (0, .right, 296) else some (1, .right, 203)) else (if q.val <
-  204 then (if a.val == 0 then some (0, .right, 429) else some (1, .right, 204)) else (if a.val == 0
-  then some (0, .right, 429) else some (1, .right, 205)))) else (if q.val < 207 then (if q.val < 206
-  then (if a.val == 0 then some (0, .right, 272) else some (1, .right, 206)) else (if a.val == 0
-  then some (0, .right, 264) else some (1, .right, 207))) else (if q.val < 208 then (if a.val == 0
-  then some (0, .right, 339) else some (1, .right, 208)) else (if a.val == 0 then some (0, .right,
-  368) else some (1, .right, 210))))) else (if q.val < 212 then (if q.val < 210 then (if a.val == 0
-  then some (0, .right, 310) else some (1, .right, 220)) else (if q.val < 211 then (if a.val == 0
-  then some (0, .right, 313) else some (1, .right, 211)) else (if a.val == 0 then some (0, .right,
-  297) else some (1, .right, 212)))) else (if q.val < 214 then (if q.val < 213 then (if a.val == 0
-  then some (0, .right, 341) else some (1, .right, 213)) else (if a.val == 0 then some (0, .right,
-  297) else some (1, .right, 214))) else (if q.val < 215 then (if a.val == 0 then some (0, .right,
-  313) else some (1, .right, 215)) else (if a.val == 0 then some (0, .right, 362) else some (1,
-  .right, 216)))))))))) else (if q.val < 324 then (if q.val < 270 then (if q.val < 243 then (if
-  q.val < 229 then (if q.val < 222 then (if q.val < 219 then (if q.val < 217 then (if a.val == 0
-  then some (0, .right, 386) else some (1, .right, 217)) else (if q.val < 218 then (if a.val == 0
-  then some (0, .right, 403) else some (1, .right, 218)) else (if a.val == 0 then some (0, .right,
-  298) else some (1, .right, 219)))) else (if q.val < 220 then (if a.val == 0 then some (0, .right,
-  392) else some (1, .right, 221)) else (if q.val < 221 then (if a.val == 0 then some (0, .right,
-  399) else some (1, .right, 231)) else (if a.val == 0 then some (0, .right, 405) else some (1,
-  .right, 222))))) else (if q.val < 225 then (if q.val < 223 then (if a.val == 0 then some (0,
-  .right, 298) else some (1, .right, 223)) else (if q.val < 224 then (if a.val == 0 then some (0,
-  .right, 272) else some (1, .right, 224)) else (if a.val == 0 then some (0, .right, 286) else some
-  (1, .right, 225)))) else (if q.val < 227 then (if q.val < 226 then (if a.val == 0 then some (0,
-  .right, 315) else some (1, .right, 226)) else (if a.val == 0 then some (0, .right, 339) else some
-  (1, .right, 227))) else (if q.val < 228 then (if a.val == 0 then some (0, .right, 286) else some
-  (1, .right, 228)) else (if a.val == 0 then some (0, .right, 368) else some (1, .right, 229))))))
-  else (if q.val < 236 then (if q.val < 232 then (if q.val < 230 then (if a.val == 0 then some (0,
-  .right, 370) else some (1, .right, 230)) else (if q.val < 231 then (if a.val == 0 then some (0,
-  .right, 283) else some (1, .right, 232)) else (if a.val == 0 then some (0, .right, 310) else some
-  (1, .right, 242)))) else (if q.val < 234 then (if q.val < 233 then (if a.val == 0 then some (0,
-  .right, 368) else some (1, .right, 233)) else (if a.val == 0 then some (0, .right, 324) else some
-  (1, .right, 234))) else (if q.val < 235 then (if a.val == 0 then some (0, .right, 322) else some
-  (1, .right, 235)) else (if a.val == 0 then some (0, .right, 264) else some (1, .right, 236)))))
-  else (if q.val < 239 then (if q.val < 237 then (if a.val == 0 then some (0, .right, 366) else some
-  (1, .right, 237)) else (if q.val < 238 then (if a.val == 0 then some (0, .right, 341) else some
-  (1, .right, 238)) else (if a.val == 0 then some (0, .right, 339) else some (1, .right, 239))))
-  else (if q.val < 241 then (if q.val < 240 then (if a.val == 0 then some (0, .right, 366) else some
-  (1, .right, 240)) else (if a.val == 0 then some (0, .right, 305) else some (1, .right, 241))) else
-  (if q.val < 242 then (if a.val == 0 then some (0, .right, 359) else some (1, .right, 243)) else
-  (if a.val == 0 then some (0, .right, 403) else some (1, .right, 253))))))) else (if q.val < 256
-  then (if q.val < 249 then (if q.val < 246 then (if q.val < 244 then (if a.val == 0 then some (0,
-  .right, 314) else some (1, .right, 244)) else (if q.val < 245 then (if a.val == 0 then some (0,
-  .right, 366) else some (1, .right, 245)) else (if a.val == 0 then some (0, .right, 288) else some
-  (1, .right, 246)))) else (if q.val < 247 then (if a.val == 0 then some (0, .right, 304) else some
-  (1, .right, 247)) else (if q.val < 248 then (if a.val == 0 then some (0, .right, 314) else some
-  (1, .right, 248)) else (if a.val == 0 then some (0, .right, 291) else some (1, .right, 249)))))
-  else (if q.val < 252 then (if q.val < 250 then (if a.val == 0 then some (0, .right, 343) else some
-  (1, .right, 250)) else (if q.val < 251 then (if a.val == 0 then some (0, .right, 300) else some
-  (1, .right, 251)) else (if a.val == 0 then some (0, .right, 344) else some (1, .right, 252))))
-  else (if q.val < 254 then (if q.val < 253 then (if a.val == 0 then some (0, .right, 360) else some
-  (1, .right, 254)) else (if a.val == 0 then some (0, .right, 310) else some (1, .right, 128))) else
-  (if q.val < 255 then (if a.val == 0 then some (0, .right, 316) else some (1, .right, 255)) else
-  (if a.val == 0 then some (0, .right, 308) else some (1, .right, 256)))))) else (if q.val < 263
-  then (if q.val < 259 then (if q.val < 257 then (if a.val == 0 then some (0, .right, 359) else some
-  (1, .right, 257)) else (if q.val < 258 then (if a.val == 0 then some (0, .right, 300) else some
-  (1, .right, 258)) else (if a.val == 0 then some (0, .right, 315) else some (1, .right, 259))))
-  else (if q.val < 261 then (if q.val < 260 then (if a.val == 0 then some (0, .right, 364) else some
-  (1, .right, 260)) else (if a.val == 0 then some (0, .right, 358) else some (1, .right, 261))) else
-  (if q.val < 262 then (if a.val == 0 then some (0, .right, 290) else some (1, .right, 262)) else
-  (if a.val == 0 then some (0, .right, 277) else some (1, .right, 263))))) else (if q.val < 266 then
-  (if q.val < 264 then (if a.val == 0 then some (0, .right, 429) else some (1, .right, 129)) else
-  (if q.val < 265 then (if a.val == 0 then some (0, .right, 429) else some (1, .right, 265)) else
-  (if a.val == 0 then some (0, .right, 283) else some (1, .right, 266)))) else (if q.val < 268 then
-  (if q.val < 267 then (if a.val == 0 then some (0, .right, 366) else some (1, .right, 267)) else
-  (if a.val == 0 then some (0, .right, 324) else some (1, .right, 268))) else (if q.val < 269 then
-  (if a.val == 0 then some (0, .right, 366) else some (1, .right, 269)) else (if a.val == 0 then
-  some (0, .right, 287) else some (1, .right, 270)))))))) else (if q.val < 297 then (if q.val < 283
-  then (if q.val < 276 then (if q.val < 273 then (if q.val < 271 then (if a.val == 0 then some (0,
-  .right, 368) else some (1, .right, 271)) else (if q.val < 272 then (if a.val == 0 then some (0,
-  .right, 341) else some (1, .right, 337)) else (if a.val == 0 then some (0, .right, 306) else some
-  (1, .right, 273)))) else (if q.val < 274 then (if a.val == 0 then some (0, .right, 325) else some
-  (1, .right, 274)) else (if q.val < 275 then (if a.val == 0 then some (0, .right, 364) else some
-  (1, .right, 275)) else (if a.val == 0 then some (0, .right, 339) else some (1, .right, 276)))))
-  else (if q.val < 279 then (if q.val < 277 then (if a.val == 0 then some (0, .right, 296) else some
-  (1, .right, 364)) else (if q.val < 278 then (if a.val == 0 then some (0, .right, 360) else some
-  (1, .right, 278)) else (if a.val == 0 then some (0, .right, 307) else some (1, .right, 279))))
-  else (if q.val < 281 then (if q.val < 280 then (if a.val == 0 then some (0, .right, 308) else some
-  (1, .right, 318)) else (if a.val == 0 then some (0, .right, 288) else some (1, .right, 281))) else
-  (if q.val < 282 then (if a.val == 0 then some (0, .right, 315) else some (1, .right, 282)) else
-  (if a.val == 0 then some (0, .right, 344) else some (1, .right, 358)))))) else (if q.val < 290
-  then (if q.val < 286 then (if q.val < 284 then (if a.val == 0 then some (0, .right, 306) else some
-  (1, .right, 284)) else (if q.val < 285 then (if a.val == 0 then some (0, .right, 368) else some
-  (1, .right, 285)) else (if a.val == 0 then some (0, .right, 337) else some (1, .right, 341))))
-  else (if q.val < 288 then (if q.val < 287 then (if a.val == 0 then some (0, .right, 294) else some
-  (1, .right, 339)) else (if a.val == 0 then some (0, .right, 295) else some (1, .right, 339))) else
-  (if q.val < 289 then (if a.val == 0 then some (0, .right, 304) else some (1, .right, 429)) else
-  (if a.val == 0 then some (0, .right, 366) else some (1, .right, 307))))) else (if q.val < 293 then
-  (if q.val < 291 then (if a.val == 0 then some (0, .right, 359) else some (1, .right, 304)) else
-  (if q.val < 292 then (if a.val == 0 then some (0, .right, 366) else some (1, .right, 292)) else
-  (if a.val == 0 then some (0, .right, 429) else some (1, .right, 293)))) else (if q.val < 295 then
-  (if q.val < 294 then (if a.val == 0 then some (0, .right, 362) else some (1, .right, 364)) else
-  (if a.val == 0 then some (0, .right, 320) else some (1, .right, 326))) else (if q.val < 296 then
-  (if a.val == 0 then some (0, .right, 305) else some (1, .right, 337)) else (if a.val == 0 then
-  some (0, .right, 337) else some (1, .right, 325))))))) else (if q.val < 310 then (if q.val < 303
-  then (if q.val < 300 then (if q.val < 298 then (if a.val == 0 then some (0, .right, 321) else some
-  (1, .right, 366)) else (if q.val < 299 then (if a.val == 0 then some (0, .right, 397) else some
-  (1, .right, 299)) else (if a.val == 0 then some (0, .right, 403) else some (1, .right, 121))))
-  else (if q.val < 301 then (if a.val == 0 then some (0, .right, 358) else some (1, .right, 322))
-  else (if q.val < 302 then (if a.val == 0 then some (0, .right, 343) else some (1, .right, 323))
-  else (if a.val == 0 then some (0, .right, 358) else some (1, .right, 303))))) else (if q.val < 306
-  then (if q.val < 304 then (if a.val == 0 then some (0, .right, 343) else some (1, .right, 368))
-  else (if q.val < 305 then (if a.val == 0 then some (0, .right, 359) else some (1, .right, 323))
-  else (if a.val == 0 then some (0, .right, 429) else some (1, .right, 320)))) else (if q.val < 308
-  then (if q.val < 307 then (if a.val == 0 then some (0, .right, 344) else some (1, .right, 321))
-  else (if a.val == 0 then some (0, .right, 360) else some (1, .right, 327))) else (if q.val < 309
-  then (if a.val == 0 then some (0, .right, 358) else some (1, .right, 309)) else (if a.val == 0
-  then some (0, .right, 337) else some (1, .right, 364)))))) else (if q.val < 317 then (if q.val <
-  313 then (if q.val < 311 then (if a.val == 0 then some (0, .right, 352) else some (1, .right,
-  416)) else (if q.val < 312 then (if a.val == 0 then some (0, .right, 341) else some (1, .right,
-  429)) else (if a.val == 0 then some (0, .right, 337) else some (1, .right, 429)))) else (if q.val
-  < 315 then (if q.val < 314 then (if a.val == 0 then some (0, .right, 364) else some (1, .right,
-  429)) else (if a.val == 0 then some (0, .right, 359) else some (1, .right, 343))) else (if q.val <
-  316 then (if a.val == 0 then some (0, .right, 364) else some (1, .right, 370)) else (if a.val == 0
-  then some (0, .right, 358) else some (1, .right, 359))))) else (if q.val < 320 then (if q.val <
-  318 then (if a.val == 0 then some (0, .right, 360) else some (1, .right, 359)) else (if q.val <
-  319 then (if a.val == 0 then some (0, .right, 362) else some (1, .right, 370)) else (if a.val == 0
-  then some (0, .right, 429) else some (1, .right, 364)))) else (if q.val < 322 then (if q.val < 321
-  then (if a.val == 0 then some (0, .right, 429) else some (1, .right, 344)) else (if a.val == 0
-  then some (0, .right, 337) else some (1, .right, 339))) else (if q.val < 323 then (if a.val == 0
-  then some (0, .right, 368) else some (1, .right, 429)) else (if a.val == 0 then some (0, .right,
-  358) else some (1, .right, 366))))))))) else (if q.val < 378 then (if q.val < 351 then (if q.val <
-  337 then (if q.val < 330 then (if q.val < 327 then (if q.val < 325 then (if a.val == 0 then some
-  (0, .right, 339) else some (1, .right, 341)) else (if q.val < 326 then (if a.val == 0 then some
-  (0, .right, 341) else some (1, .right, 364)) else (if a.val == 0 then some (0, .right, 337) else
-  some (1, .right, 337)))) else (if q.val < 328 then (if a.val == 0 then some (0, .right, 343) else
-  some (1, .right, 366)) else (if q.val < 329 then (if a.val == 0 then some (0, .right, 353) else
-  some (1, .right, 419)) else (if a.val == 0 then some (0, .right, 422) else some (1, .right,
-  330))))) else (if q.val < 333 then (if q.val < 331 then (if a.val == 0 then some (0, .right, 69)
-  else some (1, .right, 331)) else (if q.val < 332 then (if a.val == 0 then some (0, .right, 332)
-  else some (0, .left, 94)) else (if a.val == 0 then some (0, .right, 62) else some (1, .right,
-  428)))) else (if q.val < 335 then (if q.val < 334 then (if a.val == 0 then some (0, .right, 412)
-  else some (1, .right, 334)) else (if a.val == 0 then some (0, .right, 67) else some (1, .right,
-  335))) else (if q.val < 336 then (if a.val == 0 then some (0, .right, 336) else some (0, .left,
-  94)) else (if a.val == 0 then some (0, .right, 64) else some (1, .right, 425)))))) else (if q.val
-  < 344 then (if q.val < 340 then (if q.val < 338 then (if a.val == 0 then some (0, .right, 343)
-  else some (1, .right, 338)) else (if q.val < 339 then (if a.val == 0 then some (0, .right, 387)
-  else some (1, .right, 403)) else (if a.val == 0 then some (0, .right, 343) else some (1, .right,
-  340)))) else (if q.val < 342 then (if q.val < 341 then (if a.val == 0 then some (0, .right, 393)
-  else some (1, .right, 405)) else (if a.val == 0 then some (0, .right, 343) else some (1, .right,
-  342))) else (if q.val < 343 then (if a.val == 0 then some (0, .right, 396) else some (1, .right,
-  407)) else (if a.val == 0 then some (0, .right, 329) else some (1, .right, 411))))) else (if q.val
-  < 347 then (if q.val < 345 then (if a.val == 0 then some (0, .right, 425) else some (1, .right,
-  345)) else (if q.val < 346 then (if a.val == 0 then some (0, .right, 354) else some (1, .right,
-  346)) else (if a.val == 0 then some (0, .right, 419) else some (1, .right, 347)))) else (if q.val
-  < 349 then (if q.val < 348 then (if a.val == 0 then some (0, .right, 110) else some (1, .right,
-  398)) else (if a.val == 0 then some (0, .right, 63) else some (0, .left, 94))) else (if q.val <
-  350 then (if a.val == 0 then some (0, .right, 62) else some (1, .right, 350)) else (if a.val == 0
-  then some (0, .right, 348) else some (1, .right, 351))))))) else (if q.val < 364 then (if q.val <
-  357 then (if q.val < 354 then (if q.val < 352 then (if a.val == 0 then some (0, .right, 409) else
-  some (0, .left, 95)) else (if q.val < 353 then (if a.val == 0 then some (0, .right, 59) else some
-  (1, .right, 349)) else (if a.val == 0 then some (0, .right, 69) else some (1, .right, 349)))) else
-  (if q.val < 355 then (if a.val == 0 then some (0, .right, 69) else some (1, .right, 355)) else (if
-  q.val < 356 then (if a.val == 0 then some (0, .right, 68) else some (1, .right, 356)) else (if
-  a.val == 0 then some (0, .right, 348) else some (1, .right, 357))))) else (if q.val < 360 then (if
-  q.val < 358 then (if a.val == 0 then some (0, .right, 427) else some (0, .left, 95)) else (if
-  q.val < 359 then (if a.val == 0 then some (0, .right, 343) else some (1, .right, 68)) else (if
-  a.val == 0 then some (0, .right, 358) else some (1, .right, 68)))) else (if q.val < 362 then (if
-  q.val < 361 then (if a.val == 0 then some (0, .right, 359) else some (1, .right, 68)) else (if
-  a.val == 0 then some (0, .right, 360) else some (1, .right, 68))) else (if q.val < 363 then (if
-  a.val == 0 then some (0, .right, 431) else some (1, .right, 363)) else (if a.val == 0 then some
-  (0, .right, 429) else some (1, .right, 431)))))) else (if q.val < 371 then (if q.val < 367 then
-  (if q.val < 365 then (if a.val == 0 then some (0, .right, 96) else some (1, .right, 365)) else (if
-  q.val < 366 then (if a.val == 0 then some (0, .right, 361) else some (1, .right, 96)) else (if
-  a.val == 0 then some (0, .right, 96) else some (1, .right, 367)))) else (if q.val < 369 then (if
-  q.val < 368 then (if a.val == 0 then some (0, .right, 358) else some (1, .right, 96)) else (if
-  a.val == 0 then some (0, .right, 96) else some (1, .right, 369))) else (if q.val < 370 then (if
-  a.val == 0 then some (0, .right, 343) else some (1, .right, 96)) else (if a.val == 0 then some (0,
-  .right, 431) else some (1, .right, 371))))) else (if q.val < 374 then (if q.val < 372 then (if
-  a.val == 0 then some (0, .right, 364) else some (1, .right, 431)) else (if q.val < 373 then (if
-  a.val == 0 then some (0, .right, 64) else some (0, .left, 93)) else (if a.val == 0 then some (0,
-  .right, 374) else some (0, .left, 93)))) else (if q.val < 376 then (if q.val < 375 then (if a.val
-  == 0 then some (0, .right, 62) else some (1, .right, 64)) else (if a.val == 0 then some (0,
-  .right, 68) else some (0, .left, 93))) else (if q.val < 377 then (if a.val == 0 then some (0,
-  .right, 377) else some (0, .left, 93)) else (if a.val == 0 then some (0, .right, 68) else some (1,
-  .right, 62)))))))) else (if q.val < 405 then (if q.val < 391 then (if q.val < 384 then (if q.val <
-  381 then (if q.val < 379 then (if a.val == 0 then some (0, .right, 70) else some (0, .left, 93))
-  else (if q.val < 380 then (if a.val == 0 then some (0, .right, 380) else some (0, .left, 93)) else
-  (if a.val == 0 then some (0, .right, 62) else some (1, .right, 66)))) else (if q.val < 382 then
-  (if a.val == 0 then some (0, .right, 49) else some (0, .left, 92)) else (if q.val < 383 then (if
-  a.val == 0 then some (0, .right, 51) else some (1, .right, 383)) else (if a.val == 0 then some (0,
-  .right, 384) else some (0, .left, 93))))) else (if q.val < 387 then (if q.val < 385 then (if a.val
-  == 0 then some (0, .right, 62) else some (1, .right, 60)) else (if q.val < 386 then (if a.val == 0
-  then some (0, .right, 53) else some (0, .left, 92)) else (if a.val == 0 then some (0, .right, 53)
-  else some (1, .right, 373)))) else (if q.val < 389 then (if q.val < 388 then (if a.val == 0 then
-  some (0, .right, 53) else some (1, .right, 376)) else (if a.val == 0 then some (0, .right, 53)
-  else some (1, .right, 389))) else (if q.val < 390 then (if a.val == 0 then some (0, .right, 390)
-  else some (0, .left, 93)) else (if a.val == 0 then some (0, .right, 62) else some (1, .right,
-  68)))))) else (if q.val < 398 then (if q.val < 394 then (if q.val < 392 then (if a.val == 0 then
-  some (0, .right, 55) else some (0, .left, 92)) else (if q.val < 393 then (if a.val == 0 then some
-  (0, .right, 55) else some (1, .right, 373)) else (if a.val == 0 then some (0, .right, 55) else
-  some (1, .right, 376)))) else (if q.val < 396 then (if q.val < 395 then (if a.val == 0 then some
-  (0, .right, 55) else some (1, .right, 379)) else (if a.val == 0 then some (0, .right, 57) else
-  some (0, .left, 92))) else (if q.val < 397 then (if a.val == 0 then some (0, .right, 57) else some
-  (1, .right, 376)) else (if a.val == 0 then some (0, .right, 57) else some (1, .right, 379)))))
-  else (if q.val < 401 then (if q.val < 399 then (if a.val == 0 then some (0, .right, 61) else some
-  (0, .left, 92)) else (if q.val < 400 then (if a.val == 0 then some (0, .right, 61) else some (1,
-  .right, 400)) else (if a.val == 0 then some (0, .right, 50) else some (0, .left, 93)))) else (if
-  q.val < 403 then (if q.val < 402 then (if a.val == 0 then some (0, .right, 61) else some (1,
-  .right, 402)) else (if a.val == 0 then some (0, .right, 52) else some (0, .left, 93))) else (if
-  q.val < 404 then (if a.val == 0 then some (0, .right, 61) else some (1, .right, 404)) else (if
-  a.val == 0 then some (0, .right, 54) else some (0, .left, 93))))))) else (if q.val < 418 then (if
-  q.val < 411 then (if q.val < 408 then (if q.val < 406 then (if a.val == 0 then some (0, .right,
-  61) else some (1, .right, 406)) else (if q.val < 407 then (if a.val == 0 then some (0, .right, 56)
-  else some (0, .left, 93)) else (if a.val == 0 then some (0, .right, 61) else some (1, .right,
-  408)))) else (if q.val < 409 then (if a.val == 0 then some (0, .right, 58) else some (0, .left,
-  93)) else (if q.val < 410 then (if a.val == 0 then some (0, .right, 61) else some (1, .right,
-  372)) else (if a.val == 0 then some (0, .right, 61) else some (1, .right, 375))))) else (if q.val
-  < 414 then (if q.val < 412 then (if a.val == 0 then some (0, .right, 61) else some (1, .right,
-  378)) else (if q.val < 413 then (if a.val == 0 then some (0, .right, 61) else some (1, .right,
-  413)) else (if a.val == 0 then some (0, .right, 414) else some (0, .left, 93)))) else (if q.val <
-  416 then (if q.val < 415 then (if a.val == 0 then some (0, .right, 68) else some (1, .right, 64))
-  else (if a.val == 0 then some (0, .right, 63) else some (0, .left, 92))) else (if q.val < 417 then
-  (if a.val == 0 then some (0, .right, 63) else some (1, .right, 417)) else (if a.val == 0 then some
-  (0, .right, 60) else some (0, .left, 93)))))) else (if q.val < 425 then (if q.val < 421 then (if
-  q.val < 419 then (if a.val == 0 then some (0, .right, 63) else some (1, .right, 375)) else (if
-  q.val < 420 then (if a.val == 0 then some (0, .right, 63) else some (1, .right, 378)) else (if
-  a.val == 0 then some (0, .right, 65) else some (0, .left, 92)))) else (if q.val < 423 then (if
-  q.val < 422 then (if a.val == 0 then some (0, .right, 67) else some (0, .left, 92)) else (if a.val
-  == 0 then some (0, .right, 67) else some (1, .right, 423))) else (if q.val < 424 then (if a.val ==
-  0 then some (0, .right, 424) else some (0, .left, 93)) else (if a.val == 0 then some (0, .right,
-  70) else some (1, .right, 62))))) else (if q.val < 428 then (if q.val < 426 then (if a.val == 0
-  then some (0, .right, 67) else some (1, .right, 426)) else (if q.val < 427 then (if a.val == 0
-  then some (0, .right, 62) else some (0, .left, 93)) else (if a.val == 0 then some (0, .right, 67)
-  else some (1, .right, 372)))) else (if q.val < 430 then (if q.val < 429 then (if a.val == 0 then
-  some (0, .right, 69) else some (1, .right, 375)) else (if a.val == 0 then some (0, .right, 96)
-  else some (1, .right, 430))) else (if q.val < 431 then (if a.val == 0 then some (0, .right, 359)
-  else some (1, .right, 96)) else (if a.val == 0 then some (0, .right, 360) else some (1, .right,
-  96)))))))))))
-
-set_option maxHeartbeats 0 in
--- kernel `decide` over all 432 × 2 (state, symbol) pairs of `reference.transition`
-theorem refTrans_eq (q : Fin 432) (a : Fin 2) :
-    reference.transition q a = refTrans q a := by
-  revert q a; decide
-
-section GeneralMachine
-
-variable {K : ℕ} [NeZero K]
-
-theorem nSteps_of_halt {M : Machine K 2} {c : Cfg K 2}
-    (h : step M c = none) {k : ℕ} (hk : 1 ≤ k) :
-    nSteps M k c = none := by
-  cases k with
-  | zero => omega
-  | succ k => simp [nSteps_succ, h]
-
-theorem mem_eval_iff_nSteps {M : Machine K 2} {c₀ ch : Cfg K 2} :
-    ch ∈ eval (step M) c₀ ↔ ∃ N, nSteps M N c₀ = some ch ∧ step M ch = none := by
-  constructor
-  · intro h
-    refine StateTransition.evalInduction h fun a ha ih => ?_
-    rcases hs : step M a with _ | a'
-    · have hmem : a ∈ eval (step M) a :=
-        StateTransition.mem_eval.mpr ⟨Relation.ReflTransGen.refl, hs⟩
-      have heq : ch = a := Part.mem_unique ha hmem
-      subst heq
-      exact ⟨0, rfl, hs⟩
-    · obtain ⟨N, hN, hnone⟩ := ih a' hs
-      exact ⟨N + 1, by rw [nSteps_succ, hs, Option.bind_some, hN], hnone⟩
-  · rintro ⟨N, hN, hnone⟩
-    exact StateTransition.mem_eval.mpr ⟨nSteps_reaches hN, hnone⟩
-
-end GeneralMachine
-
-theorem step_mk'_right {q q' : Fin 432} {a b : Fin 2}
-    (h : refTrans q a = some (b, .right, q')) (L R : ListBlank (Fin 2)) :
-    step reference ⟨q, Tape.mk' L (R.cons a)⟩ = some ⟨q', Tape.mk' (L.cons b) R⟩ := by
-  simp [step, refTrans_eq, h, Tape.mk', Tape.write, Tape.move]
-
-theorem step_mk'_left {q q' : Fin 432} {a b : Fin 2}
-    (h : refTrans q a = some (b, .left, q')) (L R : ListBlank (Fin 2)) :
-    step reference ⟨q, Tape.mk' L (R.cons a)⟩ = some ⟨q', Tape.mkL L (R.cons b)⟩ := by
-  simp [step, refTrans_eq, h, Tape.mkL, Tape.mk', Tape.write, Tape.move]
-
 theorem step_mk'_none {q : Fin 432} {a : Fin 2}
     (h : refTrans q a = none) (L R : ListBlank (Fin 2)) :
-    step reference ⟨q, Tape.mk' L (R.cons a)⟩ = none := by
+    step Machines.zf432 ⟨q, Tape.mk' L (R.cons a)⟩ = none := by
   simp [step, refTrans_eq, h, Tape.mk']
 
-theorem step_mkL_left {q q' : Fin 432} {a b : Fin 2}
-    (h : refTrans q a = some (b, .left, q')) (L R : ListBlank (Fin 2)) :
-    step reference ⟨q, Tape.mkL (L.cons a) R⟩ = some ⟨q', Tape.mkL L (R.cons b)⟩ := by
-  simp [step, refTrans_eq, h, Tape.mkL, Tape.write, Tape.move]
-
-theorem step_mkL_right {q q' : Fin 432} {a b : Fin 2}
-    (h : refTrans q a = some (b, .right, q')) (L R : ListBlank (Fin 2)) :
-    step reference ⟨q, Tape.mkL (L.cons a) R⟩ = some ⟨q', Tape.mk' (L.cons b) R⟩ := by
-  simp [step, refTrans_eq, h, Tape.mkL, Tape.mk', Tape.write, Tape.move]
-
-theorem nSteps_mkL_left_scan {q : Fin 432} {a b : Fin 2}
-    (h : refTrans q a = some (b, .left, q)) (k : ℕ) (L R : ListBlank (Fin 2)) :
-    nSteps reference k ⟨q, Tape.mkL (ListBlank.append (List.replicate k a) L) R⟩ =
-      some ⟨q, Tape.mkL L (ListBlank.append (List.replicate k b) R)⟩ := by
-  induction k generalizing R with
-  | zero => rfl
-  | succ k ih =>
-    rw [List.replicate_succ, ListBlank.append, nSteps_succ, step_mkL_left h]
-    simp only [Option.bind_some]
-    rw [ih (R.cons b), append_replicate_cons]
-
-theorem nSteps_mk'_right_scan {q : Fin 432} {a b : Fin 2}
-    (h : refTrans q a = some (b, .right, q)) (k : ℕ) (L R : ListBlank (Fin 2)) :
-    nSteps reference k ⟨q, Tape.mk' L (ListBlank.append (List.replicate k a) R)⟩ =
-      some ⟨q, Tape.mk' (ListBlank.append (List.replicate k b) L) R⟩ := by
-  induction k generalizing L with
-  | zero => rfl
-  | succ k ih =>
-    rw [List.replicate_succ, ListBlank.append, nSteps_succ, step_mk'_right h]
-    simp only [Option.bind_some]
-    rw [ih (L.cons b), append_replicate_cons]
-
-/-- The root prefix `[1, 1, 0]` to the left of the head at `main().0` (State `126`). -/
-abbrev rootLeft : ListBlank (Fin 2) :=
-  (default : ListBlank (Fin 2)).cons 1 |>.cons 1 |>.cons 0
 
 abbrev zfRootLeft : ListBlank (Fin 2) := rootLeft
-
-theorem rootLeft_eq_append :
-    rootLeft = ListBlank.append [1, 1, 0].reverse default := rfl
-
-/-- Left half-tape after scanning right across `stack` from `main().0`. -/
-def stackLeft (stack : List (Fin 2)) : ListBlank (Fin 2) :=
-  ListBlank.append stack.reverse rootLeft
-
-theorem stackLeft_nil : stackLeft [] = rootLeft := rfl
-
-theorem stackLeft_eq_append (stack : List (Fin 2)) :
-    stackLeft stack = ListBlank.append ([1, 1, 0] ++ stack).reverse default := by
-  rw [stackLeft, rootLeft_eq_append, List.reverse_append, ListBlank.append_assoc]
-
-theorem stackLeft_append (s₁ s₂ : List (Fin 2)) :
-    stackLeft (s₁ ++ s₂) = ListBlank.append s₂.reverse (stackLeft s₁) := by
-  simp [stackLeft, ListBlank.append_assoc]
-
-@[simp]
-theorem stackLeft_append_singleton (w : List (Fin 2)) (a : Fin 2) :
-    stackLeft (w ++ [a]) = (stackLeft w).cons a := by
-  rw [stackLeft_append, List.reverse_singleton, ListBlank.append, ListBlank.append]
-
-/-- `3.<reg_k>.inc` (States `49..70`) for register `0 ≤ k ≤ 10`. -/
-def regIncStage3 : ℕ → Fin 432
-  | 0 => 60
-  | 1 => 52
-  | 2 => 68
-  | 3 => 70
-  | 4 => 50
-  | 5 => 54
-  | 6 => 56
-  | 7 => 58
-  | 8 => 62
-  | 9 => 64
-  | 10 => 66
-  | _ => 60
-
-/-- `3.<reg_k>.decnz` (States `49..70`) for register `0 ≤ k ≤ 10`. -/
-def regDecnzStage3 : ℕ → Fin 432
-  | 0 => 59
-  | 1 => 51
-  | 2 => 67
-  | 3 => 69
-  | 4 => 49
-  | 5 => 53
-  | 6 => 55
-  | 7 => 57
-  | 8 => 61
-  | 9 => 63
-  | 10 => 65
-  | _ => 59
 
 /-- Canonical configuration at `main().0` (State `126`) with stack region of width `padTotal`
 and arbitrary right-tape tail `R` starting at the `[1, 0]` `-2` marker. -/
@@ -644,14 +61,6 @@ def zfRootCfgR (padTotal : ℕ) (stack : List (Fin 2)) (R : ListBlank (Fin 2)) :
   ⟨126, Tape.mk' rootLeft
     (ListBlank.append (stack ++ List.replicate (padTotal - stack.length) 0) R)⟩
 
-/-- Canonical configuration at `main().0` (State `126`) with stack `stack`, register bank `regs`,
-and trailing tape `extra` after `regs`. -/
-def zfRootCfg (padTotal : ℕ) (stack : List (Fin 2)) (regs : List ℕ)
-    (extra : ListBlank (Fin 2) := default) : Cfg 432 2 :=
-  ⟨126, Tape.mk' rootLeft
-    (ListBlank.append
-      (stack ++ List.replicate (padTotal - stack.length) 0 ++ [1, 0] ++ encodeRegs regs)
-      extra)⟩
 
 theorem zfRootCfg_eq_zfRootCfgR (padTotal : ℕ) (stack : List (Fin 2)) (regs : List ℕ)
     (extra : ListBlank (Fin 2)) :
@@ -660,7 +69,8 @@ theorem zfRootCfg_eq_zfRootCfgR (padTotal : ℕ) (stack : List (Fin 2)) (regs : 
         0] (ListBlank.append (encodeRegs regs) extra)) := by
   simp [zfRootCfg, zfRootCfgR, List.append_assoc, ListBlank.append_assoc]
 
-theorem zfRootCfg_default_eq (padTotal : ℕ) (stack : List (Fin 2)) (regs : List ℕ) :
+theorem zfRootCfg_default_eq_zfRootCfgR (padTotal : ℕ) (stack : List (Fin 2))
+    (regs : List ℕ) :
     zfRootCfg padTotal stack regs default =
       zfRootCfgR padTotal stack (ListBlank.append [1, 0] (regsTape regs)) := by
   rw [zfRootCfg_eq_zfRootCfgR]; rfl
@@ -1067,7 +477,7 @@ def treeWalkCfg (q : Fin 432) (walked rem : List (Fin 2)) (L₀ R_tail : ListBla
   ⟨q, Tape.mk' (ListBlank.append walked.reverse L₀) (ListBlank.append rem R_tail)⟩
 
 /-- Universal Tree-Walk Soundness Theorem: for any `q`, `walked`, `rem`, `L₀`, and `R_tail`,
-`nSteps reference` executes `walkTape q walked rem` on the tape without touching `L₀` or
+`nSteps Machines.zf432` executes `walkTape q walked rem` on the tape without touching `L₀` or
 `R_tail`. -/
 theorem walkTape_sound (q : Fin 432) (walked rem : List (Fin 2)) (L₀ R_tail : ListBlank (Fin 2)) :
     match walkTape q walked rem with
@@ -1075,17 +485,17 @@ theorem walkTape_sound (q : Fin 432) (walked rem : List (Fin 2)) (L₀ R_tail : 
       walked_h ++ rem_h = walked ++ rem ∧
       ∃ s ch,
         ch = treeWalkCfg q_h walked_h rem_h L₀ R_tail ∧
-        nSteps reference s (treeWalkCfg q walked rem L₀ R_tail) = some ch ∧
-        step reference ch = none
+        nSteps Machines.zf432 s (treeWalkCfg q walked rem L₀ R_tail) = some ch ∧
+        step Machines.zf432 ch = none
     | .jumpLeft q' walked_j rem' =>
       (∃ b, walked_j ++ (b :: rem') = walked ++ rem) ∧
-      ∃ s, 1 ≤ s ∧ nSteps reference s (treeWalkCfg q walked rem L₀ R_tail) =
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s (treeWalkCfg q walked rem L₀ R_tail) =
         some ⟨q', Tape.mkL (ListBlank.append walked_j.reverse L₀) (ListBlank.append (0 :: rem')
           R_tail)⟩
     | .regLeaf q' walked_l rem' =>
       walked_l ++ rem' = walked ++ rem ∧
       49 ≤ q'.val ∧ q'.val ≤ 70 ∧
-      ∃ s, 1 ≤ s ∧ nSteps reference s (treeWalkCfg q walked rem L₀ R_tail) =
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s (treeWalkCfg q walked rem L₀ R_tail) =
         some (treeWalkCfg q' walked_l rem' L₀ R_tail)
     | .outOfFuel => True := by
   induction rem generalizing q walked with
@@ -1110,7 +520,7 @@ theorem walkTape_sound (q : Fin 432) (walked rem : List (Fin 2)) (L₀ R_tail : 
         · simp only [hw, ↓reduceIte]
           have hwb : w = b := beq_iff_eq.mp hw
           subst hwb
-          have hstep1 : step reference (treeWalkCfg q walked (w :: rem') L₀ R_tail) =
+          have hstep1 : step Machines.zf432 (treeWalkCfg q walked (w :: rem') L₀ R_tail) =
               some (treeWalkCfg q' (walked ++ [w]) rem' L₀ R_tail) := by
             simpa [treeWalkCfg, append_reverse_cons] using
               step_mk'_right htr (ListBlank.append walked.reverse L₀) (ListBlank.append rem' R_tail)
@@ -2312,179 +1722,6 @@ theorem walkTape_of_validStack {bits : List (Fin 2)} (hv : validStack bits = tru
 -/
 
 /-- `4.dispatch` chain (`0 ↦ 4.dispatch.scan = 86`, `d + 1 ↦ 4.dispatch.<d>` for `0 ≤ d ≤ 14`). -/
-def zfDispatchState : ℕ → Fin 432
-  | 0 => 86
-  | 1 => 71
-  | 2 => 72
-  | 3 => 78
-  | 4 => 79
-  | 5 => 80
-  | 6 => 81
-  | 7 => 82
-  | 8 => 83
-  | 9 => 84
-  | 10 => 85
-  | 11 => 73
-  | 12 => 74
-  | 13 => 75
-  | 14 => 76
-  | 15 => 77
-  | _ => 86
-
-theorem zfDispatch_trans_zero (d : ℕ) (hd1 : 1 ≤ d) (hd15 : d ≤ 15) :
-    refTrans (zfDispatchState d) 0 = some (0, .left, zfDispatchState (d - 1)) := by
-  revert d hd1 hd15; decide
-
-theorem zfDispatch_trans_one (d : ℕ) (hd1 : 1 ≤ d) (hd15 : d ≤ 15) :
-    refTrans (zfDispatchState d) 1 = some (1, .left, zfDispatchState d) := by
-  revert d hd1 hd15; decide
-
-theorem step_zfDispatch (d : ℕ) (hd1 : 1 ≤ d) (hd15 : d ≤ 15) (a : Fin 2)
-    (L R : ListBlank (Fin 2)) :
-    step reference ⟨zfDispatchState d, Tape.mkL (L.cons a) R⟩ =
-      some ⟨zfDispatchState (d - [a].count 0), Tape.mkL L (R.cons a)⟩ := by
-  rcases fin2_cases a with rfl | rfl
-  · exact step_mkL_left (zfDispatch_trans_zero d hd1 hd15) L R
-  · exact step_mkL_left (zfDispatch_trans_one d hd1 hd15) L R
-
-theorem zfDispatch_scan_list (l : List (Fin 2)) (d : ℕ)
-    (hcount : l.count 0 < d) (hd15 : d ≤ 15) (L R : ListBlank (Fin 2)) :
-    nSteps reference l.length
-      ⟨zfDispatchState d, Tape.mkL (ListBlank.append l.reverse L) R⟩ =
-      some ⟨zfDispatchState (d - l.count 0), Tape.mkL L (ListBlank.append l R)⟩ := by
-  induction l using List.reverseRecOn generalizing d R with
-  | nil => simp
-  | append_singleton l a ih =>
-    rw [List.count_append] at hcount
-    have ha_le : [a].count 0 ≤ 1 := by rcases fin2_cases a with rfl | rfl <;> decide
-    have hd1 : 1 ≤ d := by omega
-    have hcount' : l.count 0 < d - [a].count 0 := by omega
-    have hd15' : d - [a].count 0 ≤ 15 := by omega
-    rw [List.reverse_append, List.reverse_singleton, List.singleton_append,
-      ListBlank.append, List.length_append, List.length_singleton]
-    have hstep := step_zfDispatch d hd1 hd15 a (ListBlank.append l.reverse L) R
-    have hrest := ih (d - [a].count 0) hcount' hd15' (R.cons a)
-    have hsub : d - [a].count 0 - l.count 0 = d - (l ++ [a]).count 0 := by
-      rw [List.count_append]; omega
-    rw [hsub, append_cons_snoc] at hrest
-    exact step_nSteps hstep hrest
-
-theorem zfDispatch_bounce_default (k : ℕ) (_hk1 : 1 ≤ k) (hk15 : k ≤ 15)
-    (R : ListBlank (Fin 2)) :
-    nSteps reference (2 * k + 1)
-      ⟨zfDispatchState k, Tape.mkL default R⟩ =
-      some ⟨86, Tape.mk' default R⟩ := by
-  have hleft : ∀ m, m ≤ 15 → ∀ R',
-      nSteps reference m ⟨zfDispatchState m, Tape.mkL default R'⟩ =
-        some ⟨86, Tape.mkL default (ListBlank.append (List.replicate m 0) R')⟩ := by
-    intro m hm R'
-    induction m generalizing R' with
-    | zero => rfl
-    | succ m ihm =>
-      have hm1 : 1 ≤ m + 1 := by omega
-      have hdef : (default : ListBlank (Fin 2)) = ListBlank.cons 0 default :=
-        default_cons_zero.symm
-      have h1 : step reference ⟨zfDispatchState (m + 1), Tape.mkL default R'⟩ =
-          some ⟨zfDispatchState m, Tape.mkL default (R'.cons 0)⟩ := by
-        conv_lhs => rw [hdef]
-        exact step_mkL_left (zfDispatch_trans_zero (m + 1) hm1 hm) default R'
-      have hrest := ihm (by omega) (R'.cons 0)
-      rw [append_replicate_cons] at hrest
-      exact step_nSteps h1 hrest
-  have hl := hleft k hk15 R
-  conv at hl => rhs; rw [Tape.mkL_default]
-  have hcons : (ListBlank.append (List.replicate k 0) R).cons 0 =
-      ListBlank.append (List.replicate (k + 1) 0) R := by
-    rw [List.replicate_succ, ListBlank.append]
-  rw [hcons] at hl
-  have hr := nSteps_mk'_right_scan (q := 86) (a := 0) (b := 0) (by rfl) (k + 1) default R
-  rw [append_replicate_zero_default] at hr
-  have hcomb := nSteps_bind_eq hl hr
-  have hlen : k + (k + 1) = 2 * k + 1 := by omega
-  rw [hlen] at hcomb
-  exact hcomb
-
-theorem root_scan_to_main (a : Fin 2) (R : ListBlank (Fin 2)) :
-    nSteps reference 3
-      ⟨86, Tape.mk' default (ListBlank.append [1, 1, a] R)⟩ =
-      some ⟨126, Tape.mk' rootLeft R⟩ := by
-  simp only [ListBlank.append]
-  have h1 : step reference ⟨86, Tape.mk' default (((R.cons a).cons 1).cons 1)⟩ =
-      some ⟨87, Tape.mk' (ListBlank.cons 1 default) ((R.cons a).cons 1)⟩ :=
-    step_mk'_right (by rfl) _ _
-  have h2 : step reference ⟨87, Tape.mk' (ListBlank.cons 1 default) ((R.cons a).cons 1)⟩ =
-      some ⟨88, Tape.mk' ((ListBlank.cons 1 default).cons 1) (R.cons a)⟩ :=
-    step_mk'_right (by rfl) _ _
-  have h3 : step reference ⟨88, Tape.mk' ((ListBlank.cons 1 default).cons 1) (R.cons a)⟩ =
-      some ⟨126, Tape.mk' rootLeft R⟩ := by
-    rcases fin2_cases a with rfl | rfl
-    · exact step_mk'_right (by rfl) _ _
-    · exact step_mk'_right (by rfl) _ _
-  exact step_nSteps h1 (step_nSteps h2 (step_one h3))
-
-theorem dispatch_return_to_main (w : List (Fin 2)) (d : ℕ)
-    (hcount : w.count 0 + 1 < d) (hd15 : d ≤ 15) (R : ListBlank (Fin 2)) :
-    ∃ s, 1 ≤ s ∧ nSteps reference s
-      ⟨zfDispatchState d, Tape.mkL (stackLeft w) R⟩ =
-      some ⟨126, Tape.mk' rootLeft (ListBlank.append w R)⟩ := by
-  rw [stackLeft_eq_append]
-  have hcnt : ([1, 1, 0] ++ w).count 0 < d := by
-    rw [List.count_append]
-    change 1 + w.count 0 < d
-    omega
-  have hscan := zfDispatch_scan_list ([1, 1, 0] ++ w) d hcnt hd15 default R
-  set k := d - ([1, 1, 0] ++ w).count 0
-  have hk1 : 1 ≤ k := by omega
-  have hk15 : k ≤ 15 := by omega
-  have hbounce := zfDispatch_bounce_default k hk1 hk15 (ListBlank.append ([1, 1, 0] ++ w) R)
-  rw [ListBlank.append_assoc] at hbounce
-  have hroot := root_scan_to_main 0 (ListBlank.append w R)
-  have htotal := nSteps_bind_eq hscan (nSteps_bind_eq hbounce hroot)
-  exact ⟨_, by omega, htotal⟩
-
-theorem continue0_return (w : List (Fin 2)) (hcount : w.count 0 ≤ 13) (R : ListBlank (Fin 2)) :
-    ∃ s, 1 ≤ s ∧ nSteps reference s
-      ⟨92, Tape.mkL (stackLeft w) R⟩ =
-      some ⟨126, Tape.mk' rootLeft (ListBlank.append w R)⟩ := by
-  induction w using List.reverseRecOn generalizing R with
-  | nil =>
-    rw [stackLeft_nil]
-    have h1 : step reference ⟨92, Tape.mkL rootLeft R⟩ =
-        some ⟨92, Tape.mkL ((ListBlank.cons 1 default).cons 1) (R.cons 0)⟩ :=
-      step_mkL_left (by rfl) _ _
-    have h2 : step reference ⟨92, Tape.mkL ((ListBlank.cons 1 default).cons 1) (R.cons 0)⟩ =
-        some ⟨77, Tape.mkL (ListBlank.cons 1 default) ((R.cons 0).cons 1)⟩ :=
-      step_mkL_left (by rfl) _ _
-    have h3 : step reference ⟨77, Tape.mkL (ListBlank.cons 1 default) ((R.cons 0).cons 1)⟩ =
-        some ⟨77, Tape.mkL default (((R.cons 0).cons 1).cons 1)⟩ :=
-      step_mkL_left (by rfl) _ _
-    have hbounce := zfDispatch_bounce_default 15 (by decide) (by decide)
-      (((R.cons 0).cons 1).cons 1)
-    have hroot := root_scan_to_main 0 R
-    have htotal := step_nSteps h1 (step_nSteps h2 (step_nSteps h3 (nSteps_bind_eq hbounce hroot)))
-    exact ⟨_, by omega, htotal⟩
-  | append_singleton w a ih =>
-    rw [stackLeft_append, List.reverse_singleton, ListBlank.append]
-    rcases fin2_cases a with rfl | rfl
-    · have hw : w.count 0 ≤ 13 := by
-        rw [List.count_append] at hcount; omega
-      have hstep : step reference ⟨92, Tape.mkL ((stackLeft w).cons 0) R⟩ =
-          some ⟨92, Tape.mkL (stackLeft w) (R.cons 0)⟩ :=
-        step_mkL_left (by rfl) _ _
-      obtain ⟨s, hs1, hrest⟩ := ih hw (R.cons 0)
-      rw [append_cons_snoc] at hrest
-      exact ⟨s + 1, by omega, step_nSteps hstep hrest⟩
-    · have hw : w.count 0 + 1 < 15 := by
-        rw [List.count_append] at hcount
-        change w.count 0 + 0 ≤ 13 at hcount
-        omega
-      have hstep : step reference ⟨92, Tape.mkL ((stackLeft w).cons 1) R⟩ =
-          some ⟨zfDispatchState 15, Tape.mkL (stackLeft w) (R.cons 1)⟩ :=
-        step_mkL_left (by rfl) _ _
-      obtain ⟨s, hs1, hrest⟩ := dispatch_return_to_main w 15 hw (by decide) (R.cons 1)
-      rw [append_cons_snoc] at hrest
-      exact ⟨s + 1, by omega, step_nSteps hstep hrest⟩
-
 theorem continue_trans_zero (k : ℕ) (hk3 : k ≤ 3) :
     refTrans ⟨92 + k, by omega⟩ 0 = some (0, .left, ⟨92 + k, by omega⟩) := by
   revert k hk3; decide
@@ -2496,7 +1733,7 @@ theorem continue_trans_one (k : ℕ) (hk2 : k ≤ 2) :
 theorem continue_scan_to_92 (k : ℕ) (hk3 : k ≤ 3) (rev : List (Fin 2))
     (h1 : k + 1 ≤ rev.count 1) (L R : ListBlank (Fin 2)) :
     let w' := (popContinueRev k rev).reverse
-    ∃ s, nSteps reference s
+    ∃ s, nSteps Machines.zf432 s
       ⟨⟨92 + k, by omega⟩, Tape.mkL (ListBlank.append rev L) R⟩ =
       some ⟨92, Tape.mkL (ListBlank.append w'.reverse L)
         (ListBlank.append (List.replicate (rev.length - w'.length) 0) R)⟩ := by
@@ -2506,7 +1743,7 @@ theorem continue_scan_to_92 (k : ℕ) (hk3 : k ≤ 3) (rev : List (Fin 2))
   | cons b xs ih =>
     intro w'
     rcases fin2_cases b with rfl | rfl
-    · have hstep : step reference
+    · have hstep : step Machines.zf432
           ⟨⟨92 + k, by omega⟩, Tape.mkL ((ListBlank.append xs L).cons 0) R⟩ =
           some ⟨⟨92 + k, by omega⟩, Tape.mkL (ListBlank.append xs L) (R.cons 0)⟩ :=
         step_mkL_left (continue_trans_zero k hk3) _ _
@@ -2535,7 +1772,7 @@ theorem continue_scan_to_92 (k : ℕ) (hk3 : k ≤ 3) (rev : List (Fin 2))
       | succ k' =>
         have hk'2 : k' ≤ 2 := by omega
         have hk'3 : k' ≤ 3 := by omega
-        have hstep : step reference
+        have hstep : step Machines.zf432
             ⟨⟨92 + (k' + 1), by omega⟩, Tape.mkL ((ListBlank.append xs L).cons 1) R⟩ =
             some ⟨⟨92 + k', by omega⟩, Tape.mkL (ListBlank.append xs L) (R.cons 0)⟩ :=
           step_mkL_left (continue_trans_one k' hk'2) _ _
@@ -2555,7 +1792,7 @@ theorem continue_scan_to_92 (k : ℕ) (hk3 : k ≤ 3) (rev : List (Fin 2))
 theorem continue_return_eval (k : ℕ) (hk3 : k ≤ 3) (walked : List (Fin 2))
     (h1 : k + 1 ≤ walked.count 1) (h0 : walked.count 0 ≤ 12) (R : ListBlank (Fin 2)) :
     let w' := (popContinueRev k walked.reverse).reverse
-    ∃ s, 1 ≤ s ∧ nSteps reference s
+    ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
       ⟨⟨92 + k, by omega⟩, Tape.mkL (stackLeft walked) R⟩ =
       some ⟨126, Tape.mk' rootLeft
         (ListBlank.append w'
@@ -2574,14 +1811,14 @@ theorem continue_return_eval (k : ℕ) (hk3 : k ≤ 3) (walked : List (Fin 2))
   exact ⟨s₁ + s₂, by omega, nSteps_bind_eq hs₁ hs₂⟩
 
 theorem cleanup_47_to_92 (L : ListBlank (Fin 2)) (z m : ℕ) (R : ListBlank (Fin 2)) :
-    nSteps reference (2 * z + 2 * m + 3)
+    nSteps Machines.zf432 (2 * z + 2 * m + 3)
       ⟨47, Tape.mk' L (ListBlank.append (List.replicate z 0) (ListBlank.append (encodeReg m) R))⟩ =
       some ⟨92, Tape.mkL L
         (ListBlank.append (List.replicate (z + m) 0) (ListBlank.append [1, 0] R))⟩ := by
   have hscan_z := nSteps_mk'_right_scan (q := 47) (a := 0) (b := 0) (by rfl) z
     L (ListBlank.append (encodeReg m) R)
   conv at hscan_z => rhs; rw [append_encodeReg, List.replicate_succ, ListBlank.append]
-  have h1 : step reference
+  have h1 : step Machines.zf432
       ⟨47, Tape.mk' (ListBlank.append (List.replicate z 0) L)
         ((ListBlank.append (List.replicate m 1) (R.cons 0)).cons 1)⟩ =
       some ⟨48, Tape.mk' ((ListBlank.append (List.replicate z 0) L).cons 0)
@@ -2596,11 +1833,11 @@ theorem cleanup_47_to_92 (L : ListBlank (Fin 2)) (z m : ℕ) (R : ListBlank (Fin
     have hadd : m + 1 + z = (z + m) + 1 := by omega
     rw [hadd, List.replicate_succ, ListBlank.append]
   rw [hzeros] at hscan_m
-  have h2 : step reference
+  have h2 : step Machines.zf432
       ⟨48, Tape.mk' ((ListBlank.append (List.replicate (z + m) 0) L).cons 0) (R.cons 0)⟩ =
       some ⟨5, Tape.mkL ((ListBlank.append (List.replicate (z + m) 0) L).cons 0) (R.cons 0)⟩ :=
     step_mk'_left (by rfl) _ R
-  have h3 : step reference
+  have h3 : step Machines.zf432
       ⟨5, Tape.mkL ((ListBlank.append (List.replicate (z + m) 0) L).cons 0) (R.cons 0)⟩ =
       some ⟨92, Tape.mkL (ListBlank.append (List.replicate (z + m) 0) L)
         (ListBlank.append [1, 0] R)⟩ :=
@@ -2624,7 +1861,7 @@ theorem break_trans_zero_succ (k : ℕ) (hk1 : k ≤ 1) :
 theorem break_scan_to_47 (k : ℕ) (hk2 : k ≤ 2) (rev : List (Fin 2))
     (h0 : k + 1 ≤ rev.count 0) (L R : ListBlank (Fin 2)) :
     let w' := (popBreakRev k rev).reverse
-    ∃ s, 1 ≤ s ∧ nSteps reference s
+    ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
       ⟨⟨89 + k, by omega⟩, Tape.mkL (ListBlank.append rev L) R⟩ =
       some ⟨47, Tape.mk' (ListBlank.append w'.reverse L)
         (ListBlank.append (List.replicate (rev.length - w'.length) 0) R)⟩ := by
@@ -2636,7 +1873,7 @@ theorem break_scan_to_47 (k : ℕ) (hk2 : k ≤ 2) (rev : List (Fin 2))
     rcases fin2_cases b with rfl | rfl
     · cases k with
       | zero =>
-        have hstep : step reference
+        have hstep : step Machines.zf432
             ⟨⟨89 + 0, by omega⟩, Tape.mkL ((ListBlank.append xs L).cons 0) R⟩ =
             some ⟨47, Tape.mk' ((ListBlank.append xs L).cons 1) R⟩ :=
           step_mkL_right (by rfl) _ _
@@ -2652,7 +1889,7 @@ theorem break_scan_to_47 (k : ℕ) (hk2 : k ≤ 2) (rev : List (Fin 2))
       | succ k' =>
         have hk'1 : k' ≤ 1 := by omega
         have hk'2 : k' ≤ 2 := by omega
-        have hstep : step reference
+        have hstep : step Machines.zf432
             ⟨⟨89 + (k' + 1), by omega⟩, Tape.mkL ((ListBlank.append xs L).cons 0) R⟩ =
             some ⟨⟨89 + k', by omega⟩, Tape.mkL (ListBlank.append xs L) (R.cons 0)⟩ :=
           step_mkL_left (break_trans_zero_succ k' hk'1) _ _
@@ -2668,7 +1905,7 @@ theorem break_scan_to_47 (k : ℕ) (hk2 : k ≤ 2) (rev : List (Fin 2))
           simp; omega
         rw [hw'_eq, append_replicate_cons, ← hsub] at hs
         exact ⟨s + 1, by omega, step_nSteps hstep hs⟩
-    · have hstep : step reference
+    · have hstep : step Machines.zf432
           ⟨⟨89 + k, by omega⟩, Tape.mkL ((ListBlank.append xs L).cons 1) R⟩ =
           some ⟨⟨89 + k, by omega⟩, Tape.mkL (ListBlank.append xs L) (R.cons 0)⟩ :=
         step_mkL_left (break_trans_one k hk2) _ _
@@ -2700,18 +1937,18 @@ theorem popBreakRev_of_count_eq (k : ℕ) (rev : List (Fin 2)) (h : rev.count 0 
       simpa using ih k h'
 
 theorem continue0_return_root111 (R : ListBlank (Fin 2)) :
-    ∃ s, 1 ≤ s ∧ nSteps reference s
+    ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
       ⟨92, Tape.mkL (((default : ListBlank (Fin 2)).cons 1 |>.cons 1).cons 1) R⟩ =
       some ⟨126, Tape.mk' rootLeft R⟩ := by
-  have h1 : step reference ⟨92,
+  have h1 : step Machines.zf432 ⟨92,
       Tape.mkL (((default : ListBlank (Fin 2)).cons 1 |>.cons 1).cons 1) R⟩ =
       some ⟨77, Tape.mkL ((default : ListBlank (Fin 2)).cons 1 |>.cons 1) (R.cons 1)⟩ :=
     step_mkL_left (by rfl) _ _
-  have h2 : step reference ⟨77,
+  have h2 : step Machines.zf432 ⟨77,
       Tape.mkL ((default : ListBlank (Fin 2)).cons 1 |>.cons 1) (R.cons 1)⟩ =
       some ⟨77, Tape.mkL (ListBlank.cons 1 default) ((R.cons 1).cons 1)⟩ :=
     step_mkL_left (by rfl) _ _
-  have h3 : step reference ⟨77, Tape.mkL (ListBlank.cons 1 default) ((R.cons 1).cons 1)⟩ =
+  have h3 : step Machines.zf432 ⟨77, Tape.mkL (ListBlank.cons 1 default) ((R.cons 1).cons 1)⟩ =
       some ⟨77, Tape.mkL default (((R.cons 1).cons 1).cons 1)⟩ :=
     step_mkL_left (by rfl) _ _
   have hbounce := zfDispatch_bounce_default 15 (by decide) (by decide)
@@ -2729,7 +1966,7 @@ theorem break_cleanup_eval (k : ℕ) (hk2 : k ≤ 2) (walked : List (Fin 2))
     (hk0 : k ≤ walked.count 0) (h0 : walked.count 0 ≤ 12)
     (z m : ℕ) (R : ListBlank (Fin 2)) :
     let w' := (popBreakRev k walked.reverse).reverse
-    ∃ s, 1 ≤ s ∧ nSteps reference s
+    ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
       ⟨⟨89 + k, by omega⟩, Tape.mkL (stackLeft walked)
         (ListBlank.append (List.replicate z 0) (ListBlank.append (encodeReg m) R))⟩ =
       some ⟨126, Tape.mk' rootLeft
@@ -2777,7 +2014,7 @@ theorem break_cleanup_eval (k : ℕ) (hk2 : k ≤ 2) (walked : List (Fin 2))
       rw [List.length_reverse, hpop_0, List.length_append, List.length_reverse]
       simp
     rw [hrev_1, hsub_len, append_replicate_zeros_eq] at hs₁
-    change nSteps reference s₁ _ =
+    change nSteps Machines.zf432 s₁ _ =
       some ⟨47, Tape.mk' (((default : ListBlank (Fin 2)).cons 1 |>.cons 1).cons 1)
         (ListBlank.append (List.replicate (walked.length +
           z) 0) (ListBlank.append (encodeReg m) R))⟩ at hs₁
@@ -2788,49 +2025,6 @@ theorem break_cleanup_eval (k : ℕ) (hk2 : k ≤ 2) (walked : List (Fin 2))
     have hcomb := nSteps_bind_eq hs₁ (nSteps_bind_eq hcl hret)
     rw [hw']
     simpa using ⟨_, by omega, hcomb⟩
-
-theorem prep_pass1_eval (stack : List (Fin 2)) (hstack : stack.count 0 ≤ 12)
-    (p : ℕ) (R : ListBlank (Fin 2)) :
-    ∃ s, 1 ≤ s ∧ nSteps reference s
-      ⟨8, Tape.mk' ((stackLeft stack).cons 1)
-        (ListBlank.append (List.replicate (p + 1) 0) (ListBlank.append [1, 0] R))⟩ =
-      some ⟨126, Tape.mk' rootLeft
-        (ListBlank.append (stack ++ [1, 0] ++ encodeReg p) R)⟩ := by
-  rw [List.replicate_succ, ListBlank.append]
-  have h1 : step reference
-      ⟨8, Tape.mk' ((stackLeft stack).cons 1)
-        ((ListBlank.append (List.replicate p 0) (ListBlank.append [1, 0] R)).cons 0)⟩ =
-      some ⟨9, Tape.mk' (((stackLeft stack).cons 1).cons 0)
-        (ListBlank.append (List.replicate p 0) (ListBlank.append [1, 0] R))⟩ :=
-    step_mk'_right (by rfl) _ _
-  have hscan := nSteps_mk'_right_scan (q := 9) (a := 0) (b := 1) (by rfl) p
-    (((stackLeft stack).cons 1).cons 0) (ListBlank.append [1, 0] R)
-  have h2 : step reference
-      ⟨9, Tape.mk' (ListBlank.append (List.replicate p 1) (((stackLeft stack).cons 1).cons 0))
-        (ListBlank.append [1, 0] R)⟩ =
-      some ⟨92, Tape.mkL (ListBlank.append (List.replicate p 1) (((stackLeft stack).cons 1).cons 0))
-        (ListBlank.append [1, 0] R)⟩ :=
-    step_mk'_left (by rfl) _ (R.cons 0)
-  have hL_eq : ListBlank.append (List.replicate p 1) (((stackLeft stack).cons 1).cons 0) =
-      stackLeft (stack ++ [1, 0] ++ List.replicate p 1) := by
-    rw [stackLeft_append, stackLeft_append, List.reverse_replicate]
-    rfl
-  conv at h2 => rhs; rw [hL_eq]
-  have hrep0 : (List.replicate p (1 : Fin 2)).count 0 = 0 := by
-    rw [List.count_replicate]; rfl
-  have hw_cnt : (stack ++ [1, 0] ++ List.replicate p 1).count 0 ≤ 13 := by
-    rw [List.count_append, List.count_append, hrep0]
-    change stack.count 0 + 1 + 0 ≤ 13
-    omega
-  obtain ⟨s_ret, hs1, hret⟩ := continue0_return (stack ++ [1, 0] ++ List.replicate p 1) hw_cnt
-    (ListBlank.append [1, 0] R)
-  have hR_eq : ListBlank.append (stack ++ [1, 0] ++ List.replicate p 1)
-      (ListBlank.append [1, 0] R) =
-      ListBlank.append (stack ++ [1, 0] ++ encodeReg p) R := by
-    simp only [encodeReg, List.replicate_succ', List.append_assoc, ListBlank.append_assoc]
-    rfl
-  rw [hR_eq] at hret
-  exact ⟨_, by omega, step_nSteps h1 (nSteps_bind_eq hscan (step_nSteps h2 hret))⟩
 
 /-!
 ## 5. Abstract Call-Stack + Register Machine & Simulation Theorems
@@ -3017,7 +2211,7 @@ theorem regLeaf_pass1_and_pass2_tree {q' : Fin 432} {bits : List (Fin 2)} {m pad
     (regs : List ℕ) :
     let walked_l := bits ++ List.replicate m 0
     let p := padTotal - bits.length - m - 2
-    ∃ s, 1 ≤ s ∧ nSteps reference s (zfRootCfg padTotal bits regs) =
+    ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s (zfRootCfg padTotal bits regs) =
       some ⟨q', Tape.mk' (stackLeft walked_l) ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ := by
   intro walked_l p
   have hw1 := walkTape_sound 126 [] (bits ++ List.replicate (padTotal - bits.length) 0)
@@ -3025,7 +2219,7 @@ theorem regLeaf_pass1_and_pass2_tree {q' : Fin 432} {bits : List (Fin 2)} {m pad
   rw [hpad_walk, ← zfRootCfg_eq_treeWalkCfg] at hw1
   rcases hw1 with ⟨_, _, _, s₁, hs₁_pos, hw1⟩
   unfold treeWalkCfg at hw1
-  change nSteps reference s₁ (zfRootCfg padTotal bits regs) =
+  change nSteps Machines.zf432 s₁ (zfRootCfg padTotal bits regs) =
     some ⟨q', Tape.mk' (stackLeft walked_l)
       (ListBlank.append (List.replicate (padTotal - bits.length -
         m) 0) (regsTape (0 :: regs)))⟩ at hw1
@@ -3034,7 +2228,7 @@ theorem regLeaf_pass1_and_pass2_tree {q' : Fin 432} {bits : List (Fin 2)} {m pad
     rw [regsTape_cons]; rfl
   rw [hsub_p, hregs0, List.replicate_succ, ListBlank.append] at hw1
   have hq'0 := (leaf_stage3_eq q' h49 h70).1
-  have hstep_q' : step reference
+  have hstep_q' : step Machines.zf432
       ⟨q', Tape.mk' (stackLeft walked_l)
         ((ListBlank.append (List.replicate (p + 1) 0) (ListBlank.append [1,
           0] (regsTape regs))).cons 0)⟩ =
@@ -3052,7 +2246,7 @@ theorem regLeaf_pass1_and_pass2_tree {q' : Fin 432} {bits : List (Fin 2)} {m pad
   rcases hw2 with ⟨_, _, _, s₂, hs₂_pos, hw2⟩
   unfold treeWalkCfg at hw2
   simp only [List.reverse_nil, ListBlank.append] at hw2
-  change nSteps reference s₂
+  change nSteps Machines.zf432 s₂
     ⟨126, Tape.mk' rootLeft (ListBlank.append walked_l ((regsTape (p :: regs)).cons 0 |>.cons 1))⟩ =
     some ⟨q', Tape.mk' (stackLeft walked_l) ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ at hw2
   have hcomb := nSteps_bind_eq hw1 (step_nSteps hstep_q' (nSteps_bind_eq hprep hw2))
@@ -3065,7 +2259,7 @@ theorem regLeaf_break_to_root (k : ℕ) (hk2 : k ≤ 2) {bits : List (Fin 2)} {m
     (regs' : List ℕ) :
     let walked_l := bits ++ List.replicate m 0
     let p := padTotal - bits.length - m - 2
-    ∃ s, 1 ≤ s ∧ nSteps reference s
+    ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
       ⟨⟨89 + k, by omega⟩, Tape.mkL (stackLeft walked_l)
         ((regsTape (p :: regs')).cons 0 |>.cons 0)⟩ =
       some (zfRootCfg padTotal (applyBreak bits (bits.length + m) k) regs') := by
@@ -3098,28 +2292,28 @@ theorem regLeaf_break_to_root (k : ℕ) (hk2 : k ≤ 2) {bits : List (Fin 2)} {m
   rw [hroot_eq] at hcl
   exact ⟨s, hs_pos, hcl⟩
 
-/-- Single-step simulation of `zfRegStep` by `reference`:
+/-- Single-step simulation of `zfRegStep` by `Machines.zf432`:
 given the three Layer 1 Pass-2 register theorems (`hInc`, `hDecZero`, `hDecPos`),
 for any `padTotal ≥ 160` and any `c : ZfRegCfg` satisfying `ZfRegInv c`:
-- if `zfRegStep c = some c'`, then `reference` steps from `zfRootCfg padTotal c.stack c.regs`
+- if `zfRegStep c = some c'`, then `Machines.zf432` steps from `zfRootCfg padTotal c.stack c.regs`
   to `zfRootCfg padTotal c'.stack c'.regs` in `s ≥ 1` steps;
-- if `zfRegStep c = none`, then `reference` reaches a halting configuration from
+- if `zfRegStep c = none`, then `Machines.zf432` reaches a halting configuration from
   `zfRootCfg padTotal c.stack c.regs`. -/
 theorem tm_simulates_zfRegStep
     (hInc : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regIncStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨89, Tape.mkL L_stack
           ((regsTape (p :: regs.set k (regs[k] + 1))).cons 0 |>.cons 0)⟩)
     (hDecZero : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       regs[k] = 0 → ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regDecnzStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨90, Tape.mkL L_stack ((regsTape (p :: regs)).cons 0 |>.cons 0)⟩)
     (hDecPos : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       0 < regs[k] → ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regDecnzStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨89, Tape.mkL L_stack
           ((regsTape (p :: (regs.set k (regs[k] - 1) ++ [0]))).cons 0 |>.cons 0)⟩)
@@ -3127,11 +2321,11 @@ theorem tm_simulates_zfRegStep
     {c : ZfRegCfg} (hInv : ZfRegInv c) :
     match zfRegStep c with
     | some c' =>
-      ∃ s, 1 ≤ s ∧ nSteps reference s (zfRootCfg padTotal c.stack c.regs) =
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s (zfRootCfg padTotal c.stack c.regs) =
         some (zfRootCfg padTotal c'.stack c'.regs)
     | none =>
-      ∃ s ch, nSteps reference s (zfRootCfg padTotal c.stack c.regs) = some ch ∧
-        step reference ch = none := by
+      ∃ s ch, nSteps Machines.zf432 s (zfRootCfg padTotal c.stack c.regs) = some ch ∧
+        step Machines.zf432 ch = none := by
   rcases hInv with ⟨hv, hregs_len⟩
   have hbits_len : c.stack.length ≤ 148 := (validStack_bounds hv).1
   have hpad12 : 12 ≤ padTotal - c.stack.length := by omega
@@ -3158,7 +2352,7 @@ theorem tm_simulates_zfRegStep
         ListBlank.append (List.replicate (padTotal - c.stack.length + 1) 0)
           (ListBlank.append (encodeReg 0) (regsTape c.regs)) := by
       rw [← List.replicate_succ, regsTape_cons]
-    change nSteps reference s₁ (zfRootCfg padTotal c.stack c.regs) =
+    change nSteps Machines.zf432 s₁ (zfRootCfg padTotal c.stack c.regs) =
       some ⟨⟨89 + k, by omega⟩, Tape.mkL (stackLeft pref)
         (ListBlank.append (0 :: List.replicate (padTotal -
           c.stack.length) 0) (regsTape (0 :: c.regs)))⟩ at hw
@@ -3197,7 +2391,7 @@ theorem tm_simulates_zfRegStep
         ListBlank.append (List.replicate (padTotal - c.stack.length +
           1) 0) (regsTape (0 :: c.regs)) := by
       rw [← List.replicate_succ]
-    change nSteps reference s₁ (zfRootCfg padTotal c.stack c.regs) =
+    change nSteps Machines.zf432 s₁ (zfRootCfg padTotal c.stack c.regs) =
       some ⟨⟨92 + k, by omega⟩, Tape.mkL (stackLeft pref)
         (ListBlank.append (0 :: List.replicate (padTotal -
           c.stack.length) 0) (regsTape (0 :: c.regs)))⟩ at hw
@@ -3269,28 +2463,28 @@ theorem tm_simulates_zfRegStep
         exact ⟨_, by omega, nSteps_bind_eq htree (nSteps_bind_eq hdec_step hbrk)⟩
 
 /-- Forward simulation: if the abstract machine halts from `c` (`ZfRegInv c`),
-then `reference` halts from `zfRootCfg padTotal c.stack c.regs` (`160 ≤ padTotal`). -/
+then `Machines.zf432` halts from `zfRootCfg padTotal c.stack c.regs` (`160 ≤ padTotal`). -/
 theorem tm_eval_dom_of_zfReg_eval_dom
     (hInc : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regIncStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨89, Tape.mkL L_stack
           ((regsTape (p :: regs.set k (regs[k] + 1))).cons 0 |>.cons 0)⟩)
     (hDecZero : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       regs[k] = 0 → ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regDecnzStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨90, Tape.mkL L_stack ((regsTape (p :: regs)).cons 0 |>.cons 0)⟩)
     (hDecPos : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       0 < regs[k] → ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regDecnzStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨89, Tape.mkL L_stack
           ((regsTape (p :: (regs.set k (regs[k] - 1) ++ [0]))).cons 0 |>.cons 0)⟩)
     {padTotal : ℕ} (hpad : 160 ≤ padTotal)
     {c : ZfRegCfg} (hInv : ZfRegInv c) (hDom : (eval zfRegStep c).Dom) :
-    (eval (step reference) (zfRootCfg padTotal c.stack c.regs)).Dom := by
+    (eval (step Machines.zf432) (zfRootCfg padTotal c.stack c.regs)).Dom := by
   rw [Part.dom_iff_mem] at hDom
   rcases hDom with ⟨ch_reg, hmem⟩
   revert hInv
@@ -3306,31 +2500,32 @@ theorem tm_eval_dom_of_zfReg_eval_dom
     have hInv' := zfRegStep_preserves_inv hInv hs
     exact (nSteps_eval_dom hsteps).mpr (ih a' hs hInv')
 
-/-- Backward simulation: if `reference` halts in `N` steps from `zfRootCfg padTotal c.stack c.regs`
-(`160 ≤ padTotal`, `ZfRegInv c`), then the abstract machine halts from `c`. -/
+/-- Backward simulation: if `Machines.zf432` halts in `N` steps from
+`zfRootCfg padTotal c.stack c.regs` (`160 ≤ padTotal`, `ZfRegInv c`), then the abstract machine
+halts from `c`. -/
 theorem zfReg_eval_dom_of_tm_nSteps_halt
     (hInc : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regIncStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨89, Tape.mkL L_stack
           ((regsTape (p :: regs.set k (regs[k] + 1))).cons 0 |>.cons 0)⟩)
     (hDecZero : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       regs[k] = 0 → ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regDecnzStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨90, Tape.mkL L_stack ((regsTape (p :: regs)).cons 0 |>.cons 0)⟩)
     (hDecPos : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       0 < regs[k] → ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regDecnzStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨89, Tape.mkL L_stack
           ((regsTape (p :: (regs.set k (regs[k] - 1) ++ [0]))).cons 0 |>.cons 0)⟩)
     {padTotal : ℕ} (hpad : 160 ≤ padTotal) :
     ∀ N {c : ZfRegCfg} {ch : Cfg 432 2},
       ZfRegInv c →
-      nSteps reference N (zfRootCfg padTotal c.stack c.regs) = some ch →
-      step reference ch = none →
+      nSteps Machines.zf432 N (zfRootCfg padTotal c.stack c.regs) = some ch →
+      step Machines.zf432 ch = none →
       (eval zfRegStep c).Dom := by
   intro N
   induction N using Nat.strong_induction_on with
@@ -3456,25 +2651,25 @@ for any `padTotal ≥ 160` and any `initRegs` starting with 11 zeros. -/
 theorem halts_zfRootCfg_iff_zfRegHalts
     (hInc : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regIncStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨89, Tape.mkL L_stack
           ((regsTape (p :: regs.set k (regs[k] + 1))).cons 0 |>.cons 0)⟩)
     (hDecZero : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       regs[k] = 0 → ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regDecnzStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨90, Tape.mkL L_stack ((regsTape (p :: regs)).cons 0 |>.cons 0)⟩)
     (hDecPos : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       0 < regs[k] → ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regDecnzStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨89, Tape.mkL L_stack
           ((regsTape (p :: (regs.set k (regs[k] - 1) ++ [0]))).cons 0 |>.cons 0)⟩)
     {padTotal : ℕ} (hpad : 160 ≤ padTotal)
     {initRegs : List ℕ} (hlen : 11 ≤ initRegs.length)
     (htake : initRegs.take 11 = List.replicate 11 0) :
-    (eval (step reference) (zfRootCfg padTotal [] initRegs)).Dom ↔ ZfRegHalts := by
+    (eval (step Machines.zf432) (zfRootCfg padTotal [] initRegs)).Dom ↔ ZfRegHalts := by
   have hInv : ZfRegInv ⟨[], initRegs⟩ := ⟨validStack_nil, hlen⟩
   have hsim : ZfRegSim ⟨[], initRegs⟩ zfRegInit := by
     refine ⟨rfl, hlen, by decide, ?_⟩
@@ -3490,30 +2685,30 @@ theorem halts_zfRootCfg_iff_zfRegHalts
   · intro hDom
     exact tm_eval_dom_of_zfReg_eval_dom hInc hDecZero hDecPos hpad hInv hDom
 
-/-- Complete equivalence between `Halts reference` and `ZfRegHalts`, given the Layer 1
+/-- Complete equivalence between `Halts Machines.zf432` and `ZfRegHalts`, given the Layer 1
 boot and Pass-2 register evaluation theorems. -/
 theorem halts_reference_iff_zfRegHalts
     (hBoot : ∃ s padTotal initRegs, 160 ≤ padTotal ∧ 11 ≤ initRegs.length ∧
       initRegs.take 11 = List.replicate 11 0 ∧
-      nSteps reference s init = some (zfRootCfg padTotal [] initRegs))
+      nSteps Machines.zf432 s init = some (zfRootCfg padTotal [] initRegs))
     (hInc : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regIncStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨89, Tape.mkL L_stack
           ((regsTape (p :: regs.set k (regs[k] + 1))).cons 0 |>.cons 0)⟩)
     (hDecZero : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       regs[k] = 0 → ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regDecnzStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨90, Tape.mkL L_stack ((regsTape (p :: regs)).cons 0 |>.cons 0)⟩)
     (hDecPos : ∀ (k : ℕ), k < 11 → ∀ (p : ℕ) (regs : List ℕ) (hk : k < regs.length),
       0 < regs[k] → ∀ (L_stack : ListBlank (Fin 2)),
-      ∃ s, 1 ≤ s ∧ nSteps reference s
+      ∃ s, 1 ≤ s ∧ nSteps Machines.zf432 s
         ⟨regDecnzStage3 k, Tape.mk' L_stack ((regsTape (p :: regs)).cons 0 |>.cons 1)⟩ =
         some ⟨89, Tape.mkL L_stack
           ((regsTape (p :: (regs.set k (regs[k] - 1) ++ [0]))).cons 0 |>.cons 0)⟩) :
-    Halts reference ↔ ZfRegHalts := by
+    Halts Machines.zf432 ↔ ZfRegHalts := by
   obtain ⟨s, padTotal, initRegs, hpad, hlen, htake, hboot_steps⟩ := hBoot
   unfold ConjectureMachines.Halts
   rw [nSteps_eval_dom hboot_steps]

@@ -577,39 +577,9 @@ theorem matiyasevichRiemannCounterexample_of_sqrt_mul_one_add_log_sq_le_psi_sub 
 ## 6. Classical Analytic Number Theory Ingredients (Schoenfeld 1976 & Schmidt 1903)
 -/
 
-/-- Negating `RiemannHypothesis` yields a nontrivial zero `s` of `riemannZeta` off the critical
-line `s.re = 1 / 2`. -/
-theorem not_riemannHypothesis_iff_exists_zero :
-    ¬ RiemannHypothesis ↔
-      ∃ s : ℂ, riemannZeta s = 0 ∧ (¬∃ n : ℕ, s = -2 * (n + 1)) ∧ s ≠ 1 ∧ s.re ≠ 1 / 2 := by
-  unfold RiemannHypothesis
-  push Not
-  rfl
-
-private lemma nontrivialZetaZerosUpTo_eq_vonMangoldt (T : ℝ) :
-    WeightedStieltjes.nontrivialZetaZerosUpTo T =
-      VonMangoldtCount.nontrivialZetaZerosUpTo T := by
-  ext s
-  simp only [WeightedStieltjes.mem_nontrivialZetaZerosUpTo,
-    VonMangoldtCount.mem_nontrivialZetaZerosUpTo,
-    WeightedStieltjes.IsNontrivialZetaZero,
-    VonMangoldtCount.IsNontrivialZetaZero]
-
-private lemma weightedZeroCountingFunction_eq_vonMangoldt (T : ℝ) :
-    WeightedStieltjes.weightedZeroCountingFunction T =
-      VonMangoldtCount.weightedZeroCountingFunction T := by
-  unfold WeightedStieltjes.weightedZeroCountingFunction
-    VonMangoldtCount.weightedZeroCountingFunction
-  rw [nontrivialZetaZerosUpTo_eq_vonMangoldt]
-
-private lemma nontrivialZetaZerosUpTo_eq_horizontal (T : ℝ) :
-    WeightedStieltjes.nontrivialZetaZerosUpTo T =
-      HorizontalBounds.nontrivialZetaZerosUpTo T := by
-  ext s
-  simp only [WeightedStieltjes.mem_nontrivialZetaZerosUpTo,
-    HorizontalBounds.mem_nontrivialZetaZerosUpTo,
-    WeightedStieltjes.IsNontrivialZetaZero,
-    HorizontalBounds.IsNontrivialZetaZero]
+export RiemannSchmidt
+  (not_riemannHypothesis_iff_exists_zero
+   not_riemannHypothesis_imp_exists_psi_sub_ge_sqrt_mul_one_add_log_sq)
 
 /-- **Explicit Formula $\psi(x)$ Bound for $x \ge 5000$ under `RiemannHypothesis`**:
 Combining the smoothed Perron contour shift and multiplicity-weighted Stieltjes bound
@@ -629,7 +599,7 @@ theorem abs_psi_sub_self_le_seven_eighths_of_five_thousand_le (hRH : RiemannHypo
       (WeightedStieltjes.weightedZeroCountingFunction t : ℝ) ≤
         (16 / 5 : ℝ) * t * Real.log t + (11 / 5 : ℝ) * t + (0 : ℝ) := by
     intro t ht
-    rw [weightedZeroCountingFunction_eq_vonMangoldt, add_zero]
+    rw [add_zero]
     exact VonMangoldtCount.weightedZeroCountingFunction_le_sixteen_fifths hRH ht
   have h_left_zeta : ∀ t : ℝ,
       ‖-deriv riemannZeta (((-1 / 4 : ℝ) : ℂ) + (t : ℂ) * Complex.I) /
@@ -640,22 +610,10 @@ theorem abs_psi_sub_self_le_seven_eighths_of_five_thousand_le (hRH : RiemannHypo
         (-1 / 4 : ℂ) + (t : ℂ) * Complex.I := by push_cast; ring
     rw [h_eq, neg_div, norm_neg, ← logDeriv_apply, one_mul]
     exact DigammaBinet.norm_logDeriv_riemannZeta_leftVertical_le_eighty_five t
-  have h_heights : ∀ U₀ ≥ (3 / 2 : ℝ) * Real.sqrt x / Real.log x, ∃ U ≥ U₀,
-      (∀ ρ ∈ WeightedStieltjes.nontrivialZetaZerosUpTo U, |ρ.im| < U) ∧
-      (∀ σ ∈ Set.Icc (-1 / 4 : ℝ) 2,
-        ‖-deriv riemannZeta ((σ : ℂ) + (U : ℂ) * Complex.I) /
-          riemannZeta ((σ : ℂ) + (U : ℂ) * Complex.I)‖ ≤ C_h * (Real.log U) ^ 5) ∧
-      (∀ σ ∈ Set.Icc (-1 / 4 : ℝ) 2,
-        ‖-deriv riemannZeta ((σ : ℂ) - (U : ℂ) * Complex.I) /
-          riemannZeta ((σ : ℂ) - (U : ℂ) * Complex.I)‖ ≤ C_h * (Real.log U) ^ 5) := by
-    intro U₀ hU₀
-    obtain ⟨U, hU, h_zeros, h_top, h_bot⟩ := h_heights_hb U₀ hU₀
-    refine ⟨U, hU, ?_, h_top, h_bot⟩
-    rwa [nontrivialZetaZerosUpTo_eq_horizontal]
   have h_explicit :=
     WeightedStieltjes.abs_psi_sub_self_le_weighted_riemannVonMangoldt_six_neg_one_fourth
       hRH hx_sub hh_pos h6T (by norm_num) (by norm_num) (by norm_num) (by norm_num) hCh
-      hN_bound h_left_zeta h_heights
+      hN_bound h_left_zeta h_heights_hb
   exact h_explicit.trans h_rhs
 
 /-- **Explicit $\psi(x)$ Bound under RH**:
@@ -670,15 +628,6 @@ theorem riemannHypothesis_imp_schoenfeldPsiBound (hRH : RiemannHypothesis)
       have : 5000 ≤ x := by omega
       exact_mod_cast this
     exact abs_psi_sub_self_le_seven_eighths_of_five_thousand_le hRH hx5000
-
-/-- **Schmidt–Littlewood Oscillation Theorem under $\neg\text{RH}$ (1903 / 1914)**:
-If `RiemannHypothesis` is false, then $\zeta(s)$ has a zero with real part $\Theta > 1/2$, so
-$\psi(x) - x = \Omega_{+}(x^{\Theta - \varepsilon})$ exceeds $\sqrt{x} (1 + \log x)^2$ for
-arbitrarily large integers $x$ (in particular some $x > 253$). -/
-theorem not_riemannHypothesis_imp_exists_psi_sub_ge_sqrt_mul_one_add_log_sq
-    (hNotRH : ¬ RiemannHypothesis) :
-    ∃ x : ℕ, 253 < x ∧ Real.sqrt x * (1 + Real.log x) ^ 2 ≤ Chebyshev.psi x - x :=
-  RiemannSchmidt.not_riemannHypothesis_imp_exists_psi_sub_ge_sqrt_mul_one_add_log_sq hNotRH
 
 /-- Corollary of `not_riemannHypothesis_imp_exists_psi_sub_ge_sqrt_mul_one_add_log_sq` in terms
 of harmonic numbers and the Euler–Mascheroni constant $\gamma$. -/

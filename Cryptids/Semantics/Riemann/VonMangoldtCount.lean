@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import Cryptids.Semantics.Riemann.Schmidt
 public import Mathlib.Analysis.Real.Pi.Bounds
 public import Mathlib.NumberTheory.LSeries.HurwitzZetaValues
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
@@ -69,18 +70,15 @@ This file proves (with **zero `sorry`s**):
 
 namespace ConjectureMachines.Riemann543.Semantics.VonMangoldtCount
 
+export RiemannSchmidt
+  (sub_floor_bounds)
+
 open Complex Finset Filter MeasureTheory Set Asymptotics Metric MeromorphicOn
 open scoped Real Topology ArithmeticFunction LSeries.notation
 
 /-!
 ## Section 1: Fourth-Order Euler–Maclaurin Identity & Low-Lying Zero-Free Region `|ρ.im| > 6`
 -/
-
-/-- For `t ≥ 0`, `0 ≤ t - ⌊t⌋₊` and `t - ⌊t⌋₊ ≤ 1`. -/
-theorem sub_floor_bounds {t : ℝ} (ht : 0 ≤ t) :
-    0 ≤ t - (⌊t⌋₊ : ℝ) ∧ t - (⌊t⌋₊ : ℝ) ≤ 1 := by
-  refine ⟨sub_nonneg.mpr (Nat.floor_le ht), ?_⟩
-  linarith [Nat.lt_floor_add_one t]
 
 /-- For `t ≥ 0`, `0 ≤ (t - ⌊t⌋₊) ^ 2 * (1 - (t - ⌊t⌋₊)) ^ 2 ≤ 1 / 16`. -/
 theorem quartic_floor_bounds {t : ℝ} (ht : 0 ≤ t) :

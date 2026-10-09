@@ -51,11 +51,6 @@ def unpairStep (p : ℕ × ℕ) : ℕ × ℕ :=
 theorem unpairStep_eq_cantorStep (p : ℕ × ℕ) : unpairStep p = cantorStep p := by
   rcases p with ⟨x, _ | y⟩ <;> rfl
 
-private theorem tri_succ (n : ℕ) :
-    (n + 1) * (n + 1 + 1) / 2 = n * (n + 1) / 2 + (n + 1) := by
-  have h : (n + 1) * (n + 1 + 1) = n * (n + 1) + (n + 1) * 2 := by ring
-  rw [h, Nat.add_mul_div_right _ _ (by decide : 0 < 2)]
-
 /-- Tail-recursive register loop of `unpair(out1, out2, in)` in `zf_432_wade.tm`:
 decrements `z` to `0`, applying `unpairStep` at each iteration. -/
 def unpairLoop : ℕ → ℕ × ℕ → ℕ × ℕ

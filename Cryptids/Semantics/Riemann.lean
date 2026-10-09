@@ -59,83 +59,25 @@ namespace ConjectureMachines.Riemann543.Semantics
 open Turing StateTransition
 open ConjectureMachines.Riemann543
 
-/-!
-## 1. Definitional Alignment Between Layer 1 Gadgets and Layer 2 Dispatcher
--/
-
-private theorem layer1_nSteps_eq (s : ℕ) (c : Cfg 744 2) :
-    Layer1.nSteps Machines.riemann744 s c = nSteps Machines.riemann744 s c := by
-  induction s generalizing c with
-  | zero => rfl
-  | succ s ih =>
-    simp only [Layer1.nSteps_succ, nSteps_succ]
-    cases step Machines.riemann744 c with
-    | none => rfl
-    | some c' => exact ih c'
-
-private theorem layer1_encodeRegs_eq (regs : List ℕ) :
-    Layer1.encodeRegs regs = encodeRegs regs := by
-  induction regs with
-  | nil => rfl
-  | cons r rs ih => simp [Layer1.encodeRegs, encodeRegs, Layer1.encodeReg, encodeReg, ih]
-
-private theorem layer1_regsTape_eq (regs : List ℕ) :
-    Layer1.regsTape regs = regsTape regs := by
-  simp [Layer1.regsTape, regsTape, layer1_encodeRegs_eq]
-
-private theorem layer1_pcBits_eq (k pc : ℕ) :
-    Layer1.pcBits k pc = pcBits k pc := by
-  induction k with
-  | zero => rfl
-  | succ k ih => simp [Layer1.pcBits, pcBits, ih]
-
-private theorem layer1_entryCfg_eq (pc : ℕ) (regs : List ℕ) :
-    Layer1.entryCfg pc regs = entryCfg pc regs := by
-  unfold Layer1.entryCfg entryCfg entryCfgR Layer1.Tape.mkL
-  rw [layer1_pcBits_eq, layer1_regsTape_eq]
-  rfl
-
-private theorem layer1_postPcCfg_eq (q : Fin 744) (pc : ℕ) (regs : List ℕ) :
-    Layer1.postPcCfg q pc regs = postPcCfg q pc (regsTape regs) := by
-  unfold Layer1.postPcCfg postPcCfg
-  rw [layer1_pcBits_eq, layer1_regsTape_eq]
-
-private theorem layer1_regIncrState_eq (k : Fin 16) :
-    Layer1.regIncrState k.val = regIncrState k.val := by
-  revert k; decide
-
-private theorem layer1_regDecrState_eq (k : Fin 16) :
-    Layer1.regDecrState k.val = regDecrState k.val := by
-  revert k; decide
-
 /-- Unconditional halting equivalence between the 744-state Turing machine `reference`
 and the 16-register NQL counter machine `RegHalts`, combining Layer 1 and Layer 2. -/
 theorem halts_reference_iff_regHalts_unconditional :
     Halts reference ↔ RegHalts := by
-  apply halts_reference_iff_regHalts
-  · rw [← layer1_entryCfg_eq]
-    exact Layer1.entryCfg_zero_nil
+  apply halts_reference_iff_regHalts Layer1.entryCfg_zero_nil
   · intro pc regs _
-    obtain ⟨s, hs, heval⟩ := Layer1.reg_init_eval pc regs
-    rw [layer1_nSteps_eq, layer1_postPcCfg_eq, layer1_entryCfg_eq] at heval
-    exact ⟨s, hs, heval⟩
+    exact Layer1.reg_init_eval pc regs
   · intro k pc regs hk _
-    obtain ⟨s, hs, heval⟩ := Layer1.reg_incr_eval k.val k.isLt pc regs hk
-    rw [layer1_nSteps_eq, layer1_regIncrState_eq k, layer1_postPcCfg_eq,
-      layer1_entryCfg_eq] at heval
-    rw [List.getD_eq_getElem _ _ hk]
-    exact ⟨s, hs, heval⟩
+    simpa [List.getElem?_eq_getElem hk] using Layer1.reg_incr_eval k.val k.isLt pc regs hk
   · intro k pc regs hk _
     obtain ⟨s, hs, heval⟩ := Layer1.reg_decr_eval k.val k.isLt pc regs hk
-    rw [layer1_nSteps_eq, layer1_regDecrState_eq k, layer1_postPcCfg_eq] at heval
-    rw [List.getD_eq_getElem _ _ hk]
+    simp only [List.getD, List.getElem?_eq_getElem hk, Option.getD_some]
     refine ⟨s, hs, ?_⟩
     rw [heval]
     congr 1
     by_cases hz : regs[k.val] = 0
-    · simp [hz, layer1_entryCfg_eq]
+    · simp [hz]
     · have hbeq : (regs[k.val] == 0) = false := beq_eq_false_iff_ne.mpr hz
-      simp [hz, hbeq, layer1_entryCfg_eq]
+      simp [hz, hbeq]
 
 /-!
 ## 2. Two-Part Decomposition of the Main Equivalence

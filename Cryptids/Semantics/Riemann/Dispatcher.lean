@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Cryptids.Riemann543
+public import Cryptids.Semantics.Riemann.Gadgets
 
 /-!
 # Layer 2: BDD Dispatcher & Abstract Register Machine Step for `riemann_744`
@@ -29,118 +29,12 @@ abbrev refM : Machine 744 2 := Machines.riemann744
 ## 1. Multi-Step Execution and Canonical Tape Configurations
 -/
 
-section GeneralMachine
+export ConjectureMachines.Riemann543.Layer1
+  (nSteps pcBits encodeReg encodeRegs regsTape entryCfg postPcCfg regIncrState regDecrState)
 
-variable {states symbols : ℕ} [NeZero states] [NeZero symbols]
-
-/-- `n`-step execution of a Turing machine from configuration `c`. -/
-def nSteps (M : Machine states symbols) : ℕ → Cfg states symbols → Option (Cfg states symbols)
-  | 0, c => some c
-  | n + 1, c => (step M c).bind (nSteps M n)
-
-omit [NeZero states] in
-@[simp]
-theorem nSteps_zero (M : Machine states symbols) (c : Cfg states symbols) :
-    nSteps M 0 c = some c := rfl
-
-omit [NeZero states] in
-@[simp]
-theorem nSteps_succ (M : Machine states symbols) (n : ℕ) (c : Cfg states symbols) :
-    nSteps M (n + 1) c = (step M c).bind (nSteps M n) := rfl
-
-omit [NeZero states] in
-theorem nSteps_add (M : Machine states symbols) (m n : ℕ) (c : Cfg states symbols) :
-    nSteps M (m + n) c = (nSteps M m c).bind (nSteps M n) := by
-  induction m generalizing c with
-  | zero => simp
-  | succ m ih =>
-    rw [Nat.succ_add, nSteps_succ, nSteps_succ]
-    cases step M c with
-    | none => rfl
-    | some c' => exact ih c'
-
-omit [NeZero states] in
-theorem nSteps_bind_eq {M : Machine states symbols} {m n : ℕ} {c₁ c₂ c₃ : Cfg states symbols}
-    (h₁ : nSteps M m c₁ = some c₂) (h₂ : nSteps M n c₂ = some c₃) :
-    nSteps M (m + n) c₁ = some c₃ := by
-  rw [nSteps_add, h₁, Option.bind_some, h₂]
-
-omit [NeZero states] in
-theorem nSteps_one {M : Machine states symbols} {c₁ c₂ : Cfg states symbols}
-    (h : step M c₁ = some c₂) :
-    nSteps M 1 c₁ = some c₂ := by
-  simp [h]
-
-omit [NeZero states] in
-theorem nSteps_reaches {M : Machine states symbols} {n : ℕ} {c₁ c₂ : Cfg states symbols}
-    (h : nSteps M n c₁ = some c₂) :
-    Reaches (step M) c₁ c₂ := by
-  induction n generalizing c₁ with
-  | zero =>
-    injection h with h'
-    subst h'
-    exact Relation.ReflTransGen.refl
-  | succ n ih =>
-    rw [nSteps_succ] at h
-    rcases hs : step M c₁ with _ | c'
-    · rw [hs] at h; cases h
-    · rw [hs, Option.bind_some] at h
-      exact Relation.ReflTransGen.head hs (ih h)
-
-omit [NeZero states] in
-theorem nSteps_reaches₁ {M : Machine states symbols} {n : ℕ} {c₁ c₂ : Cfg states symbols}
-    (hn : 1 ≤ n) (h : nSteps M n c₁ = some c₂) :
-    Reaches₁ (step M) c₁ c₂ := by
-  cases n with
-  | zero => omega
-  | succ n =>
-    rw [nSteps_succ] at h
-    rcases hs : step M c₁ with _ | c'
-    · rw [hs] at h; cases h
-    · rw [hs, Option.bind_some] at h
-      exact Relation.TransGen.head' hs (nSteps_reaches h)
-
-omit [NeZero states] in
-theorem nSteps_eval_dom {M : Machine states symbols} {n : ℕ} {c₁ c₂ : Cfg states symbols}
-    (h : nSteps M n c₁ = some c₂) :
-    (eval (step M) c₁).Dom ↔ (eval (step M) c₂).Dom := by
-  rw [StateTransition.reaches_eval (nSteps_reaches h)]
-
-omit [NeZero states] in
-theorem nSteps_of_halt {M : Machine states symbols} {c : Cfg states symbols}
-    (h : step M c = none) {k : ℕ} (hk : 1 ≤ k) :
-    nSteps M k c = none := by
-  cases k with
-  | zero => omega
-  | succ k => simp [nSteps_succ, h]
-
-omit [NeZero states] in
-theorem mem_eval_iff_nSteps {M : Machine states symbols} {c₀ ch : Cfg states symbols} :
-    ch ∈ eval (step M) c₀ ↔ ∃ N, nSteps M N c₀ = some ch ∧ step M ch = none := by
-  constructor
-  · intro h
-    refine StateTransition.evalInduction h fun a ha ih => ?_
-    rcases hs : step M a with _ | a'
-    · have hmem : a ∈ eval (step M) a :=
-        StateTransition.mem_eval.mpr ⟨Relation.ReflTransGen.refl, hs⟩
-      have heq : ch = a := Part.mem_unique ha hmem
-      subst heq
-      exact ⟨0, rfl, hs⟩
-    · obtain ⟨N, hN, hnone⟩ := ih a' hs
-      exact ⟨N + 1, by rw [nSteps_succ, hs, Option.bind_some, hN], hnone⟩
-  · rintro ⟨N, hN, hnone⟩
-    exact StateTransition.mem_eval.mpr ⟨nSteps_reaches hN, hnone⟩
-
-end GeneralMachine
-
-/-- Big-endian `k`-bit binary representation of `pc`. -/
-def pcBits : ℕ → ℕ → List (Fin 2)
-  | 0, _ => []
-  | k + 1, pc => (if pc.testBit k then 1 else 0) :: pcBits k pc
-
-/-- Tape constructor with head popped from the left half-tape `L`. -/
-def Tape.mkL (L R : ListBlank (Fin 2)) : Tape (Fin 2) :=
-  ⟨L.head, L.tail, R⟩
+open ConjectureMachines.Riemann543.Layer1
+  (nSteps_zero nSteps_succ nSteps_add nSteps_bind_eq nSteps_reaches nSteps_reaches₁
+   nSteps_eval_dom nSteps_of_halt mem_eval_iff_nSteps Tape.mkL)
 
 /-- Canonical configuration at State `0` (`!ENTRY`) with arbitrary right register tape `R`:
 the head is on the blank `0` immediately to the left of `pcBits 11 pc ++ [0, 0]`. -/
@@ -161,64 +55,8 @@ def dispatchRootCfgR (pc : ℕ) (R : ListBlank (Fin 2)) : Cfg 744 2 :=
 
 /-- Configuration immediately after the 11-bit PC scan (at step 12 from `entryCfgR pc R`),
 where the head is on the first `0` of the `[0, 0]` fence in leaf state `q`. -/
-def postPcCfg (q : Fin 744) (pc : ℕ) (R : ListBlank (Fin 2)) : Cfg 744 2 :=
+def postPcCfgR (q : Fin 744) (pc : ℕ) (R : ListBlank (Fin 2)) : Cfg 744 2 :=
   ⟨q, Tape.mk' (ListBlank.append (pcBits 11 pc).reverse default) (R.cons 0 |>.cons 0)⟩
-
-/-- Unary encoding of a single register value `r : ℕ`: `1^{r+1} ++ [0]`. -/
-def encodeReg (r : ℕ) : List (Fin 2) :=
-  List.replicate (r + 1) 1 ++ [0]
-
-/-- Unary encoding of a list of register values `regs : List ℕ`. -/
-def encodeRegs : List ℕ → List (Fin 2)
-  | [] => []
-  | r :: rs => encodeReg r ++ encodeRegs rs
-
-/-- The right tape starting at the first register (immediately after the `0 0` fence). -/
-def regsTape (regs : List ℕ) : ListBlank (Fin 2) :=
-  ListBlank.append (encodeRegs regs) default
-
-/-- Canonical configuration at State `0` (`!ENTRY`) for program counter `pc` and register bank
-`regs`. -/
-def entryCfg (pc : ℕ) (regs : List ℕ) : Cfg 744 2 :=
-  entryCfgR pc (regsTape regs)
-
-/-- Entry state at the `[0, 0]` fence for `reg_incr k` (`0 ≤ k < 16`). -/
-def regIncrState : ℕ → Fin 744
-  | 0 => 551
-  | 1 => 188
-  | 2 => 558
-  | 3 => 648
-  | 4 => 559
-  | 5 => 560
-  | 6 => 561
-  | 7 => 562
-  | 8 => 563
-  | 9 => 564
-  | 10 => 552
-  | 11 => 553
-  | 12 => 554
-  | 13 => 555
-  | 14 => 556
-  | _ => 557
-
-/-- Entry state at the `[0, 0]` fence for `reg_decr k` (`0 ≤ k < 16`). -/
-def regDecrState : ℕ → Fin 744
-  | 0 => 534
-  | 1 => 535
-  | 2 => 542
-  | 3 => 543
-  | 4 => 544
-  | 5 => 545
-  | 6 => 546
-  | 7 => 547
-  | 8 => 548
-  | 9 => 549
-  | 10 => 536
-  | 11 => 537
-  | 12 => 538
-  | 13 => 539
-  | 14 => 540
-  | _ => 541
 
 /-!
 ## 2. Symbolic Bounded-Window Evaluator
@@ -331,7 +169,7 @@ theorem winRunToEntry_sound {fuel : ℕ} {s s' : WinState}
       split at h
       · injection h with h'
         subst h'
-        exact ⟨1, le_refl 1, nSteps_one (winStep_sound hs R)⟩
+        exact ⟨1, le_refl 1, Layer1.step_one (winStep_sound hs R)⟩
       · obtain ⟨n, hn, hsteps⟩ := ih h
         refine ⟨n + 1, by omega, ?_⟩
         rw [nSteps_succ, winStep_sound hs R, Option.bind_some]
@@ -343,21 +181,11 @@ theorem winStep_halt {s : WinState} (h : (refTrans s.q s.hd).isNone = true)
   have hnone : refTrans s.q s.hd = none := Option.isNone_iff_eq_none.mp h
   simp [winCfg, step, refTrans_eq, hnone]
 
-theorem cons_zero_default : (default : ListBlank (Fin 2)).cons 0 = default := by
-  ext i
-  cases i <;> rfl
-
-theorem append_snoc_zero_default (L : List (Fin 2)) :
-    ListBlank.append (L ++ [0]) (default : ListBlank (Fin 2)) = ListBlank.append L default := by
-  induction L with
-  | nil => exact cons_zero_default
-  | cons a L ih => simp [ListBlank.append, ih]
-
 /-- Initial symbolic window state for `entryCfgR pc R`. -/
 def initWin (pc : ℕ) : WinState :=
   ⟨0, [], 0, pcBits 11 pc ++ [0, 0]⟩
 
-/-- Target symbolic window state after 12 steps for `postPcCfg q pc R`. -/
+/-- Target symbolic window state after 12 steps for `postPcCfgR q pc R`. -/
 def postPcWin (q : Fin 744) (pc : ℕ) : WinState :=
   ⟨q, (pcBits 11 pc).reverse ++ [0], 0, [0]⟩
 
@@ -367,14 +195,13 @@ theorem winCfg_initWin (pc : ℕ) (R : ListBlank (Fin 2)) :
 
 @[simp]
 theorem winCfg_postPcWin (q : Fin 744) (pc : ℕ) (R : ListBlank (Fin 2)) :
-    winCfg (postPcWin q pc) R = postPcCfg q pc R := by
-  simp [winCfg, winCfg.R_pre, postPcWin, postPcCfg, append_snoc_zero_default, Tape.mk']
+    winCfg (postPcWin q pc) R = postPcCfgR q pc R := by
+  simp [winCfg, winCfg.R_pre, postPcWin, postPcCfgR, Tape.mk']
 
 theorem step_entryCfgR (pc : ℕ) (R : ListBlank (Fin 2)) :
     step refM (entryCfgR pc R) = some (dispatchRootCfgR pc R) := by
   have htr : refTrans 0 0 = some (0, .right, 523) := by decide
-  simp [entryCfgR, dispatchRootCfgR, step, refTrans_eq, htr, Tape.write, Tape.move,
-    cons_zero_default, Tape.mk']
+  simp [entryCfgR, dispatchRootCfgR, step, refTrans_eq, htr, Tape.write, Tape.move, Tape.mk']
 
 /-!
 ## 3. Abstract Register Machine Instructions and Program Table
@@ -1558,7 +1385,7 @@ theorem checkPc_of_lt {pc : ℕ} (hpc : pc < 2048) : checkPc pc = true := by
 
 theorem dispatch_initReg {pc : ℕ} (hpc : pc < 2048) (hins : program pc = .initReg)
     (R : ListBlank (Fin 2)) :
-    nSteps refM 12 (entryCfgR pc R) = some (postPcCfg 32 pc R) := by
+    nSteps refM 12 (entryCfgR pc R) = some (postPcCfgR 32 pc R) := by
   have h := checkPc_of_lt hpc
   unfold checkPc checkPcInstr at h
   rw [hins, beq_iff_eq] at h
@@ -1566,7 +1393,7 @@ theorem dispatch_initReg {pc : ℕ} (hpc : pc < 2048) (hins : program pc = .init
 
 theorem dispatch_incr {pc : ℕ} {k : Fin 16} (hpc : pc < 2048) (hins : program pc = .incr k)
     (R : ListBlank (Fin 2)) :
-    nSteps refM 12 (entryCfgR pc R) = some (postPcCfg (regIncrState k.val) pc R) := by
+    nSteps refM 12 (entryCfgR pc R) = some (postPcCfgR (regIncrState k.val) pc R) := by
   have h := checkPc_of_lt hpc
   unfold checkPc checkPcInstr at h
   rw [hins, beq_iff_eq] at h
@@ -1574,7 +1401,7 @@ theorem dispatch_incr {pc : ℕ} {k : Fin 16} (hpc : pc < 2048) (hins : program 
 
 theorem dispatch_decr {pc : ℕ} {k : Fin 16} (hpc : pc < 2048) (hins : program pc = .decr k)
     (R : ListBlank (Fin 2)) :
-    nSteps refM 12 (entryCfgR pc R) = some (postPcCfg (regDecrState k.val) pc R) := by
+    nSteps refM 12 (entryCfgR pc R) = some (postPcCfgR (regDecrState k.val) pc R) := by
   have h := checkPc_of_lt hpc
   unfold checkPc checkPcInstr at h
   rw [hins, beq_iff_eq] at h
@@ -1609,11 +1436,11 @@ without touching `R`. -/
 theorem dispatch_step {pc : ℕ} (hpc : pc < 2048) (R : ListBlank (Fin 2)) :
     match program pc with
     | .initReg =>
-      nSteps refM 12 (entryCfgR pc R) = some (postPcCfg 32 pc R)
+      nSteps refM 12 (entryCfgR pc R) = some (postPcCfgR 32 pc R)
     | .incr k =>
-      nSteps refM 12 (entryCfgR pc R) = some (postPcCfg (regIncrState k.val) pc R)
+      nSteps refM 12 (entryCfgR pc R) = some (postPcCfgR (regIncrState k.val) pc R)
     | .decr k =>
-      nSteps refM 12 (entryCfgR pc R) = some (postPcCfg (regDecrState k.val) pc R)
+      nSteps refM 12 (entryCfgR pc R) = some (postPcCfgR (regDecrState k.val) pc R)
     | .jump target =>
       target < 2048 ∧ ∃ s, 1 ≤ s ∧ nSteps refM s (entryCfgR pc R) = some (entryCfgR target R)
     | .halt =>
@@ -1796,13 +1623,13 @@ for any configuration `c : RegCfg` satisfying `RegInv c`,
 - if `regStep c = none`, then `refM` reaches a halting configuration in 11 steps. -/
 theorem tm_simulates_regStep
     (hInit : ∀ pc regs, pc + 1 < 2048 →
-      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg 32 pc (regsTape regs)) =
+      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg 32 pc regs) =
         some (entryCfg (pc + 1) (regs ++ [0])))
     (hIncr : ∀ (k : Fin 16) pc (regs : List ℕ), k.val < regs.length → pc + 1 < 2048 →
-      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regIncrState k.val) pc (regsTape regs)) =
+      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regIncrState k.val) pc regs) =
         some (entryCfg (pc + 1) (regs.set k.val (regs.getD k.val 0 + 1))))
     (hDecr : ∀ (k : Fin 16) pc (regs : List ℕ), k.val < regs.length → pc + 2 < 2048 →
-      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regDecrState k.val) pc (regsTape regs)) =
+      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regDecrState k.val) pc regs) =
         some (if regs.getD k.val 0 == 0 then
           entryCfg (pc + 1) regs
         else
@@ -1853,13 +1680,13 @@ theorem tm_simulates_regStep
 then `refM` halts from `entryCfg c.pc c.regs`. -/
 theorem tm_eval_dom_of_reg_eval_dom
     (hInit : ∀ pc regs, pc + 1 < 2048 →
-      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg 32 pc (regsTape regs)) =
+      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg 32 pc regs) =
         some (entryCfg (pc + 1) (regs ++ [0])))
     (hIncr : ∀ (k : Fin 16) pc (regs : List ℕ), k.val < regs.length → pc + 1 < 2048 →
-      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regIncrState k.val) pc (regsTape regs)) =
+      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regIncrState k.val) pc regs) =
         some (entryCfg (pc + 1) (regs.set k.val (regs.getD k.val 0 + 1))))
     (hDecr : ∀ (k : Fin 16) pc (regs : List ℕ), k.val < regs.length → pc + 2 < 2048 →
-      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regDecrState k.val) pc (regsTape regs)) =
+      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regDecrState k.val) pc regs) =
         some (if regs.getD k.val 0 == 0 then
           entryCfg (pc + 1) regs
         else
@@ -1885,13 +1712,13 @@ theorem tm_eval_dom_of_reg_eval_dom
 then the abstract register machine halts from `c`. -/
 theorem reg_eval_dom_of_tm_nSteps_halt
     (hInit : ∀ pc regs, pc + 1 < 2048 →
-      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg 32 pc (regsTape regs)) =
+      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg 32 pc regs) =
         some (entryCfg (pc + 1) (regs ++ [0])))
     (hIncr : ∀ (k : Fin 16) pc (regs : List ℕ), k.val < regs.length → pc + 1 < 2048 →
-      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regIncrState k.val) pc (regsTape regs)) =
+      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regIncrState k.val) pc regs) =
         some (entryCfg (pc + 1) (regs.set k.val (regs.getD k.val 0 + 1))))
     (hDecr : ∀ (k : Fin 16) pc (regs : List ℕ), k.val < regs.length → pc + 2 < 2048 →
-      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regDecrState k.val) pc (regsTape regs)) =
+      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regDecrState k.val) pc regs) =
         some (if regs.getD k.val 0 == 0 then
           entryCfg (pc + 1) regs
         else
@@ -1930,13 +1757,13 @@ evaluation theorems. -/
 theorem halts_reference_iff_regHalts
     (hInit0 : entryCfg 0 [] = init)
     (hInit : ∀ pc regs, pc + 1 < 2048 →
-      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg 32 pc (regsTape regs)) =
+      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg 32 pc regs) =
         some (entryCfg (pc + 1) (regs ++ [0])))
     (hIncr : ∀ (k : Fin 16) pc (regs : List ℕ), k.val < regs.length → pc + 1 < 2048 →
-      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regIncrState k.val) pc (regsTape regs)) =
+      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regIncrState k.val) pc regs) =
         some (entryCfg (pc + 1) (regs.set k.val (regs.getD k.val 0 + 1))))
     (hDecr : ∀ (k : Fin 16) pc (regs : List ℕ), k.val < regs.length → pc + 2 < 2048 →
-      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regDecrState k.val) pc (regsTape regs)) =
+      ∃ s, 1 ≤ s ∧ nSteps refM s (postPcCfg (regDecrState k.val) pc regs) =
         some (if regs.getD k.val 0 == 0 then
           entryCfg (pc + 1) regs
         else

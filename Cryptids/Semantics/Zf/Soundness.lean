@@ -60,7 +60,7 @@ theorem cantorUnpair_zero : cantorUnpair 0 = (0, 0) := rfl
 @[simp]
 theorem cantorUnpair_succ (z : ℕ) : cantorUnpair (z + 1) = cantorStep (cantorUnpair z) := rfl
 
-private theorem tri_succ (n : ℕ) :
+theorem tri_succ (n : ℕ) :
     (n + 1) * (n + 1 + 1) / 2 = n * (n + 1) / 2 + (n + 1) := by
   have h : (n + 1) * (n + 1 + 1) = n * (n + 1) + (n + 1) * 2 := by ring
   rw [h, Nat.add_mul_div_right _ _ (by decide : 0 < 2)]
