@@ -23,6 +23,7 @@ jobs:
 
       - name: Install bubblewrap for lake comparator sandbox
         run: |
+          sudo rm -rf /usr/share/dotnet
           sudo apt-get update -qq >/dev/null
           sudo apt-get install -y -qq bubblewrap >/dev/null
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
@@ -53,6 +54,7 @@ jobs:
           sed -i 's/let setup ← ModuleSetup.load file/let _setup ← ModuleSetup.load file/; s/importArts := setup.importArts/importArts := {}/' .lake/packages/verso/src/verso-literate/VersoLiterateMain.lean
           path=$(lake query :literateHtml)
           echo "path=$path" >> "$GITHUB_OUTPUT"
+          rm -rf .lake/packages/mathlib .lake/build/lib .lake/build/ir
 
       - name: Upload Pages artifact
         if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
