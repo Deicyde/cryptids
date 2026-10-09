@@ -656,34 +656,6 @@ theorem mainLoopHalts_iff_exists_zfMainNSteps :
 
 /-! ## Section 4: `WadeZFProvable` and Soundness of `zfMainStep` -/
 
-/-- Provability predicate of the exact 20-clause Hilbert system implemented by Andrew Wade's
-`zf_432_wade.tm` (`zf2.py` prior to commit `10fcf152b3`). -/
-inductive WadeZFProvable : ℕ → Prop where
-  | moot : WadeZFProvable (zfEq 0 0)
-  | mp {φ ψ : ℕ} : WadeZFProvable φ → WadeZFProvable (zfImp φ ψ) → WadeZFProvable ψ
-  | gen (x : ℕ) {φ : ℕ} : WadeZFProvable φ → WadeZFProvable (zfAll x φ)
-  | b1 (φ ψ χ : ℕ) : WadeZFProvable (axB1 φ ψ χ)
-  | b2 (φ : ℕ) : WadeZFProvable (axB2 φ)
-  | b3 (φ ψ : ℕ) : WadeZFProvable (axB3 φ ψ)
-  | b4 (x φ ψ : ℕ) : WadeZFProvable (axB4 x φ ψ)
-  | b6a_wade (x y z : ℕ) (hxz : x ≠ z) (hy : y ≠ 0) : WadeZFProvable (axB6a x y z)
-  | b6b (x y φ : ℕ) : WadeZFProvable (axB6b x y φ)
-  | b6c (x φ : ℕ) : WadeZFProvable (axB6c x φ)
-  | b7 (x y : ℕ) : WadeZFProvable (axB7 x y)
-  | b8a_zero (x y : ℕ) : WadeZFProvable (axB8a x y 0)
-  | b8b (x y z : ℕ) : WadeZFProvable (axB8b x y z)
-  | b8c_zero (x y : ℕ) : WadeZFProvable (axB8c x y 0)
-  | ext : WadeZFProvable axExt
-  | rep (φ : ℕ) : WadeZFProvable (axRep φ)
-  | pow : WadeZFProvable axPow
-  | uni : WadeZFProvable axUni
-  | inf : WadeZFProvable axInf
-
-/-- Inconsistency of the `WadeZFProvable` Hilbert system: $v_0 \in v_0$ (`zfMem 0 0 = 1`) is
-provable. -/
-def WadeZFInconsistent : Prop :=
-  WadeZFProvable (zfMem 0 0)
-
 /-- The `n`-th formula stored on the wff-stack `(topwff, wffstack)`, unpacked via repeated
 `cantorUnpair`. -/
 def stackGet : ℕ → ℕ → ℕ → ℕ

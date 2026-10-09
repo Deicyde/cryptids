@@ -5,10 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Cryptids.Machines
-public import Mathlib.Algebra.GCDMonoid.Finset
-public import Mathlib.Data.Nat.Factorial.Basic
-public import Mathlib.NumberTheory.LSeries.RiemannZeta
-public import Mathlib.Order.Interval.Finset.Nat
+public import Cryptids.Propositions
 
 /-!
 # Challenge.Riemann543
@@ -1319,25 +1316,6 @@ theorem candidate_equivalent : Halts candidate ↔ Halts reference := by
   sorry
 
 namespace Semantics
-
-/-- Unreduced harmonic numerator computed by the loop
-`num = num * i + denom; denom = denom * i` in `riemann.nql`:
-`harmNum n / n! = ∑_{i=1}^n 1 / i = harmonic n`. -/
-def harmNum : ℕ → ℕ
-  | 0 => 0
-  | n + 1 => harmNum n * (n + 1) + n.factorial
-
-/-- The elementary integer inequality tested at stage `x` by `riemann.nql`:
-for $x > 253$ and $L_x = \operatorname{lcm}(1, \dots, x)$,
-$$b \cdot c < a \cdot d \iff H_{L_x} > x \;\wedge\; (H_{L_x} - x)^2 > x \cdot H_x^4.$$ -/
-def MatiyasevichRiemannCounterexample (x : ℕ) : Prop :=
-  253 < x ∧
-  let lcm := (Finset.Icc 1 x).lcm id
-  let a := (harmNum lcm - lcm.factorial * x) ^ 2
-  let b := lcm.factorial ^ 2
-  let c := harmNum x ^ 4 * x
-  let d := x.factorial ^ 4
-  b * c < a * d
 
 /-- **Part I (Turing Machine ↔ Elementary Counterexample)**:
 The 744-state machine `reference` (`riemann_744`) halts on the blank tape if and only if there

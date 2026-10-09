@@ -53,7 +53,7 @@ python3 verify.py
 
 ## Repository Structure
 
-- [`Cryptids/`](Cryptids/) — Lean 4 machine definitions ([`Machines.lean`](Cryptids/Machines.lean)), halting-equivalence proofs, and end-to-end semantics ([`Cryptids/Semantics/README.md`](Cryptids/Semantics/README.md)).
+- [`Cryptids/`](Cryptids/) — Shared problem definitions ([`Propositions.lean`](Cryptids/Propositions.lean)), Lean 4 machine definitions ([`Machines.lean`](Cryptids/Machines.lean)), halting-equivalence proofs, and end-to-end semantics ([`Cryptids/Semantics/README.md`](Cryptids/Semantics/README.md)).
 - [`Challenge/`](Challenge/) & [`comparator/`](comparator/) — Target theorem specifications and configuration files for [`leanprover/comparator`](comparator/README.md).
 - [`artifacts/`](artifacts/) — Canonical `machine.txt` transition tables and reduction write-ups for [`goldbach_24`](artifacts/goldbach_24/README.md), [`zf_431`](artifacts/zf_431/README.md), [`zf_430`](artifacts/zf_430/README.md), [`zf_429`](artifacts/zf_429/README.md), and [`riemann_543`](artifacts/riemann_543/README.md).
 - [`baselines/`](baselines/) — Verbatim upstream source files, canonical 5-tuple tables, and [`PROVENANCE.md`](baselines/PROVENANCE.md).

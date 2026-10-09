@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.SetTheory.ZFC.Basic
+public import Cryptids.Propositions
 public import Mathlib.Tactic.Ring
 
 /-!
@@ -12,16 +12,12 @@ public import Mathlib.Tactic.Ring
 
 This module formalizes the logical core of Stefan O'Rear's `zf2.nql` ZF proof enumerator:
 
-1. **Cantor Pairing & Gödel Numbering**: `cantorPair`, its inverse `cantorUnpair`
-   (`cantorUnpair_cantorPair`, `cantorPair_cantorUnpair`), and the formula constructors
-   `zfEq`, `zfMem`, `zfImp`, `zfNot`, `zfAll` (with abbreviations `zfEx`, `zfAnd`).
+1. **Cantor Unpairing**: the inverse `cantorUnpair` of `cantorPair` (`Cryptids.Propositions`), with
+   bijection theorems `cantorUnpair_cantorPair` and `cantorPair_cantorUnpair`.
 2. **Total Tarski Truth Predicate `zfHolds`**: a well-founded satisfaction relation on *all*
    natural numbers `n : ℕ` under valuations `v : ℕ → ZFSet.{u}`, with `[simp]` Tarski equations
    for every constructor and agreement with the structural `ZFFormula.Holds`.
-3. **Hilbert System `ZFProvable`**: the 11 logical axiom schemes (`axB1..axB8c`), the 5
-   set-theoretic schemes (`axExt`, `axRep`, `axPow`, `axUni`, `axInf`), and the rules `mp`/`gen`;
-   `ZFInconsistent := ZFProvable (zfMem 0 0)`.
-4. **Soundness**: `zfProvable_zfHolds`, `zfProvable_sound_zfSet`, and
+3. **Soundness**: `zfProvable_zfHolds`, `zfProvable_sound_zfSet`, and
    `not_zfInconsistent : ¬ ZFInconsistent`, derived from Mathlib's `ZFSet.{0}` model
    (`ZFSet.ext`, `ZFSet.powerset`, `ZFSet.sUnion`, `ZFSet.sep`/`ZFSet.image` for Replacement,
    and an explicit singleton-closed witness for Infinity).
@@ -31,48 +27,13 @@ This module formalizes the logical core of Stefan O'Rear's `zf2.nql` ZF proof en
 
 namespace ConjectureMachines.Semantics.Zf
 
-/-! ## Section 1: Cantor Pairing and Gödel Numbering of ZF Formulas -/
-
-/-- The Cantor pairing function $\operatorname{cantorPair}(x, y) = x + \frac{(x+y)(x+y+1)}{2}$
-computed by `builtin_pair` in `zf2.nql`. -/
-def cantorPair (x y : ℕ) : ℕ :=
-  x + (x + y) * (x + y + 1) / 2
+/-! ## Section 1: Basic `[simp]` Lemmas for Formula Encodings -/
 
 @[simp]
 theorem cantorPair_zero_zero : cantorPair 0 0 = 0 := rfl
 
 @[simp]
 theorem cantorPair_zero_one : cantorPair 0 1 = 1 := rfl
-
-/-- Gödel number of the atomic equality formula $v_x = v_y$ (`weq` in `zf2.nql`). -/
-def zfEq (x y : ℕ) : ℕ :=
-  cantorPair (cantorPair x y) 0
-
-/-- Gödel number of the atomic membership formula $v_x \in v_y$ (`wel` in `zf2.nql`). -/
-def zfMem (x y : ℕ) : ℕ :=
-  cantorPair (cantorPair x y) 1
-
-/-- Gödel number of the implication formula $\varphi \to \psi$ (`wim` in `zf2.nql`). -/
-def zfImp (φ ψ : ℕ) : ℕ :=
-  cantorPair (cantorPair φ ψ) 2
-
-/-- Gödel number of the negation formula $\neg \varphi$ (`wn` in `zf2.nql`). -/
-def zfNot (φ : ℕ) : ℕ :=
-  cantorPair φ 3
-
-/-- Gödel number of the universal formula $\forall v_x\, \varphi$ (`wal` in `zf2.nql`). -/
-def zfAll (x φ : ℕ) : ℕ :=
-  cantorPair (cantorPair x φ) 4
-
-/-- Gödel number of the existential abbreviation
-$\exists v_x\, \varphi \equiv \neg \forall v_x \neg \varphi$ (`wex` in `zf2.nql`). -/
-def zfEx (x φ : ℕ) : ℕ :=
-  zfNot (zfAll x (zfNot φ))
-
-/-- Gödel number of the conjunction abbreviation
-$\varphi \land \psi \equiv \neg (\varphi \to \neg \psi)$ (`wa` in `zf2.nql`). -/
-def zfAnd (φ ψ : ℕ) : ℕ :=
-  zfNot (zfImp φ (zfNot ψ))
 
 @[simp]
 theorem zfEq_zero_zero : zfEq 0 0 = 0 := rfl
@@ -260,173 +221,17 @@ theorem zfHolds_zfAnd (φ ψ : ℕ) (v : ℕ → ZFSet.{u}) :
     zfHolds (zfAnd φ ψ) v ↔ (zfHolds φ v ∧ zfHolds ψ v) := by
   simp [zfAnd, Classical.not_imp]
 
-/-! ## Section 2: Axiom Schemes and Hilbert System of `zf2.nql` -/
+/-! ## Section 2: Agreement of `zfHolds` with `ZFFormula.Holds` -/
 
-/-- Axiom scheme `B1` (`axiomcode = 3`):
-$(\varphi \to \psi) \to ((\psi \to \chi) \to (\varphi \to \chi))$. -/
-def axB1 (φ ψ χ : ℕ) : ℕ :=
-  zfImp (zfImp φ ψ) (zfImp (zfImp ψ χ) (zfImp φ χ))
-
-/-- Axiom scheme `B2` (`axiomcode = 4`): $(\neg \varphi \to \varphi) \to \varphi$. -/
-def axB2 (φ : ℕ) : ℕ :=
-  zfImp (zfImp (zfNot φ) φ) φ
-
-/-- Axiom scheme `B3` (`axiomcode = 5`): $\varphi \to (\neg \varphi \to \psi)$. -/
-def axB3 (φ ψ : ℕ) : ℕ :=
-  zfImp φ (zfImp (zfNot φ) ψ)
-
-/-- Axiom scheme `B4` (`axiomcode = 6`):
-$\forall v_x (\varphi \to \psi) \to (\forall v_x \varphi \to \forall v_x \psi)$. -/
-def axB4 (x φ ψ : ℕ) : ℕ :=
-  zfImp (zfAll x (zfImp φ ψ)) (zfImp (zfAll x φ) (zfAll x ψ))
-
-/-- Axiom scheme `B6a` (`axiomcode = 7`, subject to $x \ne z \land z \ne y$):
-$(v_x = v_y \to \forall v_z\, v_x = v_y) \land (v_x \in v_y \to \forall v_z\, v_x \in v_y)$. -/
-def axB6a (x y z : ℕ) : ℕ :=
-  zfAnd (zfImp (zfEq x y) (zfAll z (zfEq x y))) (zfImp (zfMem x y) (zfAll z (zfMem x y)))
-
-/-- Axiom scheme `B6b` (`axiomcode = 8`):
-$\forall v_x \forall v_y \varphi \to \forall v_y \forall v_x \varphi$. -/
-def axB6b (x y φ : ℕ) : ℕ :=
-  zfImp (zfAll x (zfAll y φ)) (zfAll y (zfAll x φ))
-
-/-- Axiom scheme `B6c` (`axiomcode = 9`): $\exists v_x \forall v_x \varphi \to \varphi$. -/
-def axB6c (x φ : ℕ) : ℕ :=
-  zfImp (zfEx x (zfAll x φ)) φ
-
-/-- Axiom scheme `B7` (`axiomcode = 10`): $\exists v_x\, v_x = v_y$. -/
-def axB7 (x y : ℕ) : ℕ :=
-  zfEx x (zfEq x y)
-
-/-- Axiom scheme `B8a` (`axiomcode = 11`): $v_x = v_y \to (v_x = v_z \to v_y = v_z)$. -/
-def axB8a (x y z : ℕ) : ℕ :=
-  zfImp (zfEq x y) (zfImp (zfEq x z) (zfEq y z))
-
-/-- Axiom scheme `B8b` (`axiomcode = 12`): $v_x = v_y \to (v_x \in v_z \to v_y \in v_z)$. -/
-def axB8b (x y z : ℕ) : ℕ :=
-  zfImp (zfEq x y) (zfImp (zfMem x z) (zfMem y z))
-
-/-- Axiom scheme `B8c` (`axiomcode = 13`): $v_x = v_y \to (v_z \in v_x \to v_z \in v_y)$. -/
-def axB8c (x y z : ℕ) : ℕ :=
-  zfImp (zfEq x y) (zfImp (zfMem z x) (zfMem z y))
-
-/-- Axiom of Extensionality (`EXT`, `axiomcode = 14`):
-$\forall v_2 ((v_2 \in v_0 \to v_2 \in v_1) \land (v_2 \in v_1 \to v_2 \in v_0)) \to v_0 = v_1$. -/
-def axExt : ℕ :=
-  zfImp
-    (zfAll 2 (zfAnd (zfImp (zfMem 2 0) (zfMem 2 1)) (zfImp (zfMem 2 1) (zfMem 2 0))))
-    (zfEq 0 1)
-
-/-- Helper formula $\exists v_3 (v_3 \in v_0 \land \forall v_1 \varphi)$ used in `axRep`. -/
-def axRepRhs (φ : ℕ) : ℕ :=
-  zfEx 3 (zfAnd (zfMem 3 0) (zfAll 1 φ))
-
-/-- Axiom scheme of Replacement (`REP`, `axiomcode = 15`):
-$\forall v_3 \exists v_1 \forall v_2 (\forall v_1 \varphi \to v_2 = v_1) \to
-  \exists v_1 \forall v_2 ((v_2 \in v_1 \to \exists v_3 (v_3 \in v_0 \land \forall v_1 \varphi))
-    \land (\exists v_3 (v_3 \in v_0 \land \forall v_1 \varphi) \to v_2 \in v_1))$. -/
-def axRep (φ : ℕ) : ℕ :=
-  zfImp
-    (zfAll 3 (zfEx 1 (zfAll 2 (zfImp (zfAll 1 φ) (zfEq 2 1)))))
-    (zfEx 1 (zfAll 2
-      (zfAnd (zfImp (zfMem 2 1) (axRepRhs φ)) (zfImp (axRepRhs φ) (zfMem 2 1)))))
-
-/-- Axiom of Power Set (`POW`, `axiomcode = 16`):
-$\exists v_1 \forall v_2 (\forall v_3 (v_3 \in v_2 \to v_3 \in v_0) \to v_2 \in v_1)$. -/
-def axPow : ℕ :=
-  zfEx 1 (zfAll 2 (zfImp (zfAll 3 (zfImp (zfMem 3 2) (zfMem 3 0))) (zfMem 2 1)))
-
-/-- Axiom of Union (`UNI`, `axiomcode = 17`):
-$\exists v_1 \forall v_2 (\exists v_3 (v_2 \in v_3 \land v_3 \in v_0) \to v_2 \in v_1)$. -/
-def axUni : ℕ :=
-  zfEx 1 (zfAll 2 (zfImp (zfEx 3 (zfAnd (zfMem 2 3) (zfMem 3 0))) (zfMem 2 1)))
-
-/-- Helper singleton-characterization formula
-$\forall v_1 ((v_1 \in v_2 \to v_1 = v_0) \land (v_1 = v_0 \to v_1 \in v_2))$ used in `axInf`. -/
-def axInfSingleton : ℕ :=
-  zfAll 1 (zfAnd (zfImp (zfMem 1 2) (zfEq 1 0)) (zfImp (zfEq 1 0) (zfMem 1 2)))
-
-/-- Axiom of Infinity (`INF`, `axiomcode > 17`):
-$\exists v_1 (v_0 \in v_1 \land \forall v_0 (v_0 \in v_1 \to
-  \exists v_2 (v_2 \in v_1 \land \forall v_1 (v_1 \in v_2 \leftrightarrow v_1 = v_0))))$. -/
-def axInf : ℕ :=
-  zfEx 1
-    (zfAnd (zfMem 0 1)
-      (zfAll 0 (zfImp (zfMem 0 1) (zfEx 2 (zfAnd (zfMem 2 1) axInfSingleton)))))
-
-/-- The inductive provability predicate `ZFProvable φ` of O'Rear's `zf2.nql` Hilbert system
-for Zermelo–Fraenkel set theory. -/
-inductive ZFProvable : ℕ → Prop where
-  | moot : ZFProvable (zfEq 0 0)
-  | mp {φ ψ : ℕ} : ZFProvable φ → ZFProvable (zfImp φ ψ) → ZFProvable ψ
-  | gen (x : ℕ) {φ : ℕ} : ZFProvable φ → ZFProvable (zfAll x φ)
-  | b1 (φ ψ χ : ℕ) : ZFProvable (axB1 φ ψ χ)
-  | b2 (φ : ℕ) : ZFProvable (axB2 φ)
-  | b3 (φ ψ : ℕ) : ZFProvable (axB3 φ ψ)
-  | b4 (x φ ψ : ℕ) : ZFProvable (axB4 x φ ψ)
-  | b6a (x y z : ℕ) (hxz : x ≠ z) (hzy : z ≠ y) : ZFProvable (axB6a x y z)
-  | b6b (x y φ : ℕ) : ZFProvable (axB6b x y φ)
-  | b6c (x φ : ℕ) : ZFProvable (axB6c x φ)
-  | b7 (x y : ℕ) : ZFProvable (axB7 x y)
-  | b8a (x y z : ℕ) : ZFProvable (axB8a x y z)
-  | b8b (x y z : ℕ) : ZFProvable (axB8b x y z)
-  | b8c (x y z : ℕ) : ZFProvable (axB8c x y z)
-  | ext : ZFProvable axExt
-  | rep (φ : ℕ) : ZFProvable (axRep φ)
-  | pow : ZFProvable axPow
-  | uni : ZFProvable axUni
-  | inf : ZFProvable axInf
-
-/-- ZF set theory is inconsistent if the contradiction formula $v_0 \in v_0$ (`zfMem 0 0 = 1`)
-is provable in `ZFProvable`. -/
-def ZFInconsistent : Prop :=
-  ZFProvable (zfMem 0 0)
-
-/-! ## Section 3: First-Order Syntax and Interpretation in Mathlib's `ZFSet` -/
-
-/-- Well-formed formulas of first-order set theory with variables indexed by `ℕ`. -/
-inductive ZFFormula : Type where
-  | eq (x y : ℕ) : ZFFormula
-  | mem (x y : ℕ) : ZFFormula
-  | imp (φ ψ : ZFFormula) : ZFFormula
-  | not (φ : ZFFormula) : ZFFormula
-  | all (x : ℕ) (φ : ZFFormula) : ZFFormula
-  deriving DecidableEq, Repr
-
-namespace ZFFormula
-
-/-- Existential quantification abbreviation
-$\exists v_x\, \varphi \equiv \neg \forall v_x \neg \varphi$. -/
-def ex (x : ℕ) (φ : ZFFormula) : ZFFormula :=
-  .not (.all x (.not φ))
-
-/-- Conjunction abbreviation $\varphi \land \psi \equiv \neg (\varphi \to \neg \psi)$. -/
-def and (φ ψ : ZFFormula) : ZFFormula :=
-  .not (.imp φ (.not ψ))
-
-/-- The Gödel number of a `ZFFormula`, matching `zf2.nql`. -/
-def code : ZFFormula → ℕ
-  | .eq x y => zfEq x y
-  | .mem x y => zfMem x y
-  | .imp φ ψ => zfImp φ.code ψ.code
-  | .not φ => zfNot φ.code
-  | .all x φ => zfAll x φ.code
-
+open ZFFormula in
 @[simp]
 theorem code_ex (x : ℕ) (φ : ZFFormula) : (ex x φ).code = zfEx x φ.code := rfl
 
+open ZFFormula in
 @[simp]
 theorem code_and (φ ψ : ZFFormula) : (and φ ψ).code = zfAnd φ.code ψ.code := rfl
 
-/-- Tarski satisfaction of a `ZFFormula` in Mathlib's cumulative hierarchy `ZFSet.{u}`
-under a variable assignment `v : ℕ → ZFSet.{u}`. -/
-def Holds (v : ℕ → ZFSet.{u}) : ZFFormula → Prop
-  | .eq x y => v x = v y
-  | .mem x y => v x ∈ v y
-  | .imp φ ψ => φ.Holds v → ψ.Holds v
-  | .not φ => ¬ φ.Holds v
-  | .all x φ => ∀ s : ZFSet.{u}, φ.Holds (Function.update v x s)
-
+open ZFFormula in
 @[simp]
 theorem holds_ex (v : ℕ → ZFSet.{u}) (x : ℕ) (φ : ZFFormula) :
     (ex x φ).Holds v ↔ ∃ s : ZFSet.{u}, φ.Holds (Function.update v x s) := by
@@ -434,26 +239,24 @@ theorem holds_ex (v : ℕ → ZFSet.{u}) (x : ℕ) (φ : ZFFormula) :
 
 @[simp]
 theorem holds_and (v : ℕ → ZFSet.{u}) (φ ψ : ZFFormula) :
-    (and φ ψ).Holds v ↔ φ.Holds v ∧ ψ.Holds v := by
-  simp [and, Holds, Classical.not_imp]
+    (ZFFormula.and φ ψ).Holds v ↔ φ.Holds v ∧ ψ.Holds v := by
+  simp [ZFFormula.and, ZFFormula.Holds, Classical.not_imp]
 
 /-- `zfHolds` on the Gödel code of any `ZFFormula` agrees with `ZFFormula.Holds`. -/
 @[simp]
 theorem zfHolds_code (φ : ZFFormula) (v : ℕ → ZFSet.{u}) :
     zfHolds φ.code v ↔ φ.Holds v := by
   induction φ generalizing v with
-  | eq x y => simp [code, Holds]
-  | mem x y => simp [code, Holds]
-  | imp φ ψ ihφ ihψ => simp [code, Holds, ihφ, ihψ]
-  | not φ ihφ => simp [code, Holds, ihφ]
-  | all x φ ihφ => simp [code, Holds, ihφ]
+  | eq x y => simp [ZFFormula.code, ZFFormula.Holds]
+  | mem x y => simp [ZFFormula.code, ZFFormula.Holds]
+  | imp φ ψ ihφ ihψ => simp [ZFFormula.code, ZFFormula.Holds, ihφ, ihψ]
+  | not φ ihφ => simp [ZFFormula.code, ZFFormula.Holds, ihφ]
+  | all x φ ihφ => simp [ZFFormula.code, ZFFormula.Holds, ihφ]
 
 /-- The contradiction formula $v_0 \in v_0$ is refutable in Mathlib's `ZFSet.{u}` under the
 empty-set valuation `fun _ => ∅`. -/
 theorem not_holds_mem_zero_zero : ¬ (ZFFormula.mem 0 0).Holds (fun _ => (∅ : ZFSet.{u})) :=
   ZFSet.notMem_empty ∅
-
-end ZFFormula
 
 /-! ## Section 3b: Soundness of `ZFProvable` in `ZFSet` -/
 
@@ -638,7 +441,7 @@ theorem zfProvable_zfHolds {n : ℕ} (h : ZFProvable n) (v : ℕ → ZFSet.{0}) 
 any provable well-formed formula holds under every variable assignment `v : ℕ → ZFSet.{0}`. -/
 theorem zfProvable_sound_zfSet (φ : ZFFormula) (h : ZFProvable φ.code)
     (v : ℕ → ZFSet.{0}) : φ.Holds v :=
-  (ZFFormula.zfHolds_code φ v).mp (zfProvable_zfHolds h v)
+  (zfHolds_code φ v).mp (zfProvable_zfHolds h v)
 
 /-- Relative consistency of `ZFProvable` from Mathlib's `ZFSet.{0}` model of ZFC:
 `ZFInconsistent` is false assuming `zfProvable_sound_zfSet`. -/
@@ -646,6 +449,6 @@ theorem not_zfInconsistent : ¬ ZFInconsistent := by
   intro h
   have h0 : (ZFFormula.mem 0 0).Holds (fun _ => (∅ : ZFSet.{0})) :=
     zfProvable_sound_zfSet (.mem 0 0) h (fun _ => ∅)
-  exact ZFFormula.not_holds_mem_zero_zero h0
+  exact not_holds_mem_zero_zero h0
 
 end ConjectureMachines.Semantics.Zf

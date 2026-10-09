@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Cryptids.Machines
+public import Cryptids.Propositions
 public import Cryptids.Goldbach24
 public import Cryptids.Riemann543
 public import Cryptids.Zf429

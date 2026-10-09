@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Cryptids.Machines
-public import Mathlib.Data.Nat.Prime.Basic
+public import Cryptids.Propositions
 
 /-!
 # Challenge.Goldbach24
@@ -78,10 +78,6 @@ theorem candidate_equivalent : Halts candidate ↔ Halts reference := by
   sorry
 
 namespace Semantics
-
-/-- **Goldbach's Conjecture**: every even integer greater than 2 is the sum of two primes. -/
-def GoldbachConjecture : Prop :=
-  ∀ n : ℕ, 2 < n → Even n → ∃ p q : ℕ, Nat.Prime p ∧ Nat.Prime q ∧ n = p + q
 
 /-- The 25-state baseline machine `reference` (`goldbach_25`) halts on the blank tape
 if and only if Goldbach's conjecture is false. -/

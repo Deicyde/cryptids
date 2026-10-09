@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Cryptids.Goldbach24
-public import Mathlib.Data.Nat.Prime.Basic
+public import Cryptids.Propositions
 
 /-!
 # Semantics of the Goldbach Turing Machines (`goldbach_25` and `goldbach_24`)
@@ -42,10 +42,6 @@ namespace ConjectureMachines.Goldbach24.Semantics
 
 open Turing StateTransition
 open ConjectureMachines.Goldbach24
-
-/-- **Goldbach's Conjecture**: every even integer greater than 2 is the sum of two primes. -/
-def GoldbachConjecture : Prop :=
-  ∀ n : ℕ, 2 < n → Even n → ∃ p q : ℕ, Nat.Prime p ∧ Nat.Prime q ∧ n = p + q
 
 /-!
 ## 1. Canonical Configurations of `reference`
