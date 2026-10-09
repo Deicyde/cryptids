@@ -182,6 +182,7 @@ review:
   reviewers:
     - "Maxence Faldor"
     - "Moritz Firsching"
+    - "Eric Wieser"
   notes: "Verified with Lean 4 (v4.35.0-rc4), leanprover/comparator, and standalone Python verifier verify.py."
 
 alignment:
@@ -221,6 +222,7 @@ alignment:
       status: "proved"
 
 acknowledgements: >-
-  We thank the Busy Beaver Challenge community, Yijun Leng, Stefan O'Rear,
-  Yuri Matiyasevich, Scott Aaronson, Adam Yedidia, and Andrew Wade for the
-  baseline Turing machines and compilers, and the Mathlib community.
+  We thank Eric Wieser for careful review, the Busy Beaver Challenge community,
+  Yijun Leng, Stefan O'Rear, Yuri Matiyasevich, Scott Aaronson, Adam Yedidia,
+  and Andrew Wade for the baseline Turing machines and compilers, and the
+  Mathlib community.
