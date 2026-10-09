@@ -384,7 +384,8 @@ theorem zfProvable_zfHolds {n : ℕ} (h : ZFProvable n) (v : ℕ → ZFSet.{0}) 
     by_cases hxy : x = y
     · subst hxy
       have := h s s
-      rwa [Function.update_idem] at this ⊢
+      rw [Function.update_idem] at this ⊢
+      exact this
     · rw [Function.update_comm (Ne.symm hxy)]
       exact h s t
   | b6c x φ =>

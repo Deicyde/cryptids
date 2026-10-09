@@ -91,7 +91,6 @@ def refTrans (q : Fin 432) (a : Fin 2) : Option (Fin 2 × Dir × Fin 432) :=
                                                                                             .right,
                                                                                               20))
                                                                                                 else
-
   (if q.val < 22 then (if a.val == 0 then some (0, .right, 17) else some (1, .right, 21)) else (if
   a.val == 0 then some (0, .right, 20) else some (1, .right, 22)))) else (if q.val < 25 then (if
   q.val < 24 then (if a.val == 0 then some (0, .right, 21) else some (1, .right, 23)) else (if a.val
@@ -1186,7 +1185,6 @@ def nodeMaxLen (q : Fin 432) : ℕ :=
                                                                                               169
                                                                                                 then
                                                                                                   1
-
   else (if q.val < 170 then 0 else 133)) else (if q.val < 173 then (if q.val < 172 then 132 else
   131) else (if q.val < 174 then 130 else 129)))) else (if q.val < 182 then (if q.val < 178 then (if
   q.val < 176 then 128 else (if q.val < 177 then 145 else 127)) else (if q.val < 180 then (if q.val
@@ -1315,7 +1313,6 @@ def nodeMax0 (q : Fin 432) : ℕ :=
                                                                                             291 then
                                                                                               6 else
                                                                                                 9)
-
   else (if q.val < 295 then (if q.val < 294 then 9 else 8) else 8)))) else (if q.val < 310 then (if
   q.val < 303 then (if q.val < 300 then (if q.val < 298 then 6 else 3) else (if q.val < 301 then 6
   else 5)) else (if q.val < 306 then (if q.val < 304 then 4 else (if q.val < 305 then 6 else 7))
@@ -1397,7 +1394,6 @@ def nodeMin1 (q : Fin 432) : ℕ :=
                                                                                             < 173
                                                                                               then
                                                                                                 (if
-
   q.val < 172 then 15 else 16) else (if q.val < 174 then 17 else 18)))) else (if q.val < 182 then
   (if q.val < 178 then (if q.val < 176 then 19 else (if q.val < 177 then 2 else 20)) else (if q.val
   < 180 then (if q.val < 179 then 21 else 22) else (if q.val < 181 then 23 else 24))) else (if q.val
@@ -1526,7 +1522,6 @@ def nodeMin0 (q : Fin 432) : ℕ :=
                                                                                             (if
                                                                                               q.val
                                                                                                 <
-
   379 then 1 else (if q.val < 380 then 1 else 2)) else (if q.val < 382 then 1 else 2)) else (if
   q.val < 387 then (if q.val < 385 then 3 else 1) else (if q.val < 389 then 2 else (if q.val < 390
   then 2 else 3)))) else (if q.val < 398 then (if q.val < 394 then (if q.val < 392 then 1 else (if
@@ -1589,7 +1584,6 @@ def zeroDepth (q : Fin 432) : ℕ :=
                                                                                             else
                                                                                               2))))
                                                                                                 else
-
   (if q.val < 182 then (if q.val < 178 then 2 else (if q.val < 180 then (if q.val < 179 then 4 else
   3) else (if q.val < 181 then 4 else 6))) else (if q.val < 185 then (if q.val < 183 then 4 else 5)
   else (if q.val < 187 then (if q.val < 186 then 6 else 5) else (if q.val < 188 then 2 else 6)))))
@@ -1699,7 +1693,6 @@ def zeroLeaf (q : Fin 432) : Fin 432 :=
                                                                                             69 else
                                                                                               67))
                                                                                                 else
-
   (if q.val < 187 then 67 else (if q.val < 188 then 55 else 67))))) else (if q.val < 202 then (if
   q.val < 195 then (if q.val < 192 then (if q.val < 190 then 69 else 67) else (if q.val < 193 then
   67 else (if q.val < 194 then 69 else 67))) else (if q.val < 198 then (if q.val < 196 then 67 else

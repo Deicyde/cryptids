@@ -16,6 +16,7 @@ public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 public import Mathlib.NumberTheory.Harmonic.GammaDeriv
 public import Mathlib.NumberTheory.LSeries.RiemannZetaLogDeriv
 public import Mathlib.NumberTheory.LSeries.Dirichlet
+public import Mathlib.Analysis.Convex.Deriv
 
 /-!
 # Binet / Euler–Maclaurin Formula for `Complex.digamma` & Left-Vertical `logDeriv riemannZeta` Bound

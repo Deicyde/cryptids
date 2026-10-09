@@ -33,6 +33,7 @@ public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 public import Mathlib.MeasureTheory.Integral.DominatedConvergence
+public import Mathlib.MeasureTheory.Function.Floor
 
 /-!
 # Smoothed Perron Formula for $\psi_1(x)$, Vertical Tail Bound at $c = 2$, and Rectangle Contour
@@ -4854,7 +4855,7 @@ continuous on `Set.Icc T U`. -/
 theorem integrableOn_indicator_of_continuousOn {T γ U : ℝ} (hγ : T < γ)
     {g' : ℝ → ℝ} (hcont : ContinuousOn g' (Set.Icc T U)) :
     IntegrableOn ((Set.Ici γ).indicator g') (Set.Ioc T U) := by
-  rw [integrableOn_indicator_iff measurableSet_Ici]
+  rw [integrableOn_indicator_iff measurableSet_Ici.nullMeasurableSet]
   have hinter : Set.Ici γ ∩ Set.Ioc T U = Set.Icc γ U := by
     ext t
     simp only [Set.mem_inter_iff, Set.mem_Ici, Set.mem_Ioc, Set.mem_Icc]

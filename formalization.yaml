@@ -155,7 +155,7 @@ automation:
       models:
         - "Gemini Argon"
       framework: "Antigravity + experimental harness"
-      tool_setup: "Lean 4 (v4.34.1), Mathlib"
+      tool_setup: "Lean 4 (v4.35.0-rc4), Mathlib"
       cost:
         wall_time: ""
         spend_usd: ""
@@ -182,7 +182,7 @@ review:
   reviewers:
     - "Maxence Faldor"
     - "Moritz Firsching"
-  notes: "Verified with Lean 4 (v4.34.1), leanprover/comparator, and standalone Python verifier verify.py."
+  notes: "Verified with Lean 4 (v4.35.0-rc4), leanprover/comparator, and standalone Python verifier verify.py."
 
 alignment:
   namespace: "ConjectureMachines"

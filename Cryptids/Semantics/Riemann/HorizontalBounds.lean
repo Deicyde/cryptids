@@ -17,6 +17,8 @@ public import Mathlib.Analysis.Complex.JensenFormula
 public import Mathlib.Analysis.SpecialFunctions.Gamma.BohrMollerup
 public import Mathlib.Analysis.Calculus.ParametricIntegral
 public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+public import Mathlib.Analysis.Convex.Deriv
+public import Mathlib.MeasureTheory.Function.Floor
 
 /-!
 # Local Zero-Counting, Symmetric Zero-Free Heights, and Full Horizontal `ζ'/ζ` Bounds

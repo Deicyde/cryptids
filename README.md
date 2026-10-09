@@ -12,7 +12,7 @@ This repository contains smaller, formally verified 2-symbol Turing machines for
 
 ## What Is Formally Proved
 
-All proofs in [`Cryptids/`](Cryptids/) are checked by the Lean 4 kernel (`v4.34.1`) without `sorry` and use only the standard axioms (`propext`, `Classical.choice`, `Quot.sound`):
+All proofs in [`Cryptids/`](Cryptids/) are checked by the Lean 4 kernel (`v4.35.0-rc4`) without `sorry` and use only the standard axioms (`propext`, `Classical.choice`, `Quot.sound`):
 
 1. **State reduction and halting equivalence (`candidate.states < reference.states` and `Halts candidate ↔ Halts reference`):** Each reduced machine has strictly fewer states than its published reference machine and halts from the blank tape if and only if the reference machine halts ([`Goldbach24.lean`](Cryptids/Goldbach24.lean), [`Zf431.lean`](Cryptids/Zf431.lean), [`Zf430.lean`](Cryptids/Zf430.lean), [`Zf429.lean`](Cryptids/Zf429.lean), [`Riemann543.lean`](Cryptids/Riemann543.lean)).
 2. **End-to-end mathematical semantics ([`Cryptids/Semantics/`](Cryptids/Semantics/README.md)):**

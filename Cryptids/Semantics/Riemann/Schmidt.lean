@@ -17,6 +17,8 @@ public import Mathlib.Analysis.Complex.Positivity
 public import Mathlib.Analysis.Calculus.ParametricIntegral
 public import Mathlib.Analysis.MellinTransform
 public import Mathlib.Analysis.Convex.Topology
+public import Mathlib.Analysis.Analytic.Order
+public import Mathlib.MeasureTheory.Function.Floor
 
 @[expose] public section
 
