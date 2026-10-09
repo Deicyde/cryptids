@@ -20,6 +20,8 @@ namespace ConjectureMachines.Riemann543.Layer1
 
 open Turing StateTransition ConjectureMachines.Riemann543
 
+abbrev reference : Machine 744 2 := Machines.riemann744
+
 /-!
 ## 1. `nSteps` and Symbolic Tape Primitives (`Tape.mkL`, `Tape.mk'`)
 -/

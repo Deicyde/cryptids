@@ -2,6 +2,7 @@
   "challenge_module": "Challenge.Goldbach24",
   "solution_module": "Cryptids.Goldbach24",
   "theorem_names": [
+    "ConjectureMachines.Goldbach24.candidate_fewer_states",
     "ConjectureMachines.Goldbach24.candidate_equivalent"
   ],
   "permitted_axioms": [

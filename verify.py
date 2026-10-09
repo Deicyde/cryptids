@@ -1067,10 +1067,13 @@ def run_verification(
     cand_def = str(cspec["lean_def"])
     b_states = int(cspec["baseline_states"])
     expected_ref_alias = (
-        f"abbrev reference : Machine {b_states} 2 := Machines.{ref_def}"
+        f"abbrev reference : BundledMachine 2 := Machines.{ref_def}.bundle"
     )
     expected_cand_alias = (
-        f"abbrev candidate : Machine {m.states} 2 := Machines.{cand_def}"
+        f"abbrev candidate : BundledMachine 2 := Machines.{cand_def}.bundle"
+    )
+    expected_fewer_states = (
+        "theorem candidate_fewer_states : candidate.states < reference.states"
     )
     assert (
         expected_ref_alias in p_text
@@ -1079,11 +1082,17 @@ def run_verification(
         expected_cand_alias in p_text
     ), f"{cspec['proof_path']} missing `{expected_cand_alias}`"
     assert (
+        expected_fewer_states in p_text
+    ), f"{cspec['proof_path']} missing `{expected_fewer_states}`"
+    assert (
         expected_ref_alias in c_text
     ), f"{cspec['challenge_path']} missing `{expected_ref_alias}`"
     assert (
         expected_cand_alias in c_text
     ), f"{cspec['challenge_path']} missing `{expected_cand_alias}`"
+    assert (
+        expected_fewer_states in c_text
+    ), f"{cspec['challenge_path']} missing `{expected_fewer_states}`"
     cand_machines[cid] = m
 
     b_states = int(cspec["baseline_states"])

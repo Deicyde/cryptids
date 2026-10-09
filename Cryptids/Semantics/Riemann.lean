@@ -64,12 +64,12 @@ open ConjectureMachines.Riemann543
 -/
 
 private theorem layer1_nSteps_eq (s : ℕ) (c : Cfg 744 2) :
-    Layer1.nSteps reference s c = nSteps reference s c := by
+    Layer1.nSteps Machines.riemann744 s c = nSteps Machines.riemann744 s c := by
   induction s generalizing c with
   | zero => rfl
   | succ s ih =>
     simp only [Layer1.nSteps_succ, nSteps_succ]
-    cases step reference c with
+    cases step Machines.riemann744 c with
     | none => rfl
     | some c' => exact ih c'
 

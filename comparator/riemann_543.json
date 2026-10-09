@@ -2,6 +2,7 @@
   "challenge_module": "Challenge.Riemann543",
   "solution_module": "Cryptids.Riemann543",
   "theorem_names": [
+    "ConjectureMachines.Riemann543.candidate_fewer_states",
     "ConjectureMachines.Riemann543.candidate_equivalent"
   ],
   "permitted_axioms": [

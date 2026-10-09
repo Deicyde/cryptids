@@ -21,10 +21,13 @@ namespace ConjectureMachines.Riemann543
 
 /-- 744-state Riemann Hypothesis reference machine
 (`riemann_744`, Matiyasevich–Davis–O'Rear 2016). -/
-abbrev reference : Machine 744 2 := Machines.riemann744
+abbrev reference : BundledMachine 2 := Machines.riemann744.bundle
 
 /-- 543-state Riemann Hypothesis candidate machine (`riemann_543`). -/
-abbrev candidate : Machine 543 2 := Machines.riemann543
+abbrev candidate : BundledMachine 2 := Machines.riemann543.bundle
+
+theorem candidate_fewer_states : candidate.states < reference.states := by
+  sorry
 
 theorem candidate_equivalent : Halts candidate ↔ Halts reference := by
   sorry

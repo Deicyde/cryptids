@@ -19,10 +19,13 @@ public import Cryptids.Machines.Zf430
 namespace ConjectureMachines.Zf430
 
 /-- 432-state ZF consistency reference machine (`zf_432`, Wade 2025). -/
-abbrev reference : Machine 432 2 := Machines.zf432
+abbrev reference : BundledMachine 2 := Machines.zf432.bundle
 
 /-- 430-state ZF consistency candidate machine (`zf_430`). -/
-abbrev candidate : Machine 430 2 := Machines.zf430
+abbrev candidate : BundledMachine 2 := Machines.zf430.bundle
+
+theorem candidate_fewer_states : candidate.states < reference.states := by
+  sorry
 
 theorem candidate_equivalent : Halts candidate ↔ Halts reference := by
   sorry

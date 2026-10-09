@@ -22,10 +22,16 @@ open Turing StateTransition
 
 /-- 744-state Riemann Hypothesis reference machine
 (`riemann_744`, Matiyasevich–Davis–O'Rear 2016). -/
-abbrev reference : Machine 744 2 := Machines.riemann744
+abbrev reference : BundledMachine 2 := Machines.riemann744.bundle
 
 /-- 543-state Riemann Hypothesis candidate machine (`riemann_543`). -/
-abbrev candidate : Machine 543 2 := Machines.riemann543
+abbrev candidate : BundledMachine 2 := Machines.riemann543.bundle
+
+theorem candidate_fewer_states : candidate.states < reference.states := by
+  decide
+
+abbrev refM : Machine 744 2 := Machines.riemann744
+abbrev candM : Machine 543 2 := Machines.riemann543
 
 -- 543-state reduction of riemann_744 via Bounce Elimination + W=(11,13) Window Invariant.
 
@@ -34,8 +40,8 @@ abbrev refRows : List (List (Option (Fin 2 × Dir × Fin 744))) :=
 abbrev candRows : List (List (Option (Fin 2 × Dir × Fin 543))) :=
   Machines.riemann543Rows
 
-theorem reference_eq : reference = Machine.ofRows refRows := rfl
-theorem candidate_eq : candidate = Machine.ofRows candRows := rfl
+theorem reference_eq : refM = Machine.ofRows refRows := rfl
+theorem candidate_eq : candM = Machine.ofRows candRows := rfl
 
 def fNat (n : Nat) : Fin 543 :=
   (if n < 372 then (if n < 186 then (if n < 93 then (if n < 47 then (if n < 24 then (if n < 12
@@ -2511,12 +2517,12 @@ def checkCandRow (i : Nat) (row : List (Option (Fin 2 × Dir × Fin 543))) : Boo
   (row.getD 1 none == candTrans1 i)
 
 set_option maxHeartbeats 4000000 in
--- Exhaustive check over all 744 rows of the reference machine.
+-- Exhaustive check over all 744 rows of the refM machine.
 set_option maxRecDepth 200000 in
 theorem refRows_valid : checkListIdx checkRefRow refRows 0 = true := by decide
 
 set_option maxHeartbeats 4000000 in
--- Exhaustive check over all 543 rows of the candidate machine.
+-- Exhaustive check over all 543 rows of the candM machine.
 set_option maxRecDepth 200000 in
 theorem candRows_valid : checkListIdx checkCandRow candRows 0 = true := by decide
 set_option maxRecDepth 200000 in
@@ -2524,14 +2530,14 @@ theorem refRows_len : refRows.length = 744 := rfl
 set_option maxRecDepth 200000 in
 theorem candRows_len : candRows.length = 543 := rfl
 
-theorem refTrans_eq (q : Fin 744) (b : Fin 2) : reference.transition q b = refTrans q b := by
+theorem refTrans_eq (q : Fin 744) (b : Fin 2) : refM.transition q b = refTrans q b := by
   have h :=
     checkListIdx_getD checkRefRow [] refRows 0 q.val (by rw [refRows_len]; exact q.isLt)
       refRows_valid
   rw [Nat.zero_add] at h
   unfold checkRefRow at h
   simp only [Bool.and_eq_true, beq_iff_eq] at h
-  have htr : reference.transition q b = (refRows.getD q.val []).getD b.val none := by
+  have htr : refM.transition q b = (refRows.getD q.val []).getD b.val none := by
     rw [reference_eq]; rfl
   rw [htr]
   unfold refTrans
@@ -2540,14 +2546,14 @@ theorem refTrans_eq (q : Fin 744) (b : Fin 2) : reference.transition q b = refTr
   · exact h.1.1.2
   · omega
 
-theorem candTrans_eq (q : Fin 543) (b : Fin 2) : candidate.transition q b = candTrans q b := by
+theorem candTrans_eq (q : Fin 543) (b : Fin 2) : candM.transition q b = candTrans q b := by
   have h :=
     checkListIdx_getD checkCandRow [] candRows 0 q.val (by rw [candRows_len]; exact q.isLt)
       candRows_valid
   rw [Nat.zero_add] at h
   unfold checkCandRow at h
   simp only [Bool.and_eq_true, beq_iff_eq] at h
-  have htr : candidate.transition q b = (candRows.getD q.val []).getD b.val none := by
+  have htr : candM.transition q b = (candRows.getD q.val []).getD b.val none := by
     rw [candidate_eq]; rfl
   rw [htr]
   unfold candTrans
@@ -2700,8 +2706,8 @@ theorem move_opp (T : Tape (Fin 2)) (d : Dir) : (T.move d).move (oppDir d) = T :
 theorem ref_pass_step {p j1 : Fin 744} {d : Dir} (T : Tape (Fin 2))
     (hp0 : refTrans0 p.val = some (0, (oppDir d), j1))
     (hp1 : refTrans1 p.val = some (1, (oppDir d), j1)) :
-    step reference ⟨p, T⟩ = some ⟨j1, T.move (oppDir d)⟩ := by
-  have hp : reference.transition p T.head = some (T.head, (oppDir d), j1) := by
+    step refM ⟨p, T⟩ = some ⟨j1, T.move (oppDir d)⟩ := by
+  have hp : refM.transition p T.head = some (T.head, (oppDir d), j1) := by
     rw [refTrans_eq]
     unfold refTrans
     rcases T.head with ⟨_ | _ | _, hlt⟩
@@ -2749,7 +2755,7 @@ theorem force_bit {v0 v1 : Nat} {b exp : Fin 2}
 theorem halt_chain_end {v0 v1 : Nat}
     (h_head : allowBit v0 v1 11 0 = false)
     (h_tr : refTrans 513 1 = none) :
-    ∀ T, WindowInv v0 v1 T → step reference ⟨513, T⟩ = none := by
+    ∀ T, WindowInv v0 v1 T → step refM ⟨513, T⟩ = none := by
   intro T hW
   have hb : T.head = 1 := force_bit (hW ⟨11, by decide⟩) h_head
   simp [step, refTrans_eq, hb, h_tr]
@@ -2758,12 +2764,12 @@ theorem halt_chain_last {q q' : Fin 744} {v0 v1 w0 w1 : Nat} {b a : Fin 2} {d : 
     (h_head : allowBit v0 v1 11 (flipBit b) = false)
     (h_tr : refTrans q b = some (a, d, q'))
     (h_cells : checkAllCells v0 v1 w0 w1 a d = true)
-    (h_end : ∀ T', WindowInv w0 w1 T' → step reference ⟨q', T'⟩ = none) :
-    ∀ T, WindowInv v0 v1 T → ∃ ch, Reaches₁ (step reference) ⟨q, T⟩ ch ∧ step reference ch = none
+    (h_end : ∀ T', WindowInv w0 w1 T' → step refM ⟨q', T'⟩ = none) :
+    ∀ T, WindowInv v0 v1 T → ∃ ch, Reaches₁ (step refM) ⟨q, T⟩ ch ∧ step refM ch = none
       := by
   intro T hW
   have hb : T.head = b := force_bit (hW ⟨11, by decide⟩) h_head
-  have hs : step reference ⟨q, T⟩ = some ⟨q', (T.write a).move d⟩ := by
+  have hs : step refM ⟨q, T⟩ = some ⟨q', (T.write a).move d⟩ := by
     simp [step, refTrans_eq, hb, h_tr]
   have hW' := window_step_sound hW a d h_cells
   exact ⟨⟨q', (T.write a).move d⟩, Relation.TransGen.single hs, h_end _ hW'⟩
@@ -2772,13 +2778,13 @@ theorem halt_chain_step {q q' : Fin 744} {v0 v1 w0 w1 : Nat} {b a : Fin 2} {d : 
     (h_head : allowBit v0 v1 11 (flipBit b) = false)
     (h_tr : refTrans q b = some (a, d, q'))
     (h_cells : checkAllCells v0 v1 w0 w1 a d = true)
-    (h_next : ∀ T', WindowInv w0 w1 T' → ∃ ch, Reaches₁ (step reference) ⟨q', T'⟩ ch ∧ step
-      reference ch = none) :
-    ∀ T, WindowInv v0 v1 T → ∃ ch, Reaches₁ (step reference) ⟨q, T⟩ ch ∧ step reference ch = none
+    (h_next : ∀ T', WindowInv w0 w1 T' → ∃ ch, Reaches₁ (step refM) ⟨q', T'⟩ ch ∧ step
+      refM ch = none) :
+    ∀ T, WindowInv v0 v1 T → ∃ ch, Reaches₁ (step refM) ⟨q, T⟩ ch ∧ step refM ch = none
       := by
   intro T hW
   have hb : T.head = b := force_bit (hW ⟨11, by decide⟩) h_head
-  have hs : step reference ⟨q, T⟩ = some ⟨q', (T.write a).move d⟩ := by
+  have hs : step refM ⟨q, T⟩ = some ⟨q', (T.write a).move d⟩ := by
     simp [step, refTrans_eq, hb, h_tr]
   have hW' := window_step_sound hW a d h_cells
   obtain ⟨ch, hreach, hhalt⟩ := h_next _ hW'
@@ -2789,18 +2795,18 @@ theorem halt_chain_step_any {q q' : Fin 744} {v0 v1 w0 w1 : Nat} {d : Dir}
     (h_tr1 : refTrans q 1 = some (1, d, q'))
     (h_cells0 : checkAllCells v0 v1 w0 w1 0 d = true)
     (h_cells1 : checkAllCells v0 v1 w0 w1 1 d = true)
-    (h_next : ∀ T', WindowInv w0 w1 T' → ∃ ch, Reaches₁ (step reference) ⟨q', T'⟩ ch ∧ step
-      reference ch = none) :
-    ∀ T, WindowInv v0 v1 T → ∃ ch, Reaches₁ (step reference) ⟨q, T⟩ ch ∧ step reference ch = none
+    (h_next : ∀ T', WindowInv w0 w1 T' → ∃ ch, Reaches₁ (step refM) ⟨q', T'⟩ ch ∧ step
+      refM ch = none) :
+    ∀ T, WindowInv v0 v1 T → ∃ ch, Reaches₁ (step refM) ⟨q, T⟩ ch ∧ step refM ch = none
       := by
   intro T hW
   rcases hb : T.head with ⟨_ | _ | _, _⟩
-  · have hs : step reference ⟨q, T⟩ = some ⟨q', (T.write 0).move d⟩ := by
+  · have hs : step refM ⟨q, T⟩ = some ⟨q', (T.write 0).move d⟩ := by
       simp [step, refTrans_eq, hb, h_tr0]
     have hW' := window_step_sound hW 0 d h_cells0
     obtain ⟨ch, hreach, hhalt⟩ := h_next _ hW'
     exact ⟨ch, Relation.TransGen.head hs hreach, hhalt⟩
-  · have hs : step reference ⟨q, T⟩ = some ⟨q', (T.write 1).move d⟩ := by
+  · have hs : step refM ⟨q, T⟩ = some ⟨q', (T.write 1).move d⟩ := by
       simp [step, refTrans_eq, hb, h_tr1]
     have hW' := window_step_sound hW 1 d h_cells1
     obtain ⟨ch, hreach, hhalt⟩ := h_next _ hW'
@@ -2808,68 +2814,68 @@ theorem halt_chain_step_any {q q' : Fin 744} {v0 v1 w0 w1 : Nat} {d : Dir}
   · omega
 
 theorem reaches_halt_177 (T : Tape (Fin 2)) (hW : WindowInv 33540119 33503215 T) :
-    ∃ ch, Reaches₁ (step reference) ⟨177, T⟩ ch ∧ step reference ch = none := by
-  have hc24 : ∀ T, WindowInv 33551353 33541127 T → step reference ⟨513, T⟩ = none :=
+    ∃ ch, Reaches₁ (step refM) ⟨177, T⟩ ch ∧ step refM ch = none := by
+  have hc24 : ∀ T, WindowInv 33551353 33541127 T → step refM ⟨513, T⟩ = none :=
     halt_chain_end (by decide) (by decide)
-  have hc23 : ∀ T, WindowInv 33548275 33527823 T → ∃ ch, Reaches₁ (step reference) ⟨514, T⟩ ch ∧
-    step reference ch = none :=
+  have hc23 : ∀ T, WindowInv 33548275 33527823 T → ∃ ch, Reaches₁ (step refM) ⟨514, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_last (b := 1) (a := 1) (d := .right) (by decide) (by decide) (by decide) hc24
-  have hc22 : ∀ T, WindowInv 33542119 33501215 T → ∃ ch, Reaches₁ (step reference) ⟨515, T⟩ ch ∧
-    step reference ch = none :=
+  have hc22 : ∀ T, WindowInv 33542119 33501215 T → ∃ ch, Reaches₁ (step refM) ⟨515, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 0) (a := 0) (d := .right) (by decide) (by decide) (by decide) hc23
-  have hc21 : ∀ T, WindowInv 33529807 33447999 T → ∃ ch, Reaches₁ (step reference) ⟨516, T⟩ ch ∧
-    step reference ch = none :=
+  have hc21 : ∀ T, WindowInv 33529807 33447999 T → ∃ ch, Reaches₁ (step refM) ⟨516, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 0) (a := 0) (d := .right) (by decide) (by decide) (by decide) hc22
-  have hc20 : ∀ T, WindowInv 33505183 33341567 T → ∃ ch, Reaches₁ (step reference) ⟨517, T⟩ ch ∧
-    step reference ch = none :=
+  have hc20 : ∀ T, WindowInv 33505183 33341567 T → ∃ ch, Reaches₁ (step refM) ⟨517, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 0) (a := 0) (d := .right) (by decide) (by decide) (by decide) hc21
-  have hc19 : ∀ T, WindowInv 33455935 33128703 T → ∃ ch, Reaches₁ (step reference) ⟨518, T⟩ ch ∧
-    step reference ch = none :=
+  have hc19 : ∀ T, WindowInv 33455935 33128703 T → ∃ ch, Reaches₁ (step refM) ⟨518, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 0) (a := 0) (d := .right) (by decide) (by decide) (by decide) hc20
-  have hc18 : ∀ T, WindowInv 33357439 32702975 T → ∃ ch, Reaches₁ (step reference) ⟨519, T⟩ ch ∧
-    step reference ch = none :=
+  have hc18 : ∀ T, WindowInv 33357439 32702975 T → ∃ ch, Reaches₁ (step refM) ⟨519, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 0) (a := 0) (d := .right) (by decide) (by decide) (by decide) hc19
-  have hc17 : ∀ T, WindowInv 33160447 31851519 T → ∃ ch, Reaches₁ (step reference) ⟨520, T⟩ ch ∧
-    step reference ch = none :=
+  have hc17 : ∀ T, WindowInv 33160447 31851519 T → ∃ ch, Reaches₁ (step refM) ⟨520, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 0) (a := 0) (d := .right) (by decide) (by decide) (by decide) hc18
-  have hc16 : ∀ T, WindowInv 32766463 30148607 T → ∃ ch, Reaches₁ (step reference) ⟨521, T⟩ ch ∧
-    step reference ch = none :=
+  have hc16 : ∀ T, WindowInv 32766463 30148607 T → ∃ ch, Reaches₁ (step refM) ⟨521, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 0) (a := 0) (d := .right) (by decide) (by decide) (by decide) hc17
-  have hc15 : ∀ T, WindowInv 31978495 26742783 T → ∃ ch, Reaches₁ (step reference) ⟨522, T⟩ ch ∧
-    step reference ch = none :=
+  have hc15 : ∀ T, WindowInv 31978495 26742783 T → ∃ ch, Reaches₁ (step refM) ⟨522, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 1) (a := 1) (d := .right) (by decide) (by decide) (by decide) hc16
-  have hc14 : ∀ T, WindowInv 30402559 19931135 T → ∃ ch, Reaches₁ (step reference) ⟨523, T⟩ ch ∧
-    step reference ch = none :=
+  have hc14 : ∀ T, WindowInv 30402559 19931135 T → ∃ ch, Reaches₁ (step refM) ⟨523, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 1) (a := 1) (d := .right) (by decide) (by decide) (by decide) hc15
-  have hc13 : ∀ T, WindowInv 27250687 6307839 T → ∃ ch, Reaches₁ (step reference) ⟨0, T⟩ ch ∧ step
-    reference ch = none :=
+  have hc13 : ∀ T, WindowInv 27250687 6307839 T → ∃ ch, Reaches₁ (step refM) ⟨0, T⟩ ch ∧ step
+    refM ch = none :=
     halt_chain_step_any (d := .right) (by decide) (by decide) (by decide) (by decide) hc14
-  have hc12 : ∀ T, WindowInv 30402559 19931135 T → ∃ ch, Reaches₁ (step reference) ⟨12, T⟩ ch ∧
-    step reference ch = none :=
+  have hc12 : ∀ T, WindowInv 30402559 19931135 T → ∃ ch, Reaches₁ (step refM) ⟨12, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 1) (a := 1) (d := .left) (by decide) (by decide) (by decide) hc13
-  have hc11 : ∀ T, WindowInv 31980543 26740735 T → ∃ ch, Reaches₁ (step reference) ⟨29, T⟩ ch ∧
-    step reference ch = none :=
+  have hc11 : ∀ T, WindowInv 31980543 26740735 T → ∃ ch, Reaches₁ (step refM) ⟨29, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 0) (a := 1) (d := .left) (by decide) (by decide) (by decide) hc12
-  have hc10 : ∀ T, WindowInv 32765439 30149631 T → ∃ ch, Reaches₁ (step reference) ⟨27, T⟩ ch ∧
-    step reference ch = none :=
+  have hc10 : ∀ T, WindowInv 32765439 30149631 T → ∃ ch, Reaches₁ (step refM) ⟨27, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 1) (a := 0) (d := .left) (by decide) (by decide) (by decide) hc11
-  have hc9 : ∀ T, WindowInv 33157887 31854079 T → ∃ ch, Reaches₁ (step reference) ⟨25, T⟩ ch ∧
-    step reference ch = none :=
+  have hc9 : ∀ T, WindowInv 33157887 31854079 T → ∃ ch, Reaches₁ (step refM) ⟨25, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 1) (a := 0) (d := .left) (by decide) (by decide) (by decide) hc10
-  have hc8 : ∀ T, WindowInv 33354111 32706303 T → ∃ ch, Reaches₁ (step reference) ⟨23, T⟩ ch ∧
-    step reference ch = none :=
+  have hc8 : ∀ T, WindowInv 33354111 32706303 T → ∃ ch, Reaches₁ (step refM) ⟨23, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 1) (a := 0) (d := .left) (by decide) (by decide) (by decide) hc9
-  have hc7 : ∀ T, WindowInv 33452223 33132415 T → ∃ ch, Reaches₁ (step reference) ⟨21, T⟩ ch ∧
-    step reference ch = none :=
+  have hc7 : ∀ T, WindowInv 33452223 33132415 T → ∃ ch, Reaches₁ (step refM) ⟨21, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 1) (a := 0) (d := .left) (by decide) (by decide) (by decide) hc8
-  have hc6 : ∀ T, WindowInv 33501279 33345471 T → ∃ ch, Reaches₁ (step reference) ⟨19, T⟩ ch ∧
-    step reference ch = none :=
+  have hc6 : ∀ T, WindowInv 33501279 33345471 T → ∃ ch, Reaches₁ (step refM) ⟨19, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 1) (a := 0) (d := .left) (by decide) (by decide) (by decide) hc7
-  have hc5 : ∀ T, WindowInv 33525807 33451999 T → ∃ ch, Reaches₁ (step reference) ⟨17, T⟩ ch ∧
-    step reference ch = none :=
+  have hc5 : ∀ T, WindowInv 33525807 33451999 T → ∃ ch, Reaches₁ (step refM) ⟨17, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 1) (a := 0) (d := .left) (by decide) (by decide) (by decide) hc6
-  have hc4 : ∀ T, WindowInv 33540119 33503215 T → ∃ ch, Reaches₁ (step reference) ⟨177, T⟩ ch ∧
-    step reference ch = none :=
+  have hc4 : ∀ T, WindowInv 33540119 33503215 T → ∃ ch, Reaches₁ (step refM) ⟨177, T⟩ ch ∧
+    step refM ch = none :=
     halt_chain_step (b := 0) (a := 0) (d := .left) (by decide) (by decide) (by decide) hc5
   exact hc4 T hW
 
@@ -2886,30 +2892,30 @@ theorem move_left_write_nth (U : Tape (Fin 2)) (w : Fin 2) (i : ℤ) (hi : i ≤
 
 def HaltCountdown (n : Nat) (c : Cfg 543 2) : Prop :=
   Nat.rec (motive := fun _ => Cfg 543 2 → Prop)
-    (fun c => step candidate c = none)
-    (fun _ ih c => ∃ c', step candidate c = some c' ∧ ih c')
+    (fun c => step candM c = none)
+    (fun _ ih c => ∃ c', step candM c = some c' ∧ ih c')
     n c
 
 def RefCountdown (n : Nat) (c : Cfg 744 2) : Prop :=
   Nat.rec (motive := fun _ => Cfg 744 2 → Prop)
-    (fun c => step reference c = none)
-    (fun _ ih c => ∃ c', Reaches₁ (step reference) c c' ∧ ih c')
+    (fun c => step refM c = none)
+    (fun _ ih c => ∃ c', Reaches₁ (step refM) c c' ∧ ih c')
     n c
 
 def SyncCountdown (n : Nat) (c₂ : Cfg 543 2) (c₁ : Cfg 744 2) : Prop :=
   Nat.rec (motive := fun _ => Cfg 543 2 → Cfg 744 2 → Prop)
     (fun c₂ c₁ => Inv c₁.state c₁.tape ∧ c₂ = ⟨f c₁.state, c₁.tape⟩)
     (fun _ ih c₂ c₁ =>
-      ∃ c₂' c₁', step candidate c₂ = some c₂' ∧
-        Reaches₁ (step reference) c₁ c₁' ∧ ih c₂' c₁')
+      ∃ c₂' c₁', step candM c₂ = some c₂' ∧
+        Reaches₁ (step refM) c₁ c₁' ∧ ih c₂' c₁')
     n c₂ c₁
 
 theorem halt_from_503 (T : Tape (Fin 2)) (hInv : Inv 503 T) (h0 : T.head = 0) :
-    step reference ⟨503, T⟩ = some ⟨36, (T.write 0).move .right⟩ ∧
+    step refM ⟨503, T⟩ = some ⟨36, (T.write 0).move .right⟩ ∧
     RefCountdown 4 ⟨36, (T.write 0).move .right⟩ ∧
-    step candidate ⟨f 503, T⟩ = some ⟨35, (T.write 0).move .left⟩ ∧
+    step candM ⟨f 503, T⟩ = some ⟨35, (T.write 0).move .left⟩ ∧
     HaltCountdown 4 ⟨35, (T.write 0).move .left⟩ := by
-  have hs_ref1 : step reference ⟨503, T⟩ = some ⟨36, (T.write 0).move .right⟩ := by
+  have hs_ref1 : step refM ⟨503, T⟩ = some ⟨36, (T.write 0).move .right⟩ := by
     have htr : refTrans 503 0 = some (0, .right, 36) := by decide
     simp [step, refTrans_eq, h0, htr]
   have hW_503 : WindowInv 33553925 33538555 T := by
@@ -2928,19 +2934,19 @@ theorem halt_from_503 (T : Tape (Fin 2)) (hInv : Inv 503 T) (h0 : T.head = 0) :
   let R1 := (T.write 0).move .right
   have hW1 : WindowInv 33554178 33546493 R1 := window_step_sound hW_503 0 .right (by decide)
   have hb1 : R1.head = 0 := force_bit (hW1 ⟨11, by decide⟩) (by decide)
-  have hs_ref2 : step reference ⟨36, R1⟩ = some ⟨37, (R1.write 0).move .left⟩ := by
+  have hs_ref2 : step refM ⟨36, R1⟩ = some ⟨37, (R1.write 0).move .left⟩ := by
     have htr : refTrans 36 0 = some (0, .left, 37) := by decide
     simp [step, refTrans_eq, hb1, htr]
   let R2 := (R1.write 0).move .left
   have hW2 : WindowInv 33553925 33538555 R2 := window_step_sound hW1 0 .left (by decide)
   have hb2 : R2.head = 0 := force_bit (hW2 ⟨11, by decide⟩) (by decide)
-  have hs_ref3 : step reference ⟨37, R2⟩ = some ⟨38, (R2.write 1).move .left⟩ := by
+  have hs_ref3 : step refM ⟨37, R2⟩ = some ⟨38, (R2.write 1).move .left⟩ := by
     have htr : refTrans 37 0 = some (1, .left, 38) := by decide
     simp [step, refTrans_eq, hb2, htr]
   let R3 := (R2.write 1).move .left
   have hW3 : WindowInv 33549323 33526775 R3 := window_step_sound hW2 1 .left (by decide)
   have hb3 : R3.head = 0 := force_bit (hW3 ⟨11, by decide⟩) (by decide)
-  have hs_ref4 : step reference ⟨38, R3⟩ = some ⟨177, (R3.write 1).move .left⟩ := by
+  have hs_ref4 : step refM ⟨38, R3⟩ = some ⟨177, (R3.write 1).move .left⟩ := by
     have htr : refTrans 38 0 = some (1, .left, 177) := by decide
     simp [step, refTrans_eq, hb3, htr]
   let R4 := (R3.write 1).move .left
@@ -2951,7 +2957,7 @@ theorem halt_from_503 (T : Tape (Fin 2)) (hInv : Inv 503 T) (h0 : T.head = 0) :
      ⟨38, R3⟩, Relation.TransGen.single hs_ref3,
      ⟨177, R4⟩, Relation.TransGen.single hs_ref4,
      ch, hreach177, hhalt177⟩
-  have hs_c1 : step candidate ⟨f 503, T⟩ = some ⟨35, (T.write 0).move .left⟩ := by
+  have hs_c1 : step candM ⟨f 503, T⟩ = some ⟨35, (T.write 0).move .left⟩ := by
     have htr : candTrans (f 503) 0 = some (0, .left, 35) := by decide
     simp [step, candTrans_eq, h0, htr]
   let T1 := (T.write 0).move .left
@@ -2989,19 +2995,19 @@ theorem halt_from_503 (T : Tape (Fin 2)) (hInv : Inv 503 T) (h0 : T.head = 0) :
       move_left_write_nth T1 0 (0 - 1 - 1 - 1) (by decide),
       move_left_write_nth T 0 (0 - 1 - 1 - 1 - 1) (by decide)]
     exact hn5
-  have hs_c2 : step candidate ⟨35, T1⟩ = some ⟨36, T2⟩ := by
+  have hs_c2 : step candM ⟨35, T1⟩ = some ⟨36, T2⟩ := by
     have htr : candTrans 35 0 = some (0, .left, 36) := by decide
     simp [step, candTrans_eq, ht1, htr]; rfl
-  have hs_c3 : step candidate ⟨36, T2⟩ = some ⟨37, T3⟩ := by
+  have hs_c3 : step candM ⟨36, T2⟩ = some ⟨37, T3⟩ := by
     have htr : candTrans 36 0 = some (0, .left, 37) := by decide
     simp [step, candTrans_eq, ht2, htr]; rfl
-  have hs_c4 : step candidate ⟨37, T3⟩ = some ⟨38, T4⟩ := by
+  have hs_c4 : step candM ⟨37, T3⟩ = some ⟨38, T4⟩ := by
     have htr : candTrans 37 1 = some (1, .left, 38) := by decide
     simp [step, candTrans_eq, ht3, htr]; rfl
-  have hs_c5 : step candidate ⟨38, T4⟩ = some ⟨39, T5⟩ := by
+  have hs_c5 : step candM ⟨38, T4⟩ = some ⟨39, T5⟩ := by
     have htr : candTrans 38 1 = some (1, .left, 39) := by decide
     simp [step, candTrans_eq, ht4, htr]; rfl
-  have hs_c6 : step candidate ⟨39, T5⟩ = none := by
+  have hs_c6 : step candM ⟨39, T5⟩ = none := by
     have htr : candTrans 39 1 = none := by decide
     simp [step, candTrans_eq, ht5, htr]
   have h_cand_cd : HaltCountdown 4 ⟨35, T1⟩ :=
@@ -3042,9 +3048,9 @@ theorem sync_step_ex {c_cand next_cand : Fin 543} {c_ref next_ref : Fin 744}
     ∀ T, WindowInv v0 v1 T → SyncEx ⟨c_cand, T⟩ ⟨c_ref, T⟩ := by
   intro T hW
   have hb : T.head = b := force_bit (hW ⟨11, by decide⟩) h_head
-  have hs_c : step candidate ⟨c_cand, T⟩ = some ⟨next_cand, (T.write w).move d⟩ := by
+  have hs_c : step candM ⟨c_cand, T⟩ = some ⟨next_cand, (T.write w).move d⟩ := by
     simp [step, candTrans_eq, hb, h_cand]
-  have hs_r : step reference ⟨c_ref, T⟩ = some ⟨next_ref, (T.write w).move d⟩ := by
+  have hs_r : step refM ⟨c_ref, T⟩ = some ⟨next_ref, (T.write w).move d⟩ := by
     simp [step, refTrans_eq, hb, h_ref]
   have hW' := window_step_sound hW w d h_cells
   obtain ⟨m, h_m⟩ := h_next _ hW'
@@ -3064,13 +3070,13 @@ theorem sync_step_bounce_ex {c_cand next_cand : Fin 543} {c_ref p j1 next_ref : 
     ∀ T, WindowInv v0 v1 T → SyncEx ⟨c_cand, T⟩ ⟨c_ref, T⟩ := by
   intro T hW
   have hb : T.head = b := force_bit (hW ⟨11, by decide⟩) h_head
-  have hs_c : step candidate ⟨c_cand, T⟩ = some ⟨next_cand, (T.write w2).move d2⟩ := by
+  have hs_c : step candM ⟨c_cand, T⟩ = some ⟨next_cand, (T.write w2).move d2⟩ := by
     simp [step, candTrans_eq, hb, h_cand]
-  have hs1 : step reference ⟨c_ref, T⟩ = some ⟨p, (T.write w1_b).move d1⟩ := by
+  have hs1 : step refM ⟨c_ref, T⟩ = some ⟨p, (T.write w1_b).move d1⟩ := by
     simp [step, refTrans_eq, hb, h_r1]
-  have hs2 : step reference ⟨p, (T.write w1_b).move d1⟩ = some ⟨j1, T.write w1_b⟩ := by
+  have hs2 : step refM ⟨p, (T.write w1_b).move d1⟩ = some ⟨j1, T.write w1_b⟩ := by
     rw [ref_pass_step ((T.write w1_b).move d1) hp0 hp1, move_opp]
-  have hs3 : step reference ⟨j1, T.write w1_b⟩ = some ⟨next_ref, (T.write w2).move d2⟩ := by
+  have hs3 : step refM ⟨j1, T.write w1_b⟩ = some ⟨next_ref, (T.write w2).move d2⟩ := by
     have hhead : (T.write w1_b).head = w1_b := rfl
     have hwrite : (T.write w1_b).write w2 = T.write w2 := rfl
     simp [step, refTrans_eq, hhead, h_r3, hwrite]
@@ -3120,11 +3126,11 @@ theorem sync_entry_1step_ex {q nrq : Fin 744} {ncq : Fin 543}
     (h_cells : checkAllCells (m0 q) (m1 q) v0_n v1_n w d = true)
     (T : Tape (Fin 2)) (hInv : Inv q T) (hb : T.head = b) :
     ∃ c₁, SimRel ⟨ncq, (T.write w).move d⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨q, T⟩ c₁ ∧
-      step candidate ⟨f q, T⟩ = some ⟨ncq, (T.write w).move d⟩ := by
-  have hs_c : step candidate ⟨f q, T⟩ = some ⟨ncq, (T.write w).move d⟩ := by
+      Reaches₁ (step refM) ⟨q, T⟩ c₁ ∧
+      step candM ⟨f q, T⟩ = some ⟨ncq, (T.write w).move d⟩ := by
+  have hs_c : step candM ⟨f q, T⟩ = some ⟨ncq, (T.write w).move d⟩ := by
     simp [step, candTrans_eq, hb, h_cand]
-  have hs_r : step reference ⟨q, T⟩ = some ⟨nrq, (T.write w).move d⟩ := by
+  have hs_r : step refM ⟨q, T⟩ = some ⟨nrq, (T.write w).move d⟩ := by
     simp [step, refTrans_eq, hb, h_ref]
   have hW1 : WindowInv v0_n v1_n ((T.write w).move d) := window_step_sound hInv w d h_cells
   exact ⟨⟨nrq, (T.write w).move d⟩, Or.inr (h_next _ hW1), Relation.TransGen.single hs_r, hs_c⟩
@@ -3140,15 +3146,15 @@ theorem sync_entry_bounce_ex {q p j1 nrq : Fin 744} {ncq : Fin 543}
     (h_cells : checkAllCells (m0 q) (m1 q) v0_n v1_n w2 d2 = true)
     (T : Tape (Fin 2)) (hInv : Inv q T) (hb : T.head = b) :
     ∃ c₁, SimRel ⟨ncq, (T.write w2).move d2⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨q, T⟩ c₁ ∧
-      step candidate ⟨f q, T⟩ = some ⟨ncq, (T.write w2).move d2⟩ := by
-  have hs_c : step candidate ⟨f q, T⟩ = some ⟨ncq, (T.write w2).move d2⟩ := by
+      Reaches₁ (step refM) ⟨q, T⟩ c₁ ∧
+      step candM ⟨f q, T⟩ = some ⟨ncq, (T.write w2).move d2⟩ := by
+  have hs_c : step candM ⟨f q, T⟩ = some ⟨ncq, (T.write w2).move d2⟩ := by
     simp [step, candTrans_eq, hb, h_cand]
-  have hs1 : step reference ⟨q, T⟩ = some ⟨p, (T.write w1).move d1⟩ := by
+  have hs1 : step refM ⟨q, T⟩ = some ⟨p, (T.write w1).move d1⟩ := by
     simp [step, refTrans_eq, hb, h_r1]
-  have hs2 : step reference ⟨p, (T.write w1).move d1⟩ = some ⟨j1, T.write w1⟩ := by
+  have hs2 : step refM ⟨p, (T.write w1).move d1⟩ = some ⟨j1, T.write w1⟩ := by
     rw [ref_pass_step ((T.write w1).move d1) hp0 hp1, move_opp]
-  have hs3 : step reference ⟨j1, T.write w1⟩ = some ⟨nrq, (T.write w2).move d2⟩ := by
+  have hs3 : step refM ⟨j1, T.write w1⟩ = some ⟨nrq, (T.write w2).move d2⟩ := by
     have hhead : (T.write w1).head = w1 := rfl
     have hwrite : (T.write w1).write w2 = T.write w2 := rfl
     simp [step, refTrans_eq, hhead, h_r3, hwrite]
@@ -3159,8 +3165,8 @@ theorem sync_entry_bounce_ex {q p j1 nrq : Fin 744} {ncq : Fin 543}
 
 theorem sync_from_63_0 (T : Tape (Fin 2)) (hInv : Inv 63 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨33, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨63, T⟩ c₁ ∧
-      step candidate ⟨f 63, T⟩ = some ⟨33, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨63, T⟩ c₁ ∧
+      step candM ⟨f 63, T⟩ = some ⟨33, (T.write 1).move .left⟩ := by
   have hs_3 : ∀ T, WindowInv (m0 59) (m1 59) T → SyncEx ⟨f 59, T⟩ ⟨59, T⟩ := sync_base_ex
   have hs_2 : ∀ T, WindowInv 33545071 33432735 T → SyncEx ⟨34, T⟩ ⟨58, T⟩ :=
     sync_step_ex (b := 0) (w := 1) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_3
@@ -3170,8 +3176,8 @@ theorem sync_from_63_0 (T : Tape (Fin 2)) (hInv : Inv 63 T) (hb : T.head = 0) :
 
 theorem sync_from_203_1 (T : Tape (Fin 2)) (hInv : Inv 203 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨454, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨203, T⟩ c₁ ∧
-      step candidate ⟨f 203, T⟩ = some ⟨454, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨203, T⟩ c₁ ∧
+      step candM ⟨f 203, T⟩ = some ⟨454, (T.write 1).move .left⟩ := by
   have hs_2 : ∀ T, WindowInv (m0 15) (m1 15) T → SyncEx ⟨f 15, T⟩ ⟨15, T⟩ := sync_base_ex
   have hs_1 : ∀ T, WindowInv 33546431 33529667 T → SyncEx ⟨454, T⟩ ⟨165, T⟩ :=
     sync_step_ex (b := 1) (w := 1) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_2
@@ -3181,8 +3187,8 @@ theorem sync_from_203_1 (T : Tape (Fin 2)) (hInv : Inv 203 T) (hb : T.head = 1) 
 
 theorem sync_from_208_0 (T : Tape (Fin 2)) (hInv : Inv 208 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨69, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨208, T⟩ c₁ ∧
-      step candidate ⟨f 208, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨208, T⟩ c₁ ∧
+      step candM ⟨f 208, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
   have hs_6 : ∀ T, WindowInv (m0 22) (m1 22) T → SyncEx ⟨f 22, T⟩ ⟨22, T⟩ := sync_base_ex
   have hs_5 : ∀ T, WindowInv 33522687 33061951 T → SyncEx ⟨67, T⟩ ⟨121, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_6
@@ -3200,8 +3206,8 @@ theorem sync_from_208_0 (T : Tape (Fin 2)) (hInv : Inv 208 T) (hb : T.head = 0) 
 
 theorem sync_from_209_0 (T : Tape (Fin 2)) (hInv : Inv 209 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨40, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨209, T⟩ c₁ ∧
-      step candidate ⟨f 209, T⟩ = some ⟨40, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨209, T⟩ c₁ ∧
+      step candM ⟨f 209, T⟩ = some ⟨40, (T.write 0).move .left⟩ := by
   have hs_6 : ∀ T, WindowInv (m0 22) (m1 22) T → SyncEx ⟨f 22, T⟩ ⟨22, T⟩ := sync_base_ex
   have hs_5 : ∀ T, WindowInv 33526783 33057855 T → SyncEx ⟨5, T⟩ ⟨121, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_6
@@ -3219,8 +3225,8 @@ theorem sync_from_209_0 (T : Tape (Fin 2)) (hInv : Inv 209 T) (hb : T.head = 0) 
 
 theorem sync_from_212_1 (T : Tape (Fin 2)) (hInv : Inv 212 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨41, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨212, T⟩ c₁ ∧
-      step candidate ⟨f 212, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨212, T⟩ c₁ ∧
+      step candM ⟨f 212, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
   have hs_8 : ∀ T, WindowInv (m0 26) (m1 26) T → SyncEx ⟨f 26, T⟩ ⟨26, T⟩ := sync_base_ex
   have hs_7 : ∀ T, WindowInv 33165311 31846655 T → SyncEx ⟨22, T⟩ ⟨72, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_8
@@ -3242,8 +3248,8 @@ theorem sync_from_212_1 (T : Tape (Fin 2)) (hInv : Inv 212 T) (hb : T.head = 1) 
 
 theorem sync_from_216_0 (T : Tape (Fin 2)) (hInv : Inv 216 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨69, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨216, T⟩ c₁ ∧
-      step candidate ⟨f 216, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨216, T⟩ c₁ ∧
+      step candM ⟨f 216, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
   have hs_5 : ∀ T, WindowInv (m0 20) (m1 20) T → SyncEx ⟨f 20, T⟩ ⟨20, T⟩ := sync_base_ex
   have hs_4 : ∀ T, WindowInv 33546751 33299999 T → SyncEx ⟨66, T⟩ ⟨173, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_5
@@ -3259,8 +3265,8 @@ theorem sync_from_216_0 (T : Tape (Fin 2)) (hInv : Inv 216 T) (hb : T.head = 0) 
 
 theorem sync_from_217_0 (T : Tape (Fin 2)) (hInv : Inv 217 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨69, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨217, T⟩ c₁ ∧
-      step candidate ⟨f 217, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨217, T⟩ c₁ ∧
+      step candM ⟨f 217, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
   have hs_2 : ∀ T, WindowInv (m0 15) (m1 15) T → SyncEx ⟨f 15, T⟩ ⟨15, T⟩ := sync_base_ex
   have hs_1 : ∀ T, WindowInv 33550399 33525699 T → SyncEx ⟨69, T⟩ ⟨165, T⟩ :=
     sync_step_ex (b := 1) (w := 1) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_2
@@ -3270,8 +3276,8 @@ theorem sync_from_217_0 (T : Tape (Fin 2)) (hInv : Inv 217 T) (hb : T.head = 0) 
 
 theorem sync_from_224_1 (T : Tape (Fin 2)) (hInv : Inv 224 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨69, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨224, T⟩ c₁ ∧
-      step candidate ⟨f 224, T⟩ = some ⟨69, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨224, T⟩ c₁ ∧
+      step candM ⟨f 224, T⟩ = some ⟨69, (T.write 1).move .left⟩ := by
   have hs_7 : ∀ T, WindowInv (m0 72) (m1 72) T → SyncEx ⟨f 72, T⟩ ⟨72, T⟩ := sync_base_ex
   have hs_6 : ∀ T, WindowInv 33360895 32699519 T → SyncEx ⟨68, T⟩ ⟨71, T⟩ :=
     sync_step_ex (b := 0) (w := 1) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_7
@@ -3291,8 +3297,8 @@ theorem sync_from_224_1 (T : Tape (Fin 2)) (hInv : Inv 224 T) (hb : T.head = 1) 
 
 theorem sync_from_225_1 (T : Tape (Fin 2)) (hInv : Inv 225 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨41, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨225, T⟩ c₁ ∧
-      step candidate ⟨f 225, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨225, T⟩ c₁ ∧
+      step candM ⟨f 225, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
   have hs_4 : ∀ T, WindowInv (m0 19) (m1 19) T → SyncEx ⟨f 19, T⟩ ⟨19, T⟩ := sync_base_ex
   have hs_3 : ∀ T, WindowInv 33537919 33439887 T → SyncEx ⟨43, T⟩ ⟨84, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_4
@@ -3306,8 +3312,8 @@ theorem sync_from_225_1 (T : Tape (Fin 2)) (hInv : Inv 225 T) (hb : T.head = 1) 
 
 theorem sync_from_241_1 (T : Tape (Fin 2)) (hInv : Inv 241 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨454, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨241, T⟩ c₁ ∧
-      step candidate ⟨f 241, T⟩ = some ⟨454, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨241, T⟩ c₁ ∧
+      step candM ⟨f 241, T⟩ = some ⟨454, (T.write 1).move .left⟩ := by
   have hs_2 : ∀ T, WindowInv (m0 15) (m1 15) T → SyncEx ⟨f 15, T⟩ ⟨15, T⟩ := sync_base_ex
   have hs_1 : ∀ T, WindowInv 33547167 33528931 T → SyncEx ⟨454, T⟩ ⟨165, T⟩ :=
     sync_step_ex (b := 1) (w := 1) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_2
@@ -3317,8 +3323,8 @@ theorem sync_from_241_1 (T : Tape (Fin 2)) (hInv : Inv 241 T) (hb : T.head = 1) 
 
 theorem sync_from_244_0 (T : Tape (Fin 2)) (hInv : Inv 244 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨69, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨244, T⟩ c₁ ∧
-      step candidate ⟨f 244, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨244, T⟩ c₁ ∧
+      step candM ⟨f 244, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
   have hs_4 : ∀ T, WindowInv (m0 173) (m1 173) T → SyncEx ⟨f 173, T⟩ ⟨173, T⟩ := sync_base_ex
   have hs_3 : ∀ T, WindowInv 33547903 33429903 T → SyncEx ⟨62, T⟩ ⟨137, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_4
@@ -3332,8 +3338,8 @@ theorem sync_from_244_0 (T : Tape (Fin 2)) (hInv : Inv 244 T) (hb : T.head = 0) 
 
 theorem sync_from_245_0 (T : Tape (Fin 2)) (hInv : Inv 245 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨40, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨245, T⟩ c₁ ∧
-      step candidate ⟨f 245, T⟩ = some ⟨40, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨245, T⟩ c₁ ∧
+      step candM ⟨f 245, T⟩ = some ⟨40, (T.write 0).move .left⟩ := by
   have hs_2 : ∀ T, WindowInv (m0 151) (m1 151) T → SyncEx ⟨f 151, T⟩ ⟨151, T⟩ := sync_base_ex
   have hs_1 : ∀ T, WindowInv 33551775 33524323 T → SyncEx ⟨40, T⟩ ⟨150, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_2
@@ -3343,8 +3349,8 @@ theorem sync_from_245_0 (T : Tape (Fin 2)) (hInv : Inv 245 T) (hb : T.head = 0) 
 
 theorem sync_from_249_1 (T : Tape (Fin 2)) (hInv : Inv 249 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨41, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨249, T⟩ c₁ ∧
-      step candidate ⟨f 249, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨249, T⟩ c₁ ∧
+      step candM ⟨f 249, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
   have hs_4 : ∀ T, WindowInv (m0 19) (m1 19) T → SyncEx ⟨f 19, T⟩ ⟨19, T⟩ := sync_base_ex
   have hs_3 : ∀ T, WindowInv 33532399 33445407 T → SyncEx ⟨43, T⟩ ⟨84, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_4
@@ -3358,8 +3364,8 @@ theorem sync_from_249_1 (T : Tape (Fin 2)) (hInv : Inv 249 T) (hb : T.head = 1) 
 
 theorem sync_from_254_0 (T : Tape (Fin 2)) (hInv : Inv 254 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨69, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨254, T⟩ c₁ ∧
-      step candidate ⟨f 254, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨254, T⟩ c₁ ∧
+      step candM ⟨f 254, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
   have hs_6 : ∀ T, WindowInv (m0 22) (m1 22) T → SyncEx ⟨f 22, T⟩ ⟨22, T⟩ := sync_base_ex
   have hs_5 : ∀ T, WindowInv 33546751 33037887 T → SyncEx ⟨67, T⟩ ⟨121, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_6
@@ -3377,8 +3383,8 @@ theorem sync_from_254_0 (T : Tape (Fin 2)) (hInv : Inv 254 T) (hb : T.head = 0) 
 
 theorem sync_from_255_0 (T : Tape (Fin 2)) (hInv : Inv 255 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨69, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨255, T⟩ c₁ ∧
-      step candidate ⟨f 255, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨255, T⟩ c₁ ∧
+      step candM ⟨f 255, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
   have hs_2 : ∀ T, WindowInv (m0 15) (m1 15) T → SyncEx ⟨f 15, T⟩ ⟨15, T⟩ := sync_base_ex
   have hs_1 : ∀ T, WindowInv 33551135 33524963 T → SyncEx ⟨69, T⟩ ⟨165, T⟩ :=
     sync_step_ex (b := 1) (w := 1) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_2
@@ -3388,8 +3394,8 @@ theorem sync_from_255_0 (T : Tape (Fin 2)) (hInv : Inv 255 T) (hb : T.head = 0) 
 
 theorem sync_from_258_1 (T : Tape (Fin 2)) (hInv : Inv 258 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨69, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨258, T⟩ c₁ ∧
-      step candidate ⟨f 258, T⟩ = some ⟨69, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨258, T⟩ c₁ ∧
+      step candM ⟨f 258, T⟩ = some ⟨69, (T.write 1).move .left⟩ := by
   have hs_4 : ∀ T, WindowInv (m0 173) (m1 173) T → SyncEx ⟨f 173, T⟩ ⟨173, T⟩ := sync_base_ex
   have hs_3 : ∀ T, WindowInv 33531007 33446799 T → SyncEx ⟨62, T⟩ ⟨137, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_4
@@ -3403,8 +3409,8 @@ theorem sync_from_258_1 (T : Tape (Fin 2)) (hInv : Inv 258 T) (hb : T.head = 1) 
 
 theorem sync_from_266_1 (T : Tape (Fin 2)) (hInv : Inv 266 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨58, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨266, T⟩ c₁ ∧
-      step candidate ⟨f 266, T⟩ = some ⟨58, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨266, T⟩ c₁ ∧
+      step candM ⟨f 266, T⟩ = some ⟨58, (T.write 0).move .left⟩ := by
   have hs_11 : ∀ T, WindowInv (m0 371) (m1 371) T → SyncEx ⟨f 371, T⟩ ⟨371, T⟩ := sync_base_ex
   have hs_10 : ∀ T, WindowInv 32702463 17631231 T → SyncEx ⟨49, T⟩ ⟨12, T⟩ :=
     sync_step_bounce_ex hs_11 (p := 0) (j1 := 523) (b := 0) (w1_b := 0) (w2 := 0) (d1 := .left)
@@ -3435,8 +3441,8 @@ theorem sync_from_266_1 (T : Tape (Fin 2)) (hInv : Inv 266 T) (hb : T.head = 1) 
 
 theorem sync_from_291_1 (T : Tape (Fin 2)) (hInv : Inv 291 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨450, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨291, T⟩ c₁ ∧
-      step candidate ⟨f 291, T⟩ = some ⟨450, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨291, T⟩ c₁ ∧
+      step candM ⟨f 291, T⟩ = some ⟨450, (T.write 0).move .left⟩ := by
   have hs_2 : ∀ T, WindowInv (m0 14) (m1 14) T → SyncEx ⟨f 14, T⟩ ⟨14, T⟩ := sync_base_ex
   have hs_1 : ∀ T, WindowInv 33553127 33522971 T → SyncEx ⟨450, T⟩ ⟨11, T⟩ :=
     sync_step_ex (b := 0) (w := 1) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_2
@@ -3446,8 +3452,8 @@ theorem sync_from_291_1 (T : Tape (Fin 2)) (hInv : Inv 291 T) (hb : T.head = 1) 
 
 theorem sync_from_294_1 (T : Tape (Fin 2)) (hInv : Inv 294 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨450, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨294, T⟩ c₁ ∧
-      step candidate ⟨f 294, T⟩ = some ⟨450, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨294, T⟩ c₁ ∧
+      step candM ⟨f 294, T⟩ = some ⟨450, (T.write 0).move .left⟩ := by
   have hs_2 : ∀ T, WindowInv (m0 14) (m1 14) T → SyncEx ⟨f 14, T⟩ ⟨14, T⟩ := sync_base_ex
   have hs_1 : ∀ T, WindowInv 33554431 33523679 T → SyncEx ⟨450, T⟩ ⟨11, T⟩ :=
     sync_step_ex (b := 0) (w := 1) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_2
@@ -3457,8 +3463,8 @@ theorem sync_from_294_1 (T : Tape (Fin 2)) (hInv : Inv 294 T) (hb : T.head = 1) 
 
 theorem sync_from_302_1 (T : Tape (Fin 2)) (hInv : Inv 302 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨41, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨302, T⟩ c₁ ∧
-      step candidate ⟨f 302, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨302, T⟩ c₁ ∧
+      step candM ⟨f 302, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
   have hs_2 : ∀ T, WindowInv (m0 113) (m1 113) T → SyncEx ⟨f 113, T⟩ ⟨113, T⟩ := sync_base_ex
   have hs_1 : ∀ T, WindowInv 33546343 33529755 T → SyncEx ⟨41, T⟩ ⟨109, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_2
@@ -3468,8 +3474,8 @@ theorem sync_from_302_1 (T : Tape (Fin 2)) (hInv : Inv 302 T) (hb : T.head = 1) 
 
 theorem sync_from_308_0 (T : Tape (Fin 2)) (hInv : Inv 308 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨69, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨308, T⟩ c₁ ∧
-      step candidate ⟨f 308, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨308, T⟩ c₁ ∧
+      step candM ⟨f 308, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
   have hs_6 : ∀ T, WindowInv (m0 155) (m1 155) T → SyncEx ⟨f 155, T⟩ ⟨155, T⟩ := sync_base_ex
   have hs_5 : ∀ T, WindowInv 33524351 33060287 T → SyncEx ⟨67, T⟩ ⟨154, T⟩ :=
     sync_step_ex (b := 0) (w := 1) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_6
@@ -3487,8 +3493,8 @@ theorem sync_from_308_0 (T : Tape (Fin 2)) (hInv : Inv 308 T) (hb : T.head = 0) 
 
 theorem sync_from_309_0 (T : Tape (Fin 2)) (hInv : Inv 309 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨35, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨309, T⟩ c₁ ∧
-      step candidate ⟨f 309, T⟩ = some ⟨35, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨309, T⟩ c₁ ∧
+      step candM ⟨f 309, T⟩ = some ⟨35, (T.write 0).move .left⟩ := by
   have hs_6 : ∀ T, WindowInv (m0 22) (m1 22) T → SyncEx ⟨f 22, T⟩ ⟨22, T⟩ := sync_base_ex
   have hs_5 : ∀ T, WindowInv 33548927 33035711 T → SyncEx ⟨18, T⟩ ⟨121, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_6
@@ -3506,8 +3512,8 @@ theorem sync_from_309_0 (T : Tape (Fin 2)) (hInv : Inv 309 T) (hb : T.head = 0) 
 
 theorem sync_from_316_1 (T : Tape (Fin 2)) (hInv : Inv 316 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨41, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨316, T⟩ c₁ ∧
-      step candidate ⟨f 316, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨316, T⟩ c₁ ∧
+      step candM ⟨f 316, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
   have hs_5 : ∀ T, WindowInv (m0 21) (m1 21) T → SyncEx ⟨f 21, T⟩ ⟨21, T⟩ := sync_base_ex
   have hs_4 : ∀ T, WindowInv 33506687 33340415 T → SyncEx ⟨17, T⟩ ⟨19, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_5
@@ -3523,8 +3529,8 @@ theorem sync_from_316_1 (T : Tape (Fin 2)) (hInv : Inv 316 T) (hb : T.head = 1) 
 
 theorem sync_from_321_0 (T : Tape (Fin 2)) (hInv : Inv 321 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨47, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨321, T⟩ c₁ ∧
-      step candidate ⟨f 321, T⟩ = some ⟨47, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨321, T⟩ c₁ ∧
+      step candM ⟨f 321, T⟩ = some ⟨47, (T.write 0).move .left⟩ := by
   have hs_6 : ∀ T, WindowInv (m0 22) (m1 22) T → SyncEx ⟨f 22, T⟩ ⟨22, T⟩ := sync_base_ex
   have hs_5 : ∀ T, WindowInv 33522687 33062911 T → SyncEx ⟨67, T⟩ ⟨121, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_6
@@ -3542,8 +3548,8 @@ theorem sync_from_321_0 (T : Tape (Fin 2)) (hInv : Inv 321 T) (hb : T.head = 0) 
 
 theorem sync_from_332_1 (T : Tape (Fin 2)) (hInv : Inv 332 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨41, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨332, T⟩ c₁ ∧
-      step candidate ⟨f 332, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨332, T⟩ c₁ ∧
+      step candM ⟨f 332, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
   have hs_4 : ∀ T, WindowInv (m0 19) (m1 19) T → SyncEx ⟨f 19, T⟩ ⟨19, T⟩ := sync_base_ex
   have hs_3 : ∀ T, WindowInv 33532863 33445631 T → SyncEx ⟨43, T⟩ ⟨84, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_4
@@ -3557,8 +3563,8 @@ theorem sync_from_332_1 (T : Tape (Fin 2)) (hInv : Inv 332 T) (hb : T.head = 1) 
 
 theorem sync_from_337_0 (T : Tape (Fin 2)) (hInv : Inv 337 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨47, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨337, T⟩ c₁ ∧
-      step candidate ⟨f 337, T⟩ = some ⟨47, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨337, T⟩ c₁ ∧
+      step candM ⟨f 337, T⟩ = some ⟨47, (T.write 0).move .left⟩ := by
   have hs_6 : ∀ T, WindowInv (m0 22) (m1 22) T → SyncEx ⟨f 22, T⟩ ⟨22, T⟩ := sync_base_ex
   have hs_5 : ∀ T, WindowInv 33531135 33054719 T → SyncEx ⟨67, T⟩ ⟨121, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_6
@@ -3576,8 +3582,8 @@ theorem sync_from_337_0 (T : Tape (Fin 2)) (hInv : Inv 337 T) (hb : T.head = 0) 
 
 theorem sync_from_342_1 (T : Tape (Fin 2)) (hInv : Inv 342 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨58, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨342, T⟩ c₁ ∧
-      step candidate ⟨f 342, T⟩ = some ⟨58, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨342, T⟩ c₁ ∧
+      step candM ⟨f 342, T⟩ = some ⟨58, (T.write 1).move .left⟩ := by
   have hs_6 : ∀ T, WindowInv (m0 145) (m1 145) T → SyncEx ⟨f 145, T⟩ ⟨145, T⟩ := sync_base_ex
   have hs_5 : ∀ T, WindowInv 33457279 33127359 T → SyncEx ⟨30, T⟩ ⟨132, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_6
@@ -3595,8 +3601,8 @@ theorem sync_from_342_1 (T : Tape (Fin 2)) (hInv : Inv 342 T) (hb : T.head = 1) 
 
 theorem sync_from_350_1 (T : Tape (Fin 2)) (hInv : Inv 350 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨41, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨350, T⟩ c₁ ∧
-      step candidate ⟨f 350, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨350, T⟩ c₁ ∧
+      step candM ⟨f 350, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
   have hs_4 : ∀ T, WindowInv (m0 19) (m1 19) T → SyncEx ⟨f 19, T⟩ ⟨19, T⟩ := sync_base_ex
   have hs_3 : ∀ T, WindowInv 33532447 33445359 T → SyncEx ⟨43, T⟩ ⟨84, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_4
@@ -3610,8 +3616,8 @@ theorem sync_from_350_1 (T : Tape (Fin 2)) (hInv : Inv 350 T) (hb : T.head = 1) 
 
 theorem sync_from_361_0 (T : Tape (Fin 2)) (hInv : Inv 361 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨69, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨361, T⟩ c₁ ∧
-      step candidate ⟨f 361, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨361, T⟩ c₁ ∧
+      step candM ⟨f 361, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
   have hs_5 : ∀ T, WindowInv (m0 20) (m1 20) T → SyncEx ⟨f 20, T⟩ ⟨20, T⟩ := sync_base_ex
   have hs_4 : ∀ T, WindowInv 33538111 33308639 T → SyncEx ⟨66, T⟩ ⟨173, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_5
@@ -3627,8 +3633,8 @@ theorem sync_from_361_0 (T : Tape (Fin 2)) (hInv : Inv 361 T) (hb : T.head = 0) 
 
 theorem sync_from_372_1 (T : Tape (Fin 2)) (hInv : Inv 372 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨41, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨372, T⟩ c₁ ∧
-      step candidate ⟨f 372, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨372, T⟩ c₁ ∧
+      step candM ⟨f 372, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
   have hs_8 : ∀ T, WindowInv (m0 26) (m1 26) T → SyncEx ⟨f 26, T⟩ ⟨26, T⟩ := sync_base_ex
   have hs_7 : ∀ T, WindowInv 33177343 31834623 T → SyncEx ⟨22, T⟩ ⟨72, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_8
@@ -3650,8 +3656,8 @@ theorem sync_from_372_1 (T : Tape (Fin 2)) (hInv : Inv 372 T) (hb : T.head = 1) 
 
 theorem sync_from_391_1 (T : Tape (Fin 2)) (hInv : Inv 391 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨450, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨391, T⟩ c₁ ∧
-      step candidate ⟨f 391, T⟩ = some ⟨450, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨391, T⟩ c₁ ∧
+      step candM ⟨f 391, T⟩ = some ⟨450, (T.write 0).move .left⟩ := by
   have hs_2 : ∀ T, WindowInv (m0 14) (m1 14) T → SyncEx ⟨f 14, T⟩ ⟨14, T⟩ := sync_base_ex
   have hs_1 : ∀ T, WindowInv 33553595 33522503 T → SyncEx ⟨450, T⟩ ⟨11, T⟩ :=
     sync_step_ex (b := 0) (w := 1) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_2
@@ -3661,8 +3667,8 @@ theorem sync_from_391_1 (T : Tape (Fin 2)) (hInv : Inv 391 T) (hb : T.head = 1) 
 
 theorem sync_from_403_1 (T : Tape (Fin 2)) (hInv : Inv 403 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨41, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨403, T⟩ c₁ ∧
-      step candidate ⟨f 403, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨403, T⟩ c₁ ∧
+      step candM ⟨f 403, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
   have hs_4 : ∀ T, WindowInv (m0 19) (m1 19) T → SyncEx ⟨f 19, T⟩ ⟨19, T⟩ := sync_base_ex
   have hs_3 : ∀ T, WindowInv 33537903 33439903 T → SyncEx ⟨43, T⟩ ⟨84, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_4
@@ -3676,8 +3682,8 @@ theorem sync_from_403_1 (T : Tape (Fin 2)) (hInv : Inv 403 T) (hb : T.head = 1) 
 
 theorem sync_from_406_0 (T : Tape (Fin 2)) (hInv : Inv 406 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨69, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨406, T⟩ c₁ ∧
-      step candidate ⟨f 406, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨406, T⟩ c₁ ∧
+      step candM ⟨f 406, T⟩ = some ⟨69, (T.write 0).move .left⟩ := by
   have hs_4 : ∀ T, WindowInv (m0 173) (m1 173) T → SyncEx ⟨f 173, T⟩ ⟨173, T⟩ := sync_base_ex
   have hs_3 : ∀ T, WindowInv 33548143 33429663 T → SyncEx ⟨62, T⟩ ⟨137, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_4
@@ -3691,8 +3697,8 @@ theorem sync_from_406_0 (T : Tape (Fin 2)) (hInv : Inv 406 T) (hb : T.head = 0) 
 
 theorem sync_from_407_0 (T : Tape (Fin 2)) (hInv : Inv 407 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨35, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨407, T⟩ c₁ ∧
-      step candidate ⟨f 407, T⟩ = some ⟨35, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨407, T⟩ c₁ ∧
+      step candM ⟨f 407, T⟩ = some ⟨35, (T.write 0).move .left⟩ := by
   have hs_2 : ∀ T, WindowInv (m0 113) (m1 113) T → SyncEx ⟨f 113, T⟩ ⟨113, T⟩ := sync_base_ex
   have hs_1 : ∀ T, WindowInv 33551835 33524263 T → SyncEx ⟨35, T⟩ ⟨109, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_2
@@ -3702,8 +3708,8 @@ theorem sync_from_407_0 (T : Tape (Fin 2)) (hInv : Inv 407 T) (hb : T.head = 0) 
 
 theorem sync_from_416_1 (T : Tape (Fin 2)) (hInv : Inv 416 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨41, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨416, T⟩ c₁ ∧
-      step candidate ⟨f 416, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨416, T⟩ c₁ ∧
+      step candM ⟨f 416, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
   have hs_4 : ∀ T, WindowInv (m0 19) (m1 19) T → SyncEx ⟨f 19, T⟩ ⟨19, T⟩ := sync_base_ex
   have hs_3 : ∀ T, WindowInv 33533807 33445599 T → SyncEx ⟨43, T⟩ ⟨84, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_4
@@ -3717,8 +3723,8 @@ theorem sync_from_416_1 (T : Tape (Fin 2)) (hInv : Inv 416 T) (hb : T.head = 1) 
 
 theorem sync_from_420_0 (T : Tape (Fin 2)) (hInv : Inv 420 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨47, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨420, T⟩ c₁ ∧
-      step candidate ⟨f 420, T⟩ = some ⟨47, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨420, T⟩ c₁ ∧
+      step candM ⟨f 420, T⟩ = some ⟨47, (T.write 0).move .left⟩ := by
   have hs_5 : ∀ T, WindowInv (m0 20) (m1 20) T → SyncEx ⟨f 20, T⟩ ⟨20, T⟩ := sync_base_ex
   have hs_4 : ∀ T, WindowInv 33542879 33303871 T → SyncEx ⟨66, T⟩ ⟨173, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_5
@@ -3734,8 +3740,8 @@ theorem sync_from_420_0 (T : Tape (Fin 2)) (hInv : Inv 420 T) (hb : T.head = 0) 
 
 theorem sync_from_429_1 (T : Tape (Fin 2)) (hInv : Inv 429 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨41, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨429, T⟩ c₁ ∧
-      step candidate ⟨f 429, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨429, T⟩ c₁ ∧
+      step candM ⟨f 429, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
   have hs_5 : ∀ T, WindowInv (m0 21) (m1 21) T → SyncEx ⟨f 21, T⟩ ⟨21, T⟩ := sync_base_ex
   have hs_4 : ∀ T, WindowInv 33507039 33341375 T → SyncEx ⟨17, T⟩ ⟨19, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_5
@@ -3751,8 +3757,8 @@ theorem sync_from_429_1 (T : Tape (Fin 2)) (hInv : Inv 429 T) (hb : T.head = 1) 
 
 theorem sync_from_445_1 (T : Tape (Fin 2)) (hInv : Inv 445 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨41, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨445, T⟩ c₁ ∧
-      step candidate ⟨f 445, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨445, T⟩ c₁ ∧
+      step candM ⟨f 445, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
   have hs_8 : ∀ T, WindowInv (m0 26) (m1 26) T → SyncEx ⟨f 26, T⟩ ⟨26, T⟩ := sync_base_ex
   have hs_7 : ∀ T, WindowInv 33176319 31835647 T → SyncEx ⟨22, T⟩ ⟨72, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_8
@@ -3774,8 +3780,8 @@ theorem sync_from_445_1 (T : Tape (Fin 2)) (hInv : Inv 445 T) (hb : T.head = 1) 
 
 theorem sync_from_458_0 (T : Tape (Fin 2)) (hInv : Inv 458 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨47, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨458, T⟩ c₁ ∧
-      step candidate ⟨f 458, T⟩ = some ⟨47, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨458, T⟩ c₁ ∧
+      step candM ⟨f 458, T⟩ = some ⟨47, (T.write 0).move .left⟩ := by
   have hs_7 : ∀ T, WindowInv (m0 24) (m1 24) T → SyncEx ⟨f 24, T⟩ ⟨24, T⟩ := sync_base_ex
   have hs_6 : ∀ T, WindowInv 33506687 32553727 T → SyncEx ⟨68, T⟩ ⟨155, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_7
@@ -3795,8 +3801,8 @@ theorem sync_from_458_0 (T : Tape (Fin 2)) (hInv : Inv 458 T) (hb : T.head = 0) 
 
 theorem sync_from_459_0 (T : Tape (Fin 2)) (hInv : Inv 459 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨47, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨459, T⟩ c₁ ∧
-      step candidate ⟨f 459, T⟩ = some ⟨47, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨459, T⟩ c₁ ∧
+      step candM ⟨f 459, T⟩ = some ⟨47, (T.write 1).move .left⟩ := by
   have hs_4 : ∀ T, WindowInv (m0 19) (m1 19) T → SyncEx ⟨f 19, T⟩ ⟨19, T⟩ := sync_base_ex
   have hs_3 : ∀ T, WindowInv 33533615 33444191 T → SyncEx ⟨43, T⟩ ⟨84, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_4
@@ -3810,8 +3816,8 @@ theorem sync_from_459_0 (T : Tape (Fin 2)) (hInv : Inv 459 T) (hb : T.head = 0) 
 
 theorem sync_from_463_0 (T : Tape (Fin 2)) (hInv : Inv 463 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨47, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨463, T⟩ c₁ ∧
-      step candidate ⟨f 463, T⟩ = some ⟨47, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨463, T⟩ c₁ ∧
+      step candM ⟨f 463, T⟩ = some ⟨47, (T.write 1).move .left⟩ := by
   have hs_5 : ∀ T, WindowInv (m0 20) (m1 20) T → SyncEx ⟨f 20, T⟩ ⟨20, T⟩ := sync_base_ex
   have hs_4 : ∀ T, WindowInv 33510751 33335999 T → SyncEx ⟨66, T⟩ ⟨173, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_5
@@ -3827,8 +3833,8 @@ theorem sync_from_463_0 (T : Tape (Fin 2)) (hInv : Inv 463 T) (hb : T.head = 0) 
 
 theorem sync_from_468_1 (T : Tape (Fin 2)) (hInv : Inv 468 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨41, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨468, T⟩ c₁ ∧
-      step candidate ⟨f 468, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨468, T⟩ c₁ ∧
+      step candM ⟨f 468, T⟩ = some ⟨41, (T.write 1).move .left⟩ := by
   have hs_8 : ∀ T, WindowInv (m0 26) (m1 26) T → SyncEx ⟨f 26, T⟩ ⟨26, T⟩ := sync_base_ex
   have hs_7 : ∀ T, WindowInv 33164031 31847935 T → SyncEx ⟨22, T⟩ ⟨72, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_8
@@ -3850,8 +3856,8 @@ theorem sync_from_468_1 (T : Tape (Fin 2)) (hInv : Inv 468 T) (hb : T.head = 1) 
 
 theorem sync_from_487_0 (T : Tape (Fin 2)) (hInv : Inv 487 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨47, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨487, T⟩ c₁ ∧
-      step candidate ⟨f 487, T⟩ = some ⟨47, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨487, T⟩ c₁ ∧
+      step candM ⟨f 487, T⟩ = some ⟨47, (T.write 0).move .left⟩ := by
   have hs_6 : ∀ T, WindowInv (m0 155) (m1 155) T → SyncEx ⟨f 155, T⟩ ⟨155, T⟩ := sync_base_ex
   have hs_5 : ∀ T, WindowInv 33523903 33060735 T → SyncEx ⟨67, T⟩ ⟨154, T⟩ :=
     sync_step_ex (b := 0) (w := 1) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_6
@@ -3869,8 +3875,8 @@ theorem sync_from_487_0 (T : Tape (Fin 2)) (hInv : Inv 487 T) (hb : T.head = 0) 
 
 theorem sync_from_494_0 (T : Tape (Fin 2)) (hInv : Inv 494 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨47, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨494, T⟩ c₁ ∧
-      step candidate ⟨f 494, T⟩ = some ⟨47, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨494, T⟩ c₁ ∧
+      step candM ⟨f 494, T⟩ = some ⟨47, (T.write 0).move .left⟩ := by
   have hs_6 : ∀ T, WindowInv (m0 22) (m1 22) T → SyncEx ⟨f 22, T⟩ ⟨22, T⟩ := sync_base_ex
   have hs_5 : ∀ T, WindowInv 33521855 33062783 T → SyncEx ⟨67, T⟩ ⟨121, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_6
@@ -3888,8 +3894,8 @@ theorem sync_from_494_0 (T : Tape (Fin 2)) (hInv : Inv 494 T) (hb : T.head = 0) 
 
 theorem sync_from_499_1 (T : Tape (Fin 2)) (hInv : Inv 499 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨69, (T.write 1).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨499, T⟩ c₁ ∧
-      step candidate ⟨f 499, T⟩ = some ⟨69, (T.write 1).move .left⟩ := by
+      Reaches₁ (step refM) ⟨499, T⟩ c₁ ∧
+      step candM ⟨f 499, T⟩ = some ⟨69, (T.write 1).move .left⟩ := by
   have hs_5 : ∀ T, WindowInv (m0 20) (m1 20) T → SyncEx ⟨f 20, T⟩ ⟨20, T⟩ := sync_base_ex
   have hs_4 : ∀ T, WindowInv 33505375 33341375 T → SyncEx ⟨66, T⟩ ⟨173, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_5
@@ -3905,8 +3911,8 @@ theorem sync_from_499_1 (T : Tape (Fin 2)) (hInv : Inv 499 T) (hb : T.head = 1) 
 
 theorem sync_from_712_1 (T : Tape (Fin 2)) (hInv : Inv 712 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨60, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨712, T⟩ c₁ ∧
-      step candidate ⟨f 712, T⟩ = some ⟨60, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨712, T⟩ c₁ ∧
+      step candM ⟨f 712, T⟩ = some ⟨60, (T.write 0).move .left⟩ := by
   have hs_2 : ∀ T, WindowInv (m0 15) (m1 15) T → SyncEx ⟨f 15, T⟩ ⟨15, T⟩ := sync_base_ex
   have hs_1 : ∀ T, WindowInv 33554431 33523711 T → SyncEx ⟨60, T⟩ ⟨646, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_2
@@ -3916,8 +3922,8 @@ theorem sync_from_712_1 (T : Tape (Fin 2)) (hInv : Inv 712 T) (hb : T.head = 1) 
 
 theorem sync_from_713_1 (T : Tape (Fin 2)) (hInv : Inv 713 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨58, (T.write 0).move .left⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨713, T⟩ c₁ ∧
-      step candidate ⟨f 713, T⟩ = some ⟨58, (T.write 0).move .left⟩ := by
+      Reaches₁ (step refM) ⟨713, T⟩ c₁ ∧
+      step candM ⟨f 713, T⟩ = some ⟨58, (T.write 0).move .left⟩ := by
   have hs_2 : ∀ T, WindowInv (m0 14) (m1 14) T → SyncEx ⟨f 14, T⟩ ⟨14, T⟩ := sync_base_ex
   have hs_1 : ∀ T, WindowInv 33552383 33524731 T → SyncEx ⟨58, T⟩ ⟨634, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide) hs_2
@@ -3927,8 +3933,8 @@ theorem sync_from_713_1 (T : Tape (Fin 2)) (hInv : Inv 713 T) (hb : T.head = 1) 
 
 theorem sync_from_376_0 (T : Tape (Fin 2)) (hInv : Inv 376 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨139, (T.write 0).move .right⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨376, T⟩ c₁ ∧
-      step candidate ⟨f 376, T⟩ = some ⟨139, (T.write 0).move .right⟩ := by
+      Reaches₁ (step refM) ⟨376, T⟩ c₁ ∧
+      step candM ⟨f 376, T⟩ = some ⟨139, (T.write 0).move .right⟩ := by
   have hb0_6 : ∀ T, WindowInv (m0 22) (m1 22) T → SyncEx ⟨f 22, T⟩ ⟨22, T⟩ := sync_base_ex
   have hb0_5 : ∀ T, WindowInv 33529791 33055103 T → SyncEx ⟨18, T⟩ ⟨121, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide)
@@ -3961,8 +3967,8 @@ theorem sync_from_376_0 (T : Tape (Fin 2)) (hInv : Inv 376 T) (hb : T.head = 0) 
 
 theorem sync_from_386_0 (T : Tape (Fin 2)) (hInv : Inv 386 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨139, (T.write 0).move .right⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨386, T⟩ c₁ ∧
-      step candidate ⟨f 386, T⟩ = some ⟨139, (T.write 0).move .right⟩ := by
+      Reaches₁ (step refM) ⟨386, T⟩ c₁ ∧
+      step candM ⟨f 386, T⟩ = some ⟨139, (T.write 0).move .right⟩ := by
   have hb0_7 : ∀ T, WindowInv (m0 24) (m1 24) T → SyncEx ⟨f 24, T⟩ ⟨24, T⟩ := sync_base_ex
   have hb0_6 : ∀ T, WindowInv 33507199 32553215 T → SyncEx ⟨68, T⟩ ⟨155, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide)
@@ -3998,8 +4004,8 @@ theorem sync_from_386_0 (T : Tape (Fin 2)) (hInv : Inv 386 T) (hb : T.head = 0) 
 
 theorem sync_from_472_1 (T : Tape (Fin 2)) (hInv : Inv 472 T) (hb : T.head = 1) :
     ∃ c₁, SimRel ⟨140, (T.write 1).move .right⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨472, T⟩ c₁ ∧
-      step candidate ⟨f 472, T⟩ = some ⟨140, (T.write 1).move .right⟩ := by
+      Reaches₁ (step refM) ⟨472, T⟩ c₁ ∧
+      step candM ⟨f 472, T⟩ = some ⟨140, (T.write 1).move .right⟩ := by
   have h11_0_5 : ∀ T, WindowInv (m0 20) (m1 20) T → SyncEx ⟨f 20, T⟩ ⟨20, T⟩ := sync_base_ex
   have h11_0_4 : ∀ T, WindowInv 33538399 33308351 T → SyncEx ⟨66, T⟩ ⟨173, T⟩ :=
     sync_step_ex (b := 1) (w := 0) (d := .left) (by decide) (by decide) (by decide) (by decide)
@@ -4039,8 +4045,8 @@ theorem sync_from_472_1 (T : Tape (Fin 2)) (hInv : Inv 472 T) (hb : T.head = 1) 
 
 theorem sync_from_251_0 (T : Tape (Fin 2)) (hInv : Inv 251 T) (hb : T.head = 0) :
     ∃ c₁, SimRel ⟨100, (T.write 0).move .right⟩ c₁ ∧
-      Reaches₁ (step reference) ⟨251, T⟩ c₁ ∧
-      step candidate ⟨f 251, T⟩ = some ⟨100, (T.write 0).move .right⟩ := by
+      Reaches₁ (step refM) ⟨251, T⟩ c₁ ∧
+      step candM ⟨f 251, T⟩ = some ⟨100, (T.write 0).move .right⟩ := by
   have h11_0_1 : ∀ T, WindowInv (m0 545) (m1 545) T → SyncEx ⟨f 545, T⟩ ⟨545, T⟩ := sync_base_ex
   have h11_0_0 : ∀ T, WindowInv 33554255 33538225 T → SyncEx ⟨99, T⟩ ⟨249, T⟩ :=
     sync_step_ex (b := 0) (w := 0) (d := .right) (by decide) (by decide) (by decide) (by decide)
@@ -4075,25 +4081,25 @@ theorem sync_from_251_0 (T : Tape (Fin 2)) (hInv : Inv 251 T) (hb : T.head = 0) 
     0) (d := .right) (by decide) (by decide) (by decide) T hInv hb
 
 theorem respects :
-    Respects (step candidate) (step reference) SimRel := by
+    Respects (step candM) (step refM) SimRel := by
   intro c₂ c₁ hRel
   rcases hRel with (⟨hc2, hc1⟩ | ⟨_ | m, hcd2, hcd1⟩) | ⟨_ | m, hsync⟩
   · subst hc2 hc1
     have hhd : (Tape.mk₁ ([] : List (Fin 2))).head = 0 := rfl
-    have hsc : step candidate (init : Cfg 543 2) = some ⟨235, Tape.mk₁ []⟩ := by
+    have hsc : step candM (init : Cfg 543 2) = some ⟨235, Tape.mk₁ []⟩ := by
       have htr : candTrans 0 0 = some (0, .right, 235) := by decide
       simp [init, step, candTrans_eq, hhd, htr, mk1_nil_move_right]
-    have hsr1 : step reference (init : Cfg 744 2) = some ⟨523, Tape.mk₁ []⟩ := by
+    have hsr1 : step refM (init : Cfg 744 2) = some ⟨523, Tape.mk₁ []⟩ := by
       have htr : refTrans 0 0 = some (0, .right, 523) := by decide
       simp [init, step, refTrans_eq, hhd, htr, mk1_nil_move_right]
-    have hsr2 : step reference ⟨523, Tape.mk₁ []⟩ = some ⟨371, Tape.mk₁ []⟩ := by
+    have hsr2 : step refM ⟨523, Tape.mk₁ []⟩ = some ⟨371, Tape.mk₁ []⟩ := by
       have htr : refTrans 523 0 = some (0, .right, 371) := by decide
       simp [step, refTrans_eq, hhd, htr, mk1_nil_move_right]
     rw [hsc]
     exact ⟨⟨371, Tape.mk₁ []⟩, Or.inr ⟨0, inv_init, rfl⟩, Relation.TransGen.tail
       (Relation.TransGen.single hsr1) hsr2⟩
-  · change step candidate c₂ = none at hcd2
-    change step reference c₁ = none at hcd1
+  · change step candM c₂ = none at hcd2
+    change step refM c₁ = none at hcd1
     rw [hcd2, hcd1]
   · rcases hcd2 with ⟨c₂', hc2s, hcd2'⟩
     rcases hcd1 with ⟨c₁', hc1r, hcd1'⟩
@@ -4557,14 +4563,14 @@ theorem respects :
       rcases h1 : refTrans q T.head with _ | ⟨w, d, q'⟩
       · rw [h1] at htab
         have hcand : candTrans (f q) T.head = none := Option.isNone_iff_eq_none.mp htab
-        have hs_cand : step candidate ⟨f q, T⟩ = none := by simp [step, candTrans_eq, hcand]
-        have hs_ref : step reference ⟨q, T⟩ = none := by simp [step, refTrans_eq, h1]
+        have hs_cand : step candM ⟨f q, T⟩ = none := by simp [step, candTrans_eq, hcand]
+        have hs_ref : step refM ⟨q, T⟩ = none := by simp [step, refTrans_eq, h1]
         rw [hs_cand, hs_ref]
       · rw [h1, Bool.and_eq_true, beq_iff_eq] at htab
         rcases htab with ⟨hcand, hall⟩
-        have hs_cand : step candidate ⟨f q, T⟩ = some ⟨f q', (T.write w).move d⟩ := by
+        have hs_cand : step candM ⟨f q, T⟩ = some ⟨f q', (T.write w).move d⟩ := by
           simp [step, candTrans_eq, hcand]
-        have hs_ref : step reference ⟨q, T⟩ = some ⟨q', (T.write w).move d⟩ := by
+        have hs_ref : step refM ⟨q, T⟩ = some ⟨q', (T.write w).move d⟩ := by
           simp [step, refTrans_eq, h1]
         rw [hs_cand]
         exact ⟨⟨q', (T.write w).move d⟩, Or.inr ⟨0, checkAllCells_sound hInv w d hall, rfl⟩,
@@ -4586,16 +4592,16 @@ theorem respects :
             · rw [hj] at htab; cases htab
             · rw [hj, Bool.and_eq_true, beq_iff_eq] at htab
               rcases htab with ⟨hcand, hall⟩
-              have hstep_cand : step candidate ⟨f q, T⟩ = some ⟨f q2, (T.write w2).move d2⟩ := by
+              have hstep_cand : step candM ⟨f q, T⟩ = some ⟨f q2, (T.write w2).move d2⟩ := by
                 simp [step, candTrans_eq, hcand]
               rw [hstep_cand]
               refine ⟨⟨q2, (T.write w2).move d2⟩, Or.inr ⟨0, checkAllCells_sound hInv w2 d2 hall,
                 rfl⟩, ?_⟩
-              have hs1 : step reference ⟨q, T⟩ = some ⟨p, (T.write w).move d⟩ := by
+              have hs1 : step refM ⟨q, T⟩ = some ⟨p, (T.write w).move d⟩ := by
                 simp [step, refTrans_eq, h1]
-              have hs2 : step reference ⟨p, (T.write w).move d⟩ = some ⟨j1, T.write w⟩ := by
+              have hs2 : step refM ⟨p, (T.write w).move d⟩ = some ⟨j1, T.write w⟩ := by
                 rw [ref_pass_step ((T.write w).move d) hp0 hp1, move_opp]
-              have hs3 : step reference ⟨j1, T.write w⟩ = some ⟨q2, (T.write w2).move d2⟩ := by
+              have hs3 : step refM ⟨j1, T.write w⟩ = some ⟨q2, (T.write w2).move d2⟩ := by
                 have hhead_w : (T.write w).head = w := rfl
                 have hwrite_w : (T.write w).write w2 = T.write w2 := rfl
                 simp [step, refTrans_eq, hhead_w, hj, hwrite_w]

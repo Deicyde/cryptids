@@ -20,10 +20,13 @@ public import Cryptids.Propositions
 namespace ConjectureMachines.Goldbach24
 
 /-- 25-state Goldbach reference machine (`goldbach_25`, Yao & Leng 2024). -/
-abbrev reference : Machine 25 2 := Machines.goldbach25
+abbrev reference : BundledMachine 2 := Machines.goldbach25.bundle
 
 /-- 24-state Goldbach candidate machine (`goldbach_24`). -/
-abbrev candidate : Machine 24 2 := Machines.goldbach24
+abbrev candidate : BundledMachine 2 := Machines.goldbach24.bundle
+
+theorem candidate_fewer_states : candidate.states < reference.states := by
+  sorry
 
 theorem candidate_equivalent : Halts candidate ↔ Halts reference := by
   sorry

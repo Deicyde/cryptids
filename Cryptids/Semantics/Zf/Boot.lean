@@ -20,6 +20,8 @@ This file proves `boot_to_root`, showing that starting from the blank initial co
 namespace ConjectureMachines.Zf429.Boot
 
 open Turing StateTransition ConjectureMachines.Zf429
+
+abbrev reference : Machine 432 2 := Machines.zf432
 open ConjectureMachines.Riemann543.Layer1
   (nSteps nSteps_zero nSteps_succ nSteps_add nSteps_bind_eq step_nSteps step_one
    nSteps_reaches nSteps_eval_dom mk_append_replicate_zero default_eq_mk_nil

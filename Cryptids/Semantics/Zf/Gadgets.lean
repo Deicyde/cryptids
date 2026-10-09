@@ -55,6 +55,8 @@ This file formalizes the Layer 1 infrastructure of the 432-state ZF Turing machi
 namespace ConjectureMachines.Zf429.Layer1
 
 open Turing StateTransition ConjectureMachines.Zf429
+
+abbrev reference : Machine 432 2 := Machines.zf432
 open ConjectureMachines.Riemann543.Layer1
   (nSteps nSteps_zero nSteps_succ nSteps_add nSteps_bind_eq step_nSteps step_one
    nSteps_reaches nSteps_eval_dom mk_append_replicate_zero default_eq_mk_nil

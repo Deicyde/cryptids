@@ -67,4 +67,25 @@ def Machine.ofRows (rows : List (List (Option (Fin symbols × Dir × Fin states)
     Machine states symbols :=
   ⟨fun q a => (rows.getD q.val []).getD a.val none⟩
 
+/-- A Turing machine over `symbols` tape symbols with its non-zero state count bundled as a
+structure field, allowing machines with different numbers of states to share the same type
+`BundledMachine symbols`. -/
+structure BundledMachine (symbols : ℕ) where
+  states : ℕ
+  [neZeroStates : NeZero states]
+  toMachine : Machine states symbols
+
+attribute [instance] BundledMachine.neZeroStates
+
+/-- Bundle a `Machine states symbols` into a `BundledMachine symbols`. -/
+abbrev Machine.bundle {states symbols : ℕ} [NeZero states] (M : Machine states symbols) :
+    BundledMachine symbols :=
+  ⟨states, M⟩
+
+/-- `M` halts when started in state `0` on the all-blank tape. -/
+abbrev BundledMachine.Halts {symbols : ℕ} [NeZero symbols] (M : BundledMachine symbols) : Prop :=
+  ConjectureMachines.Halts M.toMachine
+
+export BundledMachine (Halts)
+
 end ConjectureMachines

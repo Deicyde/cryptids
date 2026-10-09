@@ -21,10 +21,13 @@ namespace ConjectureMachines.Zf429
 open Turing StateTransition
 
 /-- 432-state ZF consistency reference machine (`zf_432`, Wade 2025). -/
-abbrev reference : Machine 432 2 := Machines.zf432
+abbrev reference : BundledMachine 2 := Machines.zf432.bundle
 
 /-- 429-state ZF consistency candidate machine (`zf_429`). -/
-abbrev candidate : Machine 429 2 := Machines.zf429
+abbrev candidate : BundledMachine 2 := Machines.zf429.bundle
+
+theorem candidate_fewer_states : candidate.states < reference.states := by
+  decide
 
 def renum (q : Nat) : Fin 429 :=
   let s := (if q > 42 then 1 else 0) + (if q > 91 then 1 else 0) + (if q > 95 then 1 else 0)
@@ -63,7 +66,7 @@ def validState (q : Fin 432) (l2 l1 l0 h : Fin 2) : Bool :=
   (q.val != 91 || ((h == 1 && l0 == 1 && l1 == 0) || (h == 1 && l0 == 0) || h == 0))
 
 def checkNext (q : Fin 432) (l2 l1 l0 h x : Fin 2) : Bool :=
-  match reference.transition q h with
+  match Machines.zf432.transition q h with
   | none => true
   | some (w, Dir.right, q') => validState q' l1 l0 w x
   | some (_, Dir.left, q') => validState q' x l2 l1 l0
@@ -76,7 +79,7 @@ theorem validState_next (q : Fin 432) (l2 l1 l0 h x : Fin 2) :
   revert q l2 l1 l0 h x; decide
 
 def expectedTransition (q : Fin 432) (l1 l0 h x : Fin 2) : Option (Fin 2 × Dir × Fin 429) :=
-  match reference.transition q h with
+  match Machines.zf432.transition q h with
   | none => none
   | some (w, Dir.right, q') => some (w, Dir.right, mapState q' w x)
   | some (w, Dir.left, q') => some (w, Dir.left, mapState q' l1 l0)
@@ -86,32 +89,32 @@ set_option maxHeartbeats 0 in
 set_option maxRecDepth 200000 in
 theorem transition_mapState (q : Fin 432) (l2 l1 l0 h x : Fin 2) :
     validState q l2 l1 l0 h = true →
-    candidate.transition (mapState q l0 h) h = expectedTransition q l1 l0 h x := by
+    Machines.zf429.transition (mapState q l0 h) h = expectedTransition q l1 l0 h x := by
   revert q l2 l1 l0 h x; decide
 
 theorem step_mapState (q : Fin 432) (T : Tape (Fin 2))
     (hv : validState q T.left.tail.tail.head T.left.tail.head T.left.head T.head = true) :
-    step candidate ⟨mapState q T.left.head T.head, T⟩ =
-      (step reference ⟨q, T⟩).map fun c =>
+    step Machines.zf429 ⟨mapState q T.left.head T.head, T⟩ =
+      (step Machines.zf432 ⟨q, T⟩).map fun c =>
         ⟨mapState c.state c.tape.left.head c.tape.head, c.tape⟩ := by
   have htr :=
     transition_mapState q T.left.tail.tail.head T.left.tail.head T.left.head T.head T.right.head hv
   dsimp only [step]
   rw [htr]
-  rcases e : reference.transition q T.head with _ | ⟨w, d, q'⟩
+  rcases e : Machines.zf432.transition q T.head with _ | ⟨w, d, q'⟩
   · simp [expectedTransition, e]
   · cases d <;> simp [expectedTransition, e, Tape.move, Tape.write]
 
 theorem step_preserves_valid (q : Fin 432) (T : Tape (Fin 2))
     (hv : validState q T.left.tail.tail.head T.left.tail.head T.left.head T.head = true) :
-    match step reference ⟨q, T⟩ with
+    match step Machines.zf432 ⟨q, T⟩ with
     | none => True
     | some c =>
       validState c.state c.tape.left.tail.tail.head c.tape.left.tail.head c.tape.left.head
         c.tape.head = true := by
   have hnext := validState_next q T.left.tail.tail.head T.left.tail.head T.left.head T.head
   dsimp only [step]
-  rcases e : reference.transition q T.head with _ | ⟨w, d, q'⟩
+  rcases e : Machines.zf432.transition q T.head with _ | ⟨w, d, q'⟩
   · trivial
   · cases d
     · simpa [checkNext, e, Tape.move, Tape.write] using hnext T.left.tail.tail.tail.head hv
@@ -122,12 +125,12 @@ def Rel (c₁ : Cfg 432 2) (c₂ : Cfg 429 2) : Prop :=
     c₁.tape.head = true ∧
   c₂ = ⟨mapState c₁.state c₁.tape.left.head c₁.tape.head, c₁.tape⟩
 
-theorem respects : Respects (step reference) (step candidate) Rel := by
+theorem respects : Respects (step Machines.zf432) (step Machines.zf429) Rel := by
   intro c₁ c₂ ⟨hv, h⟩
   subst h
   obtain ⟨q, T⟩ := c₁
   have hpres := step_preserves_valid q T hv
-  rcases e : step reference ⟨q, T⟩ with _ | c
+  rcases e : step Machines.zf432 ⟨q, T⟩ with _ | c
   · simpa [step_mapState q T hv] using e
   · rw [e] at hpres
     exact ⟨⟨mapState c.state c.tape.left.head c.tape.head, c.tape⟩, ⟨hpres, rfl⟩,

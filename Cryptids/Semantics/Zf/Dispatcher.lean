@@ -22,6 +22,8 @@ continuations (`6.continue.0..3`, `6.break.0..2`), and two-pass register dispatc
 namespace ConjectureMachines.Zf429.Layer2
 
 open Turing StateTransition ConjectureMachines.Zf429
+
+abbrev reference : Machine 432 2 := Machines.zf432
 open ConjectureMachines.Riemann543.Layer1
   (nSteps nSteps_zero nSteps_succ nSteps_add nSteps_bind_eq step_nSteps step_one
    nSteps_reaches nSteps_eval_dom mk_append_replicate_zero default_eq_mk_nil
@@ -3520,7 +3522,7 @@ theorem halts_reference_iff_zfRegHalts
           ((regsTape (p :: (regs.set k (regs[k] - 1) ++ [0]))).cons 0 |>.cons 0)⟩) :
     Halts reference ↔ ZfRegHalts := by
   obtain ⟨s, padTotal, initRegs, hpad, hlen, htake, hboot_steps⟩ := hBoot
-  unfold Halts
+  unfold ConjectureMachines.Halts
   rw [nSteps_eval_dom hboot_steps]
   exact halts_zfRootCfg_iff_zfRegHalts hInc hDecZero hDecPos hpad hlen htake
 

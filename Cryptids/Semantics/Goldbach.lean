@@ -43,8 +43,10 @@ namespace ConjectureMachines.Goldbach24.Semantics
 open Turing StateTransition
 open ConjectureMachines.Goldbach24
 
+abbrev refM : Machine 25 2 := Machines.goldbach25
+
 /-!
-## 1. Canonical Configurations of `reference`
+## 1. Canonical Configurations of `refM`
 -/
 
 /-- Configuration at State `0`: about to test primality of `p` (`1 ≤ p`), with partner `q + 1` on
@@ -78,24 +80,24 @@ def cfgExit (is_right is_prime : Bool) (q p : ℕ) : Cfg 25 2 :=
 
 theorem cfg11_step_b0 (is_right : Bool) (q A m r' : ℕ) :
     ∃ s, 1 ≤ s ∧
-      nSteps reference s (cfg11 is_right q A 0 m (r' + 1)) =
+      nSteps refM s (cfg11 is_right q A 0 m (r' + 1)) =
         some (cfg11 is_right q 0 A (m + 1) r') := by
-  have h := nSteps_pass_11_b0 (M := reference) rfl rfl rfl rfl rfl rfl rfl rfl rfl rfl rfl
+  have h := nSteps_pass_11_b0 (M := refM) rfl rfl rfl rfl rfl rfl rfl rfl rfl rfl rfl
     A m (LBase1 is_right q) (ListBlank.append (List.replicate r' 1) ((REnd1 is_right q).cons 0))
   exact ⟨_, by omega, h⟩
 
 theorem cfg11_step_bsucc (is_right : Bool) (q A b m r' : ℕ) :
     ∃ s, 1 ≤ s ∧
-      nSteps reference s (cfg11 is_right q A (b + 1) m (r' + 1)) =
+      nSteps refM s (cfg11 is_right q A (b + 1) m (r' + 1)) =
         some (cfg11 is_right q (A + 1) b (m + 1) r') := by
-  have h := nSteps_pass_11_bsucc (M := reference) rfl rfl rfl rfl rfl rfl rfl rfl rfl rfl rfl
+  have h := nSteps_pass_11_bsucc (M := refM) rfl rfl rfl rfl rfl rfl rfl rfl rfl rfl rfl
     A b m (LBase1 is_right q) (ListBlank.append (List.replicate r' 1) ((REnd1 is_right q).cons 0))
   exact ⟨_, by omega, h⟩
 
 theorem cfg11_drain (is_right : Bool) (q k r A B m : ℕ)
     (hAB : A + B = k + 1) (hdvd : (k + 2) ∣ B + m + 2) :
     ∃ A' B', A' + B' = k + 1 ∧ (k + 2) ∣ B' + (m + r) + 2 ∧
-      ∃ s, nSteps reference s (cfg11 is_right q A B m r) =
+      ∃ s, nSteps refM s (cfg11 is_right q A B m r) =
         some (cfg11 is_right q A' B' (m + r) 0) := by
   induction r generalizing A B m with
   | zero =>
@@ -124,26 +126,26 @@ theorem cfg11_drain (is_right : Bool) (q k r A B m : ℕ)
 
 theorem cfg6_step_enter (is_right : Bool) (q k r' : ℕ) :
     ∃ s, 1 ≤ s ∧
-      nSteps reference s (cfg6 is_right q k (r' + 1)) =
+      nSteps refM s (cfg6 is_right q k (r' + 1)) =
         some (cfg11 is_right q 1 k 0 r') := by
   have h1 := sim_state6_d_ref k (LBase1 is_right q)
     (ListBlank.append (List.replicate r' 1) ((REnd1 is_right q).cons 0))
   have h10_to_11 (L_b R_m : ListBlank (Fin 2)) :
-      nSteps reference (1 + k)
+      nSteps refM (1 + k)
         ⟨10, Tape.mk' ((L_b.cons 0).cons 1)
           (ListBlank.append (0 :: (List.replicate k 0 ++ [1])) R_m)⟩ =
         some ⟨11, Tape.mk' (counterTape 1 k L_b) (R_m.cons 1)⟩ := by
     rw [ListBlank.append, ListBlank.append_assoc, ListBlank.append, ListBlank.append]
     refine nSteps_bind_eq (step_one
-      (step_mk'_right (M := reference) (q := 10) (q' := 11) (a := 0) (b := 0) rfl _ _)) ?_
-    exact nSteps_mk'_right_scan (M := reference) (q := 11) (a := 0) (b := 1) rfl k _ _
+      (step_mk'_right (M := refM) (q := 10) (q' := 11) (a := 0) (b := 0) rfl _ _)) ?_
+    exact nSteps_mk'_right_scan (M := refM) (q := 11) (a := 0) (b := 1) rfl k _ _
   have h := nSteps_bind_eq h1 (h10_to_11 (LBase1 is_right q) _)
   exact ⟨_, by omega, h⟩
 
 theorem cfg6_pass_succ_dvd (is_right : Bool) (q k r' : ℕ)
     (hdvd : (k + 2) ∣ (k + 4 + r')) :
     ∃ s, 1 ≤ s ∧
-      nSteps reference s (cfg6 is_right q k (r' + 1)) =
+      nSteps refM s (cfg6 is_right q k (r' + 1)) =
         some (cfgExit is_right false q (k + 4 + r')) := by
   obtain ⟨s₀, hs₀1, hs₀⟩ := cfg6_step_enter is_right q k r'
   obtain ⟨A', B', hAB', hdvd', s₁, hs₁⟩ :=
@@ -156,10 +158,10 @@ theorem cfg6_pass_succ_dvd (is_right : Bool) (q k r' : ℕ)
     rw [h_eq2] at hdvd'
     exact Nat.eq_zero_of_dvd_of_lt ((Nat.dvd_add_iff_left hdvd).mpr hdvd') (by omega)
   subst hB0
-  have h_fin := nSteps_pass_11_to_16 (M := reference) rfl rfl rfl rfl rfl rfl rfl rfl rfl
+  have h_fin := nSteps_pass_11_to_16 (M := refM) rfl rfl rfl rfl rfl rfl rfl rfl rfl
     A' r' (LBase1 is_right q) (REnd1 is_right q)
   have h_p : A' + r' + 3 = k + 4 + r' := by omega
-  have h_fin' : nSteps reference ((1 + (r' + 1)) + ((1 + ((r' + 1) + 1)) + (2 + (A' + 1))))
+  have h_fin' : nSteps refM ((1 + (r' + 1)) + ((1 + ((r' + 1) + 1)) + (2 + (A' + 1))))
       (cfg11 is_right q A' 0 r' 0) = some (cfgExit is_right false q (k + 4 + r')) := by
     unfold cfg11 cfgExit
     simpa [List.replicate_zero, ListBlank.append, h_p] using h_fin
@@ -168,7 +170,7 @@ theorem cfg6_pass_succ_dvd (is_right : Bool) (q k r' : ℕ)
 theorem cfg6_pass_succ_not_dvd (is_right : Bool) (q k r' : ℕ)
     (hdvd : ¬ (k + 2) ∣ (k + 4 + r')) :
     ∃ s, 1 ≤ s ∧
-      nSteps reference s (cfg6 is_right q k (r' + 1)) =
+      nSteps refM s (cfg6 is_right q k (r' + 1)) =
         some (cfg6 is_right q (k + 1) r') := by
   obtain ⟨s₀, hs₀1, hs₀⟩ := cfg6_step_enter is_right q k r'
   obtain ⟨A', B', hAB', hdvd', s₁, hs₁⟩ :=
@@ -182,12 +184,12 @@ theorem cfg6_pass_succ_not_dvd (is_right : Bool) (q k r' : ℕ)
     rw [h_eq1, Nat.dvd_add_self_right]
     simpa using hdvd'
   | succ b =>
-    have h_fin := nSteps_pass_11_to_6 (M := reference)
+    have h_fin := nSteps_pass_11_to_6 (M := refM)
       rfl rfl rfl rfl rfl rfl rfl rfl rfl rfl rfl rfl
       A' b r' (LBase1 is_right q) (REnd1 is_right q)
     have h_k : A' + b + 3 = (k + 1) + 2 := by omega
     have h_fin' :
-        nSteps reference ((1 + (r' + 1)) + ((1 + ((r' + 1) + 1)) + (1 + (b + (1 + ((b + 1) + 2))))))
+        nSteps refM ((1 + (r' + 1)) + ((1 + ((r' + 1) + 1)) + (1 + (b + (1 + ((b + 1) + 2))))))
           (cfg11 is_right q A' (b + 1) r' 0) = some (cfg6 is_right q (k + 1) r') := by
       unfold cfg11 cfg6
       simpa [List.replicate_zero, ListBlank.append, h_k] using h_fin
@@ -200,7 +202,7 @@ def NoFactorFrom (k p : ℕ) : Prop :=
 open Classical in
 theorem cfg6_eval (is_right : Bool) (q k r : ℕ) :
     ∃ s, 1 ≤ s ∧
-      nSteps reference s (cfg6 is_right q k r) =
+      nSteps refM s (cfg6 is_right q k r) =
         some (cfgExit is_right (decide (NoFactorFrom k (k + 3 + r))) q (k + 3 + r)) := by
   induction r generalizing k with
   | zero =>
@@ -223,7 +225,7 @@ theorem cfg6_eval (is_right : Bool) (q k r : ℕ) :
     simp only [Nat.add_zero, List.replicate_zero, ListBlank.append, ↓reduceIte]
     refine nSteps_bind_eq (step_one h1) ?_
     rw [h_cnt]
-    exact nSteps_mkL_left_scan (M := reference) (q := 5) (a := 1) (b := 1) rfl (k + 3) _ _
+    exact nSteps_mkL_left_scan (M := refM) (q := 5) (a := 1) (b := 1) rfl (k + 3) _ _
   | succ r' ih =>
     have h_arith : k + 3 + (r' + 1) = k + 4 + r' := by omega
     rw [h_arith]
@@ -256,7 +258,7 @@ theorem cfg6_eval (is_right : Bool) (q k r : ℕ) :
 open Classical in
 theorem cfg0_eval (is_right : Bool) (q p : ℕ) (hp : 1 ≤ p) :
     ∃ s, 1 ≤ s ∧
-      nSteps reference s (cfg0 is_right q p) =
+      nSteps refM s (cfg0 is_right q p) =
         some (cfgExit is_right (decide (Nat.Prime p)) q p) := by
   rcases Nat.eq_or_lt_of_le hp with rfl | hp2
   · rw [decide_eq_false Nat.not_prime_one]
@@ -265,7 +267,7 @@ theorem cfg0_eval (is_right : Bool) (q p : ℕ) (hp : 1 ≤ p) :
     refine ⟨2 + 1, by omega, ?_⟩
     unfold cfg0 cfgExit
     exact nSteps_bind_eq h1 (step_one
-      (step_mkL_left (M := reference) (q := 16) (q' := 16) (a := 1) (b := 1) rfl _ _))
+      (step_mkL_left (M := refM) (q := 16) (q' := 16) (a := 1) (b := 1) rfl _ _))
   · rcases Nat.eq_or_lt_of_le hp2 with rfl | hp3
     · rw [decide_eq_true Nat.prime_two]
       obtain ⟨h1, _⟩ := sim_state0_p2 ((LBase1 is_right q).cons 0) ((LBase2 is_right q).cons 0)
@@ -273,13 +275,13 @@ theorem cfg0_eval (is_right : Bool) (q p : ℕ) (hp : 1 ≤ p) :
       refine ⟨3 + 2, by omega, ?_⟩
       unfold cfg0 cfgExit
       exact nSteps_bind_eq h1 (step_nSteps
-        (step_mkL_left (M := reference) (q := 5) (q' := 5) (a := 1) (b := 1) rfl _ _)
-        (step_one (step_mkL_left (M := reference) (q := 5) (q' := 5) (a := 1) (b := 1) rfl _ _)))
+        (step_mkL_left (M := refM) (q := 5) (q' := 5) (a := 1) (b := 1) rfl _ _)
+        (step_one (step_mkL_left (M := refM) (q := 5) (q' := 5) (a := 1) (b := 1) rfl _ _)))
     · obtain ⟨r0, rfl⟩ : ∃ r0, p = r0 + 3 := ⟨p - 3, by omega⟩
       obtain ⟨h1, _⟩ := sim_state0_p_ge3 ((LBase1 is_right q).cons 0) ((LBase2 is_right q).cons 0)
         (ListBlank.append (List.replicate r0 1) ((REnd1 is_right q).cons 0))
         (ListBlank.append (List.replicate r0 1) ((REnd2 is_right q).cons 0))
-      have h_enter : nSteps reference 3 (cfg0 is_right q (r0 + 3)) =
+      have h_enter : nSteps refM 3 (cfg0 is_right q (r0 + 3)) =
           some (cfg6 is_right q 0 r0) := h1
       obtain ⟨s₂, _, hs₂⟩ := cfg6_eval is_right q 0 r0
       have h_prime_iff : Nat.Prime (r0 + 3) ↔ NoFactorFrom 0 (0 + 3 + r0) := by
@@ -300,10 +302,10 @@ theorem cfg0_eval (is_right : Bool) (q p : ℕ) (hp : 1 ≤ p) :
 
 theorem cfgExit_tt (q p : ℕ) :
     ∃ s, 1 ≤ s ∧
-      nSteps reference s (cfgExit true true q p) =
+      nSteps refM s (cfgExit true true q p) =
         some (cfg0 false p (q + 1)) := by
   have h_scan (Q P : ℕ) :
-      nSteps reference (1 + (Q + 1))
+      nSteps refM (1 + (Q + 1))
         ⟨5, Tape.mkL ((ListBlank.append (List.replicate Q 1) (B0.cons 0)).cons 0)
           (ListBlank.append (List.replicate P 1) B0)⟩ =
         some ⟨0, Tape.mk' (B0.cons 0)
@@ -312,7 +314,7 @@ theorem cfgExit_tt (q p : ℕ) :
     refine nSteps_bind_eq (step_one (step_mkL_left rfl _ _)) ?_
     refine nSteps_bind_eq (nSteps_mkL_left_scan rfl Q _ _) ?_
     exact step_one (step_mkL_right rfl _ _)
-  have h : nSteps reference (1 + ((q + 1) + 1)) (cfgExit true true q p) =
+  have h : nSteps refM (1 + ((q + 1) + 1)) (cfgExit true true q p) =
       some (cfg0 false p (q + 1)) := by
     unfold cfgExit cfg0
     simpa [LBase1, REnd1, B0_cons_zero] using h_scan (q + 1) p
@@ -320,9 +322,9 @@ theorem cfgExit_tt (q p : ℕ) :
 
 theorem cfgExit_tf_succ (q' p : ℕ) :
     ∃ s, 1 ≤ s ∧
-      nSteps reference s (cfgExit true false (q' + 1) p) =
+      nSteps refM s (cfgExit true false (q' + 1) p) =
         some (cfg0 true q' (p + 1)) := by
-  have hr1 := nSteps_state16_to_19_right (M := reference) rfl rfl rfl 0
+  have hr1 := nSteps_state16_to_19_right (M := refM) rfl rfl rfl 0
     (ListBlank.append (List.replicate (q' + 1) 1) B0)
     (ListBlank.append (List.replicate p 1) B0)
   obtain ⟨hr2, _⟩ := sim_state19_to_0_mkL
@@ -330,7 +332,7 @@ theorem cfgExit_tf_succ (q' p : ℕ) :
     (ListBlank.append (List.replicate (q' + 1) 1) B0)
     (ListBlank.append (List.replicate (p + 1) 1) B0)
     (ListBlank.append (List.replicate (p + 2) 1) B0)
-  have h : nSteps reference (2 + 2) (cfgExit true false (q' + 1) p) =
+  have h : nSteps refM (2 + 2) (cfgExit true false (q' + 1) p) =
       some (cfg0 true q' (p + 1)) := by
     unfold cfgExit cfg0
     simpa [LBase1, REnd1, B0_cons_zero, List.replicate_succ, ListBlank.append] using
@@ -338,26 +340,26 @@ theorem cfgExit_tf_succ (q' p : ℕ) :
   exact ⟨_, by omega, h⟩
 
 theorem cfgExit_tf_zero (p : ℕ) :
-    ∃ s c, nSteps reference s (cfgExit true false 0 p) = some c ∧
-      step reference c = none := by
-  have hr : nSteps reference 2 (cfgExit true false 0 p) =
+    ∃ s c, nSteps refM s (cfgExit true false 0 p) = some c ∧
+      step refM c = none := by
+  have hr : nSteps refM 2 (cfgExit true false 0 p) =
       some ⟨19, Tape.mkL B0
         (((ListBlank.append (List.replicate p 1) B0).cons 1).cons 0)⟩ := by
     unfold cfgExit
     simpa [LBase1, REnd1, B0_cons_zero] using
-      nSteps_state16_to_19_right (M := reference) rfl rfl rfl 0 B0
+      nSteps_state16_to_19_right (M := refM) rfl rfl rfl 0 B0
         (ListBlank.append (List.replicate p 1) B0)
-  have h_none : step reference ⟨19, Tape.mkL B0
+  have h_none : step refM ⟨19, Tape.mkL B0
       (((ListBlank.append (List.replicate p 1) B0).cons 1).cons 0)⟩ = none := by
     rw [← B0_cons_zero]; simp [step, Tape.mkL]; rfl
   exact ⟨2, _, hr, h_none⟩
 
 theorem cfgExit_ft (q p : ℕ) :
     ∃ s, 1 ≤ s ∧
-      nSteps reference s (cfgExit false true q p) =
+      nSteps refM s (cfgExit false true q p) =
         some (cfg0 false 0 (p + q + 2)) := by
   have hr := sim_state5_to_0_left_from_0_ref p q B0 B0
-  have h : nSteps reference (3 + (p + (1 + ((p + 1) + 1)))) (cfgExit false true q p) =
+  have h : nSteps refM (3 + (p + (1 + ((p + 1) + 1)))) (cfgExit false true q p) =
       some (cfg0 false 0 (p + q + 2)) := by
     unfold cfgExit cfg0
     simpa [LBase1, REnd1, B0_cons_zero] using hr
@@ -365,9 +367,9 @@ theorem cfgExit_ft (q p : ℕ) :
 
 theorem cfgExit_ff_succ (q p' : ℕ) :
     ∃ s, 1 ≤ s ∧
-      nSteps reference s (cfgExit false false q (p' + 2)) =
+      nSteps refM s (cfgExit false false q (p' + 2)) =
         some (cfg0 true p' (q + 1)) := by
-  have hr1 : nSteps reference (p' + 7)
+  have hr1 : nSteps refM (p' + 7)
       ⟨16, Tape.mkL B0
         (ListBlank.append (List.replicate (p' + 2) 1)
           ((ListBlank.append (List.replicate q 1) B0).cons 0))⟩ =
@@ -375,14 +377,14 @@ theorem cfgExit_ff_succ (q p' : ℕ) :
         ((ListBlank.append (List.replicate (q + 1) 1) B0).cons 0)⟩ := by
     simpa [B0_cons_zero, List.replicate_succ, ListBlank.append,
         Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using
-      nSteps_state16_to_19_left (M := reference) rfl rfl rfl rfl rfl rfl rfl 0 (p' + 1) B0
+      nSteps_state16_to_19_left (M := refM) rfl rfl rfl rfl rfl rfl rfl 0 (p' + 1) B0
         (ListBlank.append (List.replicate q 1) B0)
   obtain ⟨hr2, _⟩ := sim_state19_to_0_mkL
     (ListBlank.append (List.replicate p' 1) B0)
     (ListBlank.append (List.replicate (p' + 1) 1) B0)
     (ListBlank.append (List.replicate (q + 1) 1) B0)
     (ListBlank.append (List.replicate (q + 2) 1) B0)
-  have h : nSteps reference ((p' + 7) + 2) (cfgExit false false q (p' + 2)) =
+  have h : nSteps refM ((p' + 7) + 2) (cfgExit false false q (p' + 2)) =
       some (cfg0 true p' (q + 1)) := by
     unfold cfgExit cfg0
     simpa [LBase1, REnd1, B0_cons_zero, List.replicate_succ, ListBlank.append] using
@@ -390,16 +392,16 @@ theorem cfgExit_ff_succ (q p' : ℕ) :
   exact ⟨_, by omega, h⟩
 
 theorem cfgExit_ff_one (q : ℕ) :
-    ∃ s c, nSteps reference s (cfgExit false false q 1) = some c ∧
-      step reference c = none := by
-  have hr : nSteps reference 6 (cfgExit false false q 1) =
+    ∃ s c, nSteps refM s (cfgExit false false q 1) = some c ∧
+      step refM c = none := by
+  have hr : nSteps refM 6 (cfgExit false false q 1) =
       some ⟨19, Tape.mkL B0
         ((ListBlank.append (List.replicate (q + 1) 1) B0).cons 0)⟩ := by
     unfold cfgExit
     simpa [LBase1, REnd1, B0_cons_zero, List.replicate_succ, ListBlank.append] using
-      nSteps_state16_to_19_left (M := reference) rfl rfl rfl rfl rfl rfl rfl 0 0 B0
+      nSteps_state16_to_19_left (M := refM) rfl rfl rfl rfl rfl rfl rfl 0 0 B0
         (ListBlank.append (List.replicate q 1) B0)
-  have h_none : step reference ⟨19, Tape.mkL B0
+  have h_none : step refM ⟨19, Tape.mkL B0
       ((ListBlank.append (List.replicate (q + 1) 1) B0).cons 0)⟩ = none := by
     rw [← B0_cons_zero]; simp [step, Tape.mkL]; rfl
   exact ⟨6, _, hr, h_none⟩
@@ -410,7 +412,7 @@ def stageCfg (w : ℕ) : Cfg 25 2 :=
 
 theorem cfg0_partner_pass (w q p : ℕ) (hp : 1 ≤ p) (hsum : q + p = 2 * w + 3)
     (hp_prime : Nat.Prime p) (hq_prime : Nat.Prime (q + 1)) :
-    ∃ s, 1 ≤ s ∧ nSteps reference s (cfg0 true q p) = some (stageCfg (w + 1)) := by
+    ∃ s, 1 ≤ s ∧ nSteps refM s (cfg0 true q p) = some (stageCfg (w + 1)) := by
   obtain ⟨s₁, hs₁1, hs₁⟩ := cfg0_eval true q p hp
   rw [decide_eq_true hp_prime] at hs₁
   obtain ⟨s₂, _, hs₂⟩ := cfgExit_tt q p
@@ -432,7 +434,7 @@ theorem cfg0_partner_pass (w q p : ℕ) (hp : 1 ≤ p) (hsum : q + p = 2 * w + 3
 
 theorem cfg0_partner_fail_succ (q' p : ℕ) (hp : 1 ≤ p)
     (hfail : ¬ (Nat.Prime p ∧ Nat.Prime (q' + 2))) :
-    ∃ s, 1 ≤ s ∧ nSteps reference s (cfg0 true (q' + 1) p) = some (cfg0 true q' (p + 1)) := by
+    ∃ s, 1 ≤ s ∧ nSteps refM s (cfg0 true (q' + 1) p) = some (cfg0 true q' (p + 1)) := by
   obtain ⟨s₁, hs₁1, hs₁⟩ := cfg0_eval true (q' + 1) p hp
   by_cases hp_prime : Nat.Prime p
   · have hq_not_prime : ¬ Nat.Prime (q' + 2) := fun hq => hfail ⟨hp_prime, hq⟩
@@ -447,7 +449,7 @@ theorem cfg0_partner_fail_succ (q' p : ℕ) (hp : 1 ≤ p)
     exact ⟨_, by omega, nSteps_bind_eq hs₁ hs₂⟩
 
 theorem cfg0_partner_fail_zero (p : ℕ) (hp : 1 ≤ p) :
-    ∃ s c, nSteps reference s (cfg0 true 0 p) = some c ∧ step reference c = none := by
+    ∃ s c, nSteps refM s (cfg0 true 0 p) = some c ∧ step refM c = none := by
   obtain ⟨s₁, _, hs₁⟩ := cfg0_eval true 0 p hp
   by_cases hp_prime : Nat.Prime p
   · rw [decide_eq_true hp_prime] at hs₁
@@ -462,7 +464,7 @@ theorem cfg0_partner_fail_zero (p : ℕ) (hp : 1 ≤ p) :
 
 theorem search_advance (w q p : ℕ) (hp : 1 ≤ p) (hsum : q + p = 2 * w + 3)
     {q' : ℕ} (hq' : q' ≤ q) (hq1 : Nat.Prime (q' + 1)) (hp1 : Nat.Prime (2 * w + 3 - q')) :
-    ∃ s, 1 ≤ s ∧ nSteps reference s (cfg0 true q p) = some (stageCfg (w + 1)) := by
+    ∃ s, 1 ≤ s ∧ nSteps refM s (cfg0 true q p) = some (stageCfg (w + 1)) := by
   induction q generalizing p with
   | zero =>
     have hq'0 : q' = 0 := by omega
@@ -485,7 +487,7 @@ theorem search_advance (w q p : ℕ) (hp : 1 ≤ p) (hsum : q + p = 2 * w + 3)
 
 theorem search_halt (w q p : ℕ) (hp : 1 ≤ p) (hsum : q + p = 2 * w + 3)
     (hno : ∀ q' ≤ q, ¬ (Nat.Prime (q' + 1) ∧ Nat.Prime (2 * w + 3 - q'))) :
-    ∃ s c, nSteps reference s (cfg0 true q p) = some c ∧ step reference c = none := by
+    ∃ s c, nSteps refM s (cfg0 true q p) = some c ∧ step refM c = none := by
   induction q generalizing p with
   | zero =>
     exact cfg0_partner_fail_zero p hp
@@ -505,7 +507,7 @@ def HasGoldbachPair (n : ℕ) : Prop :=
   ∃ a b : ℕ, Nat.Prime a ∧ Nat.Prime b ∧ a + b = n
 
 theorem stage_advance (w : ℕ) (h : HasGoldbachPair (2 * w + 4)) :
-    ∃ s, 1 ≤ s ∧ nSteps reference s (stageCfg w) = some (stageCfg (w + 1)) := by
+    ∃ s, 1 ≤ s ∧ nSteps refM s (stageCfg w) = some (stageCfg (w + 1)) := by
   obtain ⟨a, b, ha, hb, hab⟩ := h
   have ha2 : 2 ≤ a := ha.two_le
   have hb2 : 2 ≤ b := hb.two_le
@@ -517,7 +519,7 @@ theorem stage_advance (w : ℕ) (h : HasGoldbachPair (2 * w + 4)) :
   · rwa [hb_eq]
 
 theorem stage_halt (w : ℕ) (h : ¬ HasGoldbachPair (2 * w + 4)) :
-    ∃ s c, nSteps reference s (stageCfg w) = some c ∧ step reference c = none := by
+    ∃ s c, nSteps refM s (stageCfg w) = some c ∧ step refM c = none := by
   refine search_halt w (2 * w + 2) 1 (by omega) (by omega) ?_
   intro q' hq' ⟨hq1, hp1⟩
   exact h ⟨q' + 1, 2 * w + 3 - q', hq1, hp1, by omega⟩
@@ -541,7 +543,7 @@ theorem nSteps_eq_none_of_step_none {M : Machine 25 2} {k : ℕ} (s : ℕ) {a b 
   rw [hs, nSteps_add, hk, Option.bind_some, nSteps_succ, hnone, Option.bind_none]
 
 theorem stage_iter_all (hall : ∀ w, HasGoldbachPair (2 * w + 4)) (N : ℕ) :
-    ∃ s, N ≤ s ∧ nSteps reference s (stageCfg 0) = some (stageCfg N) := by
+    ∃ s, N ≤ s ∧ nSteps refM s (stageCfg 0) = some (stageCfg N) := by
   induction N with
   | zero => exact ⟨0, le_rfl, rfl⟩
   | succ N ih =>
@@ -550,8 +552,8 @@ theorem stage_iter_all (hall : ∀ w, HasGoldbachPair (2 * w + 4)) (N : ℕ) :
     exact ⟨s₁ + s₂, by omega, nSteps_bind_eq hs₁ hs₂⟩
 
 theorem stage_reach_or_halt (w : ℕ) :
-    (∃ s, nSteps reference s (stageCfg 0) = some (stageCfg w)) ∨
-    (∃ s c, nSteps reference s (stageCfg 0) = some c ∧ step reference c = none) := by
+    (∃ s, nSteps refM s (stageCfg 0) = some (stageCfg w)) ∨
+    (∃ s c, nSteps refM s (stageCfg 0) = some c ∧ step refM c = none) := by
   induction w with
   | zero => exact Or.inl ⟨0, rfl⟩
   | succ w ih =>
@@ -564,10 +566,10 @@ theorem stage_reach_or_halt (w : ℕ) :
     · exact Or.inr hhalt
 
 theorem halts_reference_iff_exists_counterexample :
-    Halts reference ↔ ∃ w : ℕ, ¬ HasGoldbachPair (2 * w + 4) := by
-  unfold Halts
+    Halts refM ↔ ∃ w : ℕ, ¬ HasGoldbachPair (2 * w + 4) := by
+  unfold ConjectureMachines.Halts
   rw [nSteps_eval_dom boot_chk0_ref]
-  change (eval (step reference) (stageCfg 0)).Dom ↔ _
+  change (eval (step refM) (stageCfg 0)).Dom ↔ _
   constructor
   · intro hdom
     by_contra hall
@@ -582,7 +584,7 @@ theorem halts_reference_iff_exists_counterexample :
     rw [h_eq_none] at hs
     cases hs
   · rintro ⟨w, hw⟩
-    have h_halt : ∃ s c, nSteps reference s (stageCfg 0) = some c ∧ step reference c = none := by
+    have h_halt : ∃ s c, nSteps refM s (stageCfg 0) = some c ∧ step refM c = none := by
       rcases stage_reach_or_halt w with ⟨s₁, hs₁⟩ | hhalt
       · obtain ⟨s₂, c, hs₂, hnone⟩ := stage_halt w hw
         exact ⟨s₁ + s₂, c, nSteps_bind_eq hs₁ hs₂, hnone⟩
@@ -607,6 +609,7 @@ theorem goldbachConjecture_iff_all_stages :
 if and only if Goldbach's conjecture is false. -/
 theorem halts_reference_iff_not_goldbach :
     Halts reference ↔ ¬ GoldbachConjecture := by
+  change Halts refM ↔ ¬ GoldbachConjecture
   rw [halts_reference_iff_exists_counterexample, goldbachConjecture_iff_all_stages]
   push Not
   rfl
