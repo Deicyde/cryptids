@@ -433,3 +433,58 @@ False (via Mathlib.SetTheory.ZFC.Basic, ZFSet.mem_irrefl)
    `if_eq`, `select`, and the 61 composite RPN formula subroutines) and all 135 steps of the outer
    `main()` spine (`main().0..134`), proving `zfRegHalts_iff_mainLoopHalts : ZfRegHalts ↔ MainLoopHalts`
    and `mainLoopHalts_iff_wadeZFInconsistent : MainLoopHalts ↔ WadeZFInconsistent`.
+
+---
+
+## 4. Shunia's 120-State Riemann Hypothesis Machine ([`Riemann120.lean`](./Riemann120.lean) & [`Riemann120/`](./Riemann120/))
+
+In [`Cryptids/Riemann120.lean`](../Riemann120.lean) and [`Cryptids/Semantics/Riemann120.lean`](./Riemann120.lean)
+(with submodules [`Backend.lean`](./Riemann120/Backend.lean), [`Program.lean`](./Riemann120/Program.lean),
+[`Analytic.lean`](./Riemann120/Analytic.lean), [`VonMangoldt.lean`](./Riemann120/VonMangoldt.lean),
+and [`Bridge.lean`](./Riemann120/Bridge.lean)), we formalize Joseph M. Shunia's 120-state binary
+Turing machine (`riemann_120`, [`arXiv:2609.30306`](https://arxiv.org/abs/2609.30306), September 2026):
+
+```lean
+theorem halts_riemann120_iff_not_riemannHypothesis :
+    Halts riemann120 ↔ ¬ RiemannHypothesis
+```
+
+1. **Layer 1 (`Riemann120.lean` & `Riemann120/Backend.lean`)**: Proves the 5-cell window invariant
+   quotienting `riemann121` (`121` states) onto `riemann120` (`120` states), the 39,792-step blank-tape
+   bootstrap to `main.0`, the moving `00` register-selection invariant across all 5 registers
+   `[m, j, x, f, v]`, and the lockstep simulation `Halts riemann120 ↔ RhRegHalts`.
+2. **Layer 2 (`Riemann120/Program.lean`)**: Verifies all subroutines of `riemann121` (`move`, `fold`,
+   `transform`, `twice`, `divide`, `product_step`, `seed_deficit`, `digits`, `halve`, `width`,
+   `compare`), the self-sieving identity $A_n = n! \prod_{p \le n} p$, and
+   `RhRegHalts ↔ ∃ n ≥ 2, ShuniaCounterexample n`.
+3. **Layer 3 (`Riemann120/Analytic.lean`, `Riemann120/VonMangoldt.lean`, & `Riemann120/Bridge.lean`)**:
+   Proves the Stirling/Chebyshev identity connecting `shuniaProd n` to $\vartheta(n)$, the
+   one-sided Landau Mellin continuation theorem (`¬ RH → ∃ n ≥ 2, ShuniaCounterexample n`), the
+   elementary Chebyshev verification for $2 \le n \le 21{,}845$, and the sharp circle-average
+   Jensen bound (`a_rvM = 3/4`) closing all $n \ge 21{,}846$ under `RiemannHypothesis`.
+
+---
+
+## 5. Wade's 393-State ZF Consistency Machine ([`Zf393.lean`](./Zf393.lean) & [`Zf393/`](./Zf393/))
+
+In [`Cryptids/Zf393.lean`](../Zf393.lean) and [`Cryptids/Semantics/Zf393.lean`](./Zf393.lean)
+(with submodules [`Backend.lean`](./Zf393/Backend.lean) and [`Program.lean`](./Zf393/Program.lean)),
+we formalize Andrew Wade's 393-state binary Turing machine (`zf_393`,
+[`ajwade/turing_machine_explorer`](https://codeberg.org/ajwade/turing_machine_explorer) commit
+`9c5c2e82`, August 2026):
+
+```lean
+theorem halts_zf393_iff_zfInconsistent :
+    Halts zf393 ↔ ZFInconsistent
+
+theorem not_halts_zf393 :
+    ¬ Halts zf393
+```
+
+1. **Layer 1 (`Zf393.lean` & `Zf393/Backend.lean`)**: Verifies the 39,773-step blank-tape bootstrap,
+   the moving `00` selector (`1.sel`), self-cleaning unary register gadgets (`1.inc`, `1.decnz`,
+   `3.<reg>.inc/decnz`), root overflow into `default`, and `Halts zf393 ↔ Layer1.Zf393RegHalts`.
+2. **Layer 2 & 3 (`Zf393/Program.lean` & `Zf393.lean`)**: Verifies all 324 control-DAG states
+   (`69..392`), the 125-step outer `main()` spine (`99..223`), and soundness & completeness against
+   O'Rear's `ZFProvable` (`Layer2.Zf393RegHalts ↔ ZFInconsistent`), yielding unconditional
+   non-halting (`not_halts_zf393`) via `Cryptids.Semantics.Zf.not_zfInconsistent`.

@@ -4,17 +4,16 @@ version: "v0.4"
 project:
   name: "Cryptids: Certified State Reductions and Semantics of Conjecture-Checking Turing Machines"
   description: >-
-    Formal Lean 4 verification of state-reduced 2-symbol Turing machines for
-    Goldbach's Conjecture (25 -> 24 states), ZF Set Theory Consistency
-    (432 -> 429 states, via 431 and 430), and the Riemann Hypothesis
-    (744 -> 543 states), proving halting equivalence with the historical
-    baseline machines (zf_432 from 2025 and riemann_744 from 2016) and
-    connecting each machine's halting behavior to the corresponding statement
-    in Mathlib. While goldbach_24 improves on the smallest known binary
-    Goldbach machine, for ZF Consistency and the Riemann Hypothesis we do not
-    claim the smallest overall state counts (smaller unformalized machines with
-    393 and 120 states were recently constructed by Wade and Shunia via
-    compiler and algorithmic reworks).
+    Formal Lean 4 verification of 2-symbol Turing machines for Goldbach's
+    Conjecture (25 -> 24 states), ZF Set Theory Consistency (432 -> 429 states
+    via 431 and 430, plus Andrew Wade's August 2026 393-state machine zf_393),
+    and the Riemann Hypothesis (744 -> 543 states, plus Joseph M. Shunia's
+    September 2026 120-state machine riemann_120), proving halting equivalences
+    and connecting every machine's blank-tape halting behavior to the
+    corresponding statement in Mathlib. While goldbach_24 improves on the
+    smallest known binary Goldbach machine, for ZF Consistency and the Riemann
+    Hypothesis we do not claim to have constructed smaller machines overall than
+    zf_393 and riemann_120, both of which are also formalized end-to-end here.
   authors:
     - "Maxence Faldor"
     - "Moritz Firsching"
@@ -35,7 +34,7 @@ classification:
     - "68Q04"
 
 sources:
-  - title: "Certified State Reductions and Formal Semantics of Conjecture-Checking Turing Machines (goldbach_24, zf_431/430/429, riemann_543)"
+  - title: "Certified State Reductions and Formal Semantics of Conjecture-Checking Turing Machines (goldbach_24, zf_431/430/429, zf_393, riemann_543, riemann_120)"
     authors:
       - "Maxence Faldor"
       - "Moritz Firsching"
@@ -44,9 +43,9 @@ sources:
     note: >-
       Original state reductions (goldbach_25 -> 24, zf_432 -> 431/430/429,
       riemann_744 -> 543), halting-equivalence proofs, and first Lean 4
-      semantics proofs for ZF and RH Turing machines, including the formal
-      discovery of the B6a register-restoration bug in zf_432_wade.tm. For ZF
-      and RH we do not claim overall record state counts.
+      semantics proofs for all five ZF and RH Turing machine families (zf_432/429,
+      zf_393, riemann_744/543, and riemann_120), including the formal discovery
+      of the B6a register-restoration bug in zf_432_wade.tm.
   - title: "A Relatively Small Turing Machine Whose Behavior Is Independent of ZFC"
     authors:
       - "Adam Yedidia"
@@ -69,24 +68,25 @@ sources:
       - "Andrew Wade"
     id: "https://codeberg.org/ajwade/turing_machine_explorer"
     type: "software"
-    relationship: "background"
+    relationship: "primary"
     author_endorsement: "not-contacted"
     note: >-
-      Provides the August 2025 432-state baseline zf_432_wade.tm (commit
-      33b30300) formalized and reduced here to 429 states; a later August 2026
-      compiler and axiom-order rework (commit 9c5c2e82) reaches 393 states
-      (unformalized).
+      Provides both the August 2025 432-state baseline zf_432_wade.tm (commit
+      33b30300, formalized and reduced here to 429 states) and the August 2026
+      393-state machine zf_393_wade.tm (commit 9c5c2e82, formalized end-to-end
+      in Cryptids/Zf393.lean and Cryptids/Semantics/Zf393.lean).
   - title: "A 120-State Binary Turing Machine Equivalent to the Riemann Hypothesis"
     authors:
       - "Joseph M. Shunia"
     id: "https://arxiv.org/abs/2609.30306"
     type: "article"
-    relationship: "background"
+    relationship: "primary"
     author_endorsement: "not-contacted"
     note: >-
-      Constructs an unformalized 120-state binary Turing machine equivalent to
-      the Riemann Hypothesis via a 5-register self-sieving recurrence on a
-      specialized TMBuilder backend (September 2026).
+      Constructs the 120-state binary Turing machine riemann_120 equivalent to
+      the Riemann Hypothesis via a 5-register self-sieving recurrence and
+      offset base-n digit count (September 2026); formalized end-to-end here in
+      Cryptids/Riemann120.lean and Cryptids/Semantics/Riemann120.lean.
   - title: "Sharper bounds for the Chebyshev functions theta(x) and psi(x). II"
     authors:
       - "Lowell Schoenfeld"
@@ -117,12 +117,14 @@ status:
   scope: >-
     All five state-reduction halting equivalences (goldbach_24, zf_431,
     zf_430, zf_429, riemann_543), the end-to-end Goldbach semantics
-    (Cryptids/Semantics/Goldbach.lean), the end-to-end ZF consistency
-    semantics and soundness in Mathlib's ZFSet.{0} (Cryptids/Semantics/Zf.lean),
-    and the end-to-end Riemann Hypothesis semantics including the NQL
-    register-machine verification, Schmidt's (1903) oscillation theorem, and
-    Schoenfeld's (1976) explicit Chebyshev bound
-    (Cryptids/Semantics/Riemann.lean) are proved with zero sorrys.
+    (Cryptids/Semantics/Goldbach.lean), the end-to-end ZF consistency semantics
+    for both zf_432/429 (Cryptids/Semantics/Zf.lean) and Wade's 393-state
+    machine zf_393 (Cryptids/Semantics/Zf393.lean) including unconditional
+    non-halting via soundness in Mathlib's ZFSet.{0}, and the end-to-end
+    Riemann Hypothesis semantics for both riemann_744/543
+    (Cryptids/Semantics/Riemann.lean) and Shunia's 120-state machine
+    riemann_120 (Cryptids/Semantics/Riemann120.lean) are proved with zero
+    sorrys.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms:
@@ -155,6 +157,14 @@ status:
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: "comparator/zf_semantics.json"
+    - declaration: "ConjectureMachines.Zf393.halts_zf393_iff_zfInconsistent"
+      file: "Cryptids/Semantics/Zf393.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+    - declaration: "ConjectureMachines.Zf393.not_halts_zf393"
+      file: "Cryptids/Semantics/Zf393.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
     - declaration: "ConjectureMachines.Riemann543.candidate_equivalent"
       file: "Cryptids/Riemann543.lean"
       sorry_count: 0
@@ -170,6 +180,10 @@ status:
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: "comparator/riemann_semantics.json"
+    - declaration: "ConjectureMachines.Riemann120.halts_riemann120_iff_not_riemannHypothesis"
+      file: "Cryptids/Semantics/Riemann120.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
 
 automation:
   methods:
@@ -197,7 +211,8 @@ fidelity:
     not being restored"), causing state 299 (main().n_140.1) to restore scratch1
     into param1 instead of param3. We formalize both the exact 20-clause system
     WadeZFProvable enumerated by zf_432_wade.tm and O'Rear's intended Hilbert
-    system ZFProvable (proved sound in Mathlib's ZFSet.{0}).
+    system ZFProvable (proved sound in Mathlib's ZFSet.{0}), which zf_393
+    (compiled after commit 10fcf152b3) enumerates directly.
 
 review:
   status: "self-assessed"
@@ -230,6 +245,14 @@ alignment:
       lean: "ConjectureMachines.Semantics.Zf.not_zfInconsistent"
       module: "Cryptids.Semantics.Zf.Soundness"
       status: "proved"
+    - source: "zf_393 <-> ZFInconsistent"
+      lean: "ConjectureMachines.Zf393.halts_zf393_iff_zfInconsistent"
+      module: "Cryptids.Semantics.Zf393"
+      status: "proved"
+    - source: "Unconditional non-halting of zf_393"
+      lean: "ConjectureMachines.Zf393.not_halts_zf393"
+      module: "Cryptids.Semantics.Zf393"
+      status: "proved"
     - source: "riemann_543 <-> riemann_744 halting equivalence"
       lean: "ConjectureMachines.Riemann543.candidate_equivalent"
       module: "Cryptids.Riemann543"
@@ -242,9 +265,13 @@ alignment:
       lean: "ConjectureMachines.Riemann543.Semantics.halts_candidate_iff_not_riemannHypothesis"
       module: "Cryptids.Semantics.Riemann"
       status: "proved"
+    - source: "riemann_120 <-> ¬ RiemannHypothesis"
+      lean: "ConjectureMachines.Riemann120.halts_riemann120_iff_not_riemannHypothesis"
+      module: "Cryptids.Semantics.Riemann120"
+      status: "proved"
 
 acknowledgements: >-
   We thank Eric Wieser for careful review, the Busy Beaver Challenge community,
   Yijun Leng, Stefan O'Rear, Yuri Matiyasevich, Scott Aaronson, Adam Yedidia,
-  and Andrew Wade for the baseline Turing machines and compilers, and the
-  Mathlib community.
+  Andrew Wade, and Joseph M. Shunia for the Turing machines and compilers, and
+  the Mathlib community.

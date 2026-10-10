@@ -112,6 +112,42 @@ PINNED_BASELINES = {
         "states": 744,
         "symbols": 2,
     },
+    "zf_393": {
+        "source_file": "baselines/sources/zf_393_wade.tm",
+        "source_sha256": (
+            "a1a777fb3994c5b098228f0bd6f27fefcb47a091f36ef8c723bb668c43caf135"
+        ),
+        "table_file": "baselines/tables/zf_393.txt",
+        "table_file_sha256": (
+            "f0acf81abb428d9407a9ddd837a1bee07a709634692862386dd6d3e25cc45a97"
+        ),
+        "canonical_machine_sha256": (
+            "dcb8680665d4ec9667a1b6de6edf136e6bb0255a2f73a69c4d4f2e068dba23b2"
+        ),
+        "lean_file": "Cryptids.lean",
+        "lean_def": "zf393",
+        "format": "tursi",
+        "states": 393,
+        "symbols": 2,
+    },
+    "riemann_120": {
+        "source_file": "baselines/sources/riemann_120_shunia.tm",
+        "source_sha256": (
+            "b4b0f07607fc92dae6940f6e6c2d184fec3c13bbfc8cd00a0253321be6009db5"
+        ),
+        "table_file": "baselines/tables/riemann_120.txt",
+        "table_file_sha256": (
+            "ec3d408bbeba415afb0666573354bb1e1f2b3f4290b84b8745a3d84c841ab6d0"
+        ),
+        "canonical_machine_sha256": (
+            "a6f0c72649252257bf193268235d0cf9cd847d507d7b241627be7d818c3b86a8"
+        ),
+        "lean_file": "Cryptids.lean",
+        "lean_def": "riemann120",
+        "format": "tursi",
+        "states": 120,
+        "symbols": 2,
+    },
 }
 
 CANDIDATES = [
@@ -332,7 +368,7 @@ def derive_machine_from_source(source_text: str, fmt: str) -> Machine:
   else:
     raise ValueError(f"Unknown format: {fmt}")
 
-  numbering = {start: 0}
+  numbering = {start: 0} if start else {}
   for name in order:
     numbering.setdefault(name, len(numbering))
   names = sorted(numbering, key=numbering.__getitem__)
@@ -370,6 +406,7 @@ def parse_lean_machine_def(
       )
     assert (
         'elab "load_machine_rows% "' in lean_text
+        or "import Cryptids.Machines" in lean_text
     ), f"{def_name}: missing load_machine_rows% elaborator"
     assert (
         f"def {def_name} : Machine {expected_states} 2 := Machine.ofRows {def_name}Rows"
@@ -1211,6 +1248,55 @@ def run_verification(
         " NQL outer-loop dispatch checkpoints match with 100% bit-exact"
         f" relative tape equality ({riemann_sim['steps_saved']:,} steps saved)"
     )
+
+  for extra_id, boot_step, boot_state in (
+      ("zf_393", 39773, 99),
+      ("riemann_120", None, None),
+  ):
+    em = baseline_machines[extra_id]
+    tape: dict[int, int] = {}
+    q = 0
+    head = 0
+    boot_ok = False
+    for t in range(steps):
+      if boot_step is not None and t == boot_step:
+        boot_ok = (q == boot_state)
+      tr = em.table[q][tape.get(head, 0)]
+      assert tr is not None and tr.next_state is not None, (
+          f"{extra_id} unexpectedly halted at step {t}"
+      )
+      if tr.write:
+        tape[head] = 1
+      else:
+        tape.pop(head, None)
+      head += tr.direction
+      q = tr.next_state
+    if boot_step is not None and steps >= boot_step:
+      assert (
+          boot_ok
+      ), f"{extra_id} did not reach boot state {boot_state} at step {boot_step}"
+    if extra_id == "riemann_120":
+      assert (
+          head == zf_sim["final_head"]
+          and len(tape) == zf_sim["nonzero_cells"]
+      ), f"riemann_120 bootstrap tape diverged from zf_432 at {steps} steps"
+    report["simulations"][extra_id] = {
+        "steps_simulated": steps,
+        "boot_step_verified": boot_step if boot_step is not None else None,
+        "final_state": q,
+        "final_head": head,
+        "nonzero_cells": len(tape),
+    }
+    if verbose:
+      detail = (
+          f"boot checkpoint at t={boot_step:,} (`state {boot_state}`) verified; "
+          if boot_step is not None
+          else f"state={q}, head={head}; "
+      )
+      print(
+          f"[PASS] {extra_id} blank-tape simulation ({steps:,} steps):"
+          f" {detail}{len(tape)} active cells"
+      )
 
   elapsed = time.perf_counter() - t0
   report["elapsed_seconds"] = round(elapsed, 3)
