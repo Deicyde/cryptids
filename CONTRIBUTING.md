@@ -23,3 +23,7 @@ information on using pull requests.
 
 This project follows [Google's Open Source Community
 Guidelines](https://opensource.google/conduct/).
+
+## Scope of Contributions
+
+Pull requests and issues are welcome, especially for adding smaller Turing machines for existing problems, formalizing machines for other conjectures, or simplifying existing Lean proofs. If you notice anything amiss, such as an oversight or a missing reference, please open an issue.

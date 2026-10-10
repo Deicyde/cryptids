@@ -64,6 +64,10 @@ python3 verify.py
 - [`RELATED_WORK.md`](RELATED_WORK.md) — Literature lineage and `(Q, 2)` Turing machine conventions.
 - [`verify.py`](verify.py) — Standalone Python 3 verification script.
 
+## Contributing
+
+Pull requests and issues are welcome, especially for smaller Turing machines for these problems, machines for other conjectures, or streamlined Lean proofs. Please also open an issue if you notice anything amiss, such as a missing reference or provenance detail. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for general guidelines.
+
 ## Acknowledgements
 
 We thank Eric Wieser for careful review, as well as the Busy Beaver Challenge community, Yijun Leng, Stefan O'Rear, Yuri Matiyasevich, Scott Aaronson, Adam Yedidia, Andrew Wade, and Joseph Shunia for the baseline Turing machines and compilers, and the Mathlib community.
