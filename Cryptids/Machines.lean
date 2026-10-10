@@ -118,12 +118,18 @@ namespace Machines
 /-- Rows of `zf429`. -/ def zf429Rows : List (List (Option (Fin 2 × Dir × Fin 429))) :=
   load_machine_rows% "artifacts/zf_429/machine.txt"
 /-- 429-state ZF candidate. -/ def zf429 : Machine 429 2 := Machine.ofRows zf429Rows
+/-- Rows of `zf393`. -/ def zf393Rows : List (List (Option (Fin 2 × Dir × Fin 393))) :=
+  load_machine_rows% "baselines/tables/zf_393.txt"
+/-- 393-state ZF machine. -/ def zf393 : Machine 393 2 := Machine.ofRows zf393Rows
 /-- Rows of `riemann744`. -/ def riemann744Rows : List (List (Option (Fin 2 × Dir × Fin 744))) :=
   load_machine_rows% "baselines/tables/riemann_744.txt"
 /-- 744-state RH baseline. -/ def riemann744 : Machine 744 2 := Machine.ofRows riemann744Rows
 /-- Rows of `riemann543`. -/ def riemann543Rows : List (List (Option (Fin 2 × Dir × Fin 543))) :=
   load_machine_rows% "artifacts/riemann_543/machine.txt"
 /-- 543-state RH candidate. -/ def riemann543 : Machine 543 2 := Machine.ofRows riemann543Rows
+/-- Rows of `riemann120`. -/ def riemann120Rows : List (List (Option (Fin 2 × Dir × Fin 120))) :=
+  load_machine_rows% "baselines/tables/riemann_120.txt"
+/-- 120-state RH machine. -/ def riemann120 : Machine 120 2 := Machine.ofRows riemann120Rows
 end Machines
 
 /-- The configuration `n` steps in from `init`, or `none` once `M` has halted. -/

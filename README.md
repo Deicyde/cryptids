@@ -66,7 +66,7 @@ python3 verify.py
 
 ## Acknowledgements
 
-We thank **Eric Wieser** for careful review, as well as the Busy Beaver Challenge community, Yijun Leng, Stefan O'Rear, Yuri Matiyasevich, Scott Aaronson, Adam Yedidia, and Andrew Wade for the baseline Turing machines and compilers, and the Mathlib community.
+We thank **Eric Wieser** for careful review, as well as the Busy Beaver Challenge community, Yijun Leng, Stefan O'Rear, Yuri Matiyasevich, Scott Aaronson, Adam Yedidia, Andrew Wade, and Joseph Shunia for the baseline Turing machines and compilers, and the Mathlib community.
 
 ## License and disclaimer
 

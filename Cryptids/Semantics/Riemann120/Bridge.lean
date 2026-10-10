@@ -52,10 +52,6 @@ set_option maxRecDepth 200000
 ## 1. Universal Tree-Walk Soundness and Stack Pop (`break` / `continue`) Helpers
 -/
 
-theorem layer2_rh121Trans_eq (q : Fin 121) (b : Fin 2) :
-    Layer2.rh121Trans q b = Riemann120.rh121Trans q b := by
-  revert q b; decide
-
 theorem step_mk'_none {q : Fin 121} {a : Fin 2}
     (h : Riemann120.rh121Trans q a = none) (L R : ListBlank (Fin 2)) :
     step riemann121 ⟨q, Tape.mk' L (R.cons a)⟩ = none := by
@@ -92,13 +88,11 @@ theorem walkTape_sound (q : Fin 121) (walked rem : List (Fin 2))
   | nil => trivial
   | cons b rem' ih =>
     simp only [walkTape]
-    rcases htr : Layer2.rh121Trans q b with _ | ⟨w, d, q'⟩
+    rcases htr : rh121Trans q b with _ | ⟨w, d, q'⟩
     · refine ⟨0, Nat.add_zero _, treeWalkCfg q walked (b :: rem') L₀ R_tail, rfl, rfl, ?_⟩
-      rw [layer2_rh121Trans_eq] at htr
       exact step_mk'_none htr (ListBlank.append walked.reverse L₀)
         (ListBlank.append rem' R_tail)
-    · rw [layer2_rh121Trans_eq] at htr
-      cases d with
+    · cases d with
       | left =>
         by_cases hw : (w == 0) = true
         · simp only [hw, ↓reduceIte]
@@ -1009,55 +1003,12 @@ theorem halts_riemann121_iff_rhRegHalts : Halts riemann121 ↔ RhRegHalts := by
   · intro hDom
     exact tm_eval_dom_of_rhReg_halt isValidStack_nil rfl hDom
 
-/-!
-## 3. Equivalence between `Program` (`Layer2`) and `Analytic` (`Riemann120Analytic`) Quantities
--/
-
-theorem shuniaPrimorial_eq_primorial (n : ℕ) :
-    shuniaPrimorial n = Layer2.primorial n := rfl
-
-theorem analytic_shuniaProd_eq_program_shuniaProd (n : ℕ) :
-    Riemann120Analytic.shuniaProd n = Layer2.shuniaProd n := rfl
-
-theorem quarterClockStep_eq_program_quarterClock :
-    ∀ n : ℕ, quarterClockStep n = Layer2.quarterClock n
-  | 0 => by simp [quarterClockStep, Layer2.quarterClock]
-  | z + 1 => by
-    rw [quarterClockStep, Layer2.quarterClock]
-    exact congrArg (1 + ·) (quarterClockStep_eq_program_quarterClock (z / 4))
-
-theorem analytic_offsetDigits_eq_program_offsetDigits (b : ℕ) :
-    ∀ B : ℕ, Riemann120Analytic.offsetDigits b B = Layer2.offsetDigits b B := by
-  intro B
-  induction B using Nat.strong_induction_on with
-  | h B ih =>
-    cases B with
-    | zero => simp [Riemann120Analytic.offsetDigits, Layer2.offsetDigits]
-    | succ B' =>
-      rw [Riemann120Analytic.offsetDigits, Layer2.offsetDigits]
-      split
-      · exact congrArg (1 + ·) (ih (B' / b) (Nat.lt_succ_of_le (Nat.div_le_self B' b)))
-      · rfl
-
-theorem analytic_shuniaCounterexample_iff_program {n : ℕ} :
-    Riemann120Analytic.ShuniaCounterexample n ↔ Layer2.ShuniaCounterexample n := by
-  have hq : Riemann120Analytic.quarterClock (n - 1) = Layer2.quarterClock (n - 1) := by
-    rw [← Riemann120Analytic.quarterClockStep_eq_quarterClock (n - 1),
-      quarterClockStep_eq_program_quarterClock]
-  simp only [Riemann120Analytic.ShuniaCounterexample, Layer2.ShuniaCounterexample, hq,
-    Riemann120Analytic.shuniaDeficit, Layer2.shuniaDeficit,
-    analytic_offsetDigits_eq_program_offsetDigits,
-    analytic_shuniaProd_eq_program_shuniaProd]
-
 theorem exists_shuniaCounterexample_iff_shuniaCounterexampleExact :
-    (∃ n ≥ 2, Layer2.ShuniaCounterexample n) ↔ ∃ n, ShuniaCounterexampleExact n := by
-  constructor
-  · rintro ⟨n, hn2, hce⟩
-    exact ⟨n, shuniaCounterexampleExact_iff.mpr
-      ⟨hn2, analytic_shuniaCounterexample_iff_program.mpr hce⟩⟩
-  · rintro ⟨n, hce⟩
-    obtain ⟨hn2, hce'⟩ := shuniaCounterexampleExact_iff.mp hce
-    exact ⟨n, hn2, analytic_shuniaCounterexample_iff_program.mp hce'⟩
+    (∃ n ≥ 2, ShuniaCounterexample n) ↔ ∃ n, ShuniaCounterexampleExact n :=
+  ⟨fun ⟨n, hn2, hce⟩ => ⟨n, shuniaCounterexampleExact_iff.mpr ⟨hn2, hce⟩⟩,
+   fun ⟨n, hce⟩ =>
+    let ⟨hn2, hce'⟩ := shuniaCounterexampleExact_iff.mp hce
+    ⟨n, hn2, hce'⟩⟩
 
 /-!
 ## 4. Top-Level Bridge Theorem (`halts_riemann120_iff_not_riemannHypothesis_of_large`)

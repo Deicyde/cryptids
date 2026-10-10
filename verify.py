@@ -124,7 +124,7 @@ PINNED_BASELINES = {
         "canonical_machine_sha256": (
             "dcb8680665d4ec9667a1b6de6edf136e6bb0255a2f73a69c4d4f2e068dba23b2"
         ),
-        "lean_file": "Cryptids.lean",
+        "lean_file": "Cryptids/Machines.lean",
         "lean_def": "zf393",
         "format": "tursi",
         "states": 393,
@@ -142,7 +142,7 @@ PINNED_BASELINES = {
         "canonical_machine_sha256": (
             "a6f0c72649252257bf193268235d0cf9cd847d507d7b241627be7d818c3b86a8"
         ),
-        "lean_file": "Cryptids.lean",
+        "lean_file": "Cryptids/Machines.lean",
         "lean_def": "riemann120",
         "format": "tursi",
         "states": 120,

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import Cryptids.Riemann120
 public import Cryptids.Semantics.Riemann.Schmidt
 
 /-!
@@ -40,45 +41,17 @@ open scoped Real Topology Nat ENNReal LSeries.notation ArithmeticFunction
 
 namespace Riemann120Analytic
 
-/-!
-## 1. Pure Mathematical Definitions
--/
+open ConjectureMachines.Riemann120
+  (shuniaProd offsetDigits shuniaDeficit quarterClock ShuniaCounterexample)
 
-/-- Product of all primes `p ≤ n`. -/
-def primorial (n : ℕ) : ℕ :=
-  ((Finset.Icc 1 n).filter Nat.Prime).prod id
-
-/-- Self-sieving sequence `A_n = n! * P(n)`. -/
-def shuniaProd (n : ℕ) : ℕ :=
-  n.factorial * primorial n
-
-/-- Offset base-`b` digit count `β_b(B)`: iterations of `B ↦ ⌊(B - 1) / b⌋` while `B > 0`. -/
-def offsetDigits (b : ℕ) : ℕ → ℕ
-  | 0 => 0
-  | B + 1 =>
-    if _ : 2 ≤ b then 1 + offsetDigits b (B / b) else 0
-  termination_by B => B
-  decreasing_by exact Nat.lt_succ_of_le (Nat.div_le_self B b)
-
-/-- Integer deficit `Δ_n = n - 1 - β_n(A_n - 1)`. -/
-def shuniaDeficit (n : ℕ) : ℕ :=
-  n - 1 - offsetDigits n (shuniaProd n - 1)
-
-/-- Quartering clock `q_n = ⌊log_4(3n)⌋` computed on `z = n - 1`. -/
-def quarterClock : ℕ → ℕ
-  | 0 => 0
-  | z + 1 => 1 + quarterClock (z / 4)
-
-/-- Counterexample predicate `(q_n + 1) * 2 ^ q_n ≤ Δ_n`. -/
-def ShuniaCounterexample (n : ℕ) : Prop :=
-  (quarterClock (n - 1) + 1) * 2 ^ quarterClock (n - 1) ≤ shuniaDeficit n
+abbrev primorial : ℕ → ℕ := ConjectureMachines.Riemann120.primorial
 
 /-!
 ## 2. Arithmetic & Logarithmic Lemmas
 -/
 
 theorem primorial_eq_root_primorial (n : ℕ) : primorial n = _root_.primorial n := by
-  unfold primorial _root_.primorial
+  unfold primorial ConjectureMachines.Riemann120.primorial _root_.primorial
   congr 1
   ext p
   simp only [mem_filter, Finset.mem_Icc, Finset.mem_range]
@@ -99,7 +72,7 @@ theorem four_le_shuniaProd {n : ℕ} (hn : 2 ≤ n) : 4 ≤ shuniaProd n := by
     have hmem : 2 ∈ (Finset.Icc 1 n).filter Nat.Prime :=
       mem_filter.mpr ⟨Finset.mem_Icc.mpr ⟨by omega, hn⟩, Nat.prime_two⟩
     exact Nat.le_of_dvd (primorial_pos n) (dvd_prod_of_mem id hmem)
-  unfold shuniaProd
+  unfold shuniaProd primorial ConjectureMachines.Riemann120.primorial at *
   nlinarith
 
 /-- `log(P(n)) = θ(n)` for every `n : ℕ`. -/
@@ -188,12 +161,19 @@ theorem shuniaProd_not_pow (n : ℕ) (hn : 3 ≤ n) (d : ℕ) : shuniaProd n ≠
   have hle1 : n - 1 ≤ 1 := Nat.le_of_dvd zero_lt_one hdvd1
   omega
 
+theorem offsetDigits_zero (b : ℕ) : offsetDigits b 0 = 0 := by
+  rw [offsetDigits]
+
+theorem offsetDigits_succ (b B : ℕ) :
+    offsetDigits b (B + 1) = if 2 ≤ b then 1 + offsetDigits b (B / b) else 0 := by
+  rw [offsetDigits]; split_ifs <;> rfl
+
 /-- For `b ≥ 2` and `B ≥ 1`, `offsetDigits b B ≥ 1`. -/
 theorem offsetDigits_pos {b B : ℕ} (hb : 2 ≤ b) (hB : 1 ≤ B) :
     1 ≤ offsetDigits b B := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hB
-  rw [offsetDigits.eq_2]
-  simp only [hb, ↓reduceDIte]
+  rw [offsetDigits_succ]
+  simp only [hb, ↓reduceIte]
   omega
 
 /-- Lower bound on `B` from `offsetDigits b B`: for `b ≥ 2` and `B ≥ 1`,
@@ -202,10 +182,10 @@ theorem pow_sub_one_le_of_offsetDigits {b : ℕ} (hb : 2 ≤ b) :
     ∀ {B : ℕ}, 1 ≤ B → b ^ (offsetDigits b B - 1) ≤ B
   | 0, hB => by omega
   | B + 1, _ => by
-    rw [offsetDigits.eq_2]
-    simp only [hb, ↓reduceDIte, Nat.add_sub_cancel_left]
+    rw [offsetDigits_succ]
+    simp only [hb, ↓reduceIte, Nat.add_sub_cancel_left]
     rcases eq_or_lt_of_le (Nat.zero_le (B / b)) with h0 | hpos
-    · rw [← h0, offsetDigits.eq_1, pow_zero]
+    · rw [← h0, offsetDigits_zero, pow_zero]
       omega
     · calc b ^ offsetDigits b (B / b)
         _ = b * b ^ (offsetDigits b (B / b) - 1) := by
@@ -222,10 +202,10 @@ theorem pow_sub_one_le_of_offsetDigits {b : ℕ} (hb : 2 ≤ b) :
 lemma add_le_pow_offsetDigits_add_one {b : ℕ} (hb : 2 ≤ b) :
     ∀ B : ℕ, B + b ≤ b ^ (offsetDigits b B + 1)
   | 0 => by
-    rw [offsetDigits.eq_1, zero_add, zero_add, pow_one]
+    rw [offsetDigits_zero, zero_add, zero_add, pow_one]
   | B + 1 => by
-    rw [offsetDigits.eq_2]
-    simp only [hb, ↓reduceDIte]
+    rw [offsetDigits_succ]
+    simp only [hb, ↓reduceIte]
     have ih := add_le_pow_offsetDigits_add_one hb (B / b)
     have hmul : b * (B / b + b) ≤ b * b ^ (offsetDigits b (B / b) + 1) :=
       Nat.mul_le_mul_left b ih

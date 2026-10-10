@@ -758,24 +758,6 @@ theorem dispatch1_reaches_main0 (L : List (Fin 2)) (hok : NoNineZeros L)
     exact aux 1 L.reverse hok
   exact scan_reaches_main0 1 (by decide) L hok1 R
 
-/-- Reversed stack pop for `6.break.k`. -/
-def popBreakRev (k : ℕ) : List (Fin 2) → List (Fin 2)
-  | [] => []
-  | b :: rest =>
-    if b == 1 then popBreakRev k rest
-    else match k with | 0 => 1 :: rest | k' + 1 => popBreakRev k' rest
-
-/-- Reversed stack pop for `6.continue.k`. -/
-def popContinueRev (k : ℕ) : List (Fin 2) → List (Fin 2)
-  | [] => []
-  | b :: rest =>
-    if b == 0 then popContinueRev k rest
-    else match k with | 0 => 1 :: rest | k' + 1 => popContinueRev k' rest
-
-/-- Returned stack after `6.break.0`. -/
-def retStack (P : List (Fin 2)) : List (Fin 2) :=
-  (popBreakRev 0 P.reverse).reverse
-
 def breakState : ℕ → Fin 393
   | 0 => 61
   | 1 => 62
@@ -2191,26 +2173,6 @@ theorem stage3_walk_ones_decnz (r : Fin 11) (j : ℕ) (hj : r.val + j ≤ 10)
 ## 5. Decision-Tree Dispatcher, Abstract Machine (`zf393RegStep`), & `Halts zf393 ↔ Zf393RegHalts`
 -/
 
-def isLeafState (q : Fin 393) : Bool :=
-  (29 ≤ q.val) && (q.val ≤ 50)
-
-def isLeafInc (q : Fin 393) : Bool :=
-  (q.val % 2) == 0
-
-def leafReg (q : Fin 393) : Fin 11 :=
-  match q.val with
-  | 46 | 45 => 0
-  | 44 | 43 => 1
-  | 42 | 41 => 2
-  | 38 | 37 => 3
-  | 36 | 35 => 4
-  | 34 | 33 => 5
-  | 30 | 29 => 6
-  | 50 | 49 => 7
-  | 48 | 47 => 8
-  | 32 | 31 => 9
-  | _ => 10
-
 theorem leafReg_inc_spec (q : Fin 393) (hl : isLeafState q = true) (hi : isLeafInc q = true) :
     q = regIncStage3 (leafReg q) := by
   revert q hl hi; decide
@@ -2218,26 +2180,6 @@ theorem leafReg_inc_spec (q : Fin 393) (hl : isLeafState q = true) (hi : isLeafI
 theorem leafReg_decnz_spec (q : Fin 393) (hl : isLeafState q = true) (hi : isLeafInc q = false) :
     q = regDecnzStage3 (leafReg q) := by
   revert q hl hi; decide
-
-inductive TreeOutcome
-  | halt (q : Fin 393) (walked rem : List (Fin 2))
-  | jumpLeft (q : Fin 393) (walked rem : List (Fin 2))
-  | regLeaf (q : Fin 393) (walked rem : List (Fin 2))
-  | outOfFuel
-  deriving DecidableEq, Repr
-
-def walkTape (q : Fin 393) (walked : List (Fin 2)) : List (Fin 2) → TreeOutcome
-  | [] => .outOfFuel
-  | b :: rem =>
-    match zf393Trans q b with
-    | none => .halt q walked (b :: rem)
-    | some (w, .left, q') =>
-      if w == 0 then .jumpLeft q' walked rem else .outOfFuel
-    | some (w, .right, q') =>
-      if w == b then
-        if isLeafState q' then .regLeaf q' (walked ++ [w]) rem
-        else walkTape q' (walked ++ [w]) rem
-      else .outOfFuel
 
 def treeWalkCfg (q : Fin 393) (walked rem : List (Fin 2))
     (L₀ R_tail : ListBlank (Fin 2)) : Cfg 393 2 :=
@@ -5329,56 +5271,6 @@ def lookupSmall (ip : List (Fin 2)) : Option ℕ :=
 def minSlot (ip : List (Fin 2)) : ℕ :=
   (lookupSmall ip).getD 150
 
-
-/-- 11-register call-stack configuration for `zf393` (`regs` in left-to-right tape order
-`[scratch3, scratch2, scratch1, param3, param2, param1, axiomcode, wffstack, topwff, nextproof,
-prooflist]`, so `regs.reverse` gives `[prooflist, nextproof, ..., scratch3]`). -/
-structure Zf393RegCfg where
-  ip : List (Fin 2)
-  regs : List ℕ
-  deriving DecidableEq, Repr
-
-def zf393RegInit : Zf393RegCfg :=
-  ⟨[], List.replicate 11 0⟩
-
-/-- Logical `[prooflist, ..., scratch3]` view of `c.regs` (matching `Zf429.Layer2.zfRegStep`). -/
-def zf393LogicalRegs (c : Zf393RegCfg) : List ℕ :=
-  c.regs.reverse
-
-/-- Single abstract macro-step of `zf393` starting at `main().0` (`State 99`). -/
-def zf393RegStep (c : Zf393RegCfg) : Option Zf393RegCfg :=
-  match walkTape 99 [] (c.ip ++ List.replicate 10 0) with
-  | .halt _ _ _ => none
-  | .outOfFuel => none
-  | .jumpLeft q' walked _ =>
-    match q'.val with
-    | 61 => some ⟨(popBreakRev 0 walked.reverse).reverse, c.regs⟩
-    | 62 => some ⟨(popBreakRev 1 walked.reverse).reverse, c.regs⟩
-    | 63 => some ⟨(popBreakRev 2 walked.reverse).reverse, c.regs⟩
-    | 64 => some ⟨(popContinueRev 0 walked.reverse).reverse, c.regs⟩
-    | 65 => some ⟨(popContinueRev 1 walked.reverse).reverse, c.regs⟩
-    | 66 => some ⟨(popContinueRev 2 walked.reverse).reverse, c.regs⟩
-    | 67 => some ⟨(popContinueRev 3 walked.reverse).reverse, c.regs⟩
-    | 68 => some ⟨(popContinueRev 4 walked.reverse).reverse, c.regs⟩
-    | _ => none
-  | .regLeaf q' walked _ =>
-    let r := leafReg q'
-    if isLeafInc q' then
-      some ⟨retStack walked, c.regs.set r.val (c.regs.getD r.val 0 + 1)⟩
-    else if c.regs.getD r.val 0 == 0 then
-      some ⟨(popBreakRev 1 walked.reverse).reverse, c.regs⟩
-    else
-      some ⟨retStack walked, c.regs.set r.val (c.regs.getD r.val 0 - 1)⟩
-
-def zf393RegNSteps : ℕ → Zf393RegCfg → Option Zf393RegCfg
-  | 0, c => some c
-  | n + 1, c =>
-    match zf393RegStep c with
-    | none => none
-    | some c' => zf393RegNSteps n c'
-
-def Zf393RegHalts : Prop :=
-  ∃ n c, zf393RegNSteps n zf393RegInit = some c ∧ zf393RegStep c = none
 
 /-- Trail-zero count at the start of `rev` (number of trailing `0`s at the end of `walked`). -/
 def trailZeros : List (Fin 2) → ℕ

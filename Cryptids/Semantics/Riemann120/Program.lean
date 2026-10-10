@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import Cryptids.Riemann120
 public import Cryptids.Semantics.Riemann.Gadgets
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
@@ -16,9 +17,8 @@ This module formalizes Layer 2 for the 121-state canonical predecessor machine `
 (`riemann121`) of Shunia's 120-state Riemann Hypothesis counterexample search machine:
 
 1. **63-Node Control DAG & Call-Stack Dispatcher**:
-   - `rh121Rows` / `rh121Trans`: transition table of `canon121` (`Fin 121`).
    - `walkInternal`, `walkTape`, `outcomeToInstr`, `evalStack`: call-stack decision tree
-     dispatcher rooted at `State 27` (`main.0`).
+     dispatcher rooted at `State 27` (`main.0`) over `ConjectureMachines.Riemann120.rh121Trans`.
    - Exhaustive `decide` verification across all valid control words and reachable call stacks
      from `State 27` that `bits.length ≤ 18` and `[1, 1, 0] ++ bits ++ [1, 0]` contains
      no four consecutive zeros (`hasNoFourZeros`).
@@ -47,143 +47,14 @@ This module formalizes Layer 2 for the 121-state canonical predecessor machine `
 namespace ConjectureMachines.Riemann120.Layer2
 
 open Turing StateTransition
+open ConjectureMachines.Riemann120
+  (rh121Trans primorial shuniaProd offsetDigits shuniaDeficit quarterClock ShuniaCounterexample)
 
 set_option linter.style.setOption false
 set_option linter.flexible false
 set_option maxRecDepth 200000
 
-/-! ## Section 1: Transition Table & Control DAG of `riemann121` (`canon121`) -/
-
-/-- Exact 121-state transition rows `(onZero, onOne)` of `canon121` (`riemann121`). -/
-def rh121Rows : Array (Option (Fin 2 × Turing.Dir × Fin 121) ×
-    Option (Fin 2 × Turing.Dir × Fin 121)) := #[
-  (some (1, .right, 1), some (1, .left, 2)),
-  (some (0, .left, 0), some (0, .left, 3)),
-  (some (1, .left, 0), some (1, .right, 4)),
-  (some (1, .left, 1), some (1, .right, 5)),
-  (some (1, .right, 6), some (0, .right, 7)),
-  (some (0, .right, 3), some (0, .right, 1)),
-  (some (0, .right, 8), none),
-  (some (0, .right, 9), some (1, .right, 7)),
-  (some (1, .right, 8), some (1, .left, 10)),
-  (some (0, .right, 11), some (1, .right, 9)),
-  (some (0, .left, 10), some (1, .left, 12)),
-  (some (1, .right, 13), some (1, .right, 11)),
-  (some (0, .left, 14), some (1, .left, 12)),
-  (some (0, .left, 15), some (0, .right, 11)),
-  (some (0, .left, 16), some (1, .left, 12)),
-  (some (0, .left, 17), some (1, .left, 15)),
-  (some (0, .left, 18), some (1, .left, 12)),
-  (some (0, .left, 19), some (1, .left, 15)),
-  (some (0, .right, 20), some (1, .left, 12)),
-  (some (1, .right, 21), some (0, .left, 19)),
-  (some (0, .right, 20), some (1, .right, 22)),
-  (some (0, .right, 21), some (0, .right, 23)),
-  (some (0, .right, 24), some (1, .right, 25)),
-  (some (0, .left, 24), some (0, .right, 23)),
-  (some (1, .left, 10), some (1, .right, 26)),
-  (some (0, .right, 27), some (0, .right, 27)),
-  (some (0, .right, 24), some (1, .right, 28)),
-  (some (0, .right, 29), some (1, .right, 30)),
-  (some (0, .right, 4), some (1, .right, 31)),
-  (some (0, .right, 31), some (1, .right, 32)),
-  (some (0, .right, 33), some (1, .right, 34)),
-  (some (1, .right, 6), some (0, .right, 35)),
-  (some (0, .right, 36), some (0, .left, 37)),
-  (some (0, .right, 38), some (1, .right, 39)),
-  (some (0, .right, 40), some (1, .right, 41)),
-  (some (0, .right, 42), some (1, .right, 35)),
-  (some (1, .right, 6), some (0, .right, 43)),
-  (some (0, .left, 37), some (0, .left, 10)),
-  (some (0, .right, 44), some (1, .right, 45)),
-  (some (0, .right, 46), some (0, .left, 37)),
-  (some (0, .right, 47), some (1, .right, 48)),
-  (some (0, .right, 49), some (1, .right, 50)),
-  (some (0, .right, 51), some (1, .right, 42)),
-  (some (0, .right, 52), some (1, .right, 43)),
-  (some (1, .right, 6), some (0, .right, 53)),
-  (some (0, .right, 54), some (1, .right, 55)),
-  (some (1, .right, 6), some (0, .right, 56)),
-  (some (1, .right, 6), some (0, .right, 57)),
-  (some (0, .right, 58), some (0, .left, 37)),
-  (some (0, .right, 59), some (1, .right, 60)),
-  (some (0, .right, 61), some (1, .right, 62)),
-  (some (1, .left, 63), some (0, .right, 64)),
-  (some (0, .right, 53), some (1, .right, 52)),
-  (some (0, .right, 7), some (1, .right, 53)),
-  (some (0, .right, 65), some (1, .right, 66)),
-  (some (0, .right, 67), some (1, .right, 68)),
-  (some (0, .right, 69), some (1, .right, 56)),
-  (some (0, .right, 35), some (1, .right, 57)),
-  (some (0, .right, 70), some (1, .right, 36)),
-  (some (0, .right, 71), some (1, .right, 72)),
-  (some (0, .right, 73), some (1, .right, 74)),
-  (some (0, .right, 47), some (1, .right, 75)),
-  (some (0, .right, 76), some (1, .right, 77)),
-  (some (0, .left, 78), some (1, .left, 63)),
-  (some (0, .left, 51), some (1, .right, 79)),
-  (some (0, .right, 47), some (1, .right, 80)),
-  (some (0, .right, 81), some (1, .right, 82)),
-  (some (0, .right, 73), some (1, .right, 83)),
-  (some (0, .right, 84), some (1, .right, 84)),
-  (some (0, .right, 57), some (1, .right, 69)),
-  (some (1, .right, 6), some (0, .right, 85)),
-  (some (1, .right, 6), some (0, .right, 69)),
-  (some (0, .right, 54), some (1, .right, 86)),
-  (some (1, .right, 6), some (0, .right, 87)),
-  (some (0, .right, 44), some (0, .left, 37)),
-  (some (0, .right, 88), some (1, .right, 89)),
-  (some (0, .right, 71), some (1, .right, 90)),
-  (some (0, .right, 46), none),
-  (some (0, .left, 91), some (1, .left, 63)),
-  (some (0, .right, 92), some (1, .right, 79)),
-  (some (0, .right, 70), some (0, .left, 37)),
-  (some (0, .right, 71), some (1, .right, 93)),
-  (some (0, .right, 31), some (1, .right, 94)),
-  (some (0, .right, 70), some (1, .right, 84)),
-  (some (0, .right, 81), some (1, .right, 95)),
-  (some (0, .right, 43), some (1, .right, 85)),
-  (some (0, .right, 96), some (0, .left, 97)),
-  (some (0, .right, 56), some (1, .right, 87)),
-  (some (0, .right, 4), some (1, .right, 98)),
-  (some (0, .right, 99), some (0, .left, 97)),
-  (some (0, .right, 96), some (0, .left, 37)),
-  (some (0, .left, 19), some (0, .left, 91)),
-  (some (0, .left, 100), some (1, .right, 79)),
-  (some (0, .right, 4), some (0, .left, 37)),
-  (some (0, .right, 101), some (0, .left, 37)),
-  (some (0, .right, 102), some (1, .right, 103)),
-  (some (0, .right, 46), some (0, .left, 19)),
-  (some (0, .left, 97), some (0, .left, 37)),
-  (some (0, .right, 104), some (1, .right, 105)),
-  (some (1, .right, 6), some (0, .right, 52)),
-  (some (1, .left, 106), some (1, .left, 100)),
-  (some (0, .right, 107), some (1, .right, 108)),
-  (some (0, .right, 109), some (1, .right, 60)),
-  (some (0, .right, 31), some (1, .right, 89)),
-  (some (0, .right, 110), some (1, .right, 60)),
-  (some (0, .right, 104), some (1, .right, 111)),
-  (some (0, .left, 15), some (0, .left, 100)),
-  (some (0, .right, 73), some (1, .right, 112)),
-  (some (0, .right, 65), some (1, .right, 99)),
-  (some (0, .right, 47), some (1, .right, 113)),
-  (some (0, .right, 47), some (1, .right, 114)),
-  (some (0, .right, 115), some (1, .right, 116)),
-  (some (0, .right, 44), some (0, .left, 91)),
-  (some (0, .right, 70), some (1, .right, 89)),
-  (some (0, .right, 117), some (0, .left, 37)),
-  (some (0, .right, 46), some (1, .right, 118)),
-  (some (0, .right, 73), some (1, .right, 32)),
-  (some (0, .right, 4), some (1, .right, 119)),
-  (some (0, .right, 120), some (0, .left, 37)),
-  (some (0, .right, 47), some (1, .right, 70)),
-  (some (0, .right, 46), some (1, .right, 70))
-]
-
-/-- Transition function `rh121Trans` of `riemann121` (`canon121`). -/
-def rh121Trans (q : Fin 121) (b : Fin 2) : Option (Fin 2 × Turing.Dir × Fin 121) :=
-  let row := rh121Rows.getD q.val (none, none)
-  if b == 0 then row.1 else row.2
+/-! ## Section 1: Control DAG & Leaf Classification of `riemann121` (`canon121`) -/
 
 /-- Exact 10 register leaf states `3.<reg>.{inc,decnz}` of `canon121`. -/
 def isLeafState (q : Fin 121) : Bool :=
@@ -698,33 +569,6 @@ theorem rhRegTapeStep_sim {c₁ c₂ : RhRegCfg} (hsim : RhRegSim c₁ c₂) :
       rw [List.take_append_of_le_length hle₁, List.take_set, List.take_set, htake]
 
 /-! ## Section 4: Pure Mathematical Quantities & Self-Sieving Identity (`rhtm.tex`) -/
-
-/-- Primorial $\prod_{p \le n} p$. -/
-def primorial (n : ℕ) : ℕ := ((Finset.Icc 1 n).filter Nat.Prime).prod id
-
-/-- Shunia's product sequence $A_n = n! \prod_{p \le n} p$. -/
-def shuniaProd (n : ℕ) : ℕ := n.factorial * primorial n
-
-/-- Offset base-$b$ digit count $\beta_b(B)$. -/
-def offsetDigits (b : ℕ) : ℕ → ℕ
-  | 0 => 0
-  | B + 1 =>
-    if _hb : 2 ≤ b then 1 + offsetDigits b (B / b) else 0
-termination_by B => B
-decreasing_by
-  exact Nat.lt_succ_of_le (Nat.div_le_self B b)
-
-/-- Shunia's base-$n$ digit deficit $\Delta_n = \max(n - 1 - \beta_n(A_n - 1), 0)$. -/
-def shuniaDeficit (n : ℕ) : ℕ := n - 1 - offsetDigits n (shuniaProd n - 1)
-
-/-- Quarter-scaling clock $q_n = \text{quarterClock}(n - 1)$. -/
-def quarterClock : ℕ → ℕ
-  | 0 => 0
-  | z + 1 => 1 + quarterClock (z / 4)
-
-/-- Shunia's arithmetic RH counterexample predicate at stage $n$. -/
-def ShuniaCounterexample (n : ℕ) : Prop :=
-  (quarterClock (n - 1) + 1) * 2 ^ quarterClock (n - 1) ≤ shuniaDeficit n
 
 theorem shuniaProd_pos (n : ℕ) : 0 < shuniaProd n := by
   unfold shuniaProd primorial

@@ -20,10 +20,11 @@ their halting problem on the blank tape to the negation of Mathlib's `RiemannHyp
 
 * **744-state Riemann Hypothesis Turing machine (`riemann_744`, 2016)**:
   Designed by **Yuri Matiyasevich**, **Scott Aaronson**, and **Stefan O'Rear** in
-  [`sorear/metamath-turing-machines`](https://github.com/sorear/metamath-turing-machines/tree/master/machines/2016-riemann-matiyasevich-aaronson-744)
-  (`riemann.nql`), encoding an elementary counterexample search for the Riemann Hypothesis via
-  harmonic numbers and $\operatorname{lcm}(1, \dots, x)$ building on Schoenfeld's (1976) explicit
-  bound for $|\psi(x) - x|$ and Lagarias's (2002) elementary reformulation.
+  [`sorear/metamath-turing-machines`](https://github.com/sorear/metamath-turing-machines)
+  (`machines/2016-riemann-matiyasevich-aaronson-744/riemann.nql`), encoding an elementary
+  counterexample search for the Riemann Hypothesis via harmonic numbers and
+  $\operatorname{lcm}(1, \dots, x)$ building on Schoenfeld's (1976) explicit bound for
+  $|\psi(x) - x|$ and Lagarias's (2002) elementary reformulation.
 * **543-state compression and halting-equivalence proof (`riemann_543`, 2026)**:
   Maxence Faldor (using Gemini Argon) found the 543-state machine `candidate` (`riemann_543`) and
   proved `Halts candidate ↔ Halts reference` in `Cryptids.Riemann543`.

@@ -109,12 +109,18 @@ namespace Machines
 /-- Rows of `zf429`. -/ def zf429Rows : List (List (Option (Fin 2 × Dir × Fin 429))) :=
   load_machine_rows% "artifacts/zf_429/machine.txt"
 /-- 429-state ZF candidate. -/ def zf429 : Machine 429 2 := Machine.ofRows zf429Rows
+/-- Rows of `zf393`. -/ def zf393Rows : List (List (Option (Fin 2 × Dir × Fin 393))) :=
+  load_machine_rows% "baselines/tables/zf_393.txt"
+/-- 393-state ZF machine. -/ def zf393 : Machine 393 2 := Machine.ofRows zf393Rows
 /-- Rows of `riemann744`. -/ def riemann744Rows : List (List (Option (Fin 2 × Dir × Fin 744))) :=
   load_machine_rows% "baselines/tables/riemann_744.txt"
 /-- 744-state RH baseline. -/ def riemann744 : Machine 744 2 := Machine.ofRows riemann744Rows
 /-- Rows of `riemann543`. -/ def riemann543Rows : List (List (Option (Fin 2 × Dir × Fin 543))) :=
   load_machine_rows% "artifacts/riemann_543/machine.txt"
 /-- 543-state RH candidate. -/ def riemann543 : Machine 543 2 := Machine.ofRows riemann543Rows
+/-- Rows of `riemann120`. -/ def riemann120Rows : List (List (Option (Fin 2 × Dir × Fin 120))) :=
+  load_machine_rows% "baselines/tables/riemann_120.txt"
+/-- 120-state RH machine. -/ def riemann120 : Machine 120 2 := Machine.ofRows riemann120Rows
 end Machines
 
 /-- **Goldbach's Conjecture**: every even integer greater than 2 is the sum of two primes. -/
@@ -265,6 +271,14 @@ theorem candidate_fewer_states : candidate.states < reference.states := by sorry
 theorem candidate_equivalent : Halts candidate ↔ Halts reference := by sorry
 end Zf429
 
+namespace Zf393
+/-- 393-state ZF consistency machine (`zf_393`, Wade 2026). -/
+abbrev zf393 : Machine 393 2 := Machines.zf393
+theorem halts_zf393_iff_zfInconsistent : ConjectureMachines.Halts zf393 ↔ ZFInconsistent := by
+  sorry
+theorem not_halts_zf393 : ¬ ConjectureMachines.Halts zf393 := by sorry
+end Zf393
+
 namespace Semantics.Zf
 theorem zfProvable_sound_zfSet (φ : ZFFormula) (h : ZFProvable φ.code)
     (v : ℕ → ZFSet.{0}) : φ.Holds v := by sorry
@@ -293,5 +307,12 @@ theorem halts_candidate_iff_not_riemannHypothesis :
     Halts candidate ↔ ¬ RiemannHypothesis := by sorry
 end Semantics
 end Riemann543
+
+namespace Riemann120
+/-- 120-state Riemann Hypothesis machine (`riemann_120`, Shunia 2026). -/
+abbrev riemann120 : Machine 120 2 := Machines.riemann120
+theorem halts_riemann120_iff_not_riemannHypothesis :
+    ConjectureMachines.Halts riemann120 ↔ ¬ RiemannHypothesis := by sorry
+end Riemann120
 
 end ConjectureMachines

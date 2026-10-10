@@ -161,10 +161,12 @@ status:
       file: "Cryptids/Semantics/Zf393.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator/zf_393.json"
     - declaration: "ConjectureMachines.Zf393.not_halts_zf393"
       file: "Cryptids/Semantics/Zf393.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator/zf_393.json"
     - declaration: "ConjectureMachines.Riemann543.candidate_equivalent"
       file: "Cryptids/Riemann543.lean"
       sorry_count: 0
@@ -184,6 +186,7 @@ status:
       file: "Cryptids/Semantics/Riemann120.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator/riemann_120.json"
 
 automation:
   methods:

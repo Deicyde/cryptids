@@ -44,130 +44,8 @@ set_option maxRecDepth 200000
 ## 1. Machine Tables & Transition Lookup (`riemann120` and `riemann121`)
 -/
 
-def rh120Rows : Array (Array (Option (Fin 2 × Dir × Fin 120))) := #[
-  #[some (1, .right, 1), some (1, .left, 2)],
-  #[some (0, .left, 0), some (0, .left, 3)],
-  #[some (1, .left, 0), some (1, .right, 4)],
-  #[some (1, .left, 1), some (1, .right, 5)],
-  #[some (1, .right, 6), some (0, .right, 7)],
-  #[some (0, .right, 3), some (0, .right, 1)],
-  #[some (0, .right, 8), none],
-  #[some (0, .right, 9), some (1, .right, 7)],
-  #[some (1, .right, 8), some (1, .left, 10)],
-  #[some (0, .right, 11), some (1, .right, 9)],
-  #[some (0, .left, 10), some (1, .left, 12)],
-  #[some (1, .right, 13), some (1, .right, 11)],
-  #[some (0, .left, 14), some (1, .left, 12)],
-  #[some (0, .left, 15), some (0, .right, 11)],
-  #[some (0, .left, 16), some (1, .left, 12)],
-  #[some (0, .left, 17), some (1, .left, 15)],
-  #[some (0, .left, 18), some (1, .left, 12)],
-  #[some (0, .left, 19), some (1, .left, 15)],
-  #[some (0, .right, 20), some (1, .left, 12)],
-  #[some (1, .right, 21), some (0, .left, 19)],
-  #[some (0, .right, 20), some (1, .right, 22)],
-  #[some (0, .right, 21), some (0, .right, 23)],
-  #[some (0, .right, 24), some (1, .right, 25)],
-  #[some (0, .left, 24), some (0, .right, 23)],
-  #[some (1, .left, 10), some (1, .right, 26)],
-  #[some (0, .right, 27), some (0, .right, 27)],
-  #[some (0, .right, 24), some (1, .right, 28)],
-  #[some (0, .right, 29), some (1, .right, 30)],
-  #[some (0, .right, 4), some (1, .right, 31)],
-  #[some (0, .right, 31), some (1, .right, 32)],
-  #[some (0, .right, 33), some (1, .right, 34)],
-  #[some (1, .right, 6), some (0, .right, 35)],
-  #[some (0, .right, 36), some (0, .left, 37)],
-  #[some (0, .right, 38), some (1, .right, 39)],
-  #[some (0, .right, 40), some (1, .right, 41)],
-  #[some (0, .right, 42), some (1, .right, 35)],
-  #[some (1, .right, 6), some (0, .right, 43)],
-  #[some (0, .left, 37), some (0, .left, 10)],
-  #[some (0, .right, 44), some (1, .right, 45)],
-  #[some (0, .right, 46), some (0, .left, 37)],
-  #[some (0, .right, 47), some (1, .right, 48)],
-  #[some (0, .right, 49), some (1, .right, 50)],
-  #[some (0, .right, 51), some (1, .right, 42)],
-  #[some (0, .right, 52), some (1, .right, 43)],
-  #[some (1, .right, 6), some (0, .right, 53)],
-  #[some (0, .right, 54), some (1, .right, 55)],
-  #[some (1, .right, 6), some (0, .right, 56)],
-  #[some (1, .right, 6), some (0, .right, 57)],
-  #[some (0, .right, 58), some (0, .left, 37)],
-  #[some (0, .right, 59), some (1, .right, 60)],
-  #[some (0, .right, 61), some (1, .right, 62)],
-  #[some (1, .left, 63), some (0, .right, 64)],
-  #[some (0, .right, 53), some (1, .right, 52)],
-  #[some (0, .right, 7), some (1, .right, 53)],
-  #[some (0, .right, 65), some (1, .right, 66)],
-  #[some (0, .right, 67), some (1, .right, 68)],
-  #[some (0, .right, 69), some (1, .right, 56)],
-  #[some (0, .right, 35), some (1, .right, 57)],
-  #[some (0, .right, 70), some (1, .right, 36)],
-  #[some (0, .right, 71), some (1, .right, 72)],
-  #[some (0, .right, 73), some (1, .right, 74)],
-  #[some (0, .right, 47), some (1, .right, 75)],
-  #[some (0, .right, 76), some (1, .right, 77)],
-  #[some (0, .left, 78), some (1, .left, 63)],
-  #[some (0, .left, 51), some (1, .right, 79)],
-  #[some (0, .right, 47), some (1, .right, 80)],
-  #[some (0, .right, 81), some (1, .right, 82)],
-  #[some (0, .right, 73), some (1, .right, 83)],
-  #[some (0, .right, 84), some (1, .right, 84)],
-  #[some (0, .right, 57), some (1, .right, 69)],
-  #[some (1, .right, 6), some (0, .right, 85)],
-  #[some (1, .right, 6), some (0, .right, 69)],
-  #[some (0, .right, 54), some (1, .right, 86)],
-  #[some (1, .right, 6), some (0, .right, 87)],
-  #[some (0, .right, 44), some (0, .left, 37)],
-  #[some (0, .right, 88), some (1, .right, 89)],
-  #[some (0, .right, 71), some (1, .right, 90)],
-  #[some (0, .right, 46), none],
-  #[some (0, .left, 91), some (1, .left, 63)],
-  #[some (0, .right, 92), some (1, .right, 79)],
-  #[some (0, .right, 70), some (0, .left, 37)],
-  #[some (0, .right, 71), some (1, .right, 93)],
-  #[some (0, .right, 31), some (1, .right, 94)],
-  #[some (0, .right, 70), some (1, .right, 84)],
-  #[some (0, .right, 81), some (1, .right, 95)],
-  #[some (0, .right, 43), some (1, .right, 85)],
-  #[some (0, .right, 96), some (0, .left, 32)],
-  #[some (0, .right, 56), some (1, .right, 87)],
-  #[some (0, .right, 4), some (1, .right, 97)],
-  #[some (0, .right, 98), some (0, .left, 32)],
-  #[some (0, .right, 96), some (0, .left, 37)],
-  #[some (0, .left, 19), some (0, .left, 91)],
-  #[some (0, .left, 99), some (1, .right, 79)],
-  #[some (0, .right, 4), some (0, .left, 37)],
-  #[some (0, .right, 100), some (0, .left, 37)],
-  #[some (0, .right, 101), some (1, .right, 102)],
-  #[some (0, .right, 46), some (0, .left, 19)],
-  #[some (0, .right, 103), some (1, .right, 104)],
-  #[some (1, .right, 6), some (0, .right, 52)],
-  #[some (1, .left, 105), some (1, .left, 99)],
-  #[some (0, .right, 106), some (1, .right, 107)],
-  #[some (0, .right, 108), some (1, .right, 60)],
-  #[some (0, .right, 31), some (1, .right, 89)],
-  #[some (0, .right, 109), some (1, .right, 60)],
-  #[some (0, .right, 103), some (1, .right, 110)],
-  #[some (0, .left, 15), some (0, .left, 99)],
-  #[some (0, .right, 73), some (1, .right, 111)],
-  #[some (0, .right, 65), some (1, .right, 98)],
-  #[some (0, .right, 47), some (1, .right, 112)],
-  #[some (0, .right, 47), some (1, .right, 113)],
-  #[some (0, .right, 114), some (1, .right, 115)],
-  #[some (0, .right, 44), some (0, .left, 91)],
-  #[some (0, .right, 70), some (1, .right, 89)],
-  #[some (0, .right, 116), some (0, .left, 37)],
-  #[some (0, .right, 46), some (1, .right, 117)],
-  #[some (0, .right, 73), some (1, .right, 32)],
-  #[some (0, .right, 4), some (1, .right, 118)],
-  #[some (0, .right, 119), some (0, .left, 37)],
-  #[some (0, .right, 47), some (1, .right, 70)],
-  #[some (0, .right, 46), some (1, .right, 70)]
-]
-
-def riemann120 : TM 120 2 := ⟨fun q a => (rh120Rows.getD q.val #[]).getD a.val none⟩
+/-- Shunia's 120-state Riemann Hypothesis Turing machine (`baselines/tables/riemann_120.txt`). -/
+abbrev riemann120 : Machine 120 2 := Machines.riemann120
 
 @[simp] theorem riemann120_states : riemann120.states = 120 := rfl
 
@@ -1779,5 +1657,39 @@ theorem halts_riemann120_iff_halts_riemann121 : Halts riemann120 ↔ Halts riema
         Relation.TransGen.single hst.symm⟩
   exact StateTransition.tr_eval_dom hrel ⟨win5Inv_init, rfl⟩
 
+
+
+/-!
+## 3. Shared Arithmetic Quantities (`primorial`, `shuniaProd`, `ShuniaCounterexample`)
+-/
+
+/-- Product of all primes `p ≤ n`. -/
+def primorial (n : ℕ) : ℕ :=
+  ((Finset.Icc 1 n).filter Nat.Prime).prod id
+
+/-- Self-sieving sequence `A_n = n! * P(n)`. -/
+def shuniaProd (n : ℕ) : ℕ :=
+  n.factorial * primorial n
+
+/-- Offset base-`b` digit count `β_b(B)`: iterations of `B ↦ ⌊(B - 1) / b⌋` while `B > 0`. -/
+def offsetDigits (b : ℕ) : ℕ → ℕ
+  | 0 => 0
+  | B + 1 =>
+    if _ : 2 ≤ b then 1 + offsetDigits b (B / b) else 0
+  termination_by B => B
+  decreasing_by exact Nat.lt_succ_of_le (Nat.div_le_self B b)
+
+/-- Integer deficit `Δ_n = n - 1 - β_n(A_n - 1)`. -/
+def shuniaDeficit (n : ℕ) : ℕ :=
+  n - 1 - offsetDigits n (shuniaProd n - 1)
+
+/-- Quartering clock `q_n = ⌊log_4(3n)⌋` computed on `z = n - 1`. -/
+def quarterClock : ℕ → ℕ
+  | 0 => 0
+  | z + 1 => 1 + quarterClock (z / 4)
+
+/-- Counterexample predicate `(q_n + 1) * 2 ^ q_n ≤ Δ_n`. -/
+def ShuniaCounterexample (n : ℕ) : Prop :=
+  (quarterClock (n - 1) + 1) * 2 ^ quarterClock (n - 1) ≤ shuniaDeficit n
 
 end ConjectureMachines.Riemann120

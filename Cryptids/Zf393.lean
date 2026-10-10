@@ -25,410 +25,11 @@ open ConjectureMachines.Riemann543.Layer1 (nSteps nSteps_succ Tape.mkL append_re
 
 abbrev TM (states symbols : ℕ) := Machine states symbols
 
-abbrev TMRow (states : ℕ) := Array (Option (Fin 2 × Dir × Fin states))
-
 set_option maxRecDepth 200000
-
-def zf393Rows : Array (TMRow 393) := #[
-  #[some (1, .right, 1), some (0, .left, 2)],
-  #[some (0, .right, 2), some (0, .right, 1)],
-  #[some (1, .left, 3), some (0, .right, 4)],
-  #[some (0, .left, 4), some (0, .left, 68)],
-  #[some (1, .left, 0), some (0, .left, 1)],
-  #[some (1, .right, 6), some (1, .left, 10)],
-  #[some (0, .right, 6), some (0, .right, 7)],
-  #[some (1, .right, 8), some (1, .right, 7)],
-  #[some (0, .right, 9), some (0, .right, 7)],
-  #[some (0, .left, 5), some (1, .right, 9)],
-  #[some (0, .left, 26), some (1, .right, 11)],
-  #[some (1, .right, 12), some (0, .right, 11)],
-  #[some (0, .left, 17), some (1, .right, 9)],
-  #[some (1, .right, 14), none],
-  #[some (0, .right, 14), some (1, .right, 15)],
-  #[some (0, .right, 16), some (1, .right, 15)],
-  #[some (1, .left, 23), some (1, .right, 15)],
-  #[some (1, .right, 18), some (0, .left, 23)],
-  #[some (0, .right, 18), some (1, .right, 19)],
-  #[some (0, .right, 20), some (1, .right, 19)],
-  #[some (0, .left, 21), some (1, .right, 19)],
-  #[some (1, .left, 22), some (0, .left, 23)],
-  #[some (0, .right, 21), some (1, .left, 22)],
-  #[some (0, .left, 24), some (1, .left, 23)],
-  #[some (0, .left, 25), some (1, .left, 23)],
-  #[some (0, .left, 25), some (0, .left, 61)],
-  #[some (0, .left, 27), some (1, .left, 26)],
-  #[some (0, .left, 28), some (1, .left, 26)],
-  #[some (0, .left, 28), some (0, .left, 62)],
-  #[some (0, .right, 17), some (1, .right, 49)],
-  #[some (0, .right, 17), some (1, .right, 50)],
-  #[some (0, .right, 17), some (1, .right, 39)],
-  #[some (0, .right, 17), some (1, .right, 40)],
-  #[some (0, .right, 17), some (1, .right, 29)],
-  #[some (0, .right, 17), some (1, .right, 30)],
-  #[some (0, .right, 17), some (1, .right, 33)],
-  #[some (0, .right, 17), some (1, .right, 34)],
-  #[some (0, .right, 17), some (1, .right, 35)],
-  #[some (0, .right, 17), some (1, .right, 36)],
-  #[some (0, .right, 17), some (1, .right, 5)],
-  #[some (0, .right, 17), some (1, .right, 13)],
-  #[some (0, .right, 17), some (1, .right, 37)],
-  #[some (0, .right, 17), some (1, .right, 38)],
-  #[some (0, .right, 17), some (1, .right, 41)],
-  #[some (0, .right, 17), some (1, .right, 42)],
-  #[some (0, .right, 17), some (1, .right, 43)],
-  #[some (0, .right, 17), some (1, .right, 44)],
-  #[some (0, .right, 17), some (1, .right, 31)],
-  #[some (0, .right, 17), some (1, .right, 32)],
-  #[some (0, .right, 17), some (1, .right, 47)],
-  #[some (0, .right, 17), some (1, .right, 48)],
-  #[some (0, .left, 52), some (1, .left, 64)],
-  #[some (0, .left, 53), some (1, .left, 64)],
-  #[some (0, .left, 54), some (1, .left, 64)],
-  #[some (0, .left, 55), some (1, .left, 64)],
-  #[some (0, .left, 56), some (1, .left, 64)],
-  #[some (0, .left, 57), some (1, .left, 64)],
-  #[some (0, .left, 58), some (1, .left, 64)],
-  #[some (0, .left, 59), some (1, .left, 64)],
-  #[some (0, .right, 60), some (1, .left, 64)],
-  #[some (0, .right, 60), some (1, .right, 99)],
-  #[some (1, .left, 64), some (0, .left, 61)],
-  #[some (0, .left, 61), some (0, .left, 62)],
-  #[some (0, .left, 62), some (0, .left, 63)],
-  #[some (0, .left, 51), some (1, .left, 64)],
-  #[some (0, .left, 65), some (0, .left, 64)],
-  #[some (0, .left, 66), some (0, .left, 65)],
-  #[some (0, .left, 67), some (0, .left, 66)],
-  #[some (0, .left, 68), some (0, .left, 67)],
-  #[some (0, .right, 289), some (1, .right, 70)],
-  #[some (0, .right, 294), some (1, .right, 379)],
-  #[some (0, .right, 72), some (0, .left, 62)],
-  #[some (0, .right, 29), some (1, .right, 73)],
-  #[some (0, .right, 74), some (1, .right, 77)],
-  #[some (0, .right, 29), some (1, .right, 75)],
-  #[some (0, .right, 76), some (0, .left, 62)],
-  #[some (0, .right, 30), some (1, .right, 30)],
-  #[some (0, .right, 78), some (0, .left, 62)],
-  #[some (0, .right, 30), some (1, .right, 289)],
-  #[some (0, .right, 71), some (1, .right, 80)],
-  #[some (0, .right, 352), some (1, .right, 366)],
-  #[some (0, .right, 71), some (1, .right, 82)],
-  #[some (0, .right, 356), some (1, .right, 368)],
-  #[some (0, .right, 29), some (1, .right, 84)],
-  #[some (0, .right, 382), some (1, .right, 371)],
-  #[some (0, .right, 86), some (1, .right, 90)],
-  #[some (0, .right, 43), some (1, .right, 87)],
-  #[some (0, .right, 88), some (1, .right, 89)],
-  #[some (0, .right, 45), some (0, .left, 65)],
-  #[some (0, .right, 376), some (0, .left, 63)],
-  #[some (0, .right, 45), some (1, .right, 91)],
-  #[some (0, .right, 381), some (0, .left, 62)],
-  #[some (0, .right, 85), some (1, .right, 382)],
-  #[some (0, .right, 85), some (1, .right, 94)],
-  #[some (0, .right, 348), some (1, .right, 364)],
-  #[some (0, .right, 96), some (1, .right, 97)],
-  #[some (0, .right, 39), some (0, .left, 62)],
-  #[some (0, .right, 343), some (1, .right, 98)],
-  #[some (0, .right, 362), some (1, .right, 32)],
-  #[some (0, .right, 95), some (1, .right, 100)],
-  #[some (0, .right, 342), some (1, .right, 101)],
-  #[some (0, .right, 346), some (1, .right, 102)],
-  #[some (0, .right, 352), some (1, .right, 103)],
-  #[some (0, .right, 356), some (1, .right, 104)],
-  #[some (0, .right, 269), some (1, .right, 105)],
-  #[some (0, .right, 360), some (1, .right, 106)],
-  #[some (0, .right, 269), some (1, .right, 107)],
-  #[some (0, .right, 364), some (1, .right, 108)],
-  #[some (0, .right, 269), some (1, .right, 109)],
-  #[some (0, .right, 366), some (1, .right, 110)],
-  #[some (0, .right, 269), some (1, .right, 111)],
-  #[some (0, .right, 368), some (1, .right, 112)],
-  #[some (0, .right, 304), some (1, .right, 113)],
-  #[some (0, .right, 321), some (1, .right, 114)],
-  #[some (0, .right, 277), some (1, .right, 115)],
-  #[some (0, .right, 265), some (1, .right, 116)],
-  #[some (0, .right, 320), some (1, .right, 117)],
-  #[some (0, .right, 257), some (1, .right, 118)],
-  #[some (0, .right, 270), some (1, .right, 119)],
-  #[some (0, .right, 325), some (1, .right, 120)],
-  #[some (0, .right, 319), some (1, .right, 121)],
-  #[some (0, .right, 249), some (1, .right, 122)],
-  #[some (0, .right, 238), some (1, .right, 123)],
-  #[some (0, .right, 390), some (1, .right, 124)],
-  #[some (0, .right, 238), some (1, .right, 125)],
-  #[some (0, .right, 248), some (1, .right, 126)],
-  #[some (0, .right, 323), some (1, .right, 127)],
-  #[some (0, .right, 270), some (1, .right, 128)],
-  #[some (0, .right, 245), some (1, .right, 129)],
-  #[some (0, .right, 321), some (1, .right, 130)],
-  #[some (0, .right, 320), some (1, .right, 131)],
-  #[some (0, .right, 247), some (1, .right, 132)],
-  #[some (0, .right, 272), some (1, .right, 133)],
-  #[some (0, .right, 241), some (1, .right, 134)],
-  #[some (0, .right, 392), some (1, .right, 135)],
-  #[some (0, .right, 298), some (1, .right, 136)],
-  #[some (0, .right, 274), some (1, .right, 137)],
-  #[some (0, .right, 245), some (1, .right, 138)],
-  #[some (0, .right, 285), some (1, .right, 139)],
-  #[some (0, .right, 247), some (1, .right, 140)],
-  #[some (0, .right, 278), some (1, .right, 141)],
-  #[some (0, .right, 241), some (1, .right, 142)],
-  #[some (0, .right, 298), some (1, .right, 143)],
-  #[some (0, .right, 392), some (1, .right, 144)],
-  #[some (0, .right, 300), some (1, .right, 145)],
-  #[some (0, .right, 226), some (1, .right, 146)],
-  #[some (0, .right, 300), some (1, .right, 147)],
-  #[some (0, .right, 329), some (1, .right, 148)],
-  #[some (0, .right, 271), some (1, .right, 149)],
-  #[some (0, .right, 254), some (1, .right, 150)],
-  #[some (0, .right, 302), some (1, .right, 151)],
-  #[some (0, .right, 254), some (1, .right, 152)],
-  #[some (0, .right, 271), some (1, .right, 153)],
-  #[some (0, .right, 323), some (1, .right, 154)],
-  #[some (0, .right, 351), some (1, .right, 155)],
-  #[some (0, .right, 364), some (1, .right, 156)],
-  #[some (0, .right, 255), some (1, .right, 157)],
-  #[some (0, .right, 355), some (1, .right, 158)],
-  #[some (0, .right, 366), some (1, .right, 159)],
-  #[some (0, .right, 255), some (1, .right, 160)],
-  #[some (0, .right, 231), some (1, .right, 161)],
-  #[some (0, .right, 329), some (1, .right, 162)],
-  #[some (0, .right, 331), some (1, .right, 163)],
-  #[some (0, .right, 253), some (1, .right, 164)],
-  #[some (0, .right, 272), some (1, .right, 165)],
-  #[some (0, .right, 279), some (1, .right, 166)],
-  #[some (0, .right, 325), some (1, .right, 167)],
-  #[some (0, .right, 259), some (1, .right, 168)],
-  #[some (0, .right, 243), some (1, .right, 169)],
-  #[some (0, .right, 329), some (1, .right, 170)],
-  #[some (0, .right, 273), some (1, .right, 171)],
-  #[some (0, .right, 329), some (1, .right, 172)],
-  #[some (0, .right, 226), some (1, .right, 173)],
-  #[some (0, .right, 327), some (1, .right, 174)],
-  #[some (0, .right, 302), some (1, .right, 175)],
-  #[some (0, .right, 300), some (1, .right, 176)],
-  #[some (0, .right, 244), some (1, .right, 177)],
-  #[some (0, .right, 390), some (1, .right, 178)],
-  #[some (0, .right, 273), some (1, .right, 179)],
-  #[some (0, .right, 274), some (1, .right, 180)],
-  #[some (0, .right, 302), some (1, .right, 181)],
-  #[some (0, .right, 390), some (1, .right, 182)],
-  #[some (0, .right, 268), some (1, .right, 183)],
-  #[some (0, .right, 320), some (1, .right, 184)],
-  #[some (0, .right, 275), some (1, .right, 185)],
-  #[some (0, .right, 327), some (1, .right, 186)],
-  #[some (0, .right, 248), some (1, .right, 187)],
-  #[some (0, .right, 263), some (1, .right, 188)],
-  #[some (0, .right, 275), some (1, .right, 189)],
-  #[some (0, .right, 250), some (1, .right, 190)],
-  #[some (0, .right, 304), some (1, .right, 191)],
-  #[some (0, .right, 257), some (1, .right, 192)],
-  #[some (0, .right, 276), some (1, .right, 193)],
-  #[some (0, .right, 79), some (1, .right, 194)],
-  #[some (0, .right, 282), some (1, .right, 195)],
-  #[some (0, .right, 390), some (1, .right, 196)],
-  #[some (0, .right, 388), some (1, .right, 197)],
-  #[some (0, .right, 354), some (1, .right, 198)],
-  #[some (0, .right, 366), some (1, .right, 199)],
-  #[some (0, .right, 93), some (1, .right, 200)],
-  #[some (0, .right, 276), some (1, .right, 201)],
-  #[some (0, .right, 259), some (1, .right, 202)],
-  #[some (0, .right, 231), some (1, .right, 203)],
-  #[some (0, .right, 270), some (1, .right, 204)],
-  #[some (0, .right, 300), some (1, .right, 205)],
-  #[some (0, .right, 267), some (1, .right, 206)],
-  #[some (0, .right, 260), some (1, .right, 207)],
-  #[some (0, .right, 304), some (1, .right, 208)],
-  #[some (0, .right, 260), some (1, .right, 209)],
-  #[some (0, .right, 249), some (1, .right, 210)],
-  #[some (0, .right, 319), some (1, .right, 211)],
-  #[some (0, .right, 277), some (1, .right, 212)],
-  #[some (0, .right, 327), some (1, .right, 213)],
-  #[some (0, .right, 261), some (1, .right, 214)],
-  #[some (0, .right, 390), some (1, .right, 215)],
-  #[some (0, .right, 261), some (1, .right, 216)],
-  #[some (0, .right, 277), some (1, .right, 217)],
-  #[some (0, .right, 250), some (1, .right, 218)],
-  #[some (0, .right, 278), some (1, .right, 219)],
-  #[some (0, .right, 272), some (1, .right, 220)],
-  #[some (0, .right, 278), some (1, .right, 221)],
-  #[some (0, .right, 305), some (1, .right, 222)],
-  #[some (0, .right, 47), some (1, .right, 223)],
-  #[some (0, .right, 224), none],
-  #[some (0, .right, 47), some (1, .right, 225)],
-  #[some (0, .right, 288), some (0, .left, 62)],
-  #[some (0, .right, 243), some (1, .right, 227)],
-  #[some (0, .right, 327), some (1, .right, 228)],
-  #[some (0, .right, 273), some (1, .right, 229)],
-  #[some (0, .right, 244), some (1, .right, 230)],
-  #[some (0, .right, 329), some (1, .right, 282)],
-  #[some (0, .right, 253), some (1, .right, 232)],
-  #[some (0, .right, 325), some (1, .right, 233)],
-  #[some (0, .right, 325), some (1, .right, 234)],
-  #[some (0, .right, 300), some (1, .right, 235)],
-  #[some (0, .right, 259), some (1, .right, 236)],
-  #[some (0, .right, 271), some (1, .right, 237)],
-  #[some (0, .right, 283), some (1, .right, 279)],
-  #[some (0, .right, 321), some (1, .right, 239)],
-  #[some (0, .right, 264), some (1, .right, 240)],
-  #[some (0, .right, 265), some (1, .right, 278)],
-  #[some (0, .right, 248), some (1, .right, 242)],
-  #[some (0, .right, 270), some (1, .right, 283)],
-  #[some (0, .right, 246), some (1, .right, 286)],
-  #[some (0, .right, 327), some (1, .right, 246)],
-  #[some (0, .right, 267), some (1, .right, 285)],
-  #[some (0, .right, 268), some (1, .right, 279)],
-  #[some (0, .right, 327), some (1, .right, 264)],
-  #[some (0, .right, 263), some (1, .right, 390)],
-  #[some (0, .right, 320), some (1, .right, 263)],
-  #[some (0, .right, 327), some (1, .right, 251)],
-  #[some (0, .right, 390), some (1, .right, 252)],
-  #[some (0, .right, 323), some (1, .right, 325)],
-  #[some (0, .right, 283), some (1, .right, 273)],
-  #[some (0, .right, 279), some (1, .right, 327)],
-  #[some (0, .right, 358), some (1, .right, 256)],
-  #[some (0, .right, 368), some (1, .right, 92)],
-  #[some (0, .right, 319), some (1, .right, 258)],
-  #[some (0, .right, 329), some (1, .right, 390)],
-  #[some (0, .right, 284), some (1, .right, 325)],
-  #[some (0, .right, 304), some (1, .right, 280)],
-  #[some (0, .right, 319), some (1, .right, 262)],
-  #[some (0, .right, 304), some (1, .right, 329)],
-  #[some (0, .right, 320), some (1, .right, 280)],
-  #[some (0, .right, 321), some (1, .right, 287)],
-  #[some (0, .right, 319), some (1, .right, 266)],
-  #[some (0, .right, 298), some (1, .right, 325)],
-  #[some (0, .right, 281), some (1, .right, 319)],
-  #[some (0, .right, 390), some (1, .right, 281)],
-  #[some (0, .right, 313), some (1, .right, 377)],
-  #[some (0, .right, 325), some (1, .right, 331)],
-  #[some (0, .right, 325), some (1, .right, 390)],
-  #[some (0, .right, 390), some (1, .right, 325)],
-  #[some (0, .right, 300), some (1, .right, 302)],
-  #[some (0, .right, 390), some (1, .right, 298)],
-  #[some (0, .right, 320), some (1, .right, 304)],
-  #[some (0, .right, 305), some (1, .right, 81)],
-  #[some (0, .right, 319), some (1, .right, 320)],
-  #[some (0, .right, 323), some (1, .right, 331)],
-  #[some (0, .right, 298), some (1, .right, 300)],
-  #[some (0, .right, 319), some (1, .right, 327)],
-  #[some (0, .right, 390), some (1, .right, 305)],
-  #[some (0, .right, 302), some (1, .right, 298)],
-  #[some (0, .right, 305), some (1, .right, 298)],
-  #[some (0, .right, 298), some (1, .right, 302)],
-  #[some (0, .right, 320), some (1, .right, 321)],
-  #[some (0, .right, 329), some (1, .right, 284)],
-  #[some (0, .right, 304), some (1, .right, 327)],
-  #[some (0, .right, 48), some (1, .right, 48)],
-  #[some (0, .right, 314), some (1, .right, 380)],
-  #[some (0, .right, 383), some (1, .right, 291)],
-  #[some (0, .right, 49), some (1, .right, 292)],
-  #[some (0, .right, 293), some (0, .left, 66)],
-  #[some (0, .right, 42), some (1, .right, 389)],
-  #[some (0, .right, 373), some (1, .right, 295)],
-  #[some (0, .right, 47), some (1, .right, 296)],
-  #[some (0, .right, 297), some (0, .left, 66)],
-  #[some (0, .right, 44), some (1, .right, 386)],
-  #[some (0, .right, 304), some (1, .right, 299)],
-  #[some (0, .right, 347), some (1, .right, 364)],
-  #[some (0, .right, 304), some (1, .right, 301)],
-  #[some (0, .right, 353), some (1, .right, 366)],
-  #[some (0, .right, 304), some (1, .right, 303)],
-  #[some (0, .right, 357), some (1, .right, 368)],
-  #[some (0, .right, 290), some (1, .right, 372)],
-  #[some (0, .right, 386), some (1, .right, 306)],
-  #[some (0, .right, 315), some (1, .right, 307)],
-  #[some (0, .right, 380), some (1, .right, 308)],
-  #[some (0, .right, 83), some (1, .right, 359)],
-  #[some (0, .right, 43), some (0, .left, 66)],
-  #[some (0, .right, 42), some (1, .right, 311)],
-  #[some (0, .right, 309), some (1, .right, 312)],
-  #[some (0, .right, 370), some (0, .left, 67)],
-  #[some (0, .right, 39), some (1, .right, 310)],
-  #[some (0, .right, 49), some (1, .right, 310)],
-  #[some (0, .right, 49), some (1, .right, 316)],
-  #[some (0, .right, 48), some (1, .right, 317)],
-  #[some (0, .right, 309), some (1, .right, 318)],
-  #[some (0, .right, 388), some (0, .left, 67)],
-  #[some (0, .right, 304), some (1, .right, 48)],
-  #[some (0, .right, 304), some (1, .right, 288)],
-  #[some (0, .right, 319), some (1, .right, 288)],
-  #[some (0, .right, 320), some (1, .right, 288)],
-  #[some (0, .right, 392), some (1, .right, 324)],
-  #[some (0, .right, 390), some (1, .right, 392)],
-  #[some (0, .right, 69), some (1, .right, 326)],
-  #[some (0, .right, 322), some (1, .right, 69)],
-  #[some (0, .right, 69), some (1, .right, 328)],
-  #[some (0, .right, 319), some (1, .right, 69)],
-  #[some (0, .right, 69), some (1, .right, 330)],
-  #[some (0, .right, 304), some (1, .right, 69)],
-  #[some (0, .right, 392), some (1, .right, 332)],
-  #[some (0, .right, 325), some (1, .right, 392)],
-  #[some (0, .right, 44), some (0, .left, 65)],
-  #[some (0, .right, 50), some (0, .left, 65)],
-  #[some (0, .right, 48), some (0, .left, 65)],
-  #[some (0, .right, 337), some (0, .left, 65)],
-  #[some (0, .right, 48), some (1, .right, 42)],
-  #[some (0, .right, 339), some (0, .left, 65)],
-  #[some (0, .right, 42), some (1, .right, 46)],
-  #[some (0, .right, 341), some (0, .left, 65)],
-  #[some (0, .right, 42), some (1, .right, 44)],
-  #[some (0, .right, 29), some (0, .left, 64)],
-  #[some (0, .right, 31), some (1, .right, 344)],
-  #[some (0, .right, 345), some (0, .left, 65)],
-  #[some (0, .right, 42), some (1, .right, 40)],
-  #[some (0, .right, 33), some (0, .left, 64)],
-  #[some (0, .right, 33), some (1, .right, 336)],
-  #[some (0, .right, 33), some (1, .right, 349)],
-  #[some (0, .right, 350), some (0, .left, 65)],
-  #[some (0, .right, 42), some (1, .right, 48)],
-  #[some (0, .right, 33), some (1, .right, 340)],
-  #[some (0, .right, 35), some (0, .left, 64)],
-  #[some (0, .right, 35), some (1, .right, 336)],
-  #[some (0, .right, 35), some (1, .right, 338)],
-  #[some (0, .right, 35), some (1, .right, 340)],
-  #[some (0, .right, 37), some (0, .left, 64)],
-  #[some (0, .right, 37), some (1, .right, 336)],
-  #[some (0, .right, 37), some (1, .right, 338)],
-  #[some (0, .right, 41), some (0, .left, 64)],
-  #[some (0, .right, 41), some (1, .right, 361)],
-  #[some (0, .right, 30), some (0, .left, 65)],
-  #[some (0, .right, 41), some (1, .right, 363)],
-  #[some (0, .right, 32), some (0, .left, 65)],
-  #[some (0, .right, 41), some (1, .right, 365)],
-  #[some (0, .right, 34), some (0, .left, 65)],
-  #[some (0, .right, 41), some (1, .right, 367)],
-  #[some (0, .right, 36), some (0, .left, 65)],
-  #[some (0, .right, 41), some (1, .right, 369)],
-  #[some (0, .right, 38), some (0, .left, 65)],
-  #[some (0, .right, 41), some (1, .right, 333)],
-  #[some (0, .right, 41), some (1, .right, 335)],
-  #[some (0, .right, 41), some (1, .right, 334)],
-  #[some (0, .right, 41), some (1, .right, 374)],
-  #[some (0, .right, 375), some (0, .left, 65)],
-  #[some (0, .right, 48), some (1, .right, 44)],
-  #[some (0, .right, 43), some (0, .left, 64)],
-  #[some (0, .right, 43), some (1, .right, 378)],
-  #[some (0, .right, 40), some (0, .left, 65)],
-  #[some (0, .right, 43), some (1, .right, 335)],
-  #[some (0, .right, 43), some (1, .right, 334)],
-  #[some (0, .right, 45), some (0, .left, 64)],
-  #[some (0, .right, 47), some (0, .left, 64)],
-  #[some (0, .right, 47), some (1, .right, 384)],
-  #[some (0, .right, 385), some (0, .left, 65)],
-  #[some (0, .right, 50), some (1, .right, 42)],
-  #[some (0, .right, 47), some (1, .right, 387)],
-  #[some (0, .right, 42), some (0, .left, 65)],
-  #[some (0, .right, 47), some (1, .right, 333)],
-  #[some (0, .right, 49), some (1, .right, 335)],
-  #[some (0, .right, 69), some (1, .right, 391)],
-  #[some (0, .right, 320), some (1, .right, 69)],
-  #[some (0, .right, 321), some (1, .right, 69)]
-]
 
 abbrev LB01 : ListBlank (Fin 2) := ListBlank.cons 1 default
 
-def zf393 : TM 393 2 :=
-  ⟨fun q a => (zf393Rows.getD q.val #[]).getD a.val none⟩
+abbrev zf393 : Machine 393 2 := Machines.zf393
 
 theorem zf393_states : zf393.bundle.states = 393 := rfl
 
@@ -1728,6 +1329,137 @@ theorem nSteps_mk'_right_scan {q : Fin 393} {a b : Fin 2}
     rw [List.replicate_succ, ListBlank.append, nSteps_succ, step_mk'_right h]
     simp only [Option.bind_some]
     rw [ih (L.cons b), append_replicate_cons]
+
+
+/-!
+## Shared Call-Stack Abstract Machine Definitions for `zf393`
+-/
+
+/-- Reversed stack pop for `6.break.k`. -/
+def popBreakRev (k : ℕ) : List (Fin 2) → List (Fin 2)
+  | [] => []
+  | b :: rest =>
+    if b == 1 then popBreakRev k rest
+    else match k with | 0 => 1 :: rest | k' + 1 => popBreakRev k' rest
+
+@[simp] theorem popBreakRev_nil (k : ℕ) : popBreakRev k [] = [] := rfl
+@[simp] theorem popBreakRev_one (k : ℕ) (rest : List (Fin 2)) :
+    popBreakRev k (1 :: rest) = popBreakRev k rest := rfl
+@[simp] theorem popBreakRev_zero (rest : List (Fin 2)) :
+    popBreakRev 0 (0 :: rest) = 1 :: rest := rfl
+@[simp] theorem popBreakRev_succ (k : ℕ) (rest : List (Fin 2)) :
+    popBreakRev (k + 1) (0 :: rest) = popBreakRev k rest := rfl
+
+/-- Reversed stack pop for `6.continue.k`. -/
+def popContinueRev (k : ℕ) : List (Fin 2) → List (Fin 2)
+  | [] => []
+  | b :: rest =>
+    if b == 0 then popContinueRev k rest
+    else match k with | 0 => 1 :: rest | k' + 1 => popContinueRev k' rest
+
+@[simp] theorem popContinueRev_nil (k : ℕ) : popContinueRev k [] = [] := rfl
+@[simp] theorem popContinueRev_zero (k : ℕ) (rest : List (Fin 2)) :
+    popContinueRev k (0 :: rest) = popContinueRev k rest := rfl
+@[simp] theorem popContinueRev_zero_one (rest : List (Fin 2)) :
+    popContinueRev 0 (1 :: rest) = 1 :: rest := rfl
+@[simp] theorem popContinueRev_succ_one (k : ℕ) (rest : List (Fin 2)) :
+    popContinueRev (k + 1) (1 :: rest) = popContinueRev k rest := rfl
+
+/-- Returned stack after `6.break.0`. -/
+def retStack (P : List (Fin 2)) : List (Fin 2) :=
+  (popBreakRev 0 P.reverse).reverse
+
+def dropLeadingZeros : List (Fin 2) → List (Fin 2)
+  | 0 :: rest => dropLeadingZeros rest
+  | xs => xs
+
+def trimZeros (P : List (Fin 2)) : List (Fin 2) :=
+  (dropLeadingZeros P.reverse).reverse
+
+def isLeafState (q : Fin 393) : Bool :=
+  (29 ≤ q.val) && (q.val ≤ 50)
+
+def isLeafInc (q : Fin 393) : Bool :=
+  (q.val % 2) == 0
+
+/-- Physical left-to-right tape register index (`0..10`). -/
+def leafReg (q : Fin 393) : Fin 11 :=
+  match q.val with
+  | 46 | 45 => 0
+  | 44 | 43 => 1
+  | 42 | 41 => 2
+  | 38 | 37 => 3
+  | 36 | 35 => 4
+  | 34 | 33 => 5
+  | 30 | 29 => 6
+  | 50 | 49 => 7
+  | 48 | 47 => 8
+  | 32 | 31 => 9
+  | _ => 10
+
+inductive TreeOutcome
+  | halt (q : Fin 393) (walked rem : List (Fin 2))
+  | jumpLeft (q : Fin 393) (walked rem : List (Fin 2))
+  | regLeaf (q : Fin 393) (walked rem : List (Fin 2))
+  | outOfFuel
+  deriving DecidableEq, Repr
+
+def walkTape (q : Fin 393) (walked : List (Fin 2)) : List (Fin 2) → TreeOutcome
+  | [] => .outOfFuel
+  | b :: rem =>
+    match zf393Trans q b with
+    | none => .halt q walked (b :: rem)
+    | some (w, .left, q') =>
+      if w == 0 then .jumpLeft q' walked rem else .outOfFuel
+    | some (w, .right, q') =>
+      if w == b then
+        if isLeafState q' then .regLeaf q' (walked ++ [w]) rem
+        else walkTape q' (walked ++ [w]) rem
+      else .outOfFuel
+
+/-- 11-register call-stack configuration for `zf393` (`regs` in left-to-right tape order). -/
+structure Zf393RegCfg where
+  ip : List (Fin 2)
+  regs : List ℕ
+  deriving DecidableEq, Repr
+
+def zf393RegInit : Zf393RegCfg :=
+  ⟨[], List.replicate 11 0⟩
+
+/-- Single abstract macro-step of `zf393` starting at `main().0` (`State 99`). -/
+def zf393RegStep (c : Zf393RegCfg) : Option Zf393RegCfg :=
+  match walkTape 99 [] (c.ip ++ List.replicate 10 0) with
+  | .halt _ _ _ => none
+  | .outOfFuel => none
+  | .jumpLeft q' walked _ =>
+    match q'.val with
+    | 61 => some ⟨(popBreakRev 0 walked.reverse).reverse, c.regs⟩
+    | 62 => some ⟨(popBreakRev 1 walked.reverse).reverse, c.regs⟩
+    | 63 => some ⟨(popBreakRev 2 walked.reverse).reverse, c.regs⟩
+    | 64 => some ⟨(popContinueRev 0 walked.reverse).reverse, c.regs⟩
+    | 65 => some ⟨(popContinueRev 1 walked.reverse).reverse, c.regs⟩
+    | 66 => some ⟨(popContinueRev 2 walked.reverse).reverse, c.regs⟩
+    | 67 => some ⟨(popContinueRev 3 walked.reverse).reverse, c.regs⟩
+    | 68 => some ⟨(popContinueRev 4 walked.reverse).reverse, c.regs⟩
+    | _ => none
+  | .regLeaf q' walked _ =>
+    let r := leafReg q'
+    if isLeafInc q' then
+      some ⟨retStack walked, c.regs.set r.val (c.regs.getD r.val 0 + 1)⟩
+    else if c.regs.getD r.val 0 == 0 then
+      some ⟨(popBreakRev 1 walked.reverse).reverse, c.regs⟩
+    else
+      some ⟨retStack walked, c.regs.set r.val (c.regs.getD r.val 0 - 1)⟩
+
+def zf393RegNSteps : ℕ → Zf393RegCfg → Option Zf393RegCfg
+  | 0, c => some c
+  | n + 1, c =>
+    match zf393RegStep c with
+    | none => none
+    | some c' => zf393RegNSteps n c'
+
+def Zf393RegHalts : Prop :=
+  ∃ n c, zf393RegNSteps n zf393RegInit = some c ∧ zf393RegStep c = none
 
 end ConjectureMachines.Zf393
 

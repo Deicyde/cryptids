@@ -12,6 +12,8 @@
     "ConjectureMachines.Zf430.candidate_equivalent",
     "ConjectureMachines.Zf429.candidate_fewer_states",
     "ConjectureMachines.Zf429.candidate_equivalent",
+    "ConjectureMachines.Zf393.halts_zf393_iff_zfInconsistent",
+    "ConjectureMachines.Zf393.not_halts_zf393",
     "ConjectureMachines.Semantics.Zf.zfProvable_sound_zfSet",
     "ConjectureMachines.Semantics.Zf.not_zfInconsistent",
     "ConjectureMachines.Semantics.Zf.halts_reference_iff_wadeZFInconsistent",
@@ -21,7 +23,8 @@
     "ConjectureMachines.Riemann543.Semantics.halts_reference_iff_exists_counterexample",
     "ConjectureMachines.Riemann543.Semantics.halts_candidate_iff_exists_counterexample",
     "ConjectureMachines.Riemann543.Semantics.halts_reference_iff_not_riemannHypothesis",
-    "ConjectureMachines.Riemann543.Semantics.halts_candidate_iff_not_riemannHypothesis"
+    "ConjectureMachines.Riemann543.Semantics.halts_candidate_iff_not_riemannHypothesis",
+    "ConjectureMachines.Riemann120.halts_riemann120_iff_not_riemannHypothesis"
   ],
   "permitted_axioms": [
     "propext",
