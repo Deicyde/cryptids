@@ -103,9 +103,9 @@ namespace Machines
 /-- Rows of `goldbach25`. -/ def goldbach25Rows : List (List (Option (Fin 2 × Dir × Fin 25))) :=
   load_machine_rows% "baselines/tables/goldbach_25.txt"
 /-- 25-state Goldbach baseline. -/ def goldbach25 : Machine 25 2 := Machine.ofRows goldbach25Rows
-/-- Rows of `goldbach24`. -/ def goldbach24Rows : List (List (Option (Fin 2 × Dir × Fin 24))) :=
-  load_machine_rows% "artifacts/goldbach_24/machine.txt"
-/-- 24-state Goldbach candidate. -/ def goldbach24 : Machine 24 2 := Machine.ofRows goldbach24Rows
+/-- Rows of `goldbach21`. -/ def goldbach21Rows : List (List (Option (Fin 2 × Dir × Fin 21))) :=
+  load_machine_rows% "artifacts/goldbach_21/machine.txt"
+/-- 21-state Goldbach candidate. -/ def goldbach21 : Machine 21 2 := Machine.ofRows goldbach21Rows
 /-- Rows of `zf432`. -/ def zf432Rows : List (List (Option (Fin 2 × Dir × Fin 432))) :=
   load_machine_rows% "baselines/tables/zf_432.txt"
 /-- 432-state ZF baseline. -/ def zf432 : Machine 432 2 := Machine.ofRows zf432Rows

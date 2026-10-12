@@ -18,7 +18,7 @@ All baselines and candidate reductions in this repository adhere to the standard
 
 Community records for conjecture-checking and ZFC-independent Turing machines are tracked on the Busy Beaver Challenge wiki ([Larger Cryptids](https://wiki.bbchallenge.org/wiki/Cryptids#Larger_Cryptids) and [Logical Independence](https://wiki.bbchallenge.org/wiki/Logical_independence)).
 
-- **Goldbach (`goldbach_24`):** Reduces `goldbach_25` (`25 -> 24` states).
+- **Goldbach (`goldbach_21`):** Reduces `goldbach_25` (`25 -> 21` states).
 - **ZF Consistency (`zf_393`, `zf_429`) and Riemann Hypothesis (`riemann_120`, `riemann_543`):** Compiler and algorithmic reworks by Andrew Wade (`zf_393`, `393` states for ZF, Aug 2026) and Joseph M. Shunia (`riemann_120`, `120` states for RH, Sept 2026) achieve the smallest known state counts by changing the register microcode, axiom order, or number-theoretic algorithm, while `zf_429` (`432 -> 429`) and `riemann_543` (`744 -> 543`) are pure state-space reductions of the `zf_432` (2025) and `riemann_744` (2016) baselines. This repository provides Lean 4 end-to-end semantics proofs across all of `zf_432`–`zf_429`, `zf_393`, `riemann_744`, `riemann_543`, and `riemann_120`.
 
 ### 1. Goldbach's Conjecture (`goldbach`)
@@ -30,7 +30,7 @@ Searches even integers $2n \ge 4$ for a counterexample to Goldbach's conjecture 
 | 2015 | CodeGolf (`user23013` / Aaronson announcement) | `27` | Hand-crafted unary trial-division counterexample search | Informal |
 | 2016 | JaredCorduan (`gid3138251`) | `27` | Verified 27-state unary Goldbach machine | Informal |
 | 2024 | Andrew Yao & Yijun Leng (`lengyijun/goldbach_tm`, `bbchallenge` wiki) | `25` | Merged initialization and primality test return paths (`goldbach_25`) | Lean 4 proof (`lengyijun/goldbach_tm`) |
-| 2026 | Faldor & Firsching, using Gemini Argon (`goldbach_24`) | `24` | `+1` unary shift (`LBase2`/`REnd2`) via 4 transition edits, eliminating bootstrap state `8` (`I`) | Lean 4 proofs ([`Cryptids/Goldbach24.lean`](Cryptids/Goldbach24.lean), [`Cryptids/Semantics/Goldbach.lean`](Cryptids/Semantics/Goldbach.lean)) |
+| 2026 | Faldor & Firsching, using Gemini Argon (`goldbach_21`) | `21` | `L`-first partition enumeration (`stageCfgE`) + elimination of states `1, 8, 10, 17` | Lean 4 proofs ([`Cryptids/Goldbach21.lean`](Cryptids/Goldbach21.lean), [`Cryptids/Semantics/Goldbach.lean`](Cryptids/Semantics/Goldbach.lean)) |
 
 ### 2. Zermelo-Fraenkel Set Theory Consistency (`zf`)
 

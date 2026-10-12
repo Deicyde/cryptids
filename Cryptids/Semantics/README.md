@@ -10,7 +10,7 @@ constructions.
 
 ### Main Theorems
 
-In [`Cryptids/Semantics/Goldbach.lean`](./Goldbach.lean) (~620 lines), we define Goldbach's
+In [`Cryptids/Semantics/Goldbach.lean`](./Goldbach.lean), we define Goldbach's
 conjecture in standard mathematical terms on top of Mathlib's `Nat.Prime`:
 
 ```lean
@@ -18,8 +18,8 @@ def GoldbachConjecture : Prop :=
   ∀ n : ℕ, 2 < n → Even n → ∃ p q : ℕ, Nat.Prime p ∧ Nat.Prime q ∧ n = p + q
 ```
 
-and prove that both the 25-state baseline machine `reference` (`goldbach_25`) and the 24-state
-compressed machine `candidate` (`goldbach_24`) halt on the blank tape if and only if Goldbach's
+and prove that both the 25-state baseline machine `reference` (`goldbach_25`) and the 21-state
+compressed machine `candidate` (`goldbach_21`) halt on the blank tape if and only if Goldbach's
 conjecture is false:
 
 ```lean
@@ -39,17 +39,18 @@ theorem halts_candidate_iff_not_goldbach :
 2. **25-state optimization and first Lean 4 verification (`goldbach_25`, 2024)**
    - **Author**: Yijun Leng ([`github.com/lengyijun/goldbach_tm`](https://github.com/lengyijun/goldbach_tm), Apache-2.0 License).
    - Yijun Leng compressed the 26-state machine to 25 states (`goldbach_25`, which is the
-     `reference` machine in [`Cryptids/Goldbach24.lean`](../Goldbach24.lean)) and gave the first
+     `reference` machine in [`Cryptids/Goldbach21.lean`](../Goldbach21.lean)) and gave the first
      Lean 4 formalization proving that the 25-state machine halts iff Goldbach's conjecture is
      false.
-3. **24-state reduction and halting-equivalence proof (`goldbach_24`, 2026)**
-   - **Authors**: Maxence Faldor, using Gemini Argon ([`Cryptids/Goldbach24.lean`](../Goldbach24.lean)).
-   - Compressed the machine to 24 states (`candidate`) and proved
-     `Halts candidate ↔ Halts reference` via lockstep zipper simulation (`BaseTr`).
+3. **21-state reduction and halting-equivalence proof (`goldbach_21`, 2026)**
+   - **Authors**: Maxence Faldor and Moritz Firsching, using Gemini Argon ([`Cryptids/Goldbach21.lean`](../Goldbach21.lean)).
+   - Compressed the machine to 21 states (`candidate`, eliminating states `1, 8, 10, 17` via
+     `L`-first partition enumeration `stageCfgE`) and proved
+     `Halts candidate ↔ Halts reference`.
 4. **This formalization ([`Cryptids/Semantics/Goldbach.lean`](./Goldbach.lean))**
    - **Authors**: Maxence Faldor and Moritz Firsching, using Gemini Argon.
    - Written from scratch directly on top of the symbolic execution lemmas in
-     [`Cryptids/Goldbach24.lean`](../Goldbach24.lean) (no code copied from external repositories),
+     [`Cryptids/Goldbach21.lean`](../Goldbach21.lean) (no code copied from external repositories),
      proving `Halts reference ↔ ¬ GoldbachConjecture` and combining it with `candidate_equivalent`
      to obtain `Halts candidate ↔ ¬ GoldbachConjecture`.
 

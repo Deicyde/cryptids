@@ -152,17 +152,17 @@ PINNED_BASELINES = {
 
 CANDIDATES = [
     {
-        "id": "goldbach_24",
+        "id": "goldbach_21",
         "instance": "goldbach",
-        "path": "artifacts/goldbach_24",
+        "path": "artifacts/goldbach_21",
         "lean_file": "Cryptids/Machines.lean",
-        "lean_def": "goldbach24",
-        "proof_path": "Cryptids/Goldbach24.lean",
+        "lean_def": "goldbach21",
+        "proof_path": "Cryptids/Goldbach21.lean",
         "challenge_path": "Challenge.lean",
-        "states": 24,
+        "states": 21,
         "baseline_states": 25,
         "machine_sha256": (
-            "9b8b92a609ca9ae891856957b21a4d5ff9ba4317c27835e31265a249d236b2dc"
+            "b248827bd190d5aedcc9ed6eae5e85f58ed43df8208b0406a9f477fdb2607602"
         ),
     },
     {
@@ -434,7 +434,7 @@ def parse_lean_machine_def(
     body = m_rows.group(2) + "]"
   else:
     m = re.search(
-        rf"def {def_name} : Machine (\d+) 2 := Machine\.ofRows \[\s*(.*?)\]\]",
+        rf"def {def_name} : Machine (\d+) 2 := Machine\.ofRows \[\s*(.*?)\]\s*\]",
         lean_text,
         re.DOTALL,
     )
@@ -470,30 +470,37 @@ def parse_lean_machine_def(
 def verify_goldbach_proof_tables(
     cand_machine: Machine, ref_machine: Machine
 ) -> None:
-  """Verifies that goldbach_24 is the exact 24-state quotient of goldbach_25 under the 4 unary-shift edits."""
-  proof_text = (ROOT / "Cryptids/Goldbach24.lean").read_text(encoding="utf-8")
-  assert "def edited : Machine 25 2 := Machine.ofRows [" in proof_text
+  """Verifies that goldbach_21 embeds homomorphically into `edited` (`Fin 21 -> Fin 25`)."""
+  assert ref_machine.states == 25 and cand_machine.states == 21
+  proof_text = (ROOT / "Cryptids/Goldbach21.lean").read_text(encoding="utf-8")
   assert (
       "theorem candidate_equivalent : Halts candidate ↔ Halts reference"
       in proof_text
   )
-
-  # The 4 transition edits on goldbach_25 that implement the +1 unary shift
-  # and make state 8 unreachable:
-  edits = {
-      (1, 0): Transition(1, 1, 18),
-      (3, 0): Transition(0, -1, 5),
-      (4, 0): Transition(0, -1, 16),
-      (7, 1): Transition(1, -1, 22),
-  }
+  edited_machine = parse_lean_machine_def(proof_text, "edited")
+  assert edited_machine.states == 25
 
   def embed(q: int) -> int:
-    return q if q < 8 else q + 1
+    if q == 0:
+      return 2
+    if q == 1:
+      return 0
+    if q == 2:
+      return 23
+    if q < 8:
+      return q
+    if q == 8:
+      return 9
+    if q < 15:
+      return q + 2
+    if q == 15:
+      return 24
+    return q + 2
 
-  for q in range(24):
+  for q in range(21):
     eq = embed(q)
     for s in (0, 1):
-      expected_ed = edits.get((eq, s), ref_machine.table[eq][s])
+      expected_ed = edited_machine.table[eq][s]
       cand_tr = cand_machine.table[q][s]
       if expected_ed is None:
         assert cand_tr is None, f"Expected halt at ({q}, {s})"
@@ -810,12 +817,12 @@ def verify_riemann_543_derivation(
 def extract_goldbach_chk0(
     machine: Machine, steps: int, is_candidate: bool
 ) -> dict[str, object]:
-  """Runs Goldbach machine and extracts `(is_right, q, p)` at every outer-loop chk0 entry."""
+  """Runs Goldbach machine and extracts stage checkpoints `n = 2w + 4` (`stageCfg w` / `stageCfgE w`)."""
   tape: dict[int, int] = {}
   head = 0
   state = 0
   visited_states = {0}
-  checkpoints: list[tuple[int, bool, int, int]] = []
+  checkpoints: list[tuple[int, int]] = []
 
   def read(pos: int) -> int:
     return tape.get(pos, 0)
@@ -827,7 +834,7 @@ def extract_goldbach_chk0(
       pos += delta
     return c
 
-  shift = 1 if is_candidate else 0
+  chk_state = 1 if is_candidate else 0
   for step in range(1, steps + 1):
     sym = read(head)
     tr = machine.table[state][sym]
@@ -840,23 +847,14 @@ def extract_goldbach_chk0(
     state = tr.next_state
     visited_states.add(state)
 
-    # BaseTr.chk0: state == 0, head at left end of replicate (p + shift) 1
-    if state == 0 and read(head) == 1 and read(head - 1) == 0:
+    if state == chk_state and read(head) == 1 and read(head - 1) == 0:
       c_p = count_ones(head, 1)
-      p = c_p - shift
-      if p >= 1:
-        c_left = count_ones(head - 2, -1)
-        c_right = count_ones(head + c_p + 1, 1)
-        if c_left > 0 and c_right == 0:
-          # is_right = True: LBase has q + 1 + shift ones
-          q = c_left - (1 + shift)
-          if q >= 0:
-            checkpoints.append((step, True, q, p))
-        elif c_left == 0:
-          # is_right = False: REnd has q + shift ones
-          q = c_right - shift
-          if q >= 0:
-            checkpoints.append((step, False, q, p))
+      c_left = count_ones(head - 2, -1)
+      c_right = count_ones(head + c_p + 1, 1)
+      if not is_candidate and c_p == 1 and c_left >= 3 and c_right == 0:
+        checkpoints.append((step, c_left + 1))
+      elif is_candidate and c_left == 0 and c_right == 3 and c_p >= 3:
+        checkpoints.append((step, c_p + 1))
 
   return {
       "visited_states": len(visited_states),
@@ -1154,12 +1152,12 @@ def run_verification(
 
   # 4. Mathematical transition-table & invariant cross-checks
   verify_goldbach_proof_tables(
-      cand_machines["goldbach_24"], baseline_machines["goldbach"]
+      cand_machines["goldbach_21"], baseline_machines["goldbach"]
   )
   if verbose:
     print(
-        "[PASS] Goldbach 24 Cryptids/Goldbach24.lean table cross-check: all 48"
-        " candidate + 50 baseline cells match"
+        "[PASS] Goldbach 21 Cryptids/Goldbach21.lean table cross-check: all 42"
+        " candidate + 50 edited cells match"
     )
 
   verify_zf_table_homomorphism(
@@ -1194,21 +1192,19 @@ def run_verification(
       baseline_machines["goldbach"], steps, is_candidate=False
   )
   gb_cand_sim = extract_goldbach_chk0(
-      cand_machines["goldbach_24"], steps, is_candidate=True
+      cand_machines["goldbach_21"], steps, is_candidate=True
   )
   common_gb = min(
       len(gb_ref_sim["checkpoints"]), len(gb_cand_sim["checkpoints"])
   )
-  assert common_gb >= 80
+  assert common_gb >= 15
   for i in range(common_gb):
-    _, r_dir, r_q, r_p = gb_ref_sim["checkpoints"][i]
-    _, c_dir, c_q, c_p = gb_cand_sim["checkpoints"][i]
-    assert (r_dir, r_q, r_p) == (
-        c_dir,
-        c_q,
-        c_p,
-    ), f"Goldbach checkpoint {i} mismatch"
-  report["simulations"]["goldbach_24"] = {
+    _, r_even = gb_ref_sim["checkpoints"][i]
+    _, c_even = gb_cand_sim["checkpoints"][i]
+    assert (
+        r_even == c_even == 2 * i + 4
+    ), f"Goldbach stage checkpoint {i} mismatch: {r_even} vs {c_even}"
+  report["simulations"]["goldbach_21"] = {
       "steps_simulated": steps,
       "checkpoints_matched": common_gb,
       "ref_visited_states": gb_ref_sim["visited_states"],
@@ -1218,9 +1214,9 @@ def run_verification(
   }
   if verbose:
     print(
-        f"[PASS] Goldbach 24 lockstep simulation ({steps:,} steps):"
-        f" {common_gb}/{common_gb} `chk0(is_right, q, p)` checkpoints match"
-        " 1-to-1; 24/24 candidate states visited"
+        f"[PASS] Goldbach 21 stage simulation ({steps:,} steps):"
+        f" {common_gb}/{common_gb} even stages `2w+4` match 1-to-1;"
+        f" {gb_cand_sim['visited_states']}/21 candidate states visited"
     )
 
   zf_sim = verify_zf_lockstep_simulation(

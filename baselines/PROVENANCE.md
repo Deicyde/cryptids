@@ -13,4 +13,4 @@ All five upstream Turing machine transition tables (`baselines/tables/*.txt`) ar
 ## Lean 4 Machine Specification ([`Cryptids/Machines.lean`](../Cryptids/Machines.lean))
 
 * **File:** [`Cryptids/Machines.lean`](../Cryptids/Machines.lean)
-* **Contents:** Defines `ConjectureMachines.Machine`, `ConjectureMachines.Cfg`, `ConjectureMachines.step`, `ConjectureMachines.init`, `ConjectureMachines.Halts`, and `load_machine_rows%` definitions for all machines (`goldbach25`, `goldbach24`, `zf432`, `zf431`, `zf430`, `zf429`, `riemann744`, `riemann543`, `zf393`, `riemann120`).
+* **Contents:** Defines `ConjectureMachines.Machine`, `ConjectureMachines.Cfg`, `ConjectureMachines.step`, `ConjectureMachines.init`, `ConjectureMachines.Halts`, and `load_machine_rows%` definitions for all machines (`goldbach25`, `goldbach21`, `zf432`, `zf431`, `zf430`, `zf429`, `riemann744`, `riemann543`, `zf393`, `riemann120`).

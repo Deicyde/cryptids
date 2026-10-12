@@ -24,7 +24,7 @@ sandbox that:
 | Config File | Challenge Module | Solution Module | Verified Theorems |
 | :--- | :--- | :--- | :--- |
 | [`all.json`](./all.json) | `Challenge` | `Cryptids` | All 23 state-reduction, equivalence, and semantics theorems |
-| [`goldbach_24.json`](./goldbach_24.json) | `Challenge` | `Cryptids.Goldbach24` | `candidate_fewer_states`, `candidate_equivalent` |
+| [`goldbach_21.json`](./goldbach_21.json) | `Challenge` | `Cryptids.Goldbach21` | `candidate_fewer_states`, `candidate_equivalent` |
 | [`goldbach_semantics.json`](./goldbach_semantics.json) | `Challenge` | `Cryptids.Semantics.Goldbach` | `halts_reference_iff_not_goldbach`, `halts_candidate_iff_not_goldbach` |
 | [`zf_431.json`](./zf_431.json) | `Challenge` | `Cryptids.Zf431` | `candidate_fewer_states`, `candidate_equivalent` |
 | [`zf_430.json`](./zf_430.json) | `Challenge` | `Cryptids.Zf430` | `candidate_fewer_states`, `candidate_equivalent` |

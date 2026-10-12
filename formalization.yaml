@@ -5,12 +5,12 @@ project:
   name: "Cryptids: Certified State Reductions and Semantics of Conjecture-Checking Turing Machines"
   description: >-
     Formal Lean 4 verification of 2-symbol Turing machines for Goldbach's
-    Conjecture (25 -> 24 states), ZF Set Theory Consistency (432 -> 429 states
+    Conjecture (25 -> 21 states), ZF Set Theory Consistency (432 -> 429 states
     via 431 and 430, plus Andrew Wade's August 2026 393-state machine zf_393),
     and the Riemann Hypothesis (744 -> 543 states, plus Joseph M. Shunia's
     September 2026 120-state machine riemann_120), proving halting equivalences
     and connecting every machine's blank-tape halting behavior to the
-    corresponding statement in Mathlib. While goldbach_24 improves on the
+    corresponding statement in Mathlib. While goldbach_21 improves on the
     smallest known binary Goldbach machine, for ZF Consistency and the Riemann
     Hypothesis we do not claim to have constructed smaller machines overall than
     zf_393 and riemann_120, both of which are also formalized end-to-end here.
@@ -34,14 +34,14 @@ classification:
     - "68Q04"
 
 sources:
-  - title: "Certified State Reductions and Formal Semantics of Conjecture-Checking Turing Machines (goldbach_24, zf_431/430/429, zf_393, riemann_543, riemann_120)"
+  - title: "Certified State Reductions and Formal Semantics of Conjecture-Checking Turing Machines (goldbach_21, zf_431/430/429, zf_393, riemann_543, riemann_120)"
     authors:
       - "Maxence Faldor"
       - "Moritz Firsching"
     type: "original-proof"
     relationship: "other"
     note: >-
-      Original state reductions (goldbach_25 -> 24, zf_432 -> 431/430/429,
+      Original state reductions (goldbach_25 -> 21, zf_432 -> 431/430/429,
       riemann_744 -> 543), halting-equivalence proofs, and first Lean 4
       semantics proofs for all five ZF and RH Turing machine families (zf_432/429,
       zf_393, riemann_744/543, and riemann_120), including the formal discovery
@@ -110,12 +110,12 @@ related_formalizations:
     note: >-
       Yijun Leng (2024) constructed the 25-state baseline machine goldbach_25
       and gave the first Lean 4 proof of its Goldbach semantics; our
-      Cryptids/Goldbach24.lean and Cryptids/Semantics/Goldbach.lean are
+      Cryptids/Goldbach21.lean and Cryptids/Semantics/Goldbach.lean are
       developed from scratch.
 
 status:
   scope: >-
-    All five state-reduction halting equivalences (goldbach_24, zf_431,
+    All five state-reduction halting equivalences (goldbach_21, zf_431,
     zf_430, zf_429, riemann_543), the end-to-end Goldbach semantics
     (Cryptids/Semantics/Goldbach.lean), the end-to-end ZF consistency semantics
     for both zf_432/429 (Cryptids/Semantics/Zf.lean) and Wade's 393-state
@@ -132,12 +132,12 @@ status:
     - "Classical.choice"
     - "Quot.sound"
   main_results:
-    - declaration: "ConjectureMachines.Goldbach24.candidate_equivalent"
-      file: "Cryptids/Goldbach24.lean"
+    - declaration: "ConjectureMachines.Goldbach21.candidate_equivalent"
+      file: "Cryptids/Goldbach21.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator/goldbach_24.json"
-    - declaration: "ConjectureMachines.Goldbach24.Semantics.halts_candidate_iff_not_goldbach"
+      comparator_config: "comparator/goldbach_21.json"
+    - declaration: "ConjectureMachines.Goldbach21.Semantics.halts_candidate_iff_not_goldbach"
       file: "Cryptids/Semantics/Goldbach.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
@@ -228,12 +228,12 @@ review:
 alignment:
   namespace: "ConjectureMachines"
   statements:
-    - source: "goldbach_24 <-> goldbach_25 halting equivalence"
-      lean: "ConjectureMachines.Goldbach24.candidate_equivalent"
-      module: "Cryptids.Goldbach24"
+    - source: "goldbach_21 <-> goldbach_25 halting equivalence"
+      lean: "ConjectureMachines.Goldbach21.candidate_equivalent"
+      module: "Cryptids.Goldbach21"
       status: "proved"
-    - source: "goldbach_24 <-> ¬ GoldbachConjecture"
-      lean: "ConjectureMachines.Goldbach24.Semantics.halts_candidate_iff_not_goldbach"
+    - source: "goldbach_21 <-> ¬ GoldbachConjecture"
+      lean: "ConjectureMachines.Goldbach21.Semantics.halts_candidate_iff_not_goldbach"
       module: "Cryptids.Semantics.Goldbach"
       status: "proved"
     - source: "zf_429 <-> zf_432 halting equivalence"
