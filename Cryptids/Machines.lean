@@ -118,12 +118,12 @@ namespace Machines
 /-- Rows of `riemann744`. -/ def riemann744Rows : List (List (Option (Fin 2 × Dir × Fin 744))) :=
   load_machine_rows% "baselines/tables/riemann_744.txt"
 /-- 744-state RH baseline. -/ def riemann744 : Machine 744 2 := Machine.ofRows riemann744Rows
-/-- Rows of `riemann543`. -/ def riemann543Rows : List (List (Option (Fin 2 × Dir × Fin 543))) :=
-  load_machine_rows% "artifacts/riemann_543/machine.txt"
-/-- 543-state RH candidate. -/ def riemann543 : Machine 543 2 := Machine.ofRows riemann543Rows
 /-- Rows of `riemann120`. -/ def riemann120Rows : List (List (Option (Fin 2 × Dir × Fin 120))) :=
   load_machine_rows% "baselines/tables/riemann_120.txt"
 /-- 120-state RH machine. -/ def riemann120 : Machine 120 2 := Machine.ofRows riemann120Rows
+/-- Rows of `riemann104`. -/ def riemann104Rows : List (List (Option (Fin 2 × Dir × Fin 104))) :=
+  load_machine_rows% "artifacts/riemann_104/machine.txt"
+/-- 104-state RH candidate. -/ def riemann104 : Machine 104 2 := Machine.ofRows riemann104Rows
 end Machines
 
 /-- The configuration `n` steps in from `init`, or `none` once `M` has halted. -/

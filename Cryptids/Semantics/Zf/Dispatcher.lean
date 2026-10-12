@@ -29,7 +29,7 @@ export ConjectureMachines.Semantics.Zf.Layer1
    regIncStage3 regDecnzStage3 zfRootCfg zfDispatchState zfDispatch_trans_zero
    zfDispatch_trans_one step_zfDispatch zfDispatch_scan_list zfDispatch_bounce_default
    root_scan_to_main dispatch_return_to_main continue0_return prep_pass1_eval)
-open ConjectureMachines.Riemann543.Layer1
+open ConjectureMachines.Semantics.Riemann.Layer1
   (nSteps nSteps_zero nSteps_succ nSteps_add nSteps_bind_eq step_nSteps step_one
     nSteps_reaches nSteps_eval_dom nSteps_of_halt mem_eval_iff_nSteps
     mk_append_replicate_zero default_eq_mk_nil

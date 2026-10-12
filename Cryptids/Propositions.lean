@@ -19,11 +19,11 @@ conjecture-checking Turing machines in this repository, separated from the Turin
 constructions and halting proofs:
 
 1. **Goldbach's Conjecture** (`GoldbachConjecture`):
-   Every even integer greater than `2` is the sum of two primes (`goldbach_25`, `goldbach_24`).
+   Every even integer greater than `2` is the sum of two primes (`goldbach_25`, `goldbach_21`).
 2. **Riemann Hypothesis** (`RiemannHypothesis` and `MatiyasevichRiemannCounterexample`):
-   Mathlib's `RiemannHypothesis`, together with the elementary harmonic/LCM counterexample
-   inequality `MatiyasevichRiemannCounterexample` directly tested by `riemann_744` and
-   `riemann_543`.
+   Mathlib's `RiemannHypothesis` (`riemann_744`, `riemann_120`, `riemann_104`), together with the
+   elementary harmonic/LCM counterexample inequality `MatiyasevichRiemannCounterexample` directly
+   tested by `riemann_744`.
 3. **Zermelo–Fraenkel Set Theory Consistency** (`ZFInconsistent` vs. `WadeZFInconsistent`):
    Formula encoding via Cantor pairing (`cantorPair`, `ZFFormula`) and the two Hilbert systems
    analyzed in `Cryptids.Semantics.Zf`:

@@ -83,22 +83,26 @@ The proof decomposes the execution of `reference` into five layers:
 ### Main Theorems
 
 In [`Cryptids/Semantics/Riemann.lean`](./Riemann.lean) and its submodules under
-[`Cryptids/Semantics/Riemann/`](./Riemann/) (~5,000 lines total), we connect the 744-state baseline
-machine `reference` (`riemann_744`) and the 543-state compressed machine `candidate` (`riemann_543`)
-to Mathlib's `RiemannHypothesis` (`Mathlib.NumberTheory.LSeries.RiemannZeta`):
+[`Cryptids/Semantics/Riemann/`](./Riemann/), together with [`Cryptids/Semantics/Riemann120.lean`](./Riemann120.lean),
+we connect the 744-state baseline machine (`riemann_744`), Shunia's 120-state machine
+(`riemann_120`), and its 104-state reduction (`riemann_104`) to Mathlib's `RiemannHypothesis`
+(`Mathlib.NumberTheory.LSeries.RiemannZeta`):
 
 ```lean
-theorem halts_reference_iff_exists_counterexample :
-    Halts reference ↔ ∃ x : ℕ, MatiyasevichRiemannCounterexample x
+theorem halts_riemann744_iff_exists_counterexample :
+    ConjectureMachines.Halts Machines.riemann744 ↔ ∃ x : ℕ, MatiyasevichRiemannCounterexample x
 
 theorem exists_counterexample_iff_not_riemannHypothesis :
     (∃ x : ℕ, MatiyasevichRiemannCounterexample x) ↔ ¬ RiemannHypothesis
 
-theorem halts_reference_iff_not_riemannHypothesis :
-    Halts reference ↔ ¬ RiemannHypothesis
+theorem halts_riemann744_iff_not_riemannHypothesis :
+    ConjectureMachines.Halts Machines.riemann744 ↔ ¬ RiemannHypothesis
+
+theorem halts_riemann120_iff_not_riemannHypothesis :
+    Halts riemann120 ↔ ¬ RiemannHypothesis
 
 theorem halts_candidate_iff_not_riemannHypothesis :
-    Halts candidate ↔ ¬ RiemannHypothesis
+    Halts ConjectureMachines.Riemann104.candidate ↔ ¬ RiemannHypothesis
 ```
 
 Here `MatiyasevichRiemannCounterexample (x : ℕ) : Prop` is the elementary integer inequality tested
@@ -136,13 +140,9 @@ $$x > 253 \;\wedge\; \sqrt{x}\, H_x^2 < H_{\operatorname{lcm}(1, \dots, x)} - x.
      Hypothesis ([*Math. Comp.* **30** (1976), 337–360](https://doi.org/10.1090/S0025-5718-1976-0457374-X)),
      Erhard Schmidt's oscillation theorem ([*Math. Ann.* **57** (1903), 195–204](https://doi.org/10.1007/BF01444344)),
      and Jeffrey Lagarias's harmonic-number criterion ([*Amer. Math. Monthly* **109** (2002), 534–543](https://doi.org/10.1080/00029890.2002.11919883)).
-2. **543-state reduction and halting-equivalence proof (`riemann_543`, 2026)**
-   - **Authors**: Maxence Faldor, using Gemini Argon ([`Cryptids/Riemann543.lean`](../Riemann543.lean)).
-   - Eliminated 201 states (`-27.02%`) and `-3.69%` runtime steps by removing unreachable states,
-     dead transition branches, and pass-bounce intermediaries, and formally proved
-     `Halts candidate ↔ Halts reference`.
-3. **This formalization ([`Cryptids/Semantics/Riemann.lean`](./Riemann.lean) & [`Cryptids/Semantics/Riemann/`](./Riemann/))**
+2. **This formalization ([`Cryptids/Semantics/Riemann.lean`](./Riemann.lean) & [`Cryptids/Semantics/Riemann/`](./Riemann/))**
    - **Authors**: Maxence Faldor and Moritz Firsching, using Gemini Argon.
+   - See also [`Cryptids/Semantics/Riemann120.lean`](./Riemann120.lean) and [`Cryptids/Riemann104.lean`](../Riemann104.lean) for Joseph M. Shunia's 120-state machine (`riemann_120`, 2026) and its 104-state reduction (`riemann_104`).
 
 ---
 
@@ -153,11 +153,7 @@ The formalization separates the discrete verification of the 744-state Turing ma
 `RiemannHypothesis` (**Part II**).
 
 ```
-Halts candidate (riemann_543)
-  │
-  │  candidate_equivalent (Cryptids/Riemann543.lean, 0 sorry)
-  ▼
-Halts reference (riemann_744)
+Halts Machines.riemann744 (riemann_744)
   │
   │  Layer 1 + Layer 2: halts_reference_iff_regHalts (0 sorry)
   │  (Cryptids/Semantics/Riemann/Gadgets.lean & Dispatcher.lean)
@@ -287,7 +283,7 @@ Verifies the 1,540-instruction register program compiled from `riemann.nql` (`ri
      Proves with `0 sorry`s that $\psi(x) - x \ge \sqrt{x}\,(1 + \log x)^2$ for $x > 253$ implies
      `MatiyasevichRiemannCounterexample x` because
      $$\sqrt{x}\, H_x^2 \le \sqrt{x}\,(1 + \log x)^2 \le \psi(x) - x < H_{L_x} - x.$$
-3. **Analytic Number Theory: Schmidt's Oscillation Theorem & Schoenfeld's Explicit Bound (`0 sorry`s)**:
+3. Analytic number theory — Schmidt's oscillation theorem & Schoenfeld's explicit bound (`0 sorry`s):
    Both classical analytic number theory theorems connecting `RiemannHypothesis` (zeros of $\zeta(s)$)
    to Chebyshev's $\psi(x)$ are fully formalized with **zero `sorry`s**:
    - `not_riemannHypothesis_imp_exists_psi_sub_ge_sqrt_mul_one_add_log_sq`
@@ -373,20 +369,14 @@ Andrew Wade's `zf2.py` prior to his August 31, 2025 bugfix commit `10fcf152b3`
 2. **432-state ZF Turing machine (`zf_432_wade.tm`, 2025)**
    - **Author**: Andrew Wade ([`ajwade/turing_machine_explorer`](https://codeberg.org/ajwade/turing_machine_explorer),
      `zf2.py` and `TMBuilder.py`).
-3. **431-, 430-, and 429-state reductions and halting-equivalence proofs (`zf_431`, `zf_430`, `zf_429`, 2026)**
-   - **Authors**: Maxence Faldor, using Gemini Argon ([`Cryptids/Zf431.lean`](../Zf431.lean),
-     [`Cryptids/Zf430.lean`](../Zf430.lean), [`Cryptids/Zf429.lean`](../Zf429.lean)).
-4. **This formalization ([`Cryptids/Semantics/Zf.lean`](./Zf.lean) & [`Cryptids/Semantics/Zf/`](./Zf/))**
+3. **This formalization ([`Cryptids/Semantics/Zf.lean`](./Zf.lean) & [`Cryptids/Semantics/Zf/`](./Zf/))**
    - **Authors**: Maxence Faldor and Moritz Firsching, using Gemini Argon.
+   - See also [`Cryptids/Semantics/Zf393.lean`](./Zf393.lean) and [`Cryptids/Zf380.lean`](../Zf380.lean) for Wade's 393-state machine (`zf_393`, 2026) and its 380-state reduction (`zf_380`).
 
 ### Proof Architecture
 
 ```
-Halts candidate (zf_429 / zf_430 / zf_431)
-  │
-  │  candidate_equivalent (Cryptids/Zf429.lean, 0 sorry)
-  ▼
-Halts reference (zf_432_wade.tm)
+Halts Machines.zf432 (zf_432_wade.tm)
   │
   │  Layer 1 + Layer 1b + Layer 2: halts_reference_iff_zfRegHalts_unconditional (0 sorry)
   │  (Cryptids/Semantics/Zf/Gadgets.lean, Boot.lean, Dispatcher.lean)

@@ -15,13 +15,12 @@
     "ConjectureMachines.Semantics.Zf.zfProvable_sound_zfSet",
     "ConjectureMachines.Semantics.Zf.not_zfInconsistent",
     "ConjectureMachines.Semantics.Zf.halts_zf432_iff_wadeZFInconsistent",
-    "ConjectureMachines.Riemann543.candidate_fewer_states",
-    "ConjectureMachines.Riemann543.candidate_equivalent",
-    "ConjectureMachines.Riemann543.Semantics.halts_reference_iff_exists_counterexample",
-    "ConjectureMachines.Riemann543.Semantics.halts_candidate_iff_exists_counterexample",
-    "ConjectureMachines.Riemann543.Semantics.halts_reference_iff_not_riemannHypothesis",
-    "ConjectureMachines.Riemann543.Semantics.halts_candidate_iff_not_riemannHypothesis",
-    "ConjectureMachines.Riemann120.halts_riemann120_iff_not_riemannHypothesis"
+    "ConjectureMachines.Semantics.Riemann.halts_riemann744_iff_exists_counterexample",
+    "ConjectureMachines.Semantics.Riemann.halts_riemann744_iff_not_riemannHypothesis",
+    "ConjectureMachines.Riemann120.halts_riemann120_iff_not_riemannHypothesis",
+    "ConjectureMachines.Riemann104.candidate_fewer_states",
+    "ConjectureMachines.Riemann104.candidate_equivalent",
+    "ConjectureMachines.Riemann104.Semantics.halts_candidate_iff_not_riemannHypothesis"
   ],
   "permitted_axioms": [
     "propext",

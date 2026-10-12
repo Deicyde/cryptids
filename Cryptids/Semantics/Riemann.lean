@@ -10,11 +10,11 @@ public import Cryptids.Semantics.Riemann.RegisterMachine
 public import Cryptids.Semantics.Riemann.Analytic
 
 /-!
-# Semantics of the Riemann Hypothesis Turing Machines (`riemann_744` and `riemann_543`)
+# Semantics of the 744-State Riemann Hypothesis Turing Machine (`riemann_744`)
 
-This file formalizes the semantics of the 744-state baseline Turing machine `reference`
-(`riemann_744`) and the 543-state compressed Turing machine `candidate` (`riemann_543`), connecting
-their halting problem on the blank tape to the negation of Mathlib's `RiemannHypothesis`.
+This file formalizes the semantics of the 744-state baseline Turing machine `Machines.riemann744`
+(`riemann_744`), connecting its halting problem on the blank tape to the negation of Mathlib's
+`RiemannHypothesis`.
 
 ## Provenance and Attribution
 
@@ -25,9 +25,6 @@ their halting problem on the blank tape to the negation of Mathlib's `RiemannHyp
   counterexample search for the Riemann Hypothesis via harmonic numbers and
   $\operatorname{lcm}(1, \dots, x)$ building on Schoenfeld's (1976) explicit bound for
   $|\psi(x) - x|$ and Lagarias's (2002) elementary reformulation.
-* **543-state compression and halting-equivalence proof (`riemann_543`, 2026)**:
-  Maxence Faldor (using Gemini Argon) found the 543-state machine `candidate` (`riemann_543`) and
-  proved `Halts candidate ↔ Halts reference` in `Cryptids.Riemann543`.
 * **This formalization (`Cryptids.Semantics.Riemann` & submodules)**:
   Formalized in Lean 4 by Maxence Faldor and Moritz Firsching (using Gemini Argon).
 
@@ -36,8 +33,8 @@ their halting problem on the blank tape to the negation of Mathlib's `RiemannHyp
 The equivalence is factored through the elementary integer predicate
 `MatiyasevichRiemannCounterexample (x : ℕ) : Prop` directly computed by `riemann.nql`:
 
-1. **Part I (`halts_reference_iff_exists_counterexample`, 0 `sorry`s)**:
-   `Halts reference ↔ ∃ x : ℕ, MatiyasevichRiemannCounterexample x`
+1. **Part I (`halts_riemann744_iff_exists_counterexample`, 0 `sorry`s)**:
+   `ConjectureMachines.Halts Machines.riemann744 ↔ ∃ x : ℕ, MatiyasevichRiemannCounterexample x`
    - **Layer 1 (`Cryptids.Semantics.Riemann.Gadgets`)**: Canonical tape layout (`entryCfg`,
      `postPcCfg`), return scan loops, 11-bit ripple-carry PC adder, and primitive unary register
      operations (`reg_init_eval`, `reg_incr_eval`, `reg_decr_eval`).
@@ -55,15 +52,14 @@ The equivalence is factored through the elementary integer predicate
 
 @[expose] public section
 
-namespace ConjectureMachines.Riemann543.Semantics
+namespace ConjectureMachines.Semantics.Riemann
 
 open Turing StateTransition
-open ConjectureMachines.Riemann543
 
-/-- Unconditional halting equivalence between the 744-state Turing machine `reference`
+/-- Unconditional halting equivalence between the 744-state Turing machine `Machines.riemann744`
 and the 16-register NQL counter machine `RegHalts`, combining Layer 1 and Layer 2. -/
 theorem halts_reference_iff_regHalts_unconditional :
-    Halts reference ↔ RegHalts := by
+    ConjectureMachines.Halts Machines.riemann744 ↔ RegHalts := by
   apply halts_reference_iff_regHalts Layer1.entryCfg_zero_nil
   · intro pc regs _
     exact Layer1.reg_init_eval pc regs
@@ -85,28 +81,16 @@ theorem halts_reference_iff_regHalts_unconditional :
 -/
 
 /-- **Part I (Turing Machine ↔ Elementary Counterexample)**:
-The 744-state machine `reference` (`riemann_744`) halts on the blank tape if and only if there
-exists an integer `x` satisfying `MatiyasevichRiemannCounterexample x`. -/
-theorem halts_reference_iff_exists_counterexample :
-    Halts reference ↔ ∃ x : ℕ, MatiyasevichRiemannCounterexample x :=
+The 744-state baseline machine `riemann_744` (`Machines.riemann744`) halts on the blank tape if and
+only if there exists an integer `x` satisfying `MatiyasevichRiemannCounterexample x`. -/
+theorem halts_riemann744_iff_exists_counterexample :
+    ConjectureMachines.Halts Machines.riemann744 ↔ ∃ x : ℕ, MatiyasevichRiemannCounterexample x :=
   halts_reference_iff_regHalts_unconditional.trans regHalts_iff_exists_counterexample
 
-/-- The 543-state machine `candidate` (`riemann_543`) halts on the blank tape if and only if there
-exists an integer `x` satisfying `MatiyasevichRiemannCounterexample x`. -/
-theorem halts_candidate_iff_exists_counterexample :
-    Halts candidate ↔ ∃ x : ℕ, MatiyasevichRiemannCounterexample x :=
-  candidate_equivalent.trans halts_reference_iff_exists_counterexample
-
-/-- The 744-state baseline machine `reference` (`riemann_744`) halts on the blank tape
+/-- The 744-state baseline machine `riemann_744` (`Machines.riemann744`) halts on the blank tape
 if and only if the Riemann Hypothesis is false. -/
-theorem halts_reference_iff_not_riemannHypothesis :
-    Halts reference ↔ ¬ RiemannHypothesis :=
-  halts_reference_iff_exists_counterexample.trans exists_counterexample_iff_not_riemannHypothesis
+theorem halts_riemann744_iff_not_riemannHypothesis :
+    ConjectureMachines.Halts Machines.riemann744 ↔ ¬ RiemannHypothesis :=
+  halts_riemann744_iff_exists_counterexample.trans exists_counterexample_iff_not_riemannHypothesis
 
-/-- The 543-state machine `candidate` (`riemann_543`) halts on the blank tape
-if and only if the Riemann Hypothesis is false. -/
-theorem halts_candidate_iff_not_riemannHypothesis :
-    Halts candidate ↔ ¬ RiemannHypothesis :=
-  candidate_equivalent.trans halts_reference_iff_not_riemannHypothesis
-
-end ConjectureMachines.Riemann543.Semantics
+end ConjectureMachines.Semantics.Riemann

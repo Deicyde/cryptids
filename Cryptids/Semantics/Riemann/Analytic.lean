@@ -19,7 +19,7 @@ public import Cryptids.Semantics.Riemann.VonMangoldtCount
 public import Cryptids.Semantics.Riemann.ExplicitLarge
 
 /-!
-# Part II: Number-Theoretic & Analytic Bridge for `riemann_744` and `riemann_543`
+# Part II: Number-Theoretic & Analytic Bridge for `riemann_744`
 
 This file develops the number-theoretic and real-analytic bridge between the elementary
 Matiyasevich–Aaronson counterexample predicate `MatiyasevichRiemannCounterexample` (computed by
@@ -70,7 +70,7 @@ of Schoenfeld (1976) and Schmidt (1903):
 
 @[expose] public section
 
-namespace ConjectureMachines.Riemann543.Semantics
+namespace ConjectureMachines.Semantics.Riemann
 
 /-!
 ## 1. The Matiyasevich–Aaronson Elementary Counterexample Predicate
@@ -679,4 +679,4 @@ theorem exists_counterexample_iff_not_riemannHypothesis :
   push Not
   rfl
 
-end ConjectureMachines.Riemann543.Semantics
+end ConjectureMachines.Semantics.Riemann

@@ -27,7 +27,7 @@ open ConjectureMachines.Semantics.Zf.Layer1
    root_scan_to_main boot2_scan_pair boot2_to_inc0 boot2_to_decnz0
    return0_scan_reg return0_scan_regs return0_scan_fence inc_shift_eval_zf
    dec_shift_reg_zf dec_scan_and_shift_zf dec_shift2_scan_reg break0_step)
-open ConjectureMachines.Riemann543.Layer1
+open ConjectureMachines.Semantics.Riemann.Layer1
   (nSteps nSteps_zero nSteps_succ nSteps_add nSteps_bind_eq step_nSteps step_one
    nSteps_reaches nSteps_eval_dom mk_append_replicate_zero default_eq_mk_nil
    default_cons_zero append_replicate_zero_default fin2_cases

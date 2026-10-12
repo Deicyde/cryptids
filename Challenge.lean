@@ -109,12 +109,12 @@ namespace Machines
 /-- Rows of `riemann744`. -/ def riemann744Rows : List (List (Option (Fin 2 × Dir × Fin 744))) :=
   load_machine_rows% "baselines/tables/riemann_744.txt"
 /-- 744-state RH baseline. -/ def riemann744 : Machine 744 2 := Machine.ofRows riemann744Rows
-/-- Rows of `riemann543`. -/ def riemann543Rows : List (List (Option (Fin 2 × Dir × Fin 543))) :=
-  load_machine_rows% "artifacts/riemann_543/machine.txt"
-/-- 543-state RH candidate. -/ def riemann543 : Machine 543 2 := Machine.ofRows riemann543Rows
 /-- Rows of `riemann120`. -/ def riemann120Rows : List (List (Option (Fin 2 × Dir × Fin 120))) :=
   load_machine_rows% "baselines/tables/riemann_120.txt"
 /-- 120-state RH machine. -/ def riemann120 : Machine 120 2 := Machine.ofRows riemann120Rows
+/-- Rows of `riemann104`. -/ def riemann104Rows : List (List (Option (Fin 2 × Dir × Fin 104))) :=
+  load_machine_rows% "artifacts/riemann_104/machine.txt"
+/-- 104-state RH candidate. -/ def riemann104 : Machine 104 2 := Machine.ofRows riemann104Rows
 end Machines
 
 /-- **Goldbach's Conjecture**: every even integer greater than 2 is the sum of two primes. -/
@@ -267,24 +267,13 @@ theorem halts_zf432_iff_wadeZFInconsistent :
     ConjectureMachines.Halts Machines.zf432 ↔ WadeZFInconsistent := by sorry
 end Semantics.Zf
 
-namespace Riemann543
-/-- 744-state Riemann Hypothesis reference machine (`riemann_744`). -/
-abbrev reference : BundledMachine 2 := Machines.riemann744.bundle
-/-- 543-state Riemann Hypothesis candidate machine (`riemann_543`). -/
-abbrev candidate : BundledMachine 2 := Machines.riemann543.bundle
-theorem candidate_fewer_states : candidate.states < reference.states := by sorry
-theorem candidate_equivalent : Halts candidate ↔ Halts reference := by sorry
-namespace Semantics
-theorem halts_reference_iff_exists_counterexample :
-    Halts reference ↔ ∃ x : ℕ, MatiyasevichRiemannCounterexample x := by sorry
-theorem halts_candidate_iff_exists_counterexample :
-    Halts candidate ↔ ∃ x : ℕ, MatiyasevichRiemannCounterexample x := by sorry
-theorem halts_reference_iff_not_riemannHypothesis :
-    Halts reference ↔ ¬ RiemannHypothesis := by sorry
-theorem halts_candidate_iff_not_riemannHypothesis :
-    Halts candidate ↔ ¬ RiemannHypothesis := by sorry
-end Semantics
-end Riemann543
+namespace Semantics.Riemann
+theorem halts_riemann744_iff_exists_counterexample :
+    ConjectureMachines.Halts Machines.riemann744 ↔ ∃ x : ℕ, MatiyasevichRiemannCounterexample x :=
+  by sorry
+theorem halts_riemann744_iff_not_riemannHypothesis :
+    ConjectureMachines.Halts Machines.riemann744 ↔ ¬ RiemannHypothesis := by sorry
+end Semantics.Riemann
 
 namespace Riemann120
 /-- 120-state Riemann Hypothesis machine (`riemann_120`, Shunia 2026). -/
@@ -292,5 +281,18 @@ abbrev riemann120 : Machine 120 2 := Machines.riemann120
 theorem halts_riemann120_iff_not_riemannHypothesis :
     ConjectureMachines.Halts riemann120 ↔ ¬ RiemannHypothesis := by sorry
 end Riemann120
+
+namespace Riemann104
+/-- 120-state Riemann Hypothesis reference machine (`riemann_120`, Shunia 2026). -/
+abbrev reference : BundledMachine 2 := Machines.riemann120.bundle
+/-- 104-state Riemann Hypothesis candidate machine (`riemann_104`). -/
+abbrev candidate : BundledMachine 2 := Machines.riemann104.bundle
+theorem candidate_fewer_states : candidate.states < reference.states := by sorry
+theorem candidate_equivalent : Halts candidate ↔ Halts reference := by sorry
+namespace Semantics
+theorem halts_candidate_iff_not_riemannHypothesis :
+    Halts candidate ↔ ¬ RiemannHypothesis := by sorry
+end Semantics
+end Riemann104
 
 end ConjectureMachines

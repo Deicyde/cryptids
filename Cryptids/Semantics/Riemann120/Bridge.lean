@@ -34,7 +34,7 @@ open ConjectureMachines.Riemann120.Layer2
    RhRegCfg rhRegInit rhRegStep rhRegNSteps RhRegHalts
    mem_eval_rhRegStep_iff_rhRegNSteps
    rhRegHalts_iff_exists_shuniaCounterexample)
-open ConjectureMachines.Riemann543.Layer1
+open ConjectureMachines.Semantics.Riemann.Layer1
   (nSteps nSteps_add nSteps_bind_eq step_nSteps step_one
    nSteps_eval_dom nSteps_of_halt mem_eval_iff_nSteps fin2_cases
    Tape.mkL append_replicate_cons append_reverse_cons

@@ -21,7 +21,7 @@ single-step and scan execution lemmas (`step_mkL_left`, `step_mkL_right`, `step_
 namespace ConjectureMachines.Zf393
 
 open Turing StateTransition ConjectureMachines
-open ConjectureMachines.Riemann543.Layer1 (nSteps nSteps_succ Tape.mkL append_replicate_cons)
+open ConjectureMachines.Semantics.Riemann.Layer1 (nSteps nSteps_succ Tape.mkL append_replicate_cons)
 
 abbrev TM (states symbols : ℕ) := Machine states symbols
 

@@ -4,17 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import Cryptids.Riemann104
 public import Cryptids.Semantics.Riemann120.VonMangoldt
 public import Cryptids.Semantics.Riemann120.Bridge
 
 /-!
-# Halting Equivalence for Shunia's 120-State Riemann Machine (`riemann120`)
+# Halting Equivalence for `riemann120` and `riemann104`
 
 This module connects all layers of the formalization of Joseph M. Shunia's 120-state,
-2-symbol Turing machine (`riemann120`, `arXiv:2609.30306`, September 2026) into the complete
-end-to-end equivalence:
+2-symbol Turing machine (`riemann120`, `arXiv:2609.30306`, September 2026) and its 104-state
+reduction (`riemann104`) into the complete end-to-end equivalences:
 
-`Halts riemann120 ↔ ¬ RiemannHypothesis`.
+- `Halts riemann120 ↔ ¬ RiemannHypothesis`
+- `Halts ConjectureMachines.Riemann104.candidate ↔ ¬ RiemannHypothesis`.
 -/
 
 @[expose] public section
@@ -39,5 +41,18 @@ theorem halts_riemann120_iff_not_riemannHypothesis :
   exact le_of_lt hlt
 
 end ConjectureMachines.Riemann120
+
+namespace ConjectureMachines.Riemann104.Semantics
+
+open ConjectureMachines
+
+/-- The 104-state record machine `riemann_104` (`ConjectureMachines.Riemann104.candidate`) halts on
+the blank tape if and only if Mathlib's `RiemannHypothesis` is false. -/
+theorem halts_candidate_iff_not_riemannHypothesis :
+    Halts ConjectureMachines.Riemann104.candidate ↔ ¬ RiemannHypothesis :=
+  ConjectureMachines.Riemann104.candidate_equivalent.trans
+    ConjectureMachines.Riemann120.halts_riemann120_iff_not_riemannHypothesis
+
+end ConjectureMachines.Riemann104.Semantics
 
 end

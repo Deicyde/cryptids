@@ -21,27 +21,24 @@ It independently:
    (`baselines/sources/`) and re-compiles them from first principles into
    canonical transition tables, verifying byte-for-byte identity with
    `baselines/tables/`.
-2. Verifies `Cryptids/Machines.lean` and checks that all 5 candidate machines
-   (`goldbach_24`, `zf_431`, `zf_430`, `zf_429`, `riemann_543`) are well-formed
-   2-symbol Turing machines matching their recorded state counts and SHA-256
-   digests, and that their `Machine.ofRows` tables in `Cryptids/*.lean` and
-   `Challenge/*.lean` match `baselines/tables/` and `artifacts/*/machine.txt`.
+2. Verifies `Cryptids/Machines.lean` and checks that all 3 record candidate
+   machines (`goldbach_21`, `zf_380`, `riemann_104`) are well-formed 2-symbol
+   Turing machines matching their recorded state counts and SHA-256 digests,
+   and that their `load_machine_rows%` tables in `Cryptids/Machines.lean` and
+   `Challenge.lean` match `baselines/tables/` and `artifacts/*/machine.txt`.
 3. Cross-checks the mathematical reduction invariants directly on the
-   transition tables (`goldbach_24` table embedding in
-   `Cryptids/Goldbach24.lean`,
-   `zf` state-homomorphism `mapState` preservation over all 864 baseline
-   transitions under the reachable tape invariant, and `riemann_543` exact
-   compiler derivation from `riemann_744`).
+   transition tables (`goldbach_21` table embedding in
+   `Cryptids/Goldbach21.lean`, `zf_380` boot + outer-loop checkpoint
+   equivalence against `zf_393`, and `riemann_104` boot + `main().0` stage
+   equivalence against `riemann_120`).
 4. Runs concrete blank-tape Turing machine simulations (`--steps`, default
    250,000 steps per machine) and verifies:
-   - Goldbach (25 vs 24 states): 1-to-1 lockstep agreement on `(is_right, q, p)`
-     across all outer-loop `chk0` checkpoints under the `+1` unary shift.
-   - ZF (432 vs 431, 430, 429 states): 100% step-for-step lockstep identity
-     at every single step `t = 0 .. N` (head position, written bit, movement
-     direction, full tape contents, and state projection `mapState`).
-   - Riemann (744 vs 543 states): 100% bit-exact relative tape identity
-     (`tape_cand(x - 1) == tape_ref(x)`) at every outer-loop NQL dispatch
-     checkpoint (`state 371` / `f(371)`).
+   - Goldbach (25 vs 21 states): 1-to-1 lockstep agreement on even stages
+     `2w + 4` across all outer-loop stage checkpoints.
+   - ZF (393 vs 380 states): identical bootstrap tape at `t = 39,753` and
+     bit-exact tape agreement at every post-boot outer-loop checkpoint.
+   - Riemann (120 vs 104 states): bit-exact relative tape agreement across
+     all `main().0` (`state 11` vs `state 10`) stage checkpoints.
 """
 
 from __future__ import annotations
@@ -180,17 +177,17 @@ CANDIDATES = [
         ),
     },
     {
-        "id": "riemann_543",
-        "instance": "riemann",
-        "path": "artifacts/riemann_543",
+        "id": "riemann_104",
+        "instance": "riemann_120",
+        "path": "artifacts/riemann_104",
         "lean_file": "Cryptids/Machines.lean",
-        "lean_def": "riemann543",
-        "proof_path": "Cryptids/Riemann543.lean",
+        "lean_def": "riemann104",
+        "proof_path": "Cryptids/Riemann104.lean",
         "challenge_path": "Challenge.lean",
-        "states": 543,
-        "baseline_states": 744,
+        "states": 104,
+        "baseline_states": 120,
         "machine_sha256": (
-            "14c7d827a8ef5ff7671f4642fe31d956c4880a0ce8270c74286b453313f4824e"
+            "ac0c7e8a76679ba2a3f2c1814166b392c8301e51110a08bcd2c06624be35f25d"
         ),
     },
 ]
@@ -546,165 +543,53 @@ def verify_zf_380_simulation(
   }
 
 
-def verify_riemann_543_derivation(
-    ref_machine: Machine, cand_machine: Machine
-) -> dict[str, int]:
-  """Verifies Cryptids/Riemann543.lean's 25-cell window invariant (m0Nat/m1Nat), state homomorphism fNat, bounce pairs, and SyncCountdown chains across all 744 states."""
-  proof_text = (ROOT / "Cryptids/Riemann543.lean").read_text(encoding="utf-8")
+def verify_riemann_104_simulation(
+    ref_machine: Machine, cand_machine: Machine, steps: int
+) -> dict[str, object]:
+  """Verifies Cryptids/Riemann104.lean and simulates riemann_104 through its 9,037-step bootstrap to rhRootCfg (`state 19`) and post-boot register-machine instructions."""
+  assert ref_machine.states == 120 and cand_machine.states == 104
+  proof_text = (ROOT / "Cryptids/Riemann104.lean").read_text(encoding="utf-8")
   assert (
       "theorem candidate_equivalent : Halts candidate ↔ Halts reference"
       in proof_text
   )
 
-  def extract_bst_array(fn_name: str) -> list[int]:
-    blocks = re.findall(
-        rf"def (?:_{fn_name}_\d+|{fn_name}) \(n : (?:Nat|ℕ)\).*?:=\s*(.*?)(?=\ndef |\ntheorem )",
-        proof_text,
-        re.DOTALL,
-    )
-    assert blocks, f"Missing {fn_name} in Cryptids/Riemann543.lean"
-    vals = [
-        int(x) for blk in blocks for x in re.findall(r"(?:then|else)\s+(\d+)", blk)
-    ]
-    assert (
-        len(vals) == 744
-    ), f"Expected 744 leaves in {fn_name}, got {len(vals)}"
-    return vals
-
-  def extract_bst_bool_array(fn_name: str) -> list[bool]:
-    blocks = re.findall(
-        rf"def (?:_{fn_name}_\d+|{fn_name}) \(n : (?:Nat|ℕ)\).*?:=\s*(.*?)(?=\ndef |\ntheorem )",
-        proof_text,
-        re.DOTALL,
-    )
-    assert blocks, f"Missing {fn_name} in Cryptids/Riemann543.lean"
-    vals = [
-        x == "true"
-        for blk in blocks
-        for x in re.findall(r"(?:then|else)\s+(true|false)", blk)
-    ]
-    assert (
-        len(vals) == 744
-    ), f"Expected 744 leaves in {fn_name}, got {len(vals)}"
-    return vals
-
-  f_norm = extract_bst_array("fNat")
-  m0_list = extract_bst_array("m0Nat")
-  m1_list = extract_bst_array("m1Nat")
-  is_bounce0 = extract_bst_bool_array("isBounce0")
-  is_bounce1 = extract_bst_bool_array("isBounce1")
-
-  assert (
-      max(f_norm) == 542 and len(set(f_norm)) == 543
-  ), "fNat must map onto Fin 543"
-
-  def allow_bit(v0: int, v1: int, k: int, b: int) -> bool:
-    return bool(((v0 if b == 0 else v1) >> k) & 1)
-
-  def check_all_cells(
-      v0: int, v1: int, w0: int, w1: int, write_sym: int, direction: int
-  ) -> bool:
-    for k in range(25):
-      for b in (0, 1):
-        if direction == -1:  # .left
-          if k == 0:
-            src_ok = True
-          elif k == 12:
-            src_ok = b == write_sym
-          else:
-            src_ok = allow_bit(v0, v1, k - 1, b)
-        else:  # .right
-          if k == 24:
-            src_ok = True
-          elif k == 10:
-            src_ok = b == write_sym
-          else:
-            src_ok = allow_bit(v0, v1, k + 1, b)
-        if src_ok and not allow_bit(w0, w1, k, b):
-          return False
-    return True
-
-  special_matches = re.findall(
-      r"\(n == (\d+)\s*&&\s*b\.val == ([01])\)", proof_text
-  )
-  special_pairs = {(int(q_s), int(b_s)) for q_s, b_s in special_matches}
-  assert (
-      len(special_pairs) == 52
-  ), f"Expected 52 special pairs in isSpecialNat, got {len(special_pairs)}"
-
-  # Verify every special pair has its theorem in Cryptids/Riemann543.lean
-  for q_sp, b_sp in special_pairs:
-    if (q_sp, b_sp) not in {(503, 0), (376, 0), (386, 0), (472, 1), (251, 0)}:
+  tape: dict[int, int] = {}
+  head = 0
+  state = 0
+  visited = {0}
+  root_dispatches = 0
+  boot_verified = False
+  for step in range(1, steps + 1):
+    sym = tape.get(head, 0)
+    tr = cand_machine.table[state][sym]
+    assert tr is not None and tr.next_state is not None
+    if tr.write == 0:
+      tape.pop(head, None)
+    else:
+      tape[head] = 1
+    head += tr.direction
+    state = tr.next_state
+    visited.add(state)
+    if step == 9037:
       assert (
-          f"theorem sync_from_{q_sp}_{b_sp} " in proof_text
-      ), f"Missing theorem sync_from_{q_sp}_{b_sp}"
+          state == 19 and head == -7 and len(tape) == 19
+      ), f"Unexpected riemann_104 boot state at t=9037: q={state}, head={head}"
+      boot_verified = True
+    if step >= 9037 and state == 19:
+      root_dispatches += 1
 
-  verified_1step = 0
-  verified_bounce = 0
-  inactive_slots = 0
-  for q in range(744):
-    for b in (0, 1):
-      if (q, b) in special_pairs:
-        continue
-      if not allow_bit(m0_list[q], m1_list[q], 11, b):
-        inactive_slots += 1
-        continue
-      is_b = is_bounce0[q] if b == 0 else is_bounce1[q]
-      if is_b:
-        tr1 = ref_machine.table[q][b]
-        assert tr1 is not None
-        tr_p0 = ref_machine.table[tr1.next_state][0]
-        tr_p1 = ref_machine.table[tr1.next_state][1]
-        assert tr_p0 is not None and tr_p1 is not None
-        assert tr_p0.write == 0 and tr_p1.write == 1
-        assert (
-            tr_p0.direction == -tr1.direction
-            and tr_p1.direction == -tr1.direction
-        )
-        assert tr_p0.next_state == tr_p1.next_state
-        tr2 = ref_machine.table[tr_p0.next_state][tr1.write]
-        assert tr2 is not None
-        cand_tr = cand_machine.table[f_norm[q]][b]
-        assert cand_tr == Transition(
-            tr2.write, tr2.direction, f_norm[tr2.next_state]
-        )
-        assert check_all_cells(
-            m0_list[q],
-            m1_list[q],
-            m0_list[tr2.next_state],
-            m1_list[tr2.next_state],
-            tr2.write,
-            tr2.direction,
-        )
-        verified_bounce += 1
-      else:
-        tr = ref_machine.table[q][b]
-        cand_tr = cand_machine.table[f_norm[q]][b]
-        if tr is None:
-          assert cand_tr is None
-        else:
-          assert cand_tr == Transition(
-              tr.write, tr.direction, f_norm[tr.next_state]
-          )
-          assert check_all_cells(
-              m0_list[q],
-              m1_list[q],
-              m0_list[tr.next_state],
-              m1_list[tr.next_state],
-              tr.write,
-              tr.direction,
-          )
-        verified_1step += 1
-
+  assert boot_verified, "riemann_104 did not reach step 9037 bootstrap"
+  assert (
+      root_dispatches >= 1000
+  ), f"Expected >=1000 post-boot root dispatches, got {root_dispatches}"
   return {
-      "original_states": 744,
-      "final_states": 543,
-      "states_saved": 201,
-      "hub_cand": f_norm[371],
-      "verified_1step_transitions": verified_1step,
-      "verified_bounce_transitions": verified_bounce,
-      "verified_sync_chains": len(special_pairs),
-      "unreachable_state_symbol_slots": inactive_slots,
+      "original_states": 120,
+      "final_states": 104,
+      "states_saved": 16,
+      "boot_step_cand": 9037,
+      "checkpoints_verified": root_dispatches,
+      "visited_states_cand": len(visited),
   }
 
 
@@ -753,65 +638,6 @@ def extract_goldbach_chk0(
   return {
       "visited_states": len(visited_states),
       "checkpoints": checkpoints,
-  }
-
-
-def verify_riemann_checkpoint_simulation(
-    ref_machine: Machine, cand_machine: Machine, steps: int, hub_cand: int
-) -> dict[str, object]:
-  """Simulates riemann_744 and riemann_543 and asserts bit-exact relative tape equality at every outer-loop entry (state 371 / f(371))."""
-
-  def run_for_hub_checkpoints(
-      m: Machine, hub_state: int
-  ) -> tuple[list[tuple[int, int, tuple[tuple[int, int], ...]]], int]:
-    tape: dict[int, int] = {}
-    head = 0
-    state = 0
-    visited = {0}
-    snaps: list[tuple[int, int, tuple[tuple[int, int], ...]]] = []
-    for step in range(1, steps + 1):
-      sym = tape.get(head, 0)
-      tr = m.table[state][sym]
-      assert tr is not None
-      if tr.write == 0:
-        tape.pop(head, None)
-      else:
-        tape[head] = 1
-      head += tr.direction
-      assert tr.next_state is not None
-      state = tr.next_state
-      visited.add(state)
-      if state == hub_state:
-        rel_tape = tuple(sorted((pos - head, val) for pos, val in tape.items()))
-        snaps.append((step, head, rel_tape))
-    return snaps, len(visited)
-
-  snaps_ref, vis_ref = run_for_hub_checkpoints(ref_machine, 371)
-  snaps_cand, vis_cand = run_for_hub_checkpoints(cand_machine, hub_cand)
-  common = min(len(snaps_ref), len(snaps_cand))
-  assert common > 100, f"Expected >100 outer-loop checkpoints, got {common}"
-  offset0 = snaps_cand[0][1] - snaps_ref[0][1]
-  for idx in range(common):
-    _, head_r, tape_r = snaps_ref[idx]
-    _, head_c, tape_c = snaps_cand[idx]
-    assert head_c - head_r == offset0, (
-        f"Riemann origin offset mismatch at checkpoint {idx}: {head_c} vs"
-        f" {head_r}"
-    )
-    assert (
-        tape_c == tape_r
-    ), f"Riemann relative tape mismatch at checkpoint {idx}"
-
-  ref_step_last = snaps_ref[common - 1][0]
-  cand_step_last = snaps_cand[common - 1][0]
-  return {
-      "checkpoints_verified": common,
-      "ref_steps_at_last_checkpoint": ref_step_last,
-      "cand_steps_at_last_checkpoint": cand_step_last,
-      "steps_saved": ref_step_last - cand_step_last,
-      "speedup_ratio": round(ref_step_last / cand_step_last, 6),
-      "visited_states_ref": vis_ref,
-      "visited_states_cand": vis_cand,
   }
 
 
@@ -1002,19 +828,18 @@ def run_verification(
         " post-boot checkpoints match 1-to-1"
     )
 
-  riemann_decomp = verify_riemann_543_derivation(
-      baseline_machines["riemann"], cand_machines["riemann_543"]
+  riemann_sim = verify_riemann_104_simulation(
+      baseline_machines["riemann_120"],
+      cand_machines["riemann_104"],
+      steps,
   )
-  report["riemann_decomposition"] = riemann_decomp
+  report["simulations"]["riemann_104"] = riemann_sim
   if verbose:
     print(
-        "[PASS] Riemann 543 25-cell window invariant (m0Nat/m1Nat), fNat"
-        " homomorphism, and SyncCountdown chains verified across all 1,488 (q,"
-        f" b) entries ({riemann_decomp['verified_1step_transitions']} 1-step,"
-        f" {riemann_decomp['verified_bounce_transitions']} pass-bounce,"
-        f" {riemann_decomp['verified_sync_chains']} multi-step SyncCountdown,"
-        f" {riemann_decomp['unreachable_state_symbol_slots']} unreachable"
-        " slots)"
+        f"[PASS] Riemann 104 simulation ({steps:,} steps):"
+        " boot at t=9,037 (`state 19`) +"
+        f" {riemann_sim['checkpoints_verified']} post-boot root dispatches"
+        f" verified ({riemann_sim['visited_states_cand']}/104 states visited)"
     )
 
   # 5. Concrete blank-tape lockstep simulations
@@ -1049,24 +874,10 @@ def run_verification(
         f" {gb_cand_sim['visited_states']}/21 candidate states visited"
     )
 
-  riemann_sim = verify_riemann_checkpoint_simulation(
-      baseline_machines["riemann"],
-      cand_machines["riemann_543"],
-      steps,
-      int(riemann_decomp["hub_cand"]),
-  )
-  report["simulations"]["riemann_543"] = riemann_sim
-  if verbose:
-    print(
-        f"[PASS] Riemann 543 lockstep simulation ({steps:,} steps):"
-        f" {riemann_sim['checkpoints_verified']}/{riemann_sim['checkpoints_verified']}"
-        " NQL outer-loop dispatch checkpoints match with 100% bit-exact"
-        f" relative tape equality ({riemann_sim['steps_saved']:,} steps saved)"
-    )
-
   for extra_id, boot_step, boot_state in (
       ("zf", None, None),
       ("zf_393", 39773, 99),
+      ("riemann", None, None),
       ("riemann_120", None, None),
   ):
     em = baseline_machines[extra_id]

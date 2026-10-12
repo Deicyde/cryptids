@@ -68,7 +68,7 @@ This file proves (with **zero `sorry`s**):
 
 @[expose] public section
 
-namespace ConjectureMachines.Riemann543.Semantics.VonMangoldtCount
+namespace ConjectureMachines.Semantics.Riemann.VonMangoldtCount
 
 export RiemannSchmidt
   (sub_floor_bounds)
@@ -2157,4 +2157,4 @@ theorem sum_inv_norm_nontrivialZetaZerosUpTo_le_sixteen_fifths_of_riemannHypothe
   refine h.trans_eq ?_
   ring
 
-end ConjectureMachines.Riemann543.Semantics.VonMangoldtCount
+end ConjectureMachines.Semantics.Riemann.VonMangoldtCount

@@ -20,7 +20,7 @@ that starting from `regInit = ⟨0, []⟩`, it halts if and only if there exists
 
 @[expose] public section
 
-namespace ConjectureMachines.Riemann543.Semantics
+namespace ConjectureMachines.Semantics.Riemann
 
 open Turing StateTransition
 
@@ -2579,4 +2579,4 @@ theorem regHalts_iff_exists_counterexample :
     have hhalts21 : RegHaltsFrom ⟨21, regs⟩ := main_iter_halts (x - 1) regs hcfg hx
     exact (regHaltsFrom_of_regNSteps step).mpr hhalts21
 
-end ConjectureMachines.Riemann543.Semantics
+end ConjectureMachines.Semantics.Riemann

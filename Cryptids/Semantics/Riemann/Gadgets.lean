@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Cryptids.Riemann543
+public import Cryptids.Machines
 
 /-!
 # Layer 1: Tape Layout and Primitive Register Gadgets for `riemann_744`
@@ -16,11 +16,610 @@ for the 744-state Riemann Hypothesis Turing machine `reference` (`riemann_744`).
 
 @[expose] public section
 
-namespace ConjectureMachines.Riemann543.Layer1
+namespace ConjectureMachines.Semantics.Riemann.Layer1
 
-open Turing StateTransition ConjectureMachines.Riemann543
+open Turing StateTransition ConjectureMachines
 
 abbrev reference : Machine 744 2 := Machines.riemann744
+
+def refRow0 (q : Nat) : Option (Fin 2 × Dir × Fin 744) × Option (Fin 2 × Dir × Fin 744) :=
+  (if q < 46 then (if q < 23 then (if q < 11 then (if q < 5 then (if q < 2 then (if q < 1 then
+  (some (0, .right, 523), some (1, .right, 523)) else (some (0, .left, 3), some (1, .right,
+  5))) else (if q < 3 then (some (0, .right, 1), some (0, .right, 1)) else (if q < 4 then
+  (some (1, .left, 566), some (1, .left, 566)) else (some (0, .left, 6), some (1, .right,
+  5))))) else (if q < 8 then (if q < 6 then (some (0, .right, 4), some (1, .right, 5)) else
+  (if q < 7 then (some (0, .left, 7), some (1, .left, 7)) else (some (0, .left, 567), some (0,
+  .left, 8)))) else (if q < 9 then (some (1, .left, 7), some (1, .left, 8)) else (if q < 10
+  then (some (1, .left, 10), some (0, .left, 11)) else (some (0, .left, 14), some (1, .left,
+  14)))))) else (if q < 17 then (if q < 14 then (if q < 12 then (some (1, .left, 14), some (0,
+  .left, 15)) else (if q < 13 then (some (0, .left, 0), some (1, .left, 0)) else (some (1,
+  .left, 0), some (0, .left, 0)))) else (if q < 15 then (some (0, .left, 16), some (1, .left,
+  16)) else (if q < 16 then (some (1, .left, 16), some (0, .left, 17)) else (some (0, .left,
+  18), some (1, .left, 18))))) else (if q < 20 then (if q < 18 then (some (1, .left, 18), some
+  (0, .left, 19)) else (if q < 19 then (some (0, .left, 20), some (1, .left, 20)) else (some
+  (1, .left, 20), some (0, .left, 21)))) else (if q < 21 then (some (0, .left, 22), some (1,
+  .left, 22)) else (if q < 22 then (some (1, .left, 22), some (0, .left, 23)) else (some (0,
+  .left, 24), some (1, .left, 24))))))) else (if q < 34 then (if q < 28 then (if q < 25 then
+  (if q < 24 then (some (1, .left, 24), some (0, .left, 25)) else (some (0, .left, 26), some
+  (1, .left, 26))) else (if q < 26 then (some (1, .left, 26), some (0, .left, 27)) else (if q
+  < 27 then (some (0, .left, 28), some (1, .left, 28)) else (some (1, .left, 28), some (0,
+  .left, 29))))) else (if q < 31 then (if q < 29 then (some (0, .left, 12), some (1, .left,
+  12)) else (if q < 30 then (some (1, .left, 12), some (0, .left, 13)) else (some (0, .left,
+  565), some (0, .right, 31)))) else (if q < 32 then (some (1, .right, 30), some (1, .right,
+  31)) else (if q < 33 then (some (0, .right, 33), some (1, .right, 33)) else (some (0,
+  .right, 34), some (1, .right, 34)))))) else (if q < 40 then (if q < 37 then (if q < 35 then
+  (some (1, .left, 566), some (1, .right, 35)) else (if q < 36 then (some (0, .right, 34),
+  some (1, .right, 35)) else (some (0, .left, 37), some (1, .left, 37)))) else (if q < 38 then
+  (some (1, .left, 38), some (1, .left, 38)) else (if q < 39 then (some (1, .left, 177), some
+  (1, .left, 177)) else (some (0, .left, 40), some (1, .left, 40))))) else (if q < 43 then (if
+  q < 41 then (some (0, .left, 41), some (0, .left, 41)) else (if q < 42 then (some (1, .left,
+  42), some (1, .left, 42)) else (some (0, .left, 43), some (0, .left, 43)))) else (if q < 44
+  then (some (0, .left, 59), some (0, .left, 59)) else (if q < 45 then (some (0, .left, 45),
+  some (1, .left, 45)) else (some (0, .left, 46), some (0, .left, 46)))))))) else (if q < 69
+  then (if q < 57 then (if q < 51 then (if q < 48 then (if q < 47 then (some (0, .left, 47),
+  some (0, .left, 47)) else (some (1, .left, 172), some (1, .left, 172))) else (if q < 49 then
+  (some (0, .left, 49), some (1, .left, 49)) else (if q < 50 then (some (0, .left, 50), some
+  (0, .left, 50)) else (some (0, .left, 51), some (0, .left, 51))))) else (if q < 54 then (if
+  q < 52 then (some (1, .left, 52), some (1, .left, 52)) else (if q < 53 then (some (1, .left,
+  53), some (1, .left, 53)) else (some (0, .left, 121), some (0, .left, 121)))) else (if q <
+  55 then (some (0, .left, 55), some (1, .left, 55)) else (if q < 56 then (some (0, .left,
+  56), some (0, .left, 56)) else (some (0, .left, 57), some (0, .left, 57)))))) else (if q <
+  63 then (if q < 60 then (if q < 58 then (some (0, .left, 58), some (0, .left, 58)) else (if
+  q < 59 then (some (1, .left, 59), some (1, .left, 59)) else (some (1, .left, 60), some (1,
+  .left, 60)))) else (if q < 61 then (some (1, .left, 23), some (1, .left, 23)) else (if q <
+  62 then (some (0, .left, 62), some (1, .left, 62)) else (some (0, .left, 63), some (0,
+  .left, 63))))) else (if q < 66 then (if q < 64 then (some (1, .left, 57), some (1, .left,
+  57)) else (if q < 65 then (some (0, .left, 65), some (1, .left, 65)) else (some (1, .left,
+  66), some (1, .left, 66)))) else (if q < 67 then (some (0, .left, 67), some (0, .left, 67))
+  else (if q < 68 then (some (1, .left, 68), some (1, .left, 68)) else (some (1, .left, 69),
+  some (1, .left, 69))))))) else (if q < 81 then (if q < 75 then (if q < 72 then (if q < 70
+  then (some (1, .left, 70), some (1, .left, 70)) else (if q < 71 then (some (1, .left, 71),
+  some (1, .left, 71)) else (some (1, .left, 72), some (1, .left, 72)))) else (if q < 73 then
+  (some (0, .left, 26), some (0, .left, 26)) else (if q < 74 then (some (0, .left, 74), some
+  (1, .left, 74)) else (some (1, .left, 46), some (1, .left, 46))))) else (if q < 78 then (if
+  q < 76 then (some (0, .left, 76), some (1, .left, 76)) else (if q < 77 then (some (0, .left,
+  77), some (0, .left, 77)) else (some (0, .left, 78), some (0, .left, 78)))) else (if q < 79
+  then (some (0, .left, 79), some (0, .left, 79)) else (if q < 80 then (some (0, .left, 120),
+  some (0, .left, 120)) else (some (0, .left, 81), some (1, .left, 81)))))) else (if q < 87
+  then (if q < 84 then (if q < 82 then (some (1, .left, 82), some (1, .left, 82)) else (if q <
+  83 then (some (0, .left, 83), some (0, .left, 83)) else (some (0, .left, 84), some (0,
+  .left, 84)))) else (if q < 85 then (some (0, .left, 19), some (0, .left, 19)) else (if q <
+  86 then (some (0, .left, 86), some (1, .left, 86)) else (some (0, .left, 87), some (0,
+  .left, 87))))) else (if q < 90 then (if q < 88 then (some (0, .left, 88), some (0, .left,
+  88)) else (if q < 89 then (some (1, .left, 79), some (1, .left, 79)) else (some (0, .left,
+  90), some (1, .left, 90)))) else (if q < 91 then (some (1, .left, 93), some (1, .left, 93))
+  else (if q < 92 then (some (0, .left, 92), some (0, .left, 92)) else (some (0, .left, 0),
+  some (0, .left, 0)))))))))
+
+def refRow1 (q : Nat) : Option (Fin 2 × Dir × Fin 744) × Option (Fin 2 × Dir × Fin 744) :=
+  (if q < 139 then (if q < 116 then (if q < 104 then (if q < 98 then (if q < 95 then (if q <
+  94 then (some (0, .left, 94), some (0, .left, 94)) else (some (1, .left, 95), some (1,
+  .left, 95))) else (if q < 96 then (some (0, .left, 96), some (0, .left, 96)) else (if q < 97
+  then (some (1, .left, 97), some (1, .left, 97)) else (some (0, .left, 98), some (0, .left,
+  98))))) else (if q < 101 then (if q < 99 then (some (0, .left, 99), some (0, .left, 99))
+  else (if q < 100 then (some (0, .left, 100), some (0, .left, 100)) else (some (0, .left,
+  91), some (0, .left, 91)))) else (if q < 102 then (some (0, .left, 102), some (1, .left,
+  102)) else (if q < 103 then (some (1, .left, 103), some (1, .left, 103)) else (some (0,
+  .left, 104), some (0, .left, 104)))))) else (if q < 110 then (if q < 107 then (if q < 105
+  then (some (1, .left, 84), some (1, .left, 84)) else (if q < 106 then (some (0, .left, 106),
+  some (1, .left, 106)) else (some (0, .left, 109), some (0, .left, 109)))) else (if q < 108
+  then (some (0, .left, 108), some (1, .left, 108)) else (if q < 109 then (some (1, .left,
+  109), some (1, .left, 109)) else (some (0, .left, 113), some (0, .left, 113))))) else (if q
+  < 113 then (if q < 111 then (some (0, .left, 111), some (1, .left, 111)) else (if q < 112
+  then (some (0, .left, 112), some (0, .left, 112)) else (some (1, .left, 113), some (1,
+  .left, 113)))) else (if q < 114 then (some (0, .left, 114), some (0, .left, 114)) else (if q
+  < 115 then (some (1, .left, 19), some (1, .left, 19)) else (some (0, .left, 116), some (1,
+  .left, 116))))))) else (if q < 127 then (if q < 121 then (if q < 118 then (if q < 117 then
+  (some (0, .left, 117), some (0, .left, 117)) else (some (0, .left, 118), some (0, .left,
+  118))) else (if q < 119 then (some (1, .left, 119), some (1, .left, 119)) else (if q < 120
+  then (some (1, .left, 120), some (1, .left, 120)) else (some (1, .left, 121), some (1,
+  .left, 121))))) else (if q < 124 then (if q < 122 then (some (0, .left, 22), some (0, .left,
+  22)) else (if q < 123 then (some (0, .left, 123), some (1, .left, 123)) else (some (1,
+  .left, 124), some (1, .left, 124)))) else (if q < 125 then (some (0, .left, 125), some (0,
+  .left, 125)) else (if q < 126 then (some (1, .left, 114), some (1, .left, 114)) else (some
+  (0, .left, 127), some (1, .left, 127)))))) else (if q < 133 then (if q < 130 then (if q <
+  128 then (some (1, .left, 128), some (1, .left, 128)) else (if q < 129 then (some (0, .left,
+  129), some (0, .left, 129)) else (some (1, .left, 130), some (1, .left, 130)))) else (if q <
+  131 then (some (1, .left, 131), some (1, .left, 131)) else (if q < 132 then (some (1, .left,
+  132), some (1, .left, 132)) else (some (0, .left, 145), some (0, .left, 145))))) else (if q
+  < 136 then (if q < 134 then (some (0, .left, 134), some (1, .left, 134)) else (if q < 135
+  then (some (0, .left, 135), some (0, .left, 135)) else (some (0, .left, 136), some (0,
+  .left, 136)))) else (if q < 137 then (some (1, .left, 137), some (1, .left, 137)) else (if q
+  < 138 then (some (0, .left, 173), some (0, .left, 173)) else (some (0, .left, 139), some (1,
+  .left, 139)))))))) else (if q < 162 then (if q < 150 then (if q < 144 then (if q < 141 then
+  (if q < 140 then (some (0, .left, 140), some (0, .left, 140)) else (some (0, .left, 141),
+  some (0, .left, 141))) else (if q < 142 then (some (1, .left, 142), some (1, .left, 142))
+  else (if q < 143 then (some (1, .left, 143), some (1, .left, 143)) else (some (0, .left,
+  144), some (0, .left, 144))))) else (if q < 147 then (if q < 145 then (some (1, .left, 145),
+  some (1, .left, 145)) else (if q < 146 then (some (0, .left, 72), some (0, .left, 72)) else
+  (some (0, .left, 147), some (1, .left, 147)))) else (if q < 148 then (some (1, .left, 135),
+  some (1, .left, 135)) else (if q < 149 then (some (0, .left, 149), some (1, .left, 149))
+  else (some (0, .left, 150), some (0, .left, 150)))))) else (if q < 156 then (if q < 153 then
+  (if q < 151 then (some (0, .left, 151), some (0, .left, 151)) else (if q < 152 then (some
+  (1, .left, 152), some (1, .left, 152)) else (some (0, .left, 153), some (0, .left, 153))))
+  else (if q < 154 then (some (1, .left, 154), some (1, .left, 154)) else (if q < 155 then
+  (some (1, .left, 155), some (1, .left, 155)) else (some (0, .left, 24), some (0, .left,
+  24))))) else (if q < 159 then (if q < 157 then (some (0, .left, 157), some (1, .left, 157))
+  else (if q < 158 then (some (0, .left, 165), some (0, .left, 165)) else (some (0, .left,
+  159), some (1, .left, 159)))) else (if q < 160 then (some (0, .left, 160), some (0, .left,
+  160)) else (if q < 161 then (some (0, .left, 161), some (0, .left, 161)) else (some (1,
+  .left, 162), some (1, .left, 162))))))) else (if q < 174 then (if q < 168 then (if q < 165
+  then (if q < 163 then (some (1, .left, 153), some (1, .left, 153)) else (if q < 164 then
+  (some (0, .left, 164), some (1, .left, 164)) else (some (1, .left, 165), some (1, .left,
+  165)))) else (if q < 166 then (some (1, .left, 15), some (1, .left, 15)) else (if q < 167
+  then (some (0, .left, 167), some (1, .left, 167)) else (some (0, .left, 176), some (0,
+  .left, 176))))) else (if q < 171 then (if q < 169 then (some (0, .left, 169), some (1,
+  .left, 169)) else (if q < 170 then (some (0, .left, 170), some (0, .left, 170)) else (some
+  (0, .left, 171), some (0, .left, 171)))) else (if q < 172 then (some (0, .left, 172), some
+  (0, .left, 172)) else (if q < 173 then (some (1, .left, 173), some (1, .left, 173)) else
+  (some (0, .left, 20), some (0, .left, 20)))))) else (if q < 180 then (if q < 177 then (if q
+  < 175 then (some (0, .left, 175), some (1, .left, 175)) else (if q < 176 then (some (1,
+  .left, 176), some (1, .left, 176)) else (some (0, .left, 177), some (0, .left, 177)))) else
+  (if q < 178 then (some (0, .left, 17), some (0, .left, 17)) else (if q < 179 then (some (0,
+  .left, 179), some (1, .left, 179)) else (some (1, .left, 180), some (1, .left, 180))))) else
+  (if q < 183 then (if q < 181 then (some (0, .left, 181), some (0, .left, 181)) else (if q <
+  182 then (some (0, .left, 182), some (0, .left, 182)) else (some (0, .left, 183), some (0,
+  .left, 183)))) else (if q < 184 then (some (0, .left, 70), some (0, .left, 70)) else (if q <
+  185 then (some (0, .right, 32), some (1, .right, 32)) else (some (0, .right, 184), some (1,
+  .right, 184)))))))))
+
+def refRow2 (q : Nat) : Option (Fin 2 × Dir × Fin 744) × Option (Fin 2 × Dir × Fin 744) :=
+  (if q < 232 then (if q < 209 then (if q < 197 then (if q < 191 then (if q < 188 then (if q <
+  187 then (some (0, .right, 185), some (1, .right, 185)) else (some (0, .right, 186), some
+  (1, .right, 186))) else (if q < 189 then (some (0, .right, 551), some (1, .right, 188)) else
+  (if q < 190 then (some (0, .right, 188), some (1, .right, 524)) else (some (0, .right, 639),
+  some (1, .right, 189))))) else (if q < 194 then (if q < 192 then (some (0, .right, 190),
+  some (1, .right, 652)) else (if q < 193 then (some (0, .right, 187), some (1, .right, 191))
+  else (some (0, .right, 714), some (1, .right, 625)))) else (if q < 195 then (some (0,
+  .right, 694), some (1, .right, 526)) else (if q < 196 then (some (0, .right, 193), some (1,
+  .right, 194)) else (some (0, .right, 714), some (1, .right, 526)))))) else (if q < 203 then
+  (if q < 200 then (if q < 198 then (some (0, .right, 652), some (1, .right, 196)) else (if q
+  < 199 then (some (0, .right, 195), some (1, .right, 197)) else (some (0, .right, 192), some
+  (1, .right, 198)))) else (if q < 201 then (some (0, .right, 741), some (1, .right, 526))
+  else (if q < 202 then (some (0, .right, 661), some (1, .right, 200)) else (some (0, .right,
+  547), some (1, .right, 644))))) else (if q < 206 then (if q < 204 then (some (0, .right,
+  546), some (1, .right, 163)) else (if q < 205 then (some (0, .right, 202), some (1, .right,
+  203)) else (some (0, .right, 739), some (1, .right, 204)))) else (if q < 207 then (some (0,
+  .right, 631), some (1, .right, 205)) else (if q < 208 then (some (0, .right, 201), some (1,
+  .right, 206)) else (some (0, .right, 115), some (1, .right, 560))))))) else (if q < 220 then
+  (if q < 214 then (if q < 211 then (if q < 210 then (some (0, .right, 48), some (1, .right,
+  525)) else (some (0, .right, 208), some (1, .right, 209))) else (if q < 212 then (some (0,
+  .right, 210), some (1, .right, 734)) else (if q < 213 then (some (0, .right, 545), some (1,
+  .right, 64)) else (some (0, .right, 212), some (1, .right, 524))))) else (if q < 217 then
+  (if q < 215 then (some (0, .right, 213), some (1, .right, 526)) else (if q < 216 then (some
+  (0, .right, 211), some (1, .right, 214)) else (some (0, .right, 168), some (1, .right,
+  543)))) else (if q < 218 then (some (0, .right, 156), some (1, .right, 542)) else (if q <
+  219 then (some (0, .right, 216), some (1, .right, 217)) else (some (0, .right, 737), some
+  (1, .right, 218)))))) else (if q < 226 then (if q < 223 then (if q < 221 then (some (0,
+  .right, 628), some (1, .right, 219)) else (if q < 222 then (some (0, .right, 215), some (1,
+  .right, 220)) else (some (0, .right, 207), some (1, .right, 221)))) else (if q < 224 then
+  (some (0, .right, 199), some (1, .right, 222)) else (if q < 225 then (some (0, .right, 174),
+  some (1, .right, 64)) else (some (0, .right, 542), some (1, .right, 80))))) else (if q < 229
+  then (if q < 227 then (some (0, .right, 224), some (1, .right, 225)) else (if q < 228 then
+  (some (0, .right, 226), some (1, .right, 684)) else (some (0, .right, 54), some (1, .right,
+  525)))) else (if q < 230 then (some (0, .right, 228), some (1, .right, 524)) else (if q <
+  231 then (some (0, .right, 229), some (1, .right, 700)) else (some (0, .right, 227), some
+  (1, .right, 230)))))))) else (if q < 255 then (if q < 243 then (if q < 237 then (if q < 234
+  then (if q < 233 then (some (0, .right, 229), some (1, .right, 526)) else (some (0, .right,
+  232), some (1, .right, 655))) else (if q < 235 then (some (0, .right, 231), some (1, .right,
+  233)) else (if q < 236 then (some (0, .right, 695), some (1, .right, 526)) else (some (0,
+  .right, 235), some (1, .right, 663))))) else (if q < 240 then (if q < 238 then (some (0,
+  .right, 200), some (1, .right, 682)) else (if q < 239 then (some (0, .right, 236), some (1,
+  .right, 237)) else (some (0, .right, 234), some (1, .right, 238)))) else (if q < 241 then
+  (some (0, .right, 546), some (1, .right, 644)) else (if q < 242 then (some (0, .right, 547),
+  some (1, .right, 163)) else (some (0, .right, 240), some (1, .right, 241)))))) else (if q <
+  249 then (if q < 246 then (if q < 244 then (some (0, .right, 743), some (1, .right, 242))
+  else (if q < 245 then (some (0, .right, 133), some (1, .right, 560)) else (some (0, .right,
+  148), some (1, .right, 525)))) else (if q < 247 then (some (0, .right, 244), some (1,
+  .right, 245)) else (if q < 248 then (some (0, .right, 246), some (1, .right, 728)) else
+  (some (0, .right, 243), some (1, .right, 247))))) else (if q < 252 then (if q < 250 then
+  (some (0, .right, 545), some (1, .right, 101)) else (if q < 251 then (some (0, .right, 249),
+  some (1, .right, 524)) else (some (0, .right, 250), some (1, .right, 526)))) else (if q <
+  253 then (some (0, .right, 251), some (1, .right, 674)) else (if q < 254 then (some (0,
+  .right, 248), some (1, .right, 252)) else (some (0, .right, 75), some (1, .right, 542)))))))
+  else (if q < 267 then (if q < 261 then (if q < 258 then (if q < 256 then (some (0, .right,
+  156), some (1, .right, 543)) else (if q < 257 then (some (0, .right, 254), some (1, .right,
+  255)) else (some (0, .right, 732), some (1, .right, 256)))) else (if q < 259 then (some (0,
+  .right, 80), some (1, .right, 146)) else (if q < 260 then (some (0, .right, 543), some (1,
+  .right, 110)) else (some (0, .right, 258), some (1, .right, 259))))) else (if q < 264 then
+  (if q < 262 then (some (0, .right, 260), some (1, .right, 700)) else (if q < 263 then (some
+  (0, .right, 257), some (1, .right, 261)) else (some (0, .right, 166), some (1, .right,
+  525)))) else (if q < 265 then (some (0, .right, 263), some (1, .right, 524)) else (if q <
+  266 then (some (0, .right, 264), some (1, .right, 684)) else (some (0, .right, 551), some
+  (1, .right, 138)))))) else (if q < 273 then (if q < 270 then (if q < 268 then (some (0,
+  .right, 266), some (1, .right, 524)) else (if q < 269 then (some (0, .right, 267), some (1,
+  .right, 526)) else (some (0, .right, 265), some (1, .right, 268)))) else (if q < 271 then
+  (some (0, .right, 262), some (1, .right, 269)) else (if q < 272 then (some (0, .right, 253),
+  some (1, .right, 270)) else (some (0, .right, 239), some (1, .right, 271))))) else (if q <
+  276 then (if q < 274 then (some (0, .right, 223), some (1, .right, 272)) else (if q < 275
+  then (some (0, .right, 542), some (1, .right, 89)) else (some (0, .right, 274), some (1,
+  .right, 274)))) else (if q < 277 then (some (0, .right, 716), some (1, .right, 275)) else
+  (if q < 278 then (some (0, .right, 671), some (1, .right, 276)) else (some (0, .right, 275),
+  some (1, .right, 275)))))))))
+
+def refRow3 (q : Nat) : Option (Fin 2 × Dir × Fin 744) × Option (Fin 2 × Dir × Fin 744) :=
+  (if q < 325 then (if q < 302 then (if q < 290 then (if q < 284 then (if q < 281 then (if q <
+  280 then (some (0, .right, 278), some (1, .right, 278)) else (some (0, .right, 277), some
+  (1, .right, 279))) else (if q < 282 then (some (0, .right, 279), some (1, .right, 279)) else
+  (if q < 283 then (some (0, .right, 280), some (1, .right, 281)) else (some (0, .right, 281),
+  some (1, .right, 281))))) else (if q < 287 then (if q < 285 then (some (0, .right, 282),
+  some (1, .right, 283)) else (if q < 286 then (some (0, .right, 283), some (1, .right, 283))
+  else (some (0, .right, 284), some (1, .right, 285)))) else (if q < 288 then (some (0,
+  .right, 273), some (1, .right, 286)) else (if q < 289 then (some (0, .right, 285), some (1,
+  .right, 285)) else (some (0, .right, 684), some (1, .right, 665)))))) else (if q < 296 then
+  (if q < 293 then (if q < 291 then (some (0, .right, 278), some (1, .right, 289)) else (if q
+  < 292 then (some (0, .right, 552), some (1, .right, 525)) else (some (0, .right, 291), some
+  (1, .right, 524)))) else (if q < 294 then (some (0, .right, 605), some (1, .right, 292))
+  else (if q < 295 then (some (0, .right, 553), some (1, .right, 525)) else (some (0, .right,
+  294), some (1, .right, 524))))) else (if q < 299 then (if q < 297 then (some (0, .right,
+  616), some (1, .right, 295)) else (if q < 298 then (some (0, .right, 293), some (1, .right,
+  296)) else (some (0, .right, 290), some (1, .right, 297)))) else (if q < 300 then (some (0,
+  .right, 709), some (1, .right, 526)) else (if q < 301 then (some (0, .right, 619), some (1,
+  .right, 299)) else (some (0, .right, 543), some (1, .right, 644))))))) else (if q < 313 then
+  (if q < 307 then (if q < 304 then (if q < 303 then (some (0, .right, 542), some (1, .right,
+  107)) else (some (0, .right, 301), some (1, .right, 302))) else (if q < 305 then (some (0,
+  .right, 724), some (1, .right, 303)) else (if q < 306 then (some (0, .right, 658), some (1,
+  .right, 304)) else (some (0, .right, 300), some (1, .right, 305))))) else (if q < 310 then
+  (if q < 308 then (some (0, .right, 298), some (1, .right, 306)) else (if q < 309 then (some
+  (0, .right, 158), some (1, .right, 542)) else (some (0, .right, 75), some (1, .right,
+  525)))) else (if q < 311 then (some (0, .right, 308), some (1, .right, 309)) else (if q <
+  312 then (some (0, .right, 310), some (1, .right, 684)) else (some (0, .right, 39), some (1,
+  .right, 525)))))) else (if q < 319 then (if q < 316 then (if q < 314 then (some (0, .right,
+  312), some (1, .right, 524)) else (if q < 315 then (some (0, .right, 313), some (1, .right,
+  700)) else (some (0, .right, 311), some (1, .right, 314)))) else (if q < 317 then (some (0,
+  .right, 542), some (1, .right, 122)) else (if q < 318 then (some (0, .right, 316), some (1,
+  .right, 524)) else (some (0, .right, 726), some (1, .right, 317))))) else (if q < 322 then
+  (if q < 320 then (some (0, .right, 669), some (1, .right, 318)) else (if q < 321 then (some
+  (0, .right, 315), some (1, .right, 319)) else (some (0, .right, 115), some (1, .right,
+  525)))) else (if q < 323 then (some (0, .right, 321), some (1, .right, 524)) else (if q <
+  324 then (some (0, .right, 722), some (1, .right, 322)) else (some (0, .right, 621), some
+  (1, .right, 323)))))))) else (if q < 348 then (if q < 336 then (if q < 330 then (if q < 327
+  then (if q < 326 then (some (0, .right, 690), some (1, .right, 665)) else (some (0, .right,
+  610), some (1, .right, 325))) else (if q < 328 then (some (0, .right, 324), some (1, .right,
+  326)) else (if q < 329 then (some (0, .right, 320), some (1, .right, 327)) else (some (0,
+  .right, 307), some (1, .right, 328))))) else (if q < 333 then (if q < 331 then (some (0,
+  .right, 715), some (1, .right, 526)) else (if q < 332 then (some (0, .right, 330), some (1,
+  .right, 607)) else (some (0, .right, 542), some (1, .right, 101)))) else (if q < 334 then
+  (some (0, .right, 332), some (1, .right, 524)) else (if q < 335 then (some (0, .right, 721),
+  some (1, .right, 333)) else (some (0, .right, 334), some (1, .right, 621)))))) else (if q <
+  342 then (if q < 339 then (if q < 337 then (some (0, .right, 331), some (1, .right, 335))
+  else (if q < 338 then (some (0, .right, 85), some (1, .right, 525)) else (some (0, .right,
+  337), some (1, .right, 524)))) else (if q < 340 then (some (0, .right, 722), some (1,
+  .right, 338)) else (if q < 341 then (some (0, .right, 605), some (1, .right, 707)) else
+  (some (0, .right, 339), some (1, .right, 340))))) else (if q < 345 then (if q < 343 then
+  (some (0, .right, 553), some (1, .right, 126)) else (if q < 344 then (some (0, .right, 342),
+  some (1, .right, 524)) else (some (0, .right, 343), some (1, .right, 526)))) else (if q <
+  346 then (some (0, .right, 344), some (1, .right, 669)) else (if q < 347 then (some (0,
+  .right, 341), some (1, .right, 345)) else (some (0, .right, 336), some (1, .right,
+  346))))))) else (if q < 360 then (if q < 354 then (if q < 351 then (if q < 349 then (some
+  (0, .right, 726), some (1, .right, 526)) else (if q < 350 then (some (0, .right, 348), some
+  (1, .right, 614)) else (some (0, .right, 546), some (1, .right, 101)))) else (if q < 352
+  then (some (0, .right, 350), some (1, .right, 524)) else (if q < 353 then (some (0, .right,
+  735), some (1, .right, 351)) else (some (0, .right, 352), some (1, .right, 679))))) else (if
+  q < 357 then (if q < 355 then (some (0, .right, 349), some (1, .right, 353)) else (if q <
+  356 then (some (0, .right, 738), some (1, .right, 338)) else (some (0, .right, 545), some
+  (1, .right, 644)))) else (if q < 358 then (some (0, .right, 543), some (1, .right, 525))
+  else (if q < 359 then (some (0, .right, 356), some (1, .right, 357)) else (some (0, .right,
+  698), some (1, .right, 358)))))) else (if q < 366 then (if q < 363 then (if q < 361 then
+  (some (0, .right, 355), some (1, .right, 359)) else (if q < 362 then (some (0, .right, 44),
+  some (1, .right, 525)) else (some (0, .right, 361), some (1, .right, 524)))) else (if q <
+  364 then (some (0, .right, 362), some (1, .right, 570)) else (if q < 365 then (some (0,
+  .right, 702), some (1, .right, 526)) else (some (0, .right, 363), some (1, .right, 364)))))
+  else (if q < 369 then (if q < 367 then (some (0, .right, 360), some (1, .right, 365)) else
+  (if q < 368 then (some (0, .right, 354), some (1, .right, 366)) else (some (0, .right, 347),
+  some (1, .right, 367)))) else (if q < 370 then (some (0, .right, 329), some (1, .right,
+  368)) else (if q < 371 then (some (0, .right, 288), some (1, .right, 369)) else (some (0,
+  .right, 287), some (1, .right, 370)))))))))
+
+def refRow4 (q : Nat) : Option (Fin 2 × Dir × Fin 744) × Option (Fin 2 × Dir × Fin 744) :=
+  (if q < 418 then (if q < 395 then (if q < 383 then (if q < 377 then (if q < 374 then (if q <
+  373 then (some (0, .right, 545), some (1, .right, 126)) else (some (0, .right, 372), some
+  (1, .right, 524))) else (if q < 375 then (some (0, .right, 685), some (1, .right, 373)) else
+  (if q < 376 then (some (0, .right, 576), some (1, .right, 374)) else (some (0, .right, 209),
+  some (1, .right, 524))))) else (if q < 380 then (if q < 378 then (some (0, .right, 685),
+  some (1, .right, 376)) else (if q < 379 then (some (0, .right, 572), some (1, .right, 377))
+  else (some (0, .right, 375), some (1, .right, 378)))) else (if q < 381 then (some (0,
+  .right, 570), some (1, .right, 702)) else (if q < 382 then (some (0, .right, 380), some (1,
+  .right, 612)) else (some (0, .right, 690), some (1, .right, 250)))))) else (if q < 389 then
+  (if q < 386 then (if q < 384 then (some (0, .right, 382), some (1, .right, 610)) else (if q
+  < 385 then (some (0, .right, 381), some (1, .right, 383)) else (some (0, .right, 379), some
+  (1, .right, 384)))) else (if q < 387 then (some (0, .right, 245), some (1, .right, 524))
+  else (if q < 388 then (some (0, .right, 690), some (1, .right, 386)) else (some (0, .right,
+  578), some (1, .right, 704))))) else (if q < 392 then (if q < 390 then (some (0, .right,
+  387), some (1, .right, 388)) else (if q < 391 then (some (0, .right, 583), some (1, .right,
+  595)) else (some (0, .right, 557), some (1, .right, 525)))) else (if q < 393 then (some (0,
+  .right, 391), some (1, .right, 524)) else (if q < 394 then (some (0, .right, 392), some (1,
+  .right, 616)) else (some (0, .right, 390), some (1, .right, 393))))))) else (if q < 406 then
+  (if q < 400 then (if q < 397 then (if q < 396 then (some (0, .right, 389), some (1, .right,
+  394)) else (some (0, .right, 295), some (1, .right, 526))) else (if q < 398 then (some (0,
+  .right, 396), some (1, .right, 621)) else (if q < 399 then (some (0, .right, 722), some (1,
+  .right, 526)) else (some (0, .right, 398), some (1, .right, 676))))) else (if q < 403 then
+  (if q < 401 then (some (0, .right, 397), some (1, .right, 399)) else (if q < 402 then (some
+  (0, .right, 395), some (1, .right, 400)) else (some (0, .right, 385), some (1, .right,
+  401)))) else (if q < 404 then (some (0, .right, 543), some (1, .right, 80)) else (if q < 405
+  then (some (0, .right, 356), some (1, .right, 403)) else (some (0, .right, 696), some (1,
+  .right, 404)))))) else (if q < 412 then (if q < 409 then (if q < 407 then (some (0, .right,
+  133), some (1, .right, 543)) else (if q < 408 then (some (0, .right, 105), some (1, .right,
+  525)) else (some (0, .right, 406), some (1, .right, 407)))) else (if q < 410 then (some (0,
+  .right, 408), some (1, .right, 700)) else (if q < 411 then (some (0, .right, 405), some (1,
+  .right, 409)) else (some (0, .right, 61), some (1, .right, 525))))) else (if q < 415 then
+  (if q < 413 then (some (0, .right, 411), some (1, .right, 524)) else (if q < 414 then (some
+  (0, .right, 412), some (1, .right, 718)) else (some (0, .right, 413), some (1, .right,
+  588)))) else (if q < 416 then (some (0, .right, 410), some (1, .right, 414)) else (if q <
+  417 then (some (0, .right, 543), some (1, .right, 101)) else (some (0, .right, 416), some
+  (1, .right, 524)))))))) else (if q < 441 then (if q < 429 then (if q < 423 then (if q < 420
+  then (if q < 419 then (some (0, .right, 687), some (1, .right, 417)) else (some (0, .right,
+  418), some (1, .right, 623))) else (if q < 421 then (some (0, .right, 133), some (1, .right,
+  525)) else (if q < 422 then (some (0, .right, 420), some (1, .right, 524)) else (some (0,
+  .right, 691), some (1, .right, 421))))) else (if q < 426 then (if q < 424 then (some (0,
+  .right, 422), some (1, .right, 603)) else (if q < 425 then (some (0, .right, 419), some (1,
+  .right, 423)) else (some (0, .right, 415), some (1, .right, 424)))) else (if q < 427 then
+  (some (0, .right, 706), some (1, .right, 583)) else (if q < 428 then (some (0, .right, 719),
+  some (1, .right, 526)) else (some (0, .right, 426), some (1, .right, 427)))))) else (if q <
+  435 then (if q < 432 then (if q < 430 then (some (0, .right, 543), some (1, .right, 122))
+  else (if q < 431 then (some (0, .right, 429), some (1, .right, 524)) else (some (0, .right,
+  688), some (1, .right, 430)))) else (if q < 433 then (some (0, .right, 597), some (1,
+  .right, 431)) else (if q < 434 then (some (0, .right, 428), some (1, .right, 432)) else
+  (some (0, .right, 691), some (1, .right, 322))))) else (if q < 438 then (if q < 436 then
+  (some (0, .right, 623), some (1, .right, 434)) else (if q < 437 then (some (0, .right, 595),
+  some (1, .right, 720)) else (some (0, .right, 553), some (1, .right, 178)))) else (if q <
+  439 then (some (0, .right, 437), some (1, .right, 524)) else (if q < 440 then (some (0,
+  .right, 438), some (1, .right, 526)) else (some (0, .right, 436), some (1, .right,
+  439))))))) else (if q < 453 then (if q < 447 then (if q < 444 then (if q < 442 then (some
+  (0, .right, 435), some (1, .right, 440)) else (if q < 443 then (some (0, .right, 433), some
+  (1, .right, 441)) else (some (0, .right, 425), some (1, .right, 442)))) else (if q < 445
+  then (some (0, .right, 402), some (1, .right, 443)) else (if q < 446 then (some (0, .right,
+  543), some (1, .right, 126)) else (some (0, .right, 445), some (1, .right, 524))))) else (if
+  q < 450 then (if q < 448 then (some (0, .right, 687), some (1, .right, 446)) else (if q <
+  449 then (some (0, .right, 588), some (1, .right, 447)) else (some (0, .right, 687), some
+  (1, .right, 376)))) else (if q < 451 then (some (0, .right, 593), some (1, .right, 449))
+  else (if q < 452 then (some (0, .right, 448), some (1, .right, 450)) else (some (0, .right,
+  583), some (1, .right, 719)))))) else (if q < 459 then (if q < 456 then (if q < 454 then
+  (some (0, .right, 452), some (1, .right, 585)) else (if q < 455 then (some (0, .right, 730),
+  some (1, .right, 333)) else (some (0, .right, 454), some (1, .right, 591)))) else (if q <
+  457 then (some (0, .right, 453), some (1, .right, 455)) else (if q < 458 then (some (0,
+  .right, 451), some (1, .right, 456)) else (some (0, .right, 148), some (1, .right, 543)))))
+  else (if q < 462 then (if q < 460 then (some (0, .right, 101), some (1, .right, 525)) else
+  (if q < 461 then (some (0, .right, 458), some (1, .right, 459)) else (some (0, .right, 730),
+  some (1, .right, 460)))) else (if q < 463 then (some (0, .right, 461), some (1, .right,
+  676)) else (if q < 464 then (some (0, .right, 146), some (1, .right, 525)) else (some (0,
+  .right, 463), some (1, .right, 524)))))))))
+
+def refRow5 (q : Nat) : Option (Fin 2 × Dir × Fin 744) × Option (Fin 2 × Dir × Fin 744) :=
+  (if q < 511 then (if q < 488 then (if q < 476 then (if q < 470 then (if q < 467 then (if q <
+  466 then (some (0, .right, 696), some (1, .right, 464)) else (some (0, .right, 465), some
+  (1, .right, 452))) else (if q < 468 then (some (0, .right, 462), some (1, .right, 466)) else
+  (if q < 469 then (some (0, .right, 543), some (1, .right, 64)) else (some (0, .right, 468),
+  some (1, .right, 524))))) else (if q < 473 then (if q < 471 then (some (0, .right, 688),
+  some (1, .right, 469)) else (if q < 472 then (some (0, .right, 597), some (1, .right, 470))
+  else (some (0, .right, 688), some (1, .right, 362)))) else (if q < 474 then (some (0,
+  .right, 599), some (1, .right, 472)) else (if q < 475 then (some (0, .right, 471), some (1,
+  .right, 473)) else (some (0, .right, 467), some (1, .right, 474)))))) else (if q < 482 then
+  (if q < 479 then (if q < 477 then (some (0, .right, 457), some (1, .right, 475)) else (if q
+  < 478 then (some (0, .right, 436), some (1, .right, 597)) else (some (0, .right, 688), some
+  (1, .right, 417)))) else (if q < 480 then (some (0, .right, 478), some (1, .right, 599))
+  else (if q < 481 then (some (0, .right, 477), some (1, .right, 479)) else (some (0, .right,
+  688), some (1, .right, 338))))) else (if q < 485 then (if q < 483 then (some (0, .right,
+  481), some (1, .right, 436)) else (if q < 484 then (some (0, .right, 685), some (1, .right,
+  430)) else (some (0, .right, 572), some (1, .right, 483)))) else (if q < 486 then (some (0,
+  .right, 482), some (1, .right, 484)) else (if q < 487 then (some (0, .right, 480), some (1,
+  .right, 485)) else (some (0, .right, 158), some (1, .right, 525))))))) else (if q < 499 then
+  (if q < 493 then (if q < 490 then (if q < 489 then (some (0, .right, 487), some (1, .right,
+  524)) else (some (0, .right, 688), some (1, .right, 488))) else (if q < 491 then (some (0,
+  .right, 599), some (1, .right, 489)) else (if q < 492 then (some (0, .right, 729), some (1,
+  .right, 317)) else (some (0, .right, 581), some (1, .right, 491))))) else (if q < 496 then
+  (if q < 494 then (some (0, .right, 490), some (1, .right, 492)) else (if q < 495 then (some
+  (0, .right, 115), some (1, .right, 543)) else (some (0, .right, 156), some (1, .right,
+  545)))) else (if q < 497 then (some (0, .right, 494), some (1, .right, 495)) else (if q <
+  498 then (some (0, .right, 730), some (1, .right, 496)) else (some (0, .right, 591), some
+  (1, .right, 497)))))) else (if q < 505 then (if q < 502 then (if q < 500 then (some (0,
+  .right, 174), some (1, .right, 73)) else (if q < 501 then (some (0, .right, 545), some (1,
+  .right, 89)) else (some (0, .right, 499), some (1, .right, 500)))) else (if q < 503 then
+  (some (0, .right, 501), some (1, .right, 718)) else (if q < 504 then (some (0, .right, 36),
+  some (1, .right, 525)) else (some (0, .right, 503), some (1, .right, 524))))) else (if q <
+  508 then (if q < 506 then (some (0, .right, 504), some (1, .right, 700)) else (if q < 507
+  then (some (0, .right, 502), some (1, .right, 505)) else (some (0, .right, 498), some (1,
+  .right, 506)))) else (if q < 509 then (some (0, .right, 493), some (1, .right, 507)) else
+  (if q < 510 then (some (0, .right, 486), some (1, .right, 508)) else (some (0, .right, 476),
+  some (1, .right, 509)))))))) else (if q < 534 then (if q < 522 then (if q < 516 then (if q <
+  513 then (if q < 512 then (some (0, .right, 444), some (1, .right, 510)) else (some (0,
+  .right, 89), some (1, .right, 635))) else (if q < 514 then (some (0, .right, 89), none) else
+  (if q < 515 then (some (0, .right, 512), some (1, .right, 513)) else (some (0, .right, 514),
+  some (1, .right, 526))))) else (if q < 519 then (if q < 517 then (some (0, .right, 515),
+  some (1, .right, 527)) else (if q < 518 then (some (0, .right, 516), some (1, .right, 528))
+  else (some (0, .right, 517), some (1, .right, 529)))) else (if q < 520 then (some (0,
+  .right, 518), some (1, .right, 530)) else (if q < 521 then (some (0, .right, 519), some (1,
+  .right, 531)) else (some (0, .right, 520), some (1, .right, 532)))))) else (if q < 528 then
+  (if q < 525 then (if q < 523 then (some (0, .right, 511), some (1, .right, 521)) else (if q
+  < 524 then (some (0, .right, 371), some (1, .right, 522)) else (some (0, .left, 11), some
+  (1, .left, 11)))) else (if q < 526 then (some (0, .left, 9), some (1, .left, 9)) else (if q
+  < 527 then (some (0, .left, 15), some (1, .left, 15)) else (some (0, .left, 17), some (1,
+  .left, 17))))) else (if q < 531 then (if q < 529 then (some (0, .left, 19), some (1, .left,
+  19)) else (if q < 530 then (some (0, .left, 21), some (1, .left, 21)) else (some (0, .left,
+  23), some (1, .left, 23)))) else (if q < 532 then (some (0, .left, 25), some (1, .left, 25))
+  else (if q < 533 then (some (0, .left, 27), some (1, .left, 27)) else (some (0, .right, 2),
+  some (1, .right, 533))))))) else (if q < 546 then (if q < 540 then (if q < 537 then (if q <
+  535 then (some (0, .right, 533), some (1, .right, 534)) else (if q < 536 then (some (0,
+  .right, 534), some (1, .right, 535)) else (some (0, .right, 549), some (1, .right, 536))))
+  else (if q < 538 then (some (0, .right, 536), some (1, .right, 537)) else (if q < 539 then
+  (some (0, .right, 537), some (1, .right, 538)) else (some (0, .right, 538), some (1, .right,
+  539))))) else (if q < 543 then (if q < 541 then (some (0, .right, 539), some (1, .right,
+  540)) else (if q < 542 then (some (0, .right, 540), some (1, .right, 541)) else (some (0,
+  .right, 535), some (1, .right, 542)))) else (if q < 544 then (some (0, .right, 542), some
+  (1, .right, 543)) else (if q < 545 then (some (0, .right, 543), some (1, .right, 544)) else
+  (some (0, .right, 544), some (1, .right, 545)))))) else (if q < 552 then (if q < 549 then
+  (if q < 547 then (some (0, .right, 545), some (1, .right, 546)) else (if q < 548 then (some
+  (0, .right, 546), some (1, .right, 547)) else (some (0, .right, 547), some (1, .right,
+  548)))) else (if q < 550 then (some (0, .right, 548), some (1, .right, 549)) else (if q <
+  551 then (some (0, .right, 31), some (1, .right, 550)) else (some (0, .right, 550), some (1,
+  .right, 551))))) else (if q < 555 then (if q < 553 then (some (0, .right, 564), some (1,
+  .right, 552)) else (if q < 554 then (some (0, .right, 552), some (1, .right, 553)) else
+  (some (0, .right, 553), some (1, .right, 554)))) else (if q < 556 then (some (0, .right,
+  554), some (1, .right, 555)) else (if q < 557 then (some (0, .right, 555), some (1, .right,
+  556)) else (some (0, .right, 556), some (1, .right, 557)))))))))
+
+def refRow6 (q : Nat) : Option (Fin 2 × Dir × Fin 744) × Option (Fin 2 × Dir × Fin 744) :=
+  (if q < 604 then (if q < 581 then (if q < 569 then (if q < 563 then (if q < 560 then (if q <
+  559 then (some (0, .right, 188), some (1, .right, 558)) else (some (0, .right, 648), some
+  (1, .right, 559))) else (if q < 561 then (some (0, .right, 559), some (1, .right, 560)) else
+  (if q < 562 then (some (0, .right, 560), some (1, .right, 561)) else (some (0, .right, 561),
+  some (1, .right, 562))))) else (if q < 566 then (if q < 564 then (some (0, .right, 562),
+  some (1, .right, 563)) else (if q < 565 then (some (0, .right, 563), some (1, .right, 564))
+  else (some (0, .left, 9), some (1, .left, 566)))) else (if q < 567 then (some (0, .left,
+  565), some (1, .left, 566)) else (if q < 568 then (some (0, .left, 524), some (1, .left,
+  568)) else (some (0, .left, 567), some (1, .left, 568)))))) else (if q < 575 then (if q <
+  572 then (if q < 570 then (some (0, .right, 538), some (1, .right, 635)) else (if q < 571
+  then (some (0, .right, 569), some (1, .right, 638)) else (some (0, .right, 573), some (1,
+  .right, 653)))) else (if q < 573 then (some (0, .right, 571), some (1, .right, 651)) else
+  (if q < 574 then (some (0, .right, 538), some (1, .right, 644)) else (some (0, .right, 560),
+  some (1, .right, 558))))) else (if q < 578 then (if q < 576 then (some (0, .right, 573),
+  some (1, .right, 574)) else (if q < 577 then (some (0, .right, 575), some (1, .right, 651))
+  else (some (0, .right, 539), some (1, .right, 635)))) else (if q < 579 then (some (0,
+  .right, 577), some (1, .right, 638)) else (if q < 580 then (some (0, .right, 539), some (1,
+  .right, 644)) else (some (0, .right, 579), some (1, .right, 672))))))) else (if q < 592 then
+  (if q < 586 then (if q < 583 then (if q < 582 then (some (0, .right, 580), some (1, .right,
+  651)) else (some (0, .right, 540), some (1, .right, 635))) else (if q < 584 then (some (0,
+  .right, 582), some (1, .right, 638)) else (if q < 585 then (some (0, .right, 586), some (1,
+  .right, 672)) else (some (0, .right, 584), some (1, .right, 651))))) else (if q < 589 then
+  (if q < 587 then (some (0, .right, 540), some (1, .right, 644)) else (if q < 588 then (some
+  (0, .right, 586), some (1, .right, 653)) else (some (0, .right, 587), some (1, .right,
+  651)))) else (if q < 590 then (some (0, .right, 648), some (1, .right, 561)) else (if q <
+  591 then (some (0, .right, 586), some (1, .right, 589)) else (some (0, .right, 590), some
+  (1, .right, 651)))))) else (if q < 598 then (if q < 595 then (if q < 593 then (some (0,
+  .right, 586), some (1, .right, 574)) else (if q < 594 then (some (0, .right, 592), some (1,
+  .right, 651)) else (some (0, .right, 541), some (1, .right, 635)))) else (if q < 596 then
+  (some (0, .right, 594), some (1, .right, 638)) else (if q < 597 then (some (0, .right, 600),
+  some (1, .right, 653)) else (some (0, .right, 596), some (1, .right, 651))))) else (if q <
+  601 then (if q < 599 then (some (0, .right, 600), some (1, .right, 574)) else (if q < 600
+  then (some (0, .right, 598), some (1, .right, 651)) else (some (0, .right, 541), some (1,
+  .right, 644)))) else (if q < 602 then (some (0, .right, 560), some (1, .right, 648)) else
+  (if q < 603 then (some (0, .right, 600), some (1, .right, 601)) else (some (0, .right, 602),
+  some (1, .right, 651)))))))) else (if q < 627 then (if q < 615 then (if q < 609 then (if q <
+  606 then (if q < 605 then (some (0, .right, 536), some (1, .right, 635)) else (some (0,
+  .right, 604), some (1, .right, 638))) else (if q < 607 then (some (0, .right, 608), some (1,
+  .right, 667)) else (if q < 608 then (some (0, .right, 606), some (1, .right, 651)) else
+  (some (0, .right, 536), some (1, .right, 644))))) else (if q < 612 then (if q < 610 then
+  (some (0, .right, 608), some (1, .right, 653)) else (if q < 611 then (some (0, .right, 609),
+  some (1, .right, 651)) else (some (0, .right, 608), some (1, .right, 574)))) else (if q <
+  613 then (some (0, .right, 611), some (1, .right, 651)) else (if q < 614 then (some (0,
+  .right, 608), some (1, .right, 562)) else (some (0, .right, 613), some (1, .right, 651))))))
+  else (if q < 621 then (if q < 618 then (if q < 616 then (some (0, .right, 537), some (1,
+  .right, 635)) else (if q < 617 then (some (0, .right, 615), some (1, .right, 638)) else
+  (some (0, .right, 537), some (1, .right, 644)))) else (if q < 619 then (some (0, .right,
+  617), some (1, .right, 648)) else (if q < 620 then (some (0, .right, 618), some (1, .right,
+  651)) else (some (0, .right, 617), some (1, .right, 656))))) else (if q < 624 then (if q <
+  622 then (some (0, .right, 620), some (1, .right, 651)) else (if q < 623 then (some (0,
+  .right, 617), some (1, .right, 574)) else (some (0, .right, 622), some (1, .right, 651))))
+  else (if q < 625 then (some (0, .right, 544), some (1, .right, 635)) else (if q < 626 then
+  (some (0, .right, 624), some (1, .right, 638)) else (some (0, .right, 648), some (1, .right,
+  562))))))) else (if q < 639 then (if q < 633 then (if q < 630 then (if q < 628 then (some
+  (0, .right, 629), some (1, .right, 626)) else (if q < 629 then (some (0, .right, 627), some
+  (1, .right, 651)) else (some (0, .right, 544), some (1, .right, 644)))) else (if q < 631
+  then (some (0, .right, 629), some (1, .right, 563)) else (if q < 632 then (some (0, .right,
+  630), some (1, .right, 651)) else (some (0, .left, 633), some (1, .left, 633))))) else (if q
+  < 636 then (if q < 634 then (some (0, .left, 634), some (0, .left, 634)) else (if q < 635
+  then (some (0, .left, 14), some (0, .left, 14)) else (some (0, .left, 636), some (1, .left,
+  636)))) else (if q < 637 then (some (1, .left, 11), some (1, .left, 11)) else (if q < 638
+  then (some (0, .right, 534), some (1, .right, 635)) else (some (0, .right, 632), some (1,
+  .right, 525)))))) else (if q < 645 then (if q < 642 then (if q < 640 then (some (0, .right,
+  637), some (1, .right, 638)) else (if q < 641 then (some (0, .left, 641), some (1, .left,
+  641)) else (some (0, .left, 642), some (0, .left, 642)))) else (if q < 643 then (some (0,
+  .left, 643), some (0, .left, 643)) else (if q < 644 then (some (0, .left, 16), some (0,
+  .left, 16)) else (some (0, .left, 645), some (1, .left, 645))))) else (if q < 648 then (if q
+  < 646 then (some (1, .left, 646), some (1, .left, 646)) else (if q < 647 then (some (0,
+  .left, 15), some (0, .left, 15)) else (some (0, .right, 534), some (1, .right, 644)))) else
+  (if q < 649 then (some (0, .right, 558), some (1, .right, 648)) else (if q < 650 then (some
+  (0, .right, 647), some (1, .right, 648)) else (some (0, .right, 640), some (1, .right,
+  525)))))))))
+
+def refRow7 (q : Nat) : Option (Fin 2 × Dir × Fin 744) × Option (Fin 2 × Dir × Fin 744) :=
+  (if q < 697 then (if q < 674 then (if q < 662 then (if q < 656 then (if q < 653 then (if q <
+  652 then (some (0, .right, 650), some (1, .right, 524)) else (some (0, .right, 649), some
+  (1, .right, 651))) else (if q < 654 then (some (0, .right, 648), some (1, .right, 558)) else
+  (if q < 655 then (some (0, .right, 647), some (1, .right, 653)) else (some (0, .right, 654),
+  some (1, .right, 651))))) else (if q < 659 then (if q < 657 then (some (0, .right, 648),
+  some (1, .right, 560)) else (if q < 658 then (some (0, .right, 647), some (1, .right, 656))
+  else (some (0, .right, 657), some (1, .right, 651)))) else (if q < 660 then (some (0,
+  .right, 561), some (1, .right, 563)) else (if q < 661 then (some (0, .right, 647), some (1,
+  .right, 659)) else (some (0, .right, 660), some (1, .right, 651)))))) else (if q < 668 then
+  (if q < 665 then (if q < 663 then (some (0, .right, 647), some (1, .right, 563)) else (if q
+  < 664 then (some (0, .right, 662), some (1, .right, 651)) else (some (0, .right, 549), some
+  (1, .right, 635)))) else (if q < 666 then (some (0, .right, 664), some (1, .right, 638))
+  else (if q < 667 then (some (0, .right, 549), some (1, .right, 644)) else (some (0, .right,
+  558), some (1, .right, 560))))) else (if q < 671 then (if q < 669 then (some (0, .right,
+  666), some (1, .right, 667)) else (if q < 670 then (some (0, .right, 668), some (1, .right,
+  651)) else (some (0, .right, 680), some (1, .right, 648)))) else (if q < 672 then (some (0,
+  .right, 670), some (1, .right, 651)) else (if q < 673 then (some (0, .right, 558), some (1,
+  .right, 561)) else (some (0, .right, 680), some (1, .right, 672))))))) else (if q < 685 then
+  (if q < 679 then (if q < 676 then (if q < 675 then (some (0, .right, 673), some (1, .right,
+  651)) else (some (0, .right, 680), some (1, .right, 574))) else (if q < 677 then (some (0,
+  .right, 675), some (1, .right, 651)) else (if q < 678 then (some (0, .right, 560), some (1,
+  .right, 562)) else (some (0, .right, 680), some (1, .right, 677))))) else (if q < 682 then
+  (if q < 680 then (some (0, .right, 678), some (1, .right, 651)) else (if q < 681 then (some
+  (0, .right, 535), some (1, .right, 644)) else (some (0, .right, 680), some (1, .right,
+  659)))) else (if q < 683 then (some (0, .right, 681), some (1, .right, 651)) else (if q <
+  684 then (some (0, .right, 542), some (1, .right, 635)) else (some (0, .right, 683), some
+  (1, .right, 638)))))) else (if q < 691 then (if q < 688 then (if q < 686 then (some (0,
+  .right, 692), some (1, .right, 701)) else (if q < 687 then (some (0, .right, 556), some (1,
+  .right, 632)) else (some (0, .right, 692), some (1, .right, 686)))) else (if q < 689 then
+  (some (0, .right, 692), some (1, .right, 705)) else (if q < 690 then (some (0, .right, 552),
+  some (1, .right, 632)) else (some (0, .right, 692), some (1, .right, 689))))) else (if q <
+  694 then (if q < 692 then (some (0, .right, 692), some (1, .right, 708)) else (if q < 693
+  then (some (0, .right, 542), some (1, .right, 710)) else (some (0, .right, 559), some (1,
+  .right, 632)))) else (if q < 695 then (some (0, .right, 692), some (1, .right, 693)) else
+  (if q < 696 then (some (0, .right, 692), some (1, .right, 713)) else (some (0, .right, 692),
+  some (1, .right, 742)))))))) else (if q < 720 then (if q < 708 then (if q < 702 then (if q <
+  699 then (if q < 698 then (some (0, .right, 648), some (1, .right, 632)) else (some (0,
+  .right, 692), some (1, .right, 697))) else (if q < 700 then (some (0, .right, 543), some (1,
+  .right, 635)) else (if q < 701 then (some (0, .right, 699), some (1, .right, 638)) else
+  (some (0, .right, 554), some (1, .right, 632))))) else (if q < 705 then (if q < 703 then
+  (some (0, .right, 712), some (1, .right, 701)) else (if q < 704 then (some (0, .right, 555),
+  some (1, .right, 632)) else (some (0, .right, 712), some (1, .right, 703)))) else (if q <
+  706 then (some (0, .right, 557), some (1, .right, 632)) else (if q < 707 then (some (0,
+  .right, 712), some (1, .right, 705)) else (some (0, .right, 712), some (1, .right, 689))))))
+  else (if q < 714 then (if q < 711 then (if q < 709 then (some (0, .right, 553), some (1,
+  .right, 632)) else (if q < 710 then (some (0, .right, 712), some (1, .right, 708)) else
+  (some (0, .left, 711), some (1, .left, 711)))) else (if q < 712 then (some (0, .left, 646),
+  some (0, .left, 646)) else (if q < 713 then (some (0, .right, 543), some (1, .right, 710))
+  else (some (0, .right, 551), some (1, .right, 632))))) else (if q < 717 then (if q < 715
+  then (some (0, .right, 712), some (1, .right, 713)) else (if q < 716 then (some (0, .right,
+  712), some (1, .right, 725)) else (some (0, .right, 712), some (1, .right, 742)))) else (if
+  q < 718 then (some (0, .right, 545), some (1, .right, 635)) else (if q < 719 then (some (0,
+  .right, 717), some (1, .right, 638)) else (some (0, .right, 723), some (1, .right,
+  686))))))) else (if q < 732 then (if q < 726 then (if q < 723 then (if q < 721 then (some
+  (0, .right, 723), some (1, .right, 705)) else (if q < 722 then (some (0, .right, 723), some
+  (1, .right, 689)) else (some (0, .right, 723), some (1, .right, 708)))) else (if q < 724
+  then (some (0, .right, 545), some (1, .right, 710)) else (if q < 725 then (some (0, .right,
+  723), some (1, .right, 713)) else (some (0, .right, 564), some (1, .right, 632))))) else (if
+  q < 729 then (if q < 727 then (some (0, .right, 723), some (1, .right, 725)) else (if q <
+  728 then (some (0, .right, 546), some (1, .right, 635)) else (some (0, .right, 727), some
+  (1, .right, 638)))) else (if q < 730 then (some (0, .right, 731), some (1, .right, 703))
+  else (if q < 731 then (some (0, .right, 731), some (1, .right, 686)) else (some (0, .right,
+  546), some (1, .right, 710)))))) else (if q < 738 then (if q < 735 then (if q < 733 then
+  (some (0, .right, 731), some (1, .right, 742)) else (if q < 734 then (some (0, .right, 547),
+  some (1, .right, 635)) else (some (0, .right, 733), some (1, .right, 638)))) else (if q <
+  736 then (some (0, .right, 736), some (1, .right, 689)) else (if q < 737 then (some (0,
+  .right, 547), some (1, .right, 710)) else (some (0, .right, 736), some (1, .right, 693)))))
+  else (if q < 741 then (if q < 739 then (some (0, .right, 736), some (1, .right, 742)) else
+  (if q < 740 then (some (0, .right, 740), some (1, .right, 693)) else (some (0, .right, 548),
+  some (1, .right, 710)))) else (if q < 742 then (some (0, .right, 740), some (1, .right,
+  713)) else (if q < 743 then (some (0, .right, 188), some (1, .right, 632)) else (some (0,
+  .right, 740), some (1, .right, 742)))))))))
+
+/-- Fast logarithmic-depth transition lookup for `reference` (`riemann_744`). -/
+def refTrans (q : Fin 744) (b : Fin 2) : Option (Fin 2 × Dir × Fin 744) :=
+  let row :=
+    if q.val < 372 then
+      if q.val < 186 then (if q.val < 93 then refRow0 q.val else refRow1 q.val)
+      else (if q.val < 279 then refRow2 q.val else refRow3 q.val)
+    else
+      if q.val < 558 then (if q.val < 465 then refRow4 q.val else refRow5 q.val)
+      else (if q.val < 651 then refRow6 q.val else refRow7 q.val)
+  if b == 0 then row.1 else row.2
+
+set_option maxRecDepth 8000 in
+theorem refTrans_eq (q : Fin 744) (b : Fin 2) : reference.transition q b = refTrans q b := by
+  revert q b; decide
 
 /-!
 ## 1. `nSteps` and Symbolic Tape Primitives (`Tape.mkL`, `Tape.mk'`)
@@ -1261,4 +1860,4 @@ theorem reg_decr_eval (k : ℕ) (hk16 : k < 16) (pc : ℕ) (regs : List ℕ)
   · simp only [hz, ↓reduceIte]
     exact reg_decr_eval_pos k hk16 pc regs hk (by omega)
 
-end ConjectureMachines.Riemann543.Layer1
+end ConjectureMachines.Semantics.Riemann.Layer1

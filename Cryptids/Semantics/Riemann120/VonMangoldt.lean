@@ -46,11 +46,11 @@ namespace ConjectureMachines.Riemann120.VonMangoldt
 open Complex Finset Filter MeasureTheory Set Metric MeromorphicOn ComplexConjugate
 open scoped Real Topology ArithmeticFunction LSeries.notation
 
-open ConjectureMachines.Riemann543.Semantics
-open ConjectureMachines.Riemann543.Semantics.VonMangoldtCount
-open ConjectureMachines.Riemann543.Semantics.HorizontalBounds
-open ConjectureMachines.Riemann543.Semantics.DigammaBinet
-open ConjectureMachines.Riemann543.Semantics.WeightedStieltjes
+open ConjectureMachines.Semantics.Riemann
+open ConjectureMachines.Semantics.Riemann.VonMangoldtCount
+open ConjectureMachines.Semantics.Riemann.HorizontalBounds
+open ConjectureMachines.Semantics.Riemann.DigammaBinet
+open ConjectureMachines.Semantics.Riemann.WeightedStieltjes
 
 /-!
 ## Section 1: Circle-Average Jensen Inequality & Dirichlet Series Bound (`Re s > 1`)

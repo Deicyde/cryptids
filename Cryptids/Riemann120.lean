@@ -15,7 +15,7 @@ public import Cryptids.Semantics.Zf.Boot
 namespace ConjectureMachines.Riemann120
 
 open Turing StateTransition ConjectureMachines
-open ConjectureMachines.Riemann543.Layer1
+open ConjectureMachines.Semantics.Riemann.Layer1
   (nSteps nSteps_zero nSteps_succ nSteps_add nSteps_bind_eq step_nSteps step_one
    nSteps_reaches nSteps_eval_dom nSteps_of_halt mem_eval_iff_nSteps
    mk_append_replicate_zero default_eq_mk_nil

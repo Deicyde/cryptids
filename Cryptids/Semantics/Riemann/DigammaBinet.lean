@@ -67,7 +67,7 @@ explicit vertical-growth bound on `‖logDeriv riemannZeta (-1 / 4 + t * I)‖` 
 
 @[expose] public section
 
-namespace ConjectureMachines.Riemann543.Semantics.DigammaBinet
+namespace ConjectureMachines.Semantics.Riemann.DigammaBinet
 
 open Complex Finset Filter MeasureTheory Set
 open scoped Real Topology Interval ArithmeticFunction.vonMangoldt LSeries.notation
@@ -1840,4 +1840,4 @@ theorem intervalIntegral_re_digamma_vertical_le {a U : ℝ} (ha : 0 < a) (hU : 1
     linarith
   linarith
 
-end ConjectureMachines.Riemann543.Semantics.DigammaBinet
+end ConjectureMachines.Semantics.Riemann.DigammaBinet

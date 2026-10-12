@@ -18,10 +18,9 @@ to the 16-register abstract machine program `program : ℕ → Instr`.
 
 @[expose] public section
 
-namespace ConjectureMachines.Riemann543.Semantics
+namespace ConjectureMachines.Semantics.Riemann
 
-open Turing StateTransition
-open ConjectureMachines.Riemann543
+open Turing StateTransition ConjectureMachines
 
 abbrev refM : Machine 744 2 := Machines.riemann744
 
@@ -29,12 +28,12 @@ abbrev refM : Machine 744 2 := Machines.riemann744
 ## 1. Multi-Step Execution and Canonical Tape Configurations
 -/
 
-export ConjectureMachines.Riemann543.Layer1
+export ConjectureMachines.Semantics.Riemann.Layer1
   (nSteps pcBits encodeReg encodeRegs regsTape entryCfg postPcCfg regIncrState regDecrState)
 
-open ConjectureMachines.Riemann543.Layer1
+open ConjectureMachines.Semantics.Riemann.Layer1
   (nSteps_zero nSteps_succ nSteps_add nSteps_bind_eq nSteps_reaches nSteps_reaches₁
-   nSteps_eval_dom nSteps_of_halt mem_eval_iff_nSteps Tape.mkL)
+   nSteps_eval_dom nSteps_of_halt mem_eval_iff_nSteps Tape.mkL refTrans refTrans_eq)
 
 /-- Canonical configuration at State `0` (`!ENTRY`) with arbitrary right register tape `R`:
 the head is on the blank `0` immediately to the left of `pcBits 11 pc ++ [0, 0]`. -/
@@ -1781,4 +1780,4 @@ theorem halts_reference_iff_regHalts
   · intro hDom
     exact tm_eval_dom_of_reg_eval_dom hInit hIncr hDecr regInv_init hDom
 
-end ConjectureMachines.Riemann543.Semantics
+end ConjectureMachines.Semantics.Riemann

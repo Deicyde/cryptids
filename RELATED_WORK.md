@@ -19,7 +19,7 @@ All baselines and candidate reductions in this repository adhere to the standard
 Community records for conjecture-checking and ZFC-independent Turing machines are tracked on the Busy Beaver Challenge wiki ([Larger Cryptids](https://wiki.bbchallenge.org/wiki/Cryptids#Larger_Cryptids) and [Logical Independence](https://wiki.bbchallenge.org/wiki/Logical_independence)).
 
 - **Goldbach (`goldbach_21`):** Reduces `goldbach_25` (`25 -> 21` states).
-- **ZF Consistency (`zf_380`, `zf_393`, `zf_432`) and Riemann Hypothesis (`riemann_120`, `riemann_543`):** Compiler and algorithmic reworks by Andrew Wade (`zf_393`, `393` states for ZF, Aug 2026) and Joseph M. Shunia (`riemann_120`, `120` states for RH, Sept 2026) improved over `zf_432` (`432` states, 2025) and `riemann_744` (`744` states, 2016); `zf_380` (`393 -> 380` states) further reduces `zf_393` by 13 states. This repository provides Lean 4 end-to-end semantics proofs across all of `zf_380`, `zf_393`, `zf_432`, `riemann_744`, `riemann_543`, and `riemann_120`.
+- **ZF Consistency (`zf_380`, `zf_393`, `zf_432`) and Riemann Hypothesis (`riemann_104`, `riemann_120`, `riemann_744`):** Compiler and algorithmic reworks by Andrew Wade (`zf_393`, `393` states for ZF, Aug 2026) and Joseph M. Shunia (`riemann_120`, `120` states for RH, Sept 2026) improved over `zf_432` (`432` states, 2025) and `riemann_744` (`744` states, 2016); `zf_380` (`393 -> 380` states) and `riemann_104` (`120 -> 104` states) further reduce both record baselines. This repository provides Lean 4 end-to-end semantics proofs across all of `goldbach_21`, `goldbach_25`, `zf_380`, `zf_393`, `zf_432`, `riemann_104`, `riemann_120`, and `riemann_744`.
 
 ### 1. Goldbach's Conjecture (`goldbach`)
 
@@ -53,6 +53,6 @@ Enumerates positive integers $n$ and tests an elementary arithmetic inequality e
 | Year | Authors / Source | States (`(Q, 2)`) | Construction / Reduction Method | Formal Proof |
 | :--- | :--- | :--- | :--- | :--- |
 | 2016 | Matiyasevich, O'Rear & Aaronson (`riemann_744_sorear.tm`) | `744` | NQL-compiled Matiyasevich–Schoenfeld harmonic-LCM checker (`riemann_744`) | Lean 4 proofs in this repo ([`Cryptids/Semantics/Riemann.lean`](Cryptids/Semantics/Riemann.lean)) |
-| 2026 | Faldor & Firsching, using Gemini Argon (`riemann_543`) | `543` | State reduction of `riemann_744`: 25-cell window invariant (`m0Nat`/`m1Nat`), pass-bounce macro-step elimination (`140` bounces), and `52` `SyncCountdown` chains | Lean 4 proofs ([`Cryptids/Riemann543.lean`](Cryptids/Riemann543.lean), [`Cryptids/Semantics/Riemann.lean`](Cryptids/Semantics/Riemann.lean)) |
 | 2026 | Joseph M. Shunia ([`arXiv:2609.30306`](https://arxiv.org/abs/2609.30306), Sept 2026) | `120` | 5-register self-sieving recurrence + base-$n$ offset digit count via specialized `TMBuilder` backend | Lean 4 proofs in this repo ([`Cryptids/Riemann120.lean`](Cryptids/Riemann120.lean), [`Cryptids/Semantics/Riemann120.lean`](Cryptids/Semantics/Riemann120.lean)) |
+| 2026 | Faldor & Firsching, using Gemini Argon (`riemann_104`) | `104` | State reduction of `riemann_120` (`120 -> 104`): 662-step direct bootstrap (`9` states saved) + control-tree & `main()` compression (`7` states saved) | Lean 4 proofs ([`Cryptids/Riemann104.lean`](Cryptids/Riemann104.lean), [`Cryptids/Semantics/Riemann120.lean`](Cryptids/Semantics/Riemann120.lean)) |
 

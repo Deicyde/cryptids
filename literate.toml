@@ -14,8 +14,8 @@ library = "Cryptids"
   "Cryptids.Goldbach21",
   "Cryptids.Zf393",
   "Cryptids.Zf380",
-  "Cryptids.Riemann543",
   "Cryptids.Riemann120",
+  "Cryptids.Riemann104",
   "Cryptids.Semantics",
 ]
 "Cryptids.Semantics" = [

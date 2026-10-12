@@ -27,7 +27,7 @@ satisfies the side conditions `1 ≤ x - h`, `0 < h`, `6 ≤ T` and is bounded a
 
 open Real
 
-namespace ConjectureMachines.Riemann543.Semantics.ExplicitLarge
+namespace ConjectureMachines.Semantics.Riemann.ExplicitLarge
 
 /-- For `x ≥ 5000`, `851 / 100 ≤ Real.log x` (via `2 ^ 86 ≤ 5000 ^ 7`). -/
 lemma log_ge_851_div_100 {x : ℝ} (hx : 5000 ≤ x) :
@@ -353,4 +353,4 @@ theorem explicit_rhs_le_seven_eighths_of_five_thousand_le
   dsimp [a_rvM, C, D, A, B]
   linarith
 
-end ConjectureMachines.Riemann543.Semantics.ExplicitLarge
+end ConjectureMachines.Semantics.Riemann.ExplicitLarge

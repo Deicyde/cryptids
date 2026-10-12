@@ -10,8 +10,9 @@ This repository contains formally verified 2-symbol Turing machines and Lean 4 s
 | ZF Consistency | `zf_380` | `380` | Reduced from `zf_393` (`393` states, Wade Aug 2026) | `ZFInconsistent` (`¬ Halts candidate` proved) | [`Zf380.lean`](Cryptids/Zf380.lean), [`Semantics/Zf393.lean`](Cryptids/Semantics/Zf393.lean) |
 | ZF Consistency | `zf_393` | `393` | Andrew Wade ([`turing_machine_explorer`](https://codeberg.org/ajwade/turing_machine_explorer) `9c5c2e82`, Aug 2026) | `ZFInconsistent` (`¬ Halts zf393` proved) | [`Zf393.lean`](Cryptids/Zf393.lean), [`Semantics/Zf393.lean`](Cryptids/Semantics/Zf393.lean) |
 | ZF Consistency | `zf_432` | `432` | Andrew Wade ([`turing_machine_explorer`](https://codeberg.org/ajwade/turing_machine_explorer) `33b30300`, Aug 2025) | `WadeZFInconsistent` | [`Semantics/Zf.lean`](Cryptids/Semantics/Zf.lean) |
+| Riemann Hypothesis | `riemann_104` | `104` | Reduced from `riemann_120` (`120` states, Shunia Sept 2026) | `¬ RiemannHypothesis` | [`Riemann104.lean`](Cryptids/Riemann104.lean), [`Semantics/Riemann120.lean`](Cryptids/Semantics/Riemann120.lean) |
 | Riemann Hypothesis | `riemann_120` | `120` | Joseph M. Shunia ([`arXiv:2609.30306`](https://arxiv.org/abs/2609.30306), Sept 2026) | `¬ RiemannHypothesis` | [`Riemann120.lean`](Cryptids/Riemann120.lean), [`Semantics/Riemann120.lean`](Cryptids/Semantics/Riemann120.lean) |
-| Riemann Hypothesis | `riemann_543` | `543` | Reduced from `riemann_744` (`744` states, Matiyasevich–O'Rear–Aaronson 2016) | `¬ RiemannHypothesis` | [`Riemann543.lean`](Cryptids/Riemann543.lean), [`Semantics/Riemann.lean`](Cryptids/Semantics/Riemann.lean) |
+| Riemann Hypothesis | `riemann_744` | `744` | Matiyasevich, O'Rear & Aaronson (`riemann_744_sorear.tm`, 2016) | `¬ RiemannHypothesis` | [`Semantics/Riemann.lean`](Cryptids/Semantics/Riemann.lean) |
 
 See [`RELATED_WORK.md`](RELATED_WORK.md) for the historical progression across each domain.
 
@@ -19,10 +20,10 @@ See [`RELATED_WORK.md`](RELATED_WORK.md) for the historical progression across e
 
 All proofs in [`Cryptids/`](Cryptids/) are checked by the Lean 4 kernel (`v4.35.0-rc4`) without `sorry` and use only the standard axioms (`propext`, `Classical.choice`, `Quot.sound`):
 
-1. **State reduction and halting equivalence (`candidate.states < reference.states` and `Halts candidate ↔ Halts reference`):** Each reduced machine (`goldbach_21`, `zf_380`, `riemann_543`) has fewer states than its reference machine (`goldbach_25`, `zf_393`, `riemann_744`) and halts from the blank tape if and only if the reference machine halts ([`Goldbach21.lean`](Cryptids/Goldbach21.lean), [`Zf380.lean`](Cryptids/Zf380.lean), [`Riemann543.lean`](Cryptids/Riemann543.lean)).
+1. **State reduction and halting equivalence (`candidate.states < reference.states` and `Halts candidate ↔ Halts reference`):** Each reduced record machine (`goldbach_21`, `zf_380`, `riemann_104`) has fewer states than its reference machine (`goldbach_25`, `zf_393`, `riemann_120`) and halts from the blank tape if and only if the reference machine halts ([`Goldbach21.lean`](Cryptids/Goldbach21.lean), [`Zf380.lean`](Cryptids/Zf380.lean), [`Riemann104.lean`](Cryptids/Riemann104.lean)).
 2. **End-to-end mathematical semantics ([`Cryptids/Semantics/`](Cryptids/Semantics/README.md)):**
-   - **Goldbach:** Both `goldbach_25` and `goldbach_21` halt if and only if Goldbach's conjecture is false (`Halts candidate ↔ ¬ GoldbachConjecture`).
-   - **Riemann Hypothesis (`riemann_744`, `riemann_543`, and `riemann_120`):** All three machines (`riemann_744`, `riemann_543`, and Shunia's 120-state machine `riemann_120`) halt if and only if Mathlib's `RiemannHypothesis` is false (`Halts candidate ↔ ¬ RiemannHypothesis` and `Halts riemann120 ↔ ¬ RiemannHypothesis`).
+   - **Goldbach (`goldbach_21` and `goldbach_25`):** Both `goldbach_21` and `goldbach_25` halt if and only if Goldbach's conjecture is false (`Halts candidate ↔ ¬ GoldbachConjecture`).
+   - **Riemann Hypothesis (`riemann_104`, `riemann_120`, and `riemann_744`):** All three machines (`riemann_104`, Shunia's 120-state machine `riemann_120`, and the 744-state machine `riemann_744`) halt if and only if Mathlib's `RiemannHypothesis` is false (`Halts candidate ↔ ¬ RiemannHypothesis`, `Halts riemann120 ↔ ¬ RiemannHypothesis`, and `Halts riemann744 ↔ ¬ RiemannHypothesis`).
    - **ZF Consistency (`zf_380`, `zf_393`, and `zf_432`):** Both `zf_380` and Wade's 393-state machine `zf_393` (incorporating upstream fix `10fcf152b3`) halt if and only if O'Rear's `zf2.nql` Hilbert system proves $v_0 \in v_0$ (`Halts candidate ↔ ZFInconsistent`, `Halts zf393 ↔ ZFInconsistent`), and hence never halt in `ZFSet.{0}` (`not_halts_candidate`, `not_halts_zf393`), while `zf_432` halts if and only if the 20-clause deductive system enumerated by `zf_432_wade.tm` derives $v_0 \in v_0$ (`WadeZFInconsistent`).
 
 Details on the proof architecture and mathematical background are in [`Cryptids/Semantics/README.md`](Cryptids/Semantics/README.md).
@@ -33,7 +34,7 @@ For the reduced machines in [`artifacts/`](artifacts/), the state-space transfor
 
 - **`goldbach_21` (`339,411` vs. `170,966` steps through `n = 40`, `1.99x`):** Eliminating 4 states (`1, 8, 10, 17`) reverses the partition enumeration to test larger summands first and routes divisor acceptance through the main counter-tape scanner.
 - **`zf_380` (`+0.093%` step overhead at `1,000,000` steps; `0` step overhead during `39,753`-step bootstrap):** Eliminating 13 states (`65, 68, 266, 278, 322, 335, 341, 353, 359, 361, 379, 387, 389`) via a 5-cell sliding-window invariant (`validState`) and non-destructive leftward head bounces (`1, 3, 5, 7, 9` steps) preserves 100% bit-exact tape equality after every macro-step.
-- **`riemann_543` (`240,702` vs. `249,921` steps across `3,254` checkpoints):** Removing pass-bounce intermediary states bypasses two head-reversal steps per bounce.
+- **`riemann_104` (`-99.969%` bootstrap steps: `662` vs. `2,135,402` steps to `main()`; `1.0002x` post-bootstrap rate):** Eliminating 16 states (`120 -> 104`) replaces the 8-round exponential bootstrap with a single 662-step initialization pass (`padTotal = 21`, `3` zeroed initial registers) and compresses `main().n_11` (`117 -> 118`), `main().0` (`96`), and five single-use control-tree states (`103, 106, 108, 111, 114`).
 
 ## Building and Verifying
 
@@ -60,7 +61,7 @@ python3 verify.py
 
 - [`Cryptids/`](Cryptids/) — Shared problem definitions ([`Propositions.lean`](Cryptids/Propositions.lean)), Turing machine specifications ([`Machines.lean`](Cryptids/Machines.lean)), halting-equivalence proofs, and end-to-end semantics ([`Cryptids/Semantics/README.md`](Cryptids/Semantics/README.md)).
 - [`Challenge.lean`](Challenge.lean) & [`comparator/`](comparator/) — Self-contained target theorem specification and configuration files for [`leanprover/comparator`](comparator/README.md).
-- [`artifacts/`](artifacts/) — Canonical `machine.txt` transition tables and reduction write-ups for [`goldbach_21`](artifacts/goldbach_21/README.md), [`zf_380`](artifacts/zf_380/README.md), and [`riemann_543`](artifacts/riemann_543/README.md).
+- [`artifacts/`](artifacts/) — Canonical `machine.txt` transition tables and reduction write-ups for [`goldbach_21`](artifacts/goldbach_21/README.md), [`zf_380`](artifacts/zf_380/README.md), and [`riemann_104`](artifacts/riemann_104/README.md).
 - [`baselines/`](baselines/) — Verbatim upstream source files, canonical 5-tuple tables, and [`PROVENANCE.md`](baselines/PROVENANCE.md).
 - [`RELATED_WORK.md`](RELATED_WORK.md) — Literature lineage and `(Q, 2)` Turing machine conventions.
 - [`verify.py`](verify.py) — Standalone Python 3 verification script.

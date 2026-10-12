@@ -60,9 +60,9 @@ This standalone file proves with **zero `sorry`s**:
 
 @[expose] public section
 
-namespace ConjectureMachines.Riemann543.Semantics.HorizontalBounds
+namespace ConjectureMachines.Semantics.Riemann.HorizontalBounds
 
-export ConjectureMachines.Riemann543.Semantics.DigammaBinet
+export ConjectureMachines.Semantics.Riemann.DigammaBinet
   (ofReal_ne_neg_natCast_of_pos ne_neg_natCast_of_re_pos deriv_Gamma_ofReal_eq
    digamma_ofReal_eq_deriv_log_Gamma digamma_ofReal_re digamma_add_one_re_sandwich
    digamma_ofReal_re_sandwich norm_digamma_ofReal_sub_log_le tendsto_digamma_add_nat_sub_log
@@ -86,7 +86,7 @@ export RiemannSchmidt
    riemannZeta_eq_mul_integral_floor integral_Ioi_one_mul_cpow_neg_add_one
    one_sub_riemannZeta₀_eq_of_one_lt_re one_sub_riemannZeta₀_eq_of_re_pos)
 
-export ConjectureMachines.Riemann543.Semantics.VonMangoldtCount
+export ConjectureMachines.Semantics.Riemann.VonMangoldtCount
   (isPreconnected_re_pos analyticOnNhd_riemannZeta₁ analyticOrderAt_riemannZeta₁_ne_top
    IsNontrivialZetaZero isNontrivialZetaZero_ne_zero re_lt_one_of_isNontrivialZetaZero
    zero_lt_re_of_isNontrivialZetaZero mem_criticalStrip_of_isNontrivialZetaZero
@@ -2187,4 +2187,4 @@ theorem exists_zero_free_height_with_log_pow_five_bound
     rw [neg_div, norm_neg]
     exact (h_horiz σ hσ).2.trans h_main_bound
 
-end ConjectureMachines.Riemann543.Semantics.HorizontalBounds
+end ConjectureMachines.Semantics.Riemann.HorizontalBounds

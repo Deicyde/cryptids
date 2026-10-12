@@ -80,9 +80,9 @@ Vertical Tail at $c = 2$**:
 
 @[expose] public section
 
-namespace ConjectureMachines.Riemann543.Semantics.WeightedStieltjes
+namespace ConjectureMachines.Semantics.Riemann.WeightedStieltjes
 
-export ConjectureMachines.Riemann543.Semantics.VonMangoldtCount
+export ConjectureMachines.Semantics.Riemann.VonMangoldtCount
   (IsNontrivialZetaZero isNontrivialZetaZero_ne_zero re_lt_one_of_isNontrivialZetaZero
    zero_lt_re_of_isNontrivialZetaZero mem_criticalStrip_of_isNontrivialZetaZero
    finite_nontrivialZetaZeros_le nontrivialZetaZerosUpTo mem_nontrivialZetaZerosUpTo
@@ -5181,4 +5181,4 @@ theorem abs_psi_sub_self_le_weighted_riemannVonMangoldt_six_neg_one_fourth
       (by linarith : (0 : ℝ) ≤ U) hA hB h_left_zeta)
     (exists_zero_free_height_with_small_tailAndHorizontal hx_sub hh hCh h_heights)
 
-end ConjectureMachines.Riemann543.Semantics.WeightedStieltjes
+end ConjectureMachines.Semantics.Riemann.WeightedStieltjes
