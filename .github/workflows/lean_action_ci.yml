@@ -16,17 +16,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: leanprover/lean-action@v1
-        env:
-          LEAN_NUM_THREADS: "2"
-
-      - name: Install bubblewrap for lake comparator sandbox
+      - name: Free runner disk space and install bubblewrap
         run: |
-          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/boost
           sudo apt-get update -qq >/dev/null
           sudo apt-get install -y -qq bubblewrap >/dev/null
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+        env:
+          LEAN_NUM_THREADS: "1"
 
       - name: Verify solution against Challenge with comparator
         run: lake comparator --config comparator/all.json
@@ -47,7 +47,7 @@ jobs:
       - name: Build Verso literate HTML
         id: verso
         env:
-          LEAN_NUM_THREADS: "2"
+          LEAN_NUM_THREADS: "1"
         run: |
           # Work around Verso v4.35.0-rc4 passing `module`-mode setup.importArts (which omits
           # `.olean.private`) to `importModules (level := .private)` in `verso-literate`.
