@@ -1647,7 +1647,9 @@ set_option maxHeartbeats 0 in
 theorem validState_next (q : Fin 393) (l2 l1 l0 h r0 x : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true → checkNext q.val l2 l1 l0 h r0 x = true := by
   intro h0
-  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || all2 (fun x => checkNext q l2 l1 l0 h r0 x))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => all2 (fun l1 => all2 (fun
+    l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || all2 (fun x => checkNext q l2 l1 l0
+    h r0 x))))))) (by rfl) q
   replace hq := of_all2 hq h
   replace hq := of_all2 hq l0
   replace hq := of_all2 hq l1
@@ -1767,7 +1769,9 @@ theorem transition_oneStep (q : Fin 393) (l1 l0 h r0 : Fin 2) :
     validState1 q.val l1 l0 h r0 = true →
     zf380Trans (mapState q.val l0 h).val h = expectedTransition q.val l1 l0 h r0 := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => (isMultiStep q l0 h) || all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (mapState q l0 h).val h == expectedTransition q l1 l0 h r0)))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => (isMultiStep q l0 h) ||
+    all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (mapState q l0
+    h).val h == expectedTransition q l1 l0 h r0)))))) (by rfl) q
   replace hq := of_all2 hq h
   replace hq := of_all2 hq l0
   simp only [h0, Bool.false_or] at hq
@@ -1783,7 +1787,9 @@ theorem transition_threeStep_1 (q : Fin 393) (l1 l0 h r0 : Fin 2) :
     validState1 q.val l1 l0 h r0 = true →
     zf380Trans (mapState q.val l0 h).val h = some (h, Dir.left, midP q.val h) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isThreeStep q l0 h) || all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (mapState q l0 h).val h == some (h, Dir.left, midP q h))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isThreeStep q l0 h) ||
+    all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (mapState q l0
+    h).val h == some (h, Dir.left, midP q h))))))) (by rfl) q
   replace hq := of_all2 hq h
   replace hq := of_all2 hq l0
   simp only [h0, Bool.not_true, Bool.false_or] at hq
@@ -1799,7 +1805,9 @@ theorem transition_threeStep_2 (q : Fin 393) (l1 l0 h r0 : Fin 2) :
     validState1 q.val l1 l0 h r0 = true →
     zf380Trans (midP q.val h).val l0 = some (l0, Dir.right, midS q.val l0 h) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isThreeStep q l0 h) || all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (midP q h).val l0 == some (l0, Dir.right, midS q l0 h))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isThreeStep q l0 h) ||
+    all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (midP q h).val
+    l0 == some (l0, Dir.right, midS q l0 h))))))) (by rfl) q
   replace hq := of_all2 hq h
   replace hq := of_all2 hq l0
   simp only [h0, Bool.not_true, Bool.false_or] at hq
@@ -1815,7 +1823,9 @@ theorem transition_threeStep_3 (q : Fin 393) (l1 l0 h r0 : Fin 2) :
     validState1 q.val l1 l0 h r0 = true →
     zf380Trans (midS q.val l0 h).val h = expectedTransition q.val l1 l0 h r0 := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isThreeStep q l0 h) || all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (midS q l0 h).val h == expectedTransition q l1 l0 h r0)))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isThreeStep q l0 h) ||
+    all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (midS q l0
+    h).val h == expectedTransition q l1 l0 h r0)))))) (by rfl) q
   replace hq := of_all2 hq h
   replace hq := of_all2 hq l0
   simp only [h0, Bool.not_true, Bool.false_or] at hq
@@ -1830,7 +1840,8 @@ theorem threeStep_not_none (q : Fin 393) (l0 h : Fin 2) :
     isThreeStep q.val l0 h = true →
     Zf393.zf393Trans q h ≠ none := by
   intro h0
-  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isThreeStep q l0 h) || (Zf393.zf393Trans ⟨q % 393, Nat.mod_lt q (by decide)⟩ h != none)))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isThreeStep q l0 h) ||
+    (Zf393.zf393Trans ⟨q % 393, Nat.mod_lt q (by decide)⟩ h != none)))) (by rfl) q
   simp only [Nat.mod_eq_of_lt q.isLt] at hq
   replace hq := of_all2 hq h
   replace hq := of_all2 hq l0
@@ -1856,7 +1867,9 @@ theorem transition_fiveStepLRLR_1 (q : Fin 393) (l1 l0 h r0 : Fin 2) :
     validState1 q.val l1 l0 h r0 = true →
     zf380Trans (mapState q.val l0 h).val h = some (h, Dir.left, lrlrP1 q.val) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isFiveStepLRLR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (mapState q l0 h).val h == some (h, Dir.left, lrlrP1 q))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isFiveStepLRLR q h) || all2 (fun l0 =>
+    all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (mapState q l0
+    h).val h == some (h, Dir.left, lrlrP1 q))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -1872,7 +1885,9 @@ theorem transition_fiveStepLRLR_2 (q : Fin 393) (l1 l0 h r0 : Fin 2) :
     validState1 q.val l1 l0 h r0 = true →
     zf380Trans (lrlrP1 q.val).val l0 = some (l0, Dir.right, lrlrS1 q.val) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isFiveStepLRLR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (lrlrP1 q).val l0 == some (l0, Dir.right, lrlrS1 q))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isFiveStepLRLR q h) || all2 (fun l0 =>
+    all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (lrlrP1 q).val
+    l0 == some (l0, Dir.right, lrlrS1 q))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -1888,7 +1903,9 @@ theorem transition_fiveStepLRLR_3 (q : Fin 393) (l1 l0 h r0 : Fin 2) :
     validState1 q.val l1 l0 h r0 = true →
     zf380Trans (lrlrS1 q.val).val h = some (h, Dir.left, lrlrP2 q.val) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isFiveStepLRLR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (lrlrS1 q).val h == some (h, Dir.left, lrlrP2 q))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isFiveStepLRLR q h) || all2 (fun l0 =>
+    all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (lrlrS1 q).val h
+    == some (h, Dir.left, lrlrP2 q))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -1904,7 +1921,9 @@ theorem transition_fiveStepLRLR_4 (q : Fin 393) (l1 l0 h r0 : Fin 2) :
     validState1 q.val l1 l0 h r0 = true →
     zf380Trans (lrlrP2 q.val).val l0 = some (l0, Dir.right, lrlrS2 q.val) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isFiveStepLRLR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (lrlrP2 q).val l0 == some (l0, Dir.right, lrlrS2 q))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isFiveStepLRLR q h) || all2 (fun l0 =>
+    all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (lrlrP2 q).val
+    l0 == some (l0, Dir.right, lrlrS2 q))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -1920,7 +1939,9 @@ theorem transition_fiveStepLRLR_5 (q : Fin 393) (l1 l0 h r0 : Fin 2) :
     validState1 q.val l1 l0 h r0 = true →
     zf380Trans (lrlrS2 q.val).val h = expectedTransition q.val l1 l0 h r0 := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isFiveStepLRLR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (lrlrS2 q).val h == expectedTransition q l1 l0 h r0)))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isFiveStepLRLR q h) || all2 (fun l0 =>
+    all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (lrlrS2 q).val h
+    == expectedTransition q l1 l0 h r0)))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -1935,7 +1956,8 @@ theorem fiveStepLRLR_not_none (q : Fin 393) (h : Fin 2) :
     isFiveStepLRLR q.val h = true →
     Zf393.zf393Trans q h ≠ none := by
   intro h0
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isFiveStepLRLR q h) || (Zf393.zf393Trans ⟨q % 393, Nat.mod_lt q (by decide)⟩ h != none))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isFiveStepLRLR q h) ||
+    (Zf393.zf393Trans ⟨q % 393, Nat.mod_lt q (by decide)⟩ h != none))) (by rfl) q
   simp only [Nat.mod_eq_of_lt q.isLt] at hq
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
@@ -1978,7 +2000,9 @@ theorem transition_fiveStepLLRR_1 (q : Fin 393) (l1 l0 h r0 : Fin 2) :
     validState1 q.val l1 l0 h r0 = true →
     zf380Trans (mapState q.val l0 h).val h = some (h, Dir.left, llrrP1 q.val) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isFiveStepLLRR q l0 h) || all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (mapState q l0 h).val h == some (h, Dir.left, llrrP1 q))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isFiveStepLLRR q l0 h)
+    || all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (mapState q
+    l0 h).val h == some (h, Dir.left, llrrP1 q))))))) (by rfl) q
   replace hq := of_all2 hq h
   replace hq := of_all2 hq l0
   simp only [h0, Bool.not_true, Bool.false_or] at hq
@@ -1994,7 +2018,9 @@ theorem transition_fiveStepLLRR_2 (q : Fin 393) (l1 l0 h r0 : Fin 2) :
     validState1 q.val l1 l0 h r0 = true →
     zf380Trans (llrrP1 q.val).val l0 = some (l0, Dir.left, llrrP2 q.val) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isFiveStepLLRR q l0 h) || all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (llrrP1 q).val l0 == some (l0, Dir.left, llrrP2 q))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isFiveStepLLRR q l0 h)
+    || all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (llrrP1
+    q).val l0 == some (l0, Dir.left, llrrP2 q))))))) (by rfl) q
   replace hq := of_all2 hq h
   replace hq := of_all2 hq l0
   simp only [h0, Bool.not_true, Bool.false_or] at hq
@@ -2010,7 +2036,9 @@ theorem transition_fiveStepLLRR_3 (q : Fin 393) (l1 l0 h r0 : Fin 2) :
     validState1 q.val l1 l0 h r0 = true →
     zf380Trans (llrrP2 q.val).val l1 = some (l1, Dir.right, llrrS1 q.val) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isFiveStepLLRR q l0 h) || all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (llrrP2 q).val l1 == some (l1, Dir.right, llrrS1 q))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isFiveStepLLRR q l0 h)
+    || all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (llrrP2
+    q).val l1 == some (l1, Dir.right, llrrS1 q))))))) (by rfl) q
   replace hq := of_all2 hq h
   replace hq := of_all2 hq l0
   simp only [h0, Bool.not_true, Bool.false_or] at hq
@@ -2026,7 +2054,9 @@ theorem transition_fiveStepLLRR_4 (q : Fin 393) (l1 l0 h r0 : Fin 2) :
     validState1 q.val l1 l0 h r0 = true →
     zf380Trans (llrrS1 q.val).val l0 = some (l0, Dir.right, llrrS2 q.val) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isFiveStepLLRR q l0 h) || all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (llrrS1 q).val l0 == some (l0, Dir.right, llrrS2 q))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isFiveStepLLRR q l0 h)
+    || all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (llrrS1
+    q).val l0 == some (l0, Dir.right, llrrS2 q))))))) (by rfl) q
   replace hq := of_all2 hq h
   replace hq := of_all2 hq l0
   simp only [h0, Bool.not_true, Bool.false_or] at hq
@@ -2042,7 +2072,9 @@ theorem transition_fiveStepLLRR_5 (q : Fin 393) (l1 l0 h r0 : Fin 2) :
     validState1 q.val l1 l0 h r0 = true →
     zf380Trans (llrrS2 q.val).val h = expectedTransition q.val l1 l0 h r0 := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isFiveStepLLRR q l0 h) || all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (llrrS2 q).val h == expectedTransition q l1 l0 h r0)))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isFiveStepLLRR q l0 h)
+    || all2 (fun l1 => all2 (fun r0 => !(validState1 q l1 l0 h r0) || (zf380Trans (llrrS2
+    q).val h == expectedTransition q l1 l0 h r0)))))) (by rfl) q
   replace hq := of_all2 hq h
   replace hq := of_all2 hq l0
   simp only [h0, Bool.not_true, Bool.false_or] at hq
@@ -2057,7 +2089,8 @@ theorem fiveStepLLRR_not_none (q : Fin 393) (l0 h : Fin 2) :
     isFiveStepLLRR q.val l0 h = true →
     Zf393.zf393Trans q h ≠ none := by
   intro h0
-  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isFiveStepLLRR q l0 h) || (Zf393.zf393Trans ⟨q % 393, Nat.mod_lt q (by decide)⟩ h != none)))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => all2 (fun l0 => !(isFiveStepLLRR q l0 h)
+    || (Zf393.zf393Trans ⟨q % 393, Nat.mod_lt q (by decide)⟩ h != none)))) (by rfl) q
   simp only [Nat.mod_eq_of_lt q.isLt] at hq
   replace hq := of_all2 hq h
   replace hq := of_all2 hq l0
@@ -2089,7 +2122,9 @@ theorem transition_sevenStepLLLRRR_1 (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (mapState q.val l0 h).val h = some (h, Dir.left, lllrrrP1 q.val) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (mapState q l0 h).val h == some (h, Dir.left, lllrrrP1 q)))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (mapState q l0 h).val h == some (h, Dir.left, lllrrrP1 q)))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2106,7 +2141,9 @@ theorem transition_sevenStepLLLRRR_2 (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (lllrrrP1 q.val).val l0 = some (l0, Dir.left, lllrrrP2 q.val) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (lllrrrP1 q).val l0 == some (l0, Dir.left, lllrrrP2 q)))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (lllrrrP1 q).val l0 == some (l0, Dir.left, lllrrrP2 q)))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2123,7 +2160,9 @@ theorem transition_sevenStepLLLRRR_3 (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (lllrrrP2 q.val).val l1 = some (l1, Dir.left, lllrrrP3 q.val) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (lllrrrP2 q).val l1 == some (l1, Dir.left, lllrrrP3 q)))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (lllrrrP2 q).val l1 == some (l1, Dir.left, lllrrrP3 q)))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2140,7 +2179,9 @@ theorem transition_sevenStepLLLRRR_4 (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (lllrrrP3 q.val).val l2 = some (l2, Dir.right, lllrrrS1 q.val) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (lllrrrP3 q).val l2 == some (l2, Dir.right, lllrrrS1 q)))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (lllrrrP3 q).val l2 == some (l2, Dir.right, lllrrrS1 q)))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2157,7 +2198,9 @@ theorem transition_sevenStepLLLRRR_5 (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (lllrrrS1 q.val).val l1 = some (l1, Dir.right, lllrrrS2 q.val) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (lllrrrS1 q).val l1 == some (l1, Dir.right, lllrrrS2 q)))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (lllrrrS1 q).val l1 == some (l1, Dir.right, lllrrrS2 q)))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2174,7 +2217,9 @@ theorem transition_sevenStepLLLRRR_6 (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (lllrrrS2 q.val).val l0 = some (l0, Dir.right, lllrrrS3 q.val) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (lllrrrS2 q).val l0 == some (l0, Dir.right, lllrrrS3 q)))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (lllrrrS2 q).val l0 == some (l0, Dir.right, lllrrrS3 q)))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2191,7 +2236,9 @@ theorem transition_sevenStepLLLRRR_7 (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (lllrrrS3 q.val).val h = expectedTransition q.val l1 l0 h r0 := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (lllrrrS3 q).val h == expectedTransition q l1 l0 h r0))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (lllrrrS3 q).val h == expectedTransition q l1 l0 h r0))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2207,7 +2254,8 @@ theorem sevenStepLLLRRR_not_none (q : Fin 393) (h : Fin 2) :
     isSevenStepLLLRRR q.val h = true →
     Zf393.zf393Trans q h ≠ none := by
   intro h0
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) || (Zf393.zf393Trans ⟨q % 393, Nat.mod_lt q (by decide)⟩ h != none))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isSevenStepLLLRRR q h) ||
+    (Zf393.zf393Trans ⟨q % 393, Nat.mod_lt q (by decide)⟩ h != none))) (by rfl) q
   simp only [Nat.mod_eq_of_lt q.isLt] at hq
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
@@ -2220,7 +2268,9 @@ theorem transition_nineStep_0a (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (mapState q.val l0 h).val h = some (h, Dir.left, renum 197) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (mapState q l0 h).val h == some (h, Dir.left, renum 197)))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (mapState q l0 h).val h == some (h, Dir.left, renum 197)))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2237,7 +2287,9 @@ theorem transition_nineStep_0b (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (renum 197).val l0 = some (l0, Dir.right, renum 354) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (renum 197).val l0 == some (l0, Dir.right, renum 354)))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (renum 197).val l0 == some (l0, Dir.right, renum 354)))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2254,7 +2306,9 @@ theorem transition_nineStep_1 (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (renum 354).val h = some (h, Dir.left, renum 362) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (renum 354).val h == some (h, Dir.left, renum 362)))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (renum 354).val h == some (h, Dir.left, renum 362)))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2271,7 +2325,9 @@ theorem transition_nineStep_2 (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (renum 362).val l0 = some (l0, Dir.left, renum 346) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (renum 362).val l0 == some (l0, Dir.left, renum 346)))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (renum 362).val l0 == some (l0, Dir.left, renum 346)))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2288,7 +2344,9 @@ theorem transition_nineStep_3 (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (renum 346).val l1 = some (l1, Dir.left, renum 100) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (renum 346).val l1 == some (l1, Dir.left, renum 100)))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (renum 346).val l1 == some (l1, Dir.left, renum 100)))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2305,7 +2363,9 @@ theorem transition_nineStep_4 (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (renum 100).val l2 = some (l2, Dir.right, renum 101) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (renum 100).val l2 == some (l2, Dir.right, renum 101)))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (renum 100).val l2 == some (l2, Dir.right, renum 101)))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2322,7 +2382,9 @@ theorem transition_nineStep_5 (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (renum 101).val l1 = some (l1, Dir.right, renum 102) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (renum 101).val l1 == some (l1, Dir.right, renum 102)))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (renum 101).val l1 == some (l1, Dir.right, renum 102)))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2339,7 +2401,9 @@ theorem transition_nineStep_6 (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (renum 102).val l0 = some (l0, Dir.right, renum 352) := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (renum 102).val l0 == some (l0, Dir.right, renum 352)))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (renum 102).val l0 == some (l0, Dir.right, renum 352)))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2356,7 +2420,9 @@ theorem transition_nineStep_7 (q : Fin 393) (l2 l1 l0 h r0 : Fin 2) :
     validState q.val l2 l1 l0 h r0 = true →
     zf380Trans (renum 352).val h = expectedTransition q.val l1 l0 h r0 := by
   intro h0 h1
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0 => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) || (zf380Trans (renum 352).val h == expectedTransition q l1 l0 h r0))))))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || all2 (fun l0
+    => all2 (fun l1 => all2 (fun l2 => all2 (fun r0 => !(validState q l2 l1 l0 h r0) ||
+    (zf380Trans (renum 352).val h == expectedTransition q l1 l0 h r0))))))) (by rfl) q
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
   replace hq := of_all2 hq l0
@@ -2372,7 +2438,8 @@ theorem nineStepLRLLLRRR_not_none (q : Fin 393) (h : Fin 2) :
     isNineStepLRLLLRRR q.val h = true →
     Zf393.zf393Trans q h ≠ none := by
   intro h0
-  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) || (Zf393.zf393Trans ⟨q % 393, Nat.mod_lt q (by decide)⟩ h != none))) (by rfl) q
+  have hq := of_fin_nat (p := fun q => all2 (fun h => !(isNineStepLRLLLRRR q h) ||
+    (Zf393.zf393Trans ⟨q % 393, Nat.mod_lt q (by decide)⟩ h != none))) (by rfl) q
   simp only [Nat.mod_eq_of_lt q.isLt] at hq
   replace hq := of_all2 hq h
   simp only [h0, Bool.not_true, Bool.false_or] at hq
@@ -2388,14 +2455,15 @@ theorem step_of_transition_eq {q : Fin 393} {S : Fin 380} (T : Tape (Fin 2))
   rw [candM_transition_eq_nat S T.head, htr, Zf393.zf393Trans_eq q T.head]
   rcases e : Zf393.zf393Trans q T.head with _ | ⟨w, d, q'⟩
   · simp [expectedTransition, Nat.mod_eq_of_lt q.isLt, e]
-  · cases T; cases d <;> simp [expectedTransition, Nat.mod_eq_of_lt q.isLt, e, Tape.move, Tape.write]
+  · cases T; cases d <;> simp [expectedTransition, Nat.mod_eq_of_lt q.isLt, e, Tape.move,
+    Tape.write]
 
 theorem tape_left_right_self (T : Tape (Fin 2)) :
     (((T.write T.head).move Dir.left).write T.left.head).move Dir.right = T := by
   cases T
   simp [Tape.write, Tape.move]
 
-theorem step_three_left_right 
+theorem step_three_left_right
     {q₁ P S : Fin 380} (T : Tape (Fin 2))
     (h1 : zf380Trans q₁.val T.head = some (T.head, Dir.left, P))
     (h2 : zf380Trans P.val T.left.head = some (T.left.head, Dir.right, S))
@@ -2413,7 +2481,7 @@ theorem step_three_left_right
     rw [tape_left_right_self]
   exact Relation.TransGen.tail (Relation.TransGen.tail (Relation.TransGen.single hs1) hs2) h3
 
-theorem step_five_left_right 
+theorem step_five_left_right
     {q₁ P₁ S₁ P₂ S₂ : Fin 380} (T : Tape (Fin 2))
     (h1 : zf380Trans q₁.val T.head = some (T.head, Dir.left, P₁))
     (h2 : zf380Trans P₁.val T.left.head = some (T.left.head, Dir.right, S₁))
@@ -2446,7 +2514,7 @@ theorem step_five_left_right
       hs4)
     h5
 
-theorem step_five_left_left_right_right 
+theorem step_five_left_left_right_right
     {q₁ P₁ P₂ S₁ S₂ : Fin 380} (T : Tape (Fin 2))
     (h1 : zf380Trans q₁.val T.head = some (T.head, Dir.left, P₁))
     (h2 : zf380Trans P₁.val T.left.head = some (T.left.head, Dir.left, P₂))
@@ -2486,7 +2554,7 @@ theorem step_five_left_left_right_right
       hs4)
     h5
 
-theorem step_seven_left_left_left_right_right_right 
+theorem step_seven_left_left_left_right_right_right
     {q₁ P₁ P₂ P₃ S₁ S₂ S₃ : Fin 380} (T : Tape (Fin 2))
     (h1 : zf380Trans q₁.val T.head = some (T.head, Dir.left, P₁))
     (h2 : zf380Trans P₁.val T.left.head = some (T.left.head, Dir.left, P₂))
@@ -2546,7 +2614,7 @@ theorem step_seven_left_left_left_right_right_right
       hs6)
     h7
 
-theorem step_nine_left_right_left_left_left_right_right_right 
+theorem step_nine_left_right_left_left_left_right_right_right
     {q₁ P₀ q₂ P₁ P₂ P₃ S₁ S₂ S₃ : Fin 380} (T : Tape (Fin 2))
     (h0a : zf380Trans q₁.val T.head = some (T.head, Dir.left, P₀))
     (h0b : zf380Trans P₀.val T.left.head = some (T.left.head, Dir.right, q₂))
@@ -2634,8 +2702,10 @@ theorem step_preserves_valid (q : Fin 393) (T : Tape (Fin 2))
   rcases e : Zf393.zf393Trans q T.head with _ | ⟨w, d, q'⟩
   · trivial
   · cases d
-    · simpa [checkNext, Nat.mod_eq_of_lt q.isLt, e, Tape.move, Tape.write] using hnext T.left.tail.tail.tail.head hv
-    · simpa [checkNext, Nat.mod_eq_of_lt q.isLt, e, Tape.move, Tape.write] using hnext T.right.tail.head hv
+    · simpa [checkNext, Nat.mod_eq_of_lt q.isLt, e, Tape.move, Tape.write] using
+        hnext T.left.tail.tail.tail.head hv
+    · simpa [checkNext, Nat.mod_eq_of_lt q.isLt, e, Tape.move, Tape.write] using
+        hnext T.right.tail.head hv
 
 def Rel (c₁ : Cfg 393 2) (c₂ : Cfg 380 2) : Prop :=
   validState c₁.state.val c₁.tape.left.tail.tail.head c₁.tape.left.tail.head c₁.tape.left.head
