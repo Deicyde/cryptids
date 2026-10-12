@@ -327,20 +327,17 @@ Verifies the 1,540-instruction register program compiled from `riemann.nql` (`ri
 In [`Cryptids/Semantics/Zf.lean`](./Zf.lean) and its six submodules under
 [`Cryptids/Semantics/Zf/`](./Zf/) (~7,000 lines total, **zero `sorry`s**), we formalize both:
 1. O'Rear's Tarski $S_2$ + Metamath ZF Hilbert system `ZFProvable` (`ZFInconsistent := ZFProvable (zfMem 0 0)`) and its full soundness in Mathlib's cumulative hierarchy `ZFSet.{0}` ([`Zf/Soundness.lean`](./Zf/Soundness.lean)), and
-2. The exact 20-clause deductive system `WadeZFProvable` (`WadeZFInconsistent := WadeZFProvable (zfMem 0 0)`) enumerated by Andrew Wade's `zf_432_wade.tm` (`ConjectureMachines.Zf429.reference`), proving with **zero `sorry`s** that the 432-state baseline (`zf_432`) and the 431-, 430-, and 429-state compressed machines (`zf_431`, `zf_430`, `zf_429`) halt on the blank tape if and only if `WadeZFInconsistent` holds:
+2. The exact 20-clause deductive system `WadeZFProvable` (`WadeZFInconsistent := WadeZFProvable (zfMem 0 0)`) enumerated by Andrew Wade's `zf_432_wade.tm` (`Machines.zf432`), proving with **zero `sorry`s** that the 432-state baseline (`zf_432`) halts on the blank tape if and only if `WadeZFInconsistent` holds, while Wade's August 2026 393-state machine (`zf_393`) and its 380-state reduction (`zf_380`) in [`Cryptids/Semantics/Zf393.lean`](./Zf393.lean) halt if and only if `ZFInconsistent` holds (and hence never halt in `ZFSet.{0}`):
 
 ```lean
-theorem halts_reference_iff_wadeZFInconsistent :
-    Halts ConjectureMachines.Zf429.reference ↔ WadeZFInconsistent
+theorem halts_zf432_iff_wadeZFInconsistent :
+    ConjectureMachines.Halts Machines.zf432 ↔ WadeZFInconsistent
 
-theorem halts_candidate_431_iff_wadeZFInconsistent :
-    Halts ConjectureMachines.Zf431.candidate ↔ WadeZFInconsistent
+theorem halts_zf393_iff_zfInconsistent :
+    ConjectureMachines.Halts zf393 ↔ ZFInconsistent
 
-theorem halts_candidate_430_iff_wadeZFInconsistent :
-    Halts ConjectureMachines.Zf430.candidate ↔ WadeZFInconsistent
-
-theorem halts_candidate_429_iff_wadeZFInconsistent :
-    Halts ConjectureMachines.Zf429.candidate ↔ WadeZFInconsistent
+theorem halts_candidate_iff_zfInconsistent :
+    Halts ConjectureMachines.Zf380.candidate ↔ ZFInconsistent
 
 theorem zfProvable_sound_zfSet (φ : ZFFormula) (h : ZFProvable φ.code)
     (v : ℕ → ZFSet.{0}) : φ.Holds v

@@ -4,14 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import Cryptids.Zf380
 public import Cryptids.Semantics.Zf393.Backend
 public import Cryptids.Semantics.Zf393.Program
 
 /-!
-# End-to-End Semantics of Wade's 393-State ZF Machine (`Cryptids.Semantics.Zf393`)
+# End-to-End Semantics of `zf_393` and `zf_380` (`Cryptids.Semantics.Zf393`)
 
 Combines:
-1. [`Cryptids.Zf393`](./../Zf393.lean) and
+1. [`Cryptids.Zf393`](./../Zf393.lean), [`Cryptids.Zf380`](./../Zf380.lean), and
    [`Cryptids.Semantics.Zf393.Backend`](./Zf393/Backend.lean): the 39,773-step bootstrap,
    moving `00` register-selection invariant, self-cleaning register gadgets, and exact simulation
    equivalence `ConjectureMachines.Halts zf393 ↔ Zf393RegHalts`; and
@@ -20,9 +21,11 @@ Combines:
    `zf393MainStep` against O'Rear's `ZFProvable` (`Zf393RegHalts ↔ ZFInconsistent`).
 
 Together with `Cryptids.Semantics.Zf.not_zfInconsistent` (soundness of `ZFProvable` in Mathlib's
-`ZFSet.{0}`), this establishes both:
+`ZFSet.{0}`) and `ConjectureMachines.Zf380.candidate_equivalent`, this establishes:
 - `halts_zf393_iff_zfInconsistent : ConjectureMachines.Halts zf393 ↔ ZFInconsistent`
-- `not_halts_zf393 : ¬ ConjectureMachines.Halts zf393`.
+- `not_halts_zf393 : ¬ ConjectureMachines.Halts zf393`
+- `halts_candidate_iff_zfInconsistent : Halts ConjectureMachines.Zf380.candidate ↔ ZFInconsistent`
+- `not_halts_candidate : ¬ Halts ConjectureMachines.Zf380.candidate`.
 -/
 
 @[expose] public section
@@ -44,5 +47,24 @@ theorem not_halts_zf393 : ¬ ConjectureMachines.Halts zf393 := by
   exact not_zfInconsistent
 
 end ConjectureMachines.Zf393
+
+namespace ConjectureMachines.Zf380.Semantics
+
+open ConjectureMachines ConjectureMachines.Semantics.Zf
+
+/-- The 380-state record machine `zf_380` (`ConjectureMachines.Zf380.candidate`) halts on the
+blank tape if and only if O'Rear's `zf2.nql` Hilbert system proves `v₀ ∈ v₀` (`ZFInconsistent`). -/
+theorem halts_candidate_iff_zfInconsistent :
+    Halts ConjectureMachines.Zf380.candidate ↔ ZFInconsistent :=
+  ConjectureMachines.Zf380.candidate_equivalent.trans
+    ConjectureMachines.Zf393.halts_zf393_iff_zfInconsistent
+
+/-- Since `ZFProvable` is sound in Mathlib's `ZFSet.{0}` (`not_zfInconsistent`), the 380-state
+record machine `zf_380` (`ConjectureMachines.Zf380.candidate`) never halts on the blank tape. -/
+theorem not_halts_candidate : ¬ Halts ConjectureMachines.Zf380.candidate := by
+  rw [halts_candidate_iff_zfInconsistent]
+  exact not_zfInconsistent
+
+end ConjectureMachines.Zf380.Semantics
 
 end

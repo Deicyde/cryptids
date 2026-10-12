@@ -11,11 +11,9 @@ library = "Cryptids"
 "Cryptids" = [
   "Cryptids.Propositions",
   "Cryptids.Machines",
-  "Cryptids.Goldbach24",
-  "Cryptids.Zf431",
-  "Cryptids.Zf430",
-  "Cryptids.Zf429",
+  "Cryptids.Goldbach21",
   "Cryptids.Zf393",
+  "Cryptids.Zf380",
   "Cryptids.Riemann543",
   "Cryptids.Riemann120",
   "Cryptids.Semantics",

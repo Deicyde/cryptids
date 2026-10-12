@@ -109,18 +109,12 @@ namespace Machines
 /-- Rows of `zf432`. -/ def zf432Rows : List (List (Option (Fin 2 × Dir × Fin 432))) :=
   load_machine_rows% "baselines/tables/zf_432.txt"
 /-- 432-state ZF baseline. -/ def zf432 : Machine 432 2 := Machine.ofRows zf432Rows
-/-- Rows of `zf431`. -/ def zf431Rows : List (List (Option (Fin 2 × Dir × Fin 431))) :=
-  load_machine_rows% "artifacts/zf_431/machine.txt"
-/-- 431-state ZF candidate. -/ def zf431 : Machine 431 2 := Machine.ofRows zf431Rows
-/-- Rows of `zf430`. -/ def zf430Rows : List (List (Option (Fin 2 × Dir × Fin 430))) :=
-  load_machine_rows% "artifacts/zf_430/machine.txt"
-/-- 430-state ZF candidate. -/ def zf430 : Machine 430 2 := Machine.ofRows zf430Rows
-/-- Rows of `zf429`. -/ def zf429Rows : List (List (Option (Fin 2 × Dir × Fin 429))) :=
-  load_machine_rows% "artifacts/zf_429/machine.txt"
-/-- 429-state ZF candidate. -/ def zf429 : Machine 429 2 := Machine.ofRows zf429Rows
 /-- Rows of `zf393`. -/ def zf393Rows : List (List (Option (Fin 2 × Dir × Fin 393))) :=
   load_machine_rows% "baselines/tables/zf_393.txt"
 /-- 393-state ZF machine. -/ def zf393 : Machine 393 2 := Machine.ofRows zf393Rows
+/-- Rows of `zf380`. -/ def zf380Rows : List (List (Option (Fin 2 × Dir × Fin 380))) :=
+  load_machine_rows% "artifacts/zf_380/machine.txt"
+/-- 380-state ZF candidate. -/ def zf380 : Machine 380 2 := Machine.ofRows zf380Rows
 /-- Rows of `riemann744`. -/ def riemann744Rows : List (List (Option (Fin 2 × Dir × Fin 744))) :=
   load_machine_rows% "baselines/tables/riemann_744.txt"
 /-- 744-state RH baseline. -/ def riemann744 : Machine 744 2 := Machine.ofRows riemann744Rows

@@ -4,14 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Cryptids.Zf429
+public import Cryptids.Machines
 public import Cryptids.Semantics.Riemann.Gadgets
 
 /-!
-# Layer 1: Tape Layout, Boot, & Register Gadgets for `zf_432_wade.tm` (`Zf429.Machines.zf432`)
+# Layer 1: Tape Layout, Boot, & Register Gadgets for `zf_432_wade.tm` (`Machines.zf432`)
 
 This file formalizes the Layer 1 infrastructure of the 432-state ZF Turing machine
-`ConjectureMachines.Zf429.Machines.zf432` (`zf_432_wade.tm`):
+`ConjectureMachines.Semantics.Zf.Machines.zf432` (`zf_432_wade.tm`):
 
 1. **State Mapping & `nSteps` Scan Primitives (`0..95`, `126`)**:
    - `0a.boot1.A..E` = States `0..4`
@@ -52,9 +52,9 @@ This file formalizes the Layer 1 infrastructure of the 432-state ZF Turing machi
 
 @[expose] public section
 
-namespace ConjectureMachines.Zf429.Layer1
+namespace ConjectureMachines.Semantics.Zf.Layer1
 
-open Turing StateTransition ConjectureMachines.Zf429
+open Turing StateTransition ConjectureMachines.Semantics.Zf
 
 open ConjectureMachines.Riemann543.Layer1
   (nSteps nSteps_zero nSteps_succ nSteps_add nSteps_bind_eq step_nSteps step_one
@@ -69,12 +69,12 @@ open ConjectureMachines.Riemann543.Layer1
    list_take_cons_drop list_take_set_drop)
 
 /-!
-## 1. State Mapping & `nSteps` Scan Primitives for `Zf429.Machines.zf432`
+## 1. State Mapping & `nSteps` Scan Primitives for `Machines.zf432`
 -/
 
 set_option maxRecDepth 200000
 
-/-- Fast binary-search transition function for `ConjectureMachines.Zf429.Machines.zf432`. -/
+/-- Fast binary-search transition function for `ConjectureMachines.Semantics.Zf.Machines.zf432`. -/
 def refTrans (q : Fin 432) (a : Fin 2) : Option (Fin 2 × Dir × Fin 432) :=
   (if q.val < 216 then (if q.val < 108 then (if q.val < 54 then (if q.val < 27 then (if q.val < 13
     then (if q.val < 6 then (if q.val < 3 then (if q.val < 1 then (if a.val == 0 then some (1,
@@ -2125,5 +2125,5 @@ theorem stage3_decnz_pass2_pos_to_root (k : ℕ) (hk11 : k < 11) (padTotal : ℕ
   rw [hroot_eq] at hcl
   exact ⟨s₁ + s₂, by omega, nSteps_bind_eq hp2 hcl⟩
 
-end ConjectureMachines.Zf429.Layer1
+end ConjectureMachines.Semantics.Zf.Layer1
 

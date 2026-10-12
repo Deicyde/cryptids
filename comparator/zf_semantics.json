@@ -4,8 +4,7 @@
   "theorem_names": [
     "ConjectureMachines.Semantics.Zf.zfProvable_sound_zfSet",
     "ConjectureMachines.Semantics.Zf.not_zfInconsistent",
-    "ConjectureMachines.Semantics.Zf.halts_reference_iff_wadeZFInconsistent",
-    "ConjectureMachines.Semantics.Zf.halts_candidate_429_iff_wadeZFInconsistent"
+    "ConjectureMachines.Semantics.Zf.halts_zf432_iff_wadeZFInconsistent"
   ],
   "permitted_axioms": [
     "propext",

@@ -4,9 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Cryptids.Zf431
-public import Cryptids.Zf430
-public import Cryptids.Zf429
 public import Cryptids.Semantics.Zf.Gadgets
 public import Cryptids.Semantics.Zf.Boot
 public import Cryptids.Semantics.Zf.Dispatcher
@@ -15,14 +12,11 @@ public import Cryptids.Semantics.Zf.RegisterMachine
 public import Cryptids.Semantics.Zf.Subroutines
 
 /-!
-# End-to-End Mathematical Semantics of `zf_432`, `zf_431`, `zf_430`, and `zf_429`
+# End-to-End Mathematical Semantics of `zf_432`
 
 This module formalizes the complete, zero-`sorry` mathematical specification of Stefan O'Rear's
-`zf2.nql` Zermelo–Fraenkel (ZF) set theory proof-enumerating register machine, Andrew Wade's
-432-state compilation `zf_432_wade.tm` (`ConjectureMachines.Zf429.reference`), and our certified
-431-, 430-, and 429-state reductions (`ConjectureMachines.Zf431.candidate`,
-`ConjectureMachines.Zf430.candidate`, `ConjectureMachines.Zf429.candidate`), found and formalized
-by Maxence Faldor and Moritz Firsching using Gemini Argon.
+`zf2.nql` Zermelo–Fraenkel (ZF) set theory proof-enumerating register machine and Andrew Wade's
+432-state compilation `zf_432_wade.tm` (`Machines.zf432`).
 
 ## Architecture
 
@@ -33,7 +27,7 @@ The formalization is structured into six modular components, all verified with *
    - Encodes formulas of first-order set theory via the Cantor pairing function `cantorPair` and
      its inverse `cantorUnpair` (`cantorUnpair_cantorPair`, `cantorPair_cantorUnpair`).
    - Defines O'Rear's Tarski $S_2$ + Metamath ZF Hilbert system `ZFProvable` (`axB1..axB8c`,
-     `axExt`, `axRep`, `axPow`, `axUni`, `axInf`, `mp`, `gen`) and `ZFInconsistent`.
+     `axRep`, `axPow`, `axUni`, `axInf`, `mp`, `gen`) and `ZFInconsistent`.
    - Defines a total well-founded Tarski satisfaction relation `zfHolds` on `ℕ` and proves full
      soundness of all 19 constructors of `ZFProvable` in Mathlib's cumulative hierarchy
      `ZFSet.{0}` (`zfProvable_sound_zfSet` and `not_zfInconsistent : ¬ ZFInconsistent`).
@@ -47,7 +41,7 @@ The formalization is structured into six modular components, all verified with *
 
 3. **Layer 1b — Bootstrapping Verification (`Cryptids.Semantics.Zf.Boot`, 0 `sorry`s)**:
    - Proves `boot_to_root`, showing that starting from the blank initial configuration
-     `init = ⟨0, default⟩`, `ConjectureMachines.Zf429.reference` executes all 8 exponential
+     `init = ⟨0, default⟩`, `Machines.zf432` executes all 8 exponential
      rounds of `0a.boot1.A..E` (2,133,492 steps) and all 1,909 cycles of `0b.boot2` to reach
      `zfRootCfg 3821 [] (List.replicate 1909 0)` at `main().0` (State `126`).
 
@@ -55,7 +49,7 @@ The formalization is structured into six modular components, all verified with *
    (`Cryptids.Semantics.Zf.Dispatcher`, 0 `sorry`s)**:
    - Formalizes the 336-state unary call-stack decision tree (`States 96..431`), proves universal
      tree-walk soundness (`walkTape_sound`) and stack-bound invariance (`validStack`), and proves
-     the halting bisimulation `halts_reference_iff_zfRegHalts : Halts reference ↔ ZfRegHalts`.
+     the halting bisimulation `halts_reference_iff_zfRegHalts : Halts Machines.zf432 ↔ ZfRegHalts`.
 
 5. **Layer 3 — 11-Register Machine & Wff-Stack Verification
    (`Cryptids.Semantics.Zf.RegisterMachine`, 0 `sorry`s)**:
@@ -100,45 +94,24 @@ open Turing StateTransition
 /-! ## Section 1: Unconditional Layer 1 + Layer 2 Halting Equivalence -/
 
 /-- Unconditional halting equivalence between the 432-state baseline Turing machine `zf_432`
-(`ConjectureMachines.Zf429.reference`) and the 11-register call-stack machine `ZfRegHalts`,
+(`Machines.zf432`) and the 11-register call-stack machine `ZfRegHalts`,
 combining `Boot.boot_to_root`, `Layer1.stage3_inc_pass2`, `Layer1.stage3_decnz_pass2_zero`,
 `Layer1.stage3_decnz_pass2_pos`, and `Layer2.halts_reference_iff_zfRegHalts`. -/
 theorem halts_reference_iff_zfRegHalts_unconditional :
-    Halts ConjectureMachines.Zf429.reference ↔ ConjectureMachines.Zf429.Layer2.ZfRegHalts :=
-  ConjectureMachines.Zf429.Layer2.halts_reference_iff_zfRegHalts
-    ConjectureMachines.Zf429.Boot.boot_to_root
-    ConjectureMachines.Zf429.Layer1.stage3_inc_pass2
-    ConjectureMachines.Zf429.Layer1.stage3_decnz_pass2_zero
-    ConjectureMachines.Zf429.Layer1.stage3_decnz_pass2_pos
+    ConjectureMachines.Halts Machines.zf432 ↔ Layer2.ZfRegHalts :=
+  Layer2.halts_reference_iff_zfRegHalts
+    Boot.boot_to_root
+    Layer1.stage3_inc_pass2
+    Layer1.stage3_decnz_pass2_zero
+    Layer1.stage3_decnz_pass2_pos
 
-/-! ## Section 2: End-to-End Turing Machine Equivalence Theorems -/
+/-! ## Section 2: End-to-End Turing Machine Equivalence Theorem -/
 
-/-- The 432-state baseline machine `zf_432` (`ConjectureMachines.Zf429.reference`) halts on the
-blank tape if and only if `WadeZFProvable` proves `v_0 ∈ v_0` (`WadeZFInconsistent`). -/
-theorem halts_reference_iff_wadeZFInconsistent :
-    Halts ConjectureMachines.Zf429.reference ↔ WadeZFInconsistent :=
+/-- The 432-state baseline machine `zf_432` (`Machines.zf432`) halts on the blank tape if and only
+if `WadeZFProvable` proves `v_0 ∈ v_0` (`WadeZFInconsistent`). -/
+theorem halts_zf432_iff_wadeZFInconsistent :
+    ConjectureMachines.Halts Machines.zf432 ↔ WadeZFInconsistent :=
   halts_reference_iff_zfRegHalts_unconditional.trans
     (zfRegHalts_iff_mainLoopHalts.trans mainLoopHalts_iff_wadeZFInconsistent)
-
-/-- The 431-state reduced machine `zf_431` (`ConjectureMachines.Zf431.candidate`) halts on the
-blank tape if and only if `WadeZFProvable` proves `v_0 ∈ v_0` (`WadeZFInconsistent`). -/
-theorem halts_candidate_431_iff_wadeZFInconsistent :
-    Halts ConjectureMachines.Zf431.candidate ↔ WadeZFInconsistent :=
-  ConjectureMachines.Zf431.candidate_equivalent.trans
-    halts_reference_iff_wadeZFInconsistent
-
-/-- The 430-state reduced machine `zf_430` (`ConjectureMachines.Zf430.candidate`) halts on the
-blank tape if and only if `WadeZFProvable` proves `v_0 ∈ v_0` (`WadeZFInconsistent`). -/
-theorem halts_candidate_430_iff_wadeZFInconsistent :
-    Halts ConjectureMachines.Zf430.candidate ↔ WadeZFInconsistent :=
-  ConjectureMachines.Zf430.candidate_equivalent.trans
-    halts_reference_iff_wadeZFInconsistent
-
-/-- The 429-state reduced machine `zf_429` (`ConjectureMachines.Zf429.candidate`) halts on the
-blank tape if and only if `WadeZFProvable` proves `v_0 ∈ v_0` (`WadeZFInconsistent`). -/
-theorem halts_candidate_429_iff_wadeZFInconsistent :
-    Halts ConjectureMachines.Zf429.candidate ↔ WadeZFInconsistent :=
-  ConjectureMachines.Zf429.candidate_equivalent.trans
-    halts_reference_iff_wadeZFInconsistent
 
 end ConjectureMachines.Semantics.Zf

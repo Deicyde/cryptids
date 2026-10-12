@@ -39,7 +39,7 @@ open ConjectureMachines.Riemann543.Layer1
    nSteps_eval_dom nSteps_of_halt mem_eval_iff_nSteps fin2_cases
    Tape.mkL append_replicate_cons append_reverse_cons
    encodeReg encodeRegs encodeRegs_append regsTape regsTape_cons)
-open ConjectureMachines.Zf429.Layer1
+open ConjectureMachines.Semantics.Zf.Layer1
   (rootLeft stackLeft)
 open Riemann120Analytic
   (shuniaPrimorial quarterClockStep ShuniaCounterexampleExact

@@ -4,25 +4,25 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Cryptids.Zf429
+public import Cryptids.Machines
 public import Cryptids.Semantics.Zf.Gadgets
 /-!
 # Layer 2: Call-Stack Dispatcher & Abstract Machine Simulation for `zf_432_wade.tm`
 
 This module formalizes the unary call-stack decision tree (`States 96..431`), stack-popping
 continuations (`6.continue.0..3`, `6.break.0..2`), and two-pass register dispatch (`3.<reg>.inc`,
-`3.<reg>.decnz`) of the 432-state Turing machine `ConjectureMachines.Zf429.Machines.zf432`
+`3.<reg>.decnz`) of the 432-state Turing machine `ConjectureMachines.Semantics.Zf.Machines.zf432`
 (`zf_432_wade.tm`), establishing the lockstep simulation and halting equivalence with the
 11-register abstract machine `zfRegStep`.
 -/
 
 @[expose] public section
 
-namespace ConjectureMachines.Zf429.Layer2
+namespace ConjectureMachines.Semantics.Zf.Layer2
 
-open Turing StateTransition ConjectureMachines.Zf429
+open Turing StateTransition ConjectureMachines.Semantics.Zf
 
-export ConjectureMachines.Zf429.Layer1
+export ConjectureMachines.Semantics.Zf.Layer1
   (refTrans refTrans_eq step_mk'_right step_mk'_left step_mkL_left step_mkL_right
    nSteps_mkL_left_scan nSteps_mk'_right_scan rootLeft rootLeft_eq_append
    stackLeft stackLeft_nil stackLeft_eq_append stackLeft_append stackLeft_append_singleton
@@ -2714,4 +2714,4 @@ theorem halts_reference_iff_zfRegHalts
   rw [nSteps_eval_dom hboot_steps]
   exact halts_zfRootCfg_iff_zfRegHalts hInc hDecZero hDecPos hpad hlen htake
 
-end ConjectureMachines.Zf429.Layer2
+end ConjectureMachines.Semantics.Zf.Layer2

@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Cryptids.Semantics.Zf.Soundness
-public import Cryptids.Zf429
+public import Cryptids.Machines
 public import Mathlib.Tactic.Ring
 
 /-!

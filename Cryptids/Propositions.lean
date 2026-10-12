@@ -302,9 +302,8 @@ inductive WadeZFProvable : ℕ → Prop where
   | uni : WadeZFProvable axUni
   | inf : WadeZFProvable axInf
 
-/-- Inconsistency of the `WadeZFProvable` Hilbert system enumerated by `zf_432_wade.tm`
-(and `zf_431`, `zf_430`, `zf_429`): the contradiction formula $v_0 \in v_0$ (`zfMem 0 0 = 1`) is
-provable. -/
+/-- Inconsistency of the `WadeZFProvable` Hilbert system enumerated by `zf_432_wade.tm` (`zf_432`):
+the contradiction formula $v_0 \in v_0$ (`zfMem 0 0 = 1`) is provable. -/
 def WadeZFInconsistent : Prop :=
   WadeZFProvable (zfMem 0 0)
 

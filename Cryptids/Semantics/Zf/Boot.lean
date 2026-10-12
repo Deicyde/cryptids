@@ -4,23 +4,23 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Cryptids.Zf429
+public import Cryptids.Machines
 public import Cryptids.Semantics.Zf.Gadgets
 /-!
-# Boot Verification (`0a.boot1` & `0b.boot2`) for `zf_432_wade.tm` (`Zf429.Machines.zf432`)
+# Boot Verification (`0a.boot1` & `0b.boot2`) for `zf_432_wade.tm` (`Machines.zf432`)
 
 This file proves `boot_to_root`, showing that starting from the blank initial configuration
-`init = ⟨0, default⟩`, `ConjectureMachines.Zf429.Machines.zf432` (`zf_432_wade.tm`) reaches
+`init = ⟨0, default⟩`, `ConjectureMachines.Semantics.Zf.Machines.zf432` (`zf_432_wade.tm`) reaches
 `zfRootCfg 3821 [] (List.replicate 1909 0)` at `main().0` (State `126`).
 -/
 
 @[expose] public section
 
-namespace ConjectureMachines.Zf429.Boot
+namespace ConjectureMachines.Semantics.Zf.Boot
 
-open Turing StateTransition ConjectureMachines.Zf429
+open Turing StateTransition ConjectureMachines.Semantics.Zf
 
-open ConjectureMachines.Zf429.Layer1
+open ConjectureMachines.Semantics.Zf.Layer1
   (refTrans refTrans_eq step_mkL_left step_mkL_right step_mk'_right step_mk'_left
    nSteps_mkL_left_scan nSteps_mk'_right_scan rootLeft zfRootCfg zfRootCfg_default_eq
    zfDispatchState zfDispatch_trans_zero zfDispatch_trans_one zfDispatch_bounce_default
@@ -1071,7 +1071,7 @@ theorem boot2_loop (m i : ℕ) (hm : 1 ≤ m) (hi : 1 ≤ i) :
       rw [hadd] at hrest
       exact ⟨_, nSteps_bind_eq h92 (nSteps_bind_eq hcont hrest)⟩
 
-/-- Main boot theorem: starting from `init = ⟨0, default⟩`, `Zf429.Machines.zf432` reaches
+/-- Main boot theorem: starting from `init = ⟨0, default⟩`, `Machines.zf432` reaches
 `zfRootCfg padTotal [] initRegs` at `main().0` (State `126`) with `padTotal = 3821 ≥ 160` and
 `initRegs = List.replicate 1909 0` (`initRegs.length = 1909 ≥ 11`,
 `initRegs.take 11 = List.replicate 11 0`). -/
@@ -1087,5 +1087,5 @@ theorem boot_to_root :
   · rw [List.length_replicate]; decide
   · rw [List.take_replicate]; rfl
 
-end ConjectureMachines.Zf429.Boot
+end ConjectureMachines.Semantics.Zf.Boot
 

@@ -26,10 +26,10 @@ open ConjectureMachines.Riemann543.Layer1
    encodeRegs encodeRegs_nil encodeRegs_cons encodeRegs_append
    regsTape regsTape_nil regsTape_cons regsTape_append
    list_take_cons_drop list_take_set_drop)
-open ConjectureMachines.Zf429.Layer1
+open ConjectureMachines.Semantics.Zf.Layer1
   (rootLeft rootLeft_eq_append stackLeft stackLeft_nil stackLeft_eq_append
    stackLeft_append stackLeft_append_singleton)
-open ConjectureMachines.Zf429.Boot
+open ConjectureMachines.Semantics.Zf.Boot
   (pair01 pair10 pair01_snoc pair10_snoc cons_one_pair01 pair10_succ_eq
    bootLeft bootLeft_zero)
 

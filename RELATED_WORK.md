@@ -19,7 +19,7 @@ All baselines and candidate reductions in this repository adhere to the standard
 Community records for conjecture-checking and ZFC-independent Turing machines are tracked on the Busy Beaver Challenge wiki ([Larger Cryptids](https://wiki.bbchallenge.org/wiki/Cryptids#Larger_Cryptids) and [Logical Independence](https://wiki.bbchallenge.org/wiki/Logical_independence)).
 
 - **Goldbach (`goldbach_21`):** Reduces `goldbach_25` (`25 -> 21` states).
-- **ZF Consistency (`zf_393`, `zf_429`) and Riemann Hypothesis (`riemann_120`, `riemann_543`):** Compiler and algorithmic reworks by Andrew Wade (`zf_393`, `393` states for ZF, Aug 2026) and Joseph M. Shunia (`riemann_120`, `120` states for RH, Sept 2026) achieve the smallest known state counts by changing the register microcode, axiom order, or number-theoretic algorithm, while `zf_429` (`432 -> 429`) and `riemann_543` (`744 -> 543`) are pure state-space reductions of the `zf_432` (2025) and `riemann_744` (2016) baselines. This repository provides Lean 4 end-to-end semantics proofs across all of `zf_432`–`zf_429`, `zf_393`, `riemann_744`, `riemann_543`, and `riemann_120`.
+- **ZF Consistency (`zf_380`, `zf_393`, `zf_432`) and Riemann Hypothesis (`riemann_120`, `riemann_543`):** Compiler and algorithmic reworks by Andrew Wade (`zf_393`, `393` states for ZF, Aug 2026) and Joseph M. Shunia (`riemann_120`, `120` states for RH, Sept 2026) improved over `zf_432` (`432` states, 2025) and `riemann_744` (`744` states, 2016); `zf_380` (`393 -> 380` states) further reduces `zf_393` by 13 states. This repository provides Lean 4 end-to-end semantics proofs across all of `zf_380`, `zf_393`, `zf_432`, `riemann_744`, `riemann_543`, and `riemann_120`.
 
 ### 1. Goldbach's Conjecture (`goldbach`)
 
@@ -43,8 +43,8 @@ Enumerates deductions in a finite axiomatization of ZF (or metamath `set.mm` / T
 | 2023 | Riebel | `745` | State-merging pass on O'Rear's 748-state machine | Informal |
 | 2024 | Ridenour | `643` | Optimized NQL compilation + dead-branch pruning | Informal |
 | 2025 | Andrew Wade ([`ajwade/turing_machine_explorer`](https://codeberg.org/ajwade/turing_machine_explorer), commit `33b30300`, `zf_432_wade.tm`) | `432` | Tarski minimal first-order ZF encoding (`zf_432`, `bbchallenge` benchmark) | Lean 4 proofs in this repo ([`Cryptids/Semantics/Zf.lean`](Cryptids/Semantics/Zf.lean)) |
-| 2026 | Faldor & Firsching, using Gemini Argon (`zf_429`) | `429` | State reduction of `zf_432` (`432 -> 431 -> 430 -> 429`): Moore merge (`42->13`), head-symbol merge (`95->331`), and 4-cell window split (`91->{46,93,94}`) | Lean 4 proofs ([`Cryptids/Zf429.lean`](Cryptids/Zf429.lean), [`Cryptids/Semantics/Zf.lean`](Cryptids/Semantics/Zf.lean)) |
 | 2026 | Andrew Wade ([`ajwade/turing_machine_explorer`](https://codeberg.org/ajwade/turing_machine_explorer), commit `9c5c2e82`, Aug 2026) | `393` | Reworked register microcode (`00` moving marker), run-length dispatch, and axiom-order search (`69` framework + `324` decision DAG) | Lean 4 proofs in this repo ([`Cryptids/Zf393.lean`](Cryptids/Zf393.lean), [`Cryptids/Semantics/Zf393.lean`](Cryptids/Semantics/Zf393.lean)) |
+| 2026 | Faldor & Firsching, using Gemini Argon (`zf_380`) | `380` | State reduction of `zf_393` (`393 -> 380`): 5-cell window invariant (`validState`), state merges, and non-destructive leftward bounce excursions (`1..9` steps) | Lean 4 proofs ([`Cryptids/Zf380.lean`](Cryptids/Zf380.lean), [`Cryptids/Semantics/Zf393.lean`](Cryptids/Semantics/Zf393.lean)) |
 
 ### 3. Riemann Hypothesis (`riemann`)
 

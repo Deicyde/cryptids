@@ -19,7 +19,7 @@ This module bridges the abstract call-stack + register machine (`Layer2.ZfRegHal
 
 namespace ConjectureMachines.Semantics.Zf
 
-open Turing StateTransition ConjectureMachines.Zf429 ConjectureMachines.Zf429.Layer2
+open Turing StateTransition ConjectureMachines.Semantics.Zf ConjectureMachines.Semantics.Zf.Layer2
 
 /-! ## Section 1: Fixed-Width 11-Register Machine (`zfReg11Step`) -/
 

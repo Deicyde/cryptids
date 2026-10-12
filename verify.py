@@ -166,45 +166,17 @@ CANDIDATES = [
         ),
     },
     {
-        "id": "zf_431",
-        "instance": "zf",
-        "path": "artifacts/zf_431",
+        "id": "zf_380",
+        "instance": "zf_393",
+        "path": "artifacts/zf_380",
         "lean_file": "Cryptids/Machines.lean",
-        "lean_def": "zf431",
-        "proof_path": "Cryptids/Zf431.lean",
+        "lean_def": "zf380",
+        "proof_path": "Cryptids/Zf380.lean",
         "challenge_path": "Challenge.lean",
-        "states": 431,
-        "baseline_states": 432,
+        "states": 380,
+        "baseline_states": 393,
         "machine_sha256": (
-            "6414d9a1a4bebd72761483505a7581e936dbeb5e4790e39436080f0b0bd302ca"
-        ),
-    },
-    {
-        "id": "zf_430",
-        "instance": "zf",
-        "path": "artifacts/zf_430",
-        "lean_file": "Cryptids/Machines.lean",
-        "lean_def": "zf430",
-        "proof_path": "Cryptids/Zf430.lean",
-        "challenge_path": "Challenge.lean",
-        "states": 430,
-        "baseline_states": 432,
-        "machine_sha256": (
-            "9a4829d0f084177b045612e444b6cd63070168a55d7b582e1f34b10b3daca26c"
-        ),
-    },
-    {
-        "id": "zf_429",
-        "instance": "zf",
-        "path": "artifacts/zf_429",
-        "lean_file": "Cryptids/Machines.lean",
-        "lean_def": "zf429",
-        "proof_path": "Cryptids/Zf429.lean",
-        "challenge_path": "Challenge.lean",
-        "states": 429,
-        "baseline_states": 432,
-        "machine_sha256": (
-            "041919e91a6a5cb2afee60ecdf97975a57811c0c8e0cff52c771d66501f7f730"
+            "c3b8b166f41bd731e6de552a0f9cf7bfa15938fa5165cb4ccd19ead3206b8784"
         ),
     },
     {
@@ -516,140 +488,62 @@ def verify_goldbach_proof_tables(
         )
 
 
-def zf_renum_429(q: int) -> int:
-  s = (1 if q > 42 else 0) + (1 if q > 91 else 0) + (1 if q > 95 else 0)
-  return q - s
-
-
-def zf_map_state_429(q: int, l0: int, h: int) -> int:
-  """Projects a 432-state ZF state onto the 429-state candidate state space."""
-  if q == 42:
-    return zf_renum_429(13)
-  if q == 95:
-    return zf_renum_429(331)
-  if q == 94:
-    return zf_renum_429(94 if h == 0 else 372)
-  if q == 93:
-    return zf_renum_429(93 if h == 0 else 420)
-  if q == 91:
-    if h == 0:
-      return zf_renum_429(46)
-    return zf_renum_429(93 if l0 == 1 else 94)
-  return zf_renum_429(q)
-
-
-def zf_valid_state_429(q: int, l2: int, l1: int, l0: int, h: int) -> bool:
-  """Checks the reachable local tape invariant for the 432-state ZF machine."""
-  l0_eq_1_states = {
-      114,
-      330,
-      334,
-      349,
-      355,
-      372,
-      373,
-      375,
-      376,
-      378,
-      379,
-      383,
-      389,
-      400,
-      402,
-      404,
-      406,
-      408,
-      413,
-      417,
-      423,
-      426,
-  }
-  return (
-      (q not in l0_eq_1_states or l0 == 1)
-      and (q not in {331, 335, 350, 356} or (l0 == 1 and l1 == 1))
-      and (q not in {351, 357} or (l0 == 1 and l1 == 1 and l2 == 1))
-      and (q != 113 or l0 == 0)
-      and (q != 114 or l1 == 0)
-      and (q != 115 or (l0 == 0 and l1 == 1))
-      and (q != 116 or (l0 == 1 and l1 == 1 and l2 == 0))
-      and (q != 348 or (l0 == 0 and l1 == 1 and l2 == 1))
-      and (q != 95 or (h == 1 and l0 == 1 and l1 == 1))
-      and (
-          q != 94 or ((h == 0 and l0 == 1 and l1 == 1) or (h == 1 and l0 == 1))
-      )
-      and (q != 93 or ((h == 0 and l0 == 1) or h == 1))
-      and (
-          q != 91
-          or (
-              (h == 1 and l0 == 1 and l1 == 0) or (h == 1 and l0 == 0) or h == 0
-          )
-      )
+def verify_zf_380_simulation(
+    ref_machine: Machine, cand_380: Machine, steps: int
+) -> dict[str, object]:
+  """Verifies Cryptids/Zf380.lean and simulates zf_393 vs zf_380 across boot + post-boot checkpoints."""
+  proof_text = (ROOT / "Cryptids/Zf380.lean").read_text(encoding="utf-8")
+  assert (
+      "theorem candidate_equivalent : Halts candidate ↔ Halts reference"
+      in proof_text
   )
 
-
-def verify_zf_table_homomorphism(
-    ref_machine: Machine,
-    cand_431: Machine,
-    cand_430: Machine,
-    cand_429: Machine,
-) -> None:
-  """Exhaustively checks the finite inductive invariants of zf_431, zf_430, and zf_429."""
-  assert cand_430.states == 430
-
-  # 1. Check zf_431: exact Moore merge of state 42 -> 13 across all transitions
-  def map_431(q: int) -> int:
-    if q == 42:
-      return 13
-    return q if q < 42 else q - 1
-
-  for q in range(432):
-    for sym in (0, 1):
-      tr_r = ref_machine.table[q][sym]
-      tr_c = cand_431.table[map_431(q)][sym]
-      if tr_r is None:
-        assert tr_c is None
+  def run_to_checkpoints(
+      m: Machine, boot_steps: int, boot_state: int
+  ) -> tuple[tuple[int, dict[int, int]], list[tuple[int, dict[int, int]]], int]:
+    tape: dict[int, int] = {}
+    head = 0
+    q = 0
+    visited = {0}
+    boot_snapshot: tuple[int, dict[int, int]] | None = None
+    post_chks: list[tuple[int, dict[int, int]]] = []
+    for step in range(1, steps + 1):
+      tr = m.table[q][tape.get(head, 0)]
+      assert tr is not None and tr.next_state is not None
+      if tr.write == 0:
+        tape.pop(head, None)
       else:
-        assert tr_c is not None
-        assert (tr_c.write, tr_c.direction, tr_c.next_state) == (
-            tr_r.write,
-            tr_r.direction,
-            map_431(tr_r.next_state),
+        tape[head] = 1
+      head += tr.direction
+      q = tr.next_state
+      visited.add(q)
+      if step == boot_steps:
+        assert q == boot_state, (
+            f"Unexpected boot state at step {step}: q={q}"
         )
+        boot_snapshot = (step, {k - head: 1 for k in tape})
+      elif step > boot_steps and q == boot_state:
+        rel = {k - head: 1 for k in tape}
+        post_chks.append((step, rel))
+    assert boot_snapshot is not None
+    return boot_snapshot, post_chks, len(visited)
 
-  # 2. Check zf_429: exhaustive check of validState_next and transition_mapState
-  assert zf_valid_state_429(
-      0, 0, 0, 0, 0
-  ), "Initial configuration must satisfy validState"
-  for q in range(432):
-    for l2 in (0, 1):
-      for l1 in (0, 1):
-        for l0 in (0, 1):
-          for h in (0, 1):
-            if not zf_valid_state_429(q, l2, l1, l0, h):
-              continue
-            tr_r = ref_machine.table[q][h]
-            q_c = zf_map_state_429(q, l0, h)
-            tr_c = cand_429.table[q_c][h]
-            if tr_r is None:
-              assert tr_c is None
-            else:
-              assert tr_c is not None
-              assert (
-                  tr_c.write == tr_r.write and tr_c.direction == tr_r.direction
-              )
-              for x in (0, 1):
-                if tr_r.direction == 1:  # right move
-                  assert zf_valid_state_429(
-                      tr_r.next_state, l1, l0, tr_r.write, x
-                  )
-                  assert tr_c.next_state == zf_map_state_429(
-                      tr_r.next_state, tr_r.write, x
-                  )
-                else:  # left move
-                  assert zf_valid_state_429(tr_r.next_state, x, l2, l1, l0)
-                  assert tr_c.next_state == zf_map_state_429(
-                      tr_r.next_state, l1, l0
-                  )
+  # Both zf_393 and zf_380 reach state 64 at step 39,753 with identical tapes (`boot_ref` / `boot_cand`)
+  boot_r, chks_r, vis_r = run_to_checkpoints(ref_machine, 39_753, 64)
+  boot_c, chks_c, vis_c = run_to_checkpoints(cand_380, 39_753, 64)
+  assert boot_r[1] == boot_c[1], "zf_380 bootstrap tape mismatch vs zf_393"
+  common = min(len(chks_r), len(chks_c))
+  assert common >= 30, f"Too few ZF post-boot checkpoints: {common}"
+  for i in range(common):
+    assert chks_r[i][1] == chks_c[i][1], f"ZF checkpoint {i} tape mismatch"
+  return {
+      "steps_verified": steps,
+      "boot_steps_ref": boot_r[0],
+      "boot_steps_cand": boot_c[0],
+      "checkpoints_verified": common,
+      "visited_states_ref": vis_r,
+      "visited_states_cand": vis_c,
+  }
 
 
 def verify_riemann_543_derivation(
@@ -859,70 +753,6 @@ def extract_goldbach_chk0(
   return {
       "visited_states": len(visited_states),
       "checkpoints": checkpoints,
-  }
-
-
-def verify_zf_lockstep_simulation(
-    ref_machine: Machine, cand_429: Machine, steps: int
-) -> dict[str, object]:
-  """Simulates zf_432 and zf_429 side by side for `steps` steps and asserts 1-to-1 lockstep identity."""
-  tape_r: dict[int, int] = {}
-  tape_c: dict[int, int] = {}
-  head_r = 0
-  head_c = 0
-  q_r = 0
-  q_c = 0
-  visited_r = {0}
-  visited_c = {0}
-
-  for step in range(1, steps + 1):
-    sr = tape_r.get(head_r, 0)
-    sc = tape_c.get(head_c, 0)
-    assert (
-        sr == sc and head_r == head_c
-    ), f"ZF tape/head divergence at step {step}"
-
-    tr_r = ref_machine.table[q_r][sr]
-    tr_c = cand_429.table[q_c][sc]
-    assert (
-        tr_r.write == tr_c.write and tr_r.direction == tr_c.direction
-    ), f"ZF action divergence at step {step}: ref={tr_r}, cand={tr_c}"
-
-    if tr_r.write == 0:
-      tape_r.pop(head_r, None)
-      tape_c.pop(head_c, None)
-    else:
-      tape_r[head_r] = 1
-      tape_c[head_c] = 1
-
-    head_r += tr_r.direction
-    head_c += tr_c.direction
-    assert tr_r.next_state is not None and tr_c.next_state is not None
-    q_r = tr_r.next_state
-    q_c = tr_c.next_state
-    visited_r.add(q_r)
-    visited_c.add(q_c)
-
-    l2 = tape_r.get(head_r - 3, 0)
-    l1 = tape_r.get(head_r - 2, 0)
-    l0 = tape_r.get(head_r - 1, 0)
-    h = tape_r.get(head_r, 0)
-    assert zf_valid_state_429(
-        q_r, l2, l1, l0, h
-    ), f"ZF validState failed at step {step}"
-    expected_qc = zf_map_state_429(q_r, l0, h)
-    assert q_c == expected_qc, (
-        f"ZF state map divergence at step {step}: q_r={q_r}, q_c={q_c},"
-        f" expected={expected_qc}"
-    )
-
-  assert tape_r == tape_c
-  return {
-      "steps_verified": steps,
-      "final_head": head_r,
-      "nonzero_cells": len(tape_r),
-      "visited_states_ref": len(visited_r),
-      "visited_states_cand": len(visited_c),
   }
 
 
@@ -1160,16 +990,16 @@ def run_verification(
         " candidate + 50 edited cells match"
     )
 
-  verify_zf_table_homomorphism(
-      baseline_machines["zf"],
-      cand_machines["zf_431"],
-      cand_machines["zf_430"],
-      cand_machines["zf_429"],
+  zf_sim = verify_zf_380_simulation(
+      baseline_machines["zf_393"], cand_machines["zf_380"], steps
   )
+  report["simulations"]["zf_380"] = zf_sim
   if verbose:
     print(
-        "[PASS] ZF (431 / 430 / 429) state-homomorphism `mapState` verified"
-        " across all 864 baseline transitions"
+        f"[PASS] ZF 380 simulation ({steps:,} steps):"
+        " boot tape identical at t=39,753 +"
+        f" {zf_sim['checkpoints_verified']}/{zf_sim['checkpoints_verified']}"
+        " post-boot checkpoints match 1-to-1"
     )
 
   riemann_decomp = verify_riemann_543_derivation(
@@ -1219,17 +1049,6 @@ def run_verification(
         f" {gb_cand_sim['visited_states']}/21 candidate states visited"
     )
 
-  zf_sim = verify_zf_lockstep_simulation(
-      baseline_machines["zf"], cand_machines["zf_429"], steps
-  )
-  report["simulations"]["zf_429"] = zf_sim
-  if verbose:
-    print(
-        f"[PASS] ZF 429 lockstep simulation ({steps:,} steps): "
-        f"100% step-for-step identity at every step t=0..{steps:,} "
-        f"(head={zf_sim['final_head']}, {zf_sim['nonzero_cells']} active cells)"
-    )
-
   riemann_sim = verify_riemann_checkpoint_simulation(
       baseline_machines["riemann"],
       cand_machines["riemann_543"],
@@ -1246,6 +1065,7 @@ def run_verification(
     )
 
   for extra_id, boot_step, boot_state in (
+      ("zf", None, None),
       ("zf_393", 39773, 99),
       ("riemann_120", None, None),
   ):
@@ -1271,11 +1091,6 @@ def run_verification(
       assert (
           boot_ok
       ), f"{extra_id} did not reach boot state {boot_state} at step {boot_step}"
-    if extra_id == "riemann_120":
-      assert (
-          head == zf_sim["final_head"]
-          and len(tape) == zf_sim["nonzero_cells"]
-      ), f"riemann_120 bootstrap tape diverged from zf_432 at {steps} steps"
     report["simulations"][extra_id] = {
         "steps_simulated": steps,
         "boot_step_verified": boot_step if boot_step is not None else None,

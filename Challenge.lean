@@ -100,18 +100,12 @@ namespace Machines
 /-- Rows of `zf432`. -/ def zf432Rows : List (List (Option (Fin 2 × Dir × Fin 432))) :=
   load_machine_rows% "baselines/tables/zf_432.txt"
 /-- 432-state ZF baseline. -/ def zf432 : Machine 432 2 := Machine.ofRows zf432Rows
-/-- Rows of `zf431`. -/ def zf431Rows : List (List (Option (Fin 2 × Dir × Fin 431))) :=
-  load_machine_rows% "artifacts/zf_431/machine.txt"
-/-- 431-state ZF candidate. -/ def zf431 : Machine 431 2 := Machine.ofRows zf431Rows
-/-- Rows of `zf430`. -/ def zf430Rows : List (List (Option (Fin 2 × Dir × Fin 430))) :=
-  load_machine_rows% "artifacts/zf_430/machine.txt"
-/-- 430-state ZF candidate. -/ def zf430 : Machine 430 2 := Machine.ofRows zf430Rows
-/-- Rows of `zf429`. -/ def zf429Rows : List (List (Option (Fin 2 × Dir × Fin 429))) :=
-  load_machine_rows% "artifacts/zf_429/machine.txt"
-/-- 429-state ZF candidate. -/ def zf429 : Machine 429 2 := Machine.ofRows zf429Rows
 /-- Rows of `zf393`. -/ def zf393Rows : List (List (Option (Fin 2 × Dir × Fin 393))) :=
   load_machine_rows% "baselines/tables/zf_393.txt"
 /-- 393-state ZF machine. -/ def zf393 : Machine 393 2 := Machine.ofRows zf393Rows
+/-- Rows of `zf380`. -/ def zf380Rows : List (List (Option (Fin 2 × Dir × Fin 380))) :=
+  load_machine_rows% "artifacts/zf_380/machine.txt"
+/-- 380-state ZF candidate. -/ def zf380 : Machine 380 2 := Machine.ofRows zf380Rows
 /-- Rows of `riemann744`. -/ def riemann744Rows : List (List (Option (Fin 2 × Dir × Fin 744))) :=
   load_machine_rows% "baselines/tables/riemann_744.txt"
 /-- 744-state RH baseline. -/ def riemann744 : Machine 744 2 := Machine.ofRows riemann744Rows
@@ -244,33 +238,6 @@ theorem halts_candidate_iff_not_goldbach : Halts candidate ↔ ¬ GoldbachConjec
 end Semantics
 end Goldbach21
 
-namespace Zf431
-/-- 432-state ZF consistency reference machine (`zf_432`, Wade 2025). -/
-abbrev reference : BundledMachine 2 := Machines.zf432.bundle
-/-- 431-state ZF consistency candidate machine (`zf_431`). -/
-abbrev candidate : BundledMachine 2 := Machines.zf431.bundle
-theorem candidate_fewer_states : candidate.states < reference.states := by sorry
-theorem candidate_equivalent : Halts candidate ↔ Halts reference := by sorry
-end Zf431
-
-namespace Zf430
-/-- 432-state ZF consistency reference machine (`zf_432`, Wade 2025). -/
-abbrev reference : BundledMachine 2 := Machines.zf432.bundle
-/-- 430-state ZF consistency candidate machine (`zf_430`). -/
-abbrev candidate : BundledMachine 2 := Machines.zf430.bundle
-theorem candidate_fewer_states : candidate.states < reference.states := by sorry
-theorem candidate_equivalent : Halts candidate ↔ Halts reference := by sorry
-end Zf430
-
-namespace Zf429
-/-- 432-state ZF consistency reference machine (`zf_432`, Wade 2025). -/
-abbrev reference : BundledMachine 2 := Machines.zf432.bundle
-/-- 429-state ZF consistency candidate machine (`zf_429`). -/
-abbrev candidate : BundledMachine 2 := Machines.zf429.bundle
-theorem candidate_fewer_states : candidate.states < reference.states := by sorry
-theorem candidate_equivalent : Halts candidate ↔ Halts reference := by sorry
-end Zf429
-
 namespace Zf393
 /-- 393-state ZF consistency machine (`zf_393`, Wade 2026). -/
 abbrev zf393 : Machine 393 2 := Machines.zf393
@@ -279,14 +246,25 @@ theorem halts_zf393_iff_zfInconsistent : ConjectureMachines.Halts zf393 ↔ ZFIn
 theorem not_halts_zf393 : ¬ ConjectureMachines.Halts zf393 := by sorry
 end Zf393
 
+namespace Zf380
+/-- 393-state ZF consistency reference machine (`zf_393`, Wade 2026). -/
+abbrev reference : BundledMachine 2 := Machines.zf393.bundle
+/-- 380-state ZF consistency candidate machine (`zf_380`). -/
+abbrev candidate : BundledMachine 2 := Machines.zf380.bundle
+theorem candidate_fewer_states : candidate.states < reference.states := by sorry
+theorem candidate_equivalent : Halts candidate ↔ Halts reference := by sorry
+namespace Semantics
+theorem halts_candidate_iff_zfInconsistent : Halts candidate ↔ ZFInconsistent := by sorry
+theorem not_halts_candidate : ¬ Halts candidate := by sorry
+end Semantics
+end Zf380
+
 namespace Semantics.Zf
 theorem zfProvable_sound_zfSet (φ : ZFFormula) (h : ZFProvable φ.code)
     (v : ℕ → ZFSet.{0}) : φ.Holds v := by sorry
 theorem not_zfInconsistent : ¬ ZFInconsistent := by sorry
-theorem halts_reference_iff_wadeZFInconsistent :
-    Halts ConjectureMachines.Zf429.reference ↔ WadeZFInconsistent := by sorry
-theorem halts_candidate_429_iff_wadeZFInconsistent :
-    Halts ConjectureMachines.Zf429.candidate ↔ WadeZFInconsistent := by sorry
+theorem halts_zf432_iff_wadeZFInconsistent :
+    ConjectureMachines.Halts Machines.zf432 ↔ WadeZFInconsistent := by sorry
 end Semantics.Zf
 
 namespace Riemann543
