@@ -1,6 +1,6 @@
 # Riemann Hypothesis Machine (`120 -> 104` States)
 
-* **Domain:** `riemann` (2-symbol deterministic Turing machine halting if and only if the Riemann Hypothesis is false, starting from Matiyasevich, Davis, and O'Rear's 2016 120-state LACONIC/TM-compiled machine [`baselines/sources/riemann_120_sorear.tm`](../../baselines/sources/riemann_120_sorear.tm))
+* **Domain:** `riemann` (2-symbol deterministic Turing machine halting if and only if the Riemann Hypothesis is false, starting from Joseph M. Shunia's September 2026 120-state machine [`baselines/tables/riemann_120.txt`](../../baselines/tables/riemann_120.txt), [`arXiv:2609.30306`](https://arxiv.org/abs/2609.30306))
 * **State Reduction:** `120 -> 104` states (`-16` states, `-13.33%`; non-halting transitions `238 -> 207`, `-31` transitions, `-13.03%`)
 * **Runtime Steps:** `-99.9899%` bootstrap step reduction (`9,934.23x` faster initialization: `9,037` candidate steps vs. `89,775,610` baseline steps to canonical root entry `main.0`) and `-97.7260%` post-bootstrap execution reduction over the first `1,000` abstract register instructions (`489,345` candidate steps vs. `21,518,736` baseline steps, `43.97x` post-bootstrap speedup; cumulative `498,382` vs. `111,294,346` steps, `223.31x` total speedup)
 * **Machine SHA-256:** `ac0c7e8a76679ba2a3f2c1814166b392c8301e51110a08bcd2c06624be35f25d` ([`machine.txt`](machine.txt))
@@ -8,7 +8,7 @@
 
 ## Mathematical Mechanism
 
-Across a five-link chain of forward/backward simulation theorems (`Halts candidate ↔ Halts edited121 ↔ RhRegHaltsOf true ↔ RhRegHaltsOf false ↔ Halts riemann121 ↔ Halts reference`), this reduction removes 16 states (`-13.33%`) and 31 non-halting transitions (`-13.03%`) from Matiyasevich, Davis, and O'Rear's 120-state machine (`riemann_120_sorear.tm`).
+Across a five-link chain of forward/backward simulation theorems (`Halts candidate ↔ Halts edited121 ↔ RhRegHaltsOf true ↔ RhRegHaltsOf false ↔ Halts riemann121 ↔ Halts reference`), this reduction removes 16 states (`-13.33%`) and 31 non-halting transitions (`-13.03%`) from Joseph M. Shunia's 120-state machine (`riemann_120`, [`arXiv:2609.30306`](https://arxiv.org/abs/2609.30306)).
 
 The formal proof ([`Cryptids/Riemann104.lean`](../../Cryptids/Riemann104.lean)) factors through a de-merged 121-state intermediate machine (`riemann121`) and an optimized 121-state sparse machine (`edited121`) whose 104 reachable states embed injectively into `Fin 121` via `embed104To121 : Fin 104 → Fin 121`:
 

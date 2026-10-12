@@ -34,7 +34,7 @@ For the reduced machines in [`artifacts/`](artifacts/), the state-space transfor
 
 - **`goldbach_21` (`339,411` vs. `170,966` steps through `n = 40`, `1.99x`):** Eliminating 4 states (`1, 8, 10, 17`) reverses the partition enumeration to test larger summands first and routes divisor acceptance through the main counter-tape scanner.
 - **`zf_380` (`+0.093%` step overhead at `1,000,000` steps; `0` step overhead during `39,753`-step bootstrap):** Eliminating 13 states (`65, 68, 266, 278, 322, 335, 341, 353, 359, 361, 379, 387, 389`) via a 5-cell sliding-window invariant (`validState`) and non-destructive leftward head bounces (`1, 3, 5, 7, 9` steps) preserves 100% bit-exact tape equality after every macro-step.
-- **`riemann_104` (`-99.969%` bootstrap steps: `662` vs. `2,135,402` steps to `main()`; `1.0002x` post-bootstrap rate):** Eliminating 16 states (`120 -> 104`) replaces the 8-round exponential bootstrap with a single 662-step initialization pass (`padTotal = 21`, `3` zeroed initial registers) and compresses `main().n_11` (`117 -> 118`), `main().0` (`96`), and five single-use control-tree states (`103, 106, 108, 111, 114`).
+- **`riemann_104` (`9,037` vs. `89,775,610` bootstrap steps, `9,934.23x` faster initialization; `498,382` vs. `111,294,346` total steps over the first `1,000` register instructions, `223.31x` speedup):** Eliminating 16 states (`120 -> 104`) splits merged scanner state `32` via a 5-cell window invariant (`120 -> 121`), replaces the two-phase `89.8M`-step bootstrap (`-9` states) with a self-bootstrapping header and dynamic on-demand zero padding (`padTotal -> padTotal + 1`), and consolidates return scanners and binary call-stack frames (`mapStack`, `-8` states).
 
 ## Building and Verifying
 

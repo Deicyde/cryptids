@@ -67,7 +67,7 @@ sources:
       - "Andrew Wade"
     id: "https://codeberg.org/ajwade/turing_machine_explorer"
     type: "software"
-    relationship: "primary"
+    relationship: "background"
     author_endorsement: "not-contacted"
     note: >-
       Provides both the August 2025 432-state baseline zf_432_wade.tm (commit
@@ -80,7 +80,7 @@ sources:
       - "Joseph M. Shunia"
     id: "https://arxiv.org/abs/2609.30306"
     type: "article"
-    relationship: "primary"
+    relationship: "background"
     author_endorsement: "not-contacted"
     note: >-
       Constructs the 120-state binary Turing machine riemann_120 equivalent to
@@ -133,16 +133,41 @@ status:
     - "Classical.choice"
     - "Quot.sound"
   main_results:
+    - declaration: "ConjectureMachines.Goldbach21.candidate_fewer_states"
+      file: "Cryptids/Goldbach21.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator/goldbach_21.json"
     - declaration: "ConjectureMachines.Goldbach21.candidate_equivalent"
       file: "Cryptids/Goldbach21.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: "comparator/goldbach_21.json"
+    - declaration: "ConjectureMachines.Goldbach21.Semantics.halts_reference_iff_not_goldbach"
+      file: "Cryptids/Semantics/Goldbach.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator/goldbach_semantics.json"
     - declaration: "ConjectureMachines.Goldbach21.Semantics.halts_candidate_iff_not_goldbach"
       file: "Cryptids/Semantics/Goldbach.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: "comparator/goldbach_semantics.json"
+    - declaration: "ConjectureMachines.Zf393.halts_zf393_iff_zfInconsistent"
+      file: "Cryptids/Semantics/Zf393.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator/zf_393.json"
+    - declaration: "ConjectureMachines.Zf393.not_halts_zf393"
+      file: "Cryptids/Semantics/Zf393.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator/zf_393.json"
+    - declaration: "ConjectureMachines.Zf380.candidate_fewer_states"
+      file: "Cryptids/Zf380.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator/zf_380.json"
     - declaration: "ConjectureMachines.Zf380.candidate_equivalent"
       file: "Cryptids/Zf380.lean"
       sorry_count: 0
@@ -158,8 +183,8 @@ status:
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: "comparator/zf_393.json"
-    - declaration: "ConjectureMachines.Semantics.Zf.halts_zf432_iff_wadeZFInconsistent"
-      file: "Cryptids/Semantics/Zf.lean"
+    - declaration: "ConjectureMachines.Semantics.Zf.zfProvable_sound_zfSet"
+      file: "Cryptids/Semantics/Zf/Soundness.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: "comparator/zf_semantics.json"
@@ -168,16 +193,16 @@ status:
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: "comparator/zf_semantics.json"
-    - declaration: "ConjectureMachines.Zf393.halts_zf393_iff_zfInconsistent"
-      file: "Cryptids/Semantics/Zf393.lean"
+    - declaration: "ConjectureMachines.Semantics.Zf.halts_zf432_iff_wadeZFInconsistent"
+      file: "Cryptids/Semantics/Zf.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator/zf_393.json"
-    - declaration: "ConjectureMachines.Zf393.not_halts_zf393"
-      file: "Cryptids/Semantics/Zf393.lean"
+      comparator_config: "comparator/zf_semantics.json"
+    - declaration: "ConjectureMachines.Semantics.Riemann.halts_riemann744_iff_exists_counterexample"
+      file: "Cryptids/Semantics/Riemann.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator/zf_393.json"
+      comparator_config: "comparator/riemann_semantics.json"
     - declaration: "ConjectureMachines.Semantics.Riemann.halts_riemann744_iff_not_riemannHypothesis"
       file: "Cryptids/Semantics/Riemann.lean"
       sorry_count: 0
@@ -188,6 +213,11 @@ status:
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: "comparator/riemann_120.json"
+    - declaration: "ConjectureMachines.Riemann104.candidate_fewer_states"
+      file: "Cryptids/Riemann104.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator/riemann_104.json"
     - declaration: "ConjectureMachines.Riemann104.candidate_equivalent"
       file: "Cryptids/Riemann104.lean"
       sorry_count: 0
@@ -239,13 +269,33 @@ review:
 alignment:
   namespace: "ConjectureMachines"
   statements:
+    - source: "goldbach_21 < goldbach_25 state reduction"
+      lean: "ConjectureMachines.Goldbach21.candidate_fewer_states"
+      module: "Cryptids.Goldbach21"
+      status: "proved"
     - source: "goldbach_21 <-> goldbach_25 halting equivalence"
       lean: "ConjectureMachines.Goldbach21.candidate_equivalent"
       module: "Cryptids.Goldbach21"
       status: "proved"
+    - source: "goldbach_25 <-> ¬ GoldbachConjecture"
+      lean: "ConjectureMachines.Goldbach21.Semantics.halts_reference_iff_not_goldbach"
+      module: "Cryptids.Semantics.Goldbach"
+      status: "proved"
     - source: "goldbach_21 <-> ¬ GoldbachConjecture"
       lean: "ConjectureMachines.Goldbach21.Semantics.halts_candidate_iff_not_goldbach"
       module: "Cryptids.Semantics.Goldbach"
+      status: "proved"
+    - source: "zf_393 <-> ZFInconsistent"
+      lean: "ConjectureMachines.Zf393.halts_zf393_iff_zfInconsistent"
+      module: "Cryptids.Semantics.Zf393"
+      status: "proved"
+    - source: "Unconditional non-halting of zf_393"
+      lean: "ConjectureMachines.Zf393.not_halts_zf393"
+      module: "Cryptids.Semantics.Zf393"
+      status: "proved"
+    - source: "zf_380 < zf_393 state reduction"
+      lean: "ConjectureMachines.Zf380.candidate_fewer_states"
+      module: "Cryptids.Zf380"
       status: "proved"
     - source: "zf_380 <-> zf_393 halting equivalence"
       lean: "ConjectureMachines.Zf380.candidate_equivalent"
@@ -259,21 +309,21 @@ alignment:
       lean: "ConjectureMachines.Zf380.Semantics.not_halts_candidate"
       module: "Cryptids.Semantics.Zf393"
       status: "proved"
+    - source: "Soundness of ZFProvable in ZFSet.{0} (formula satisfaction)"
+      lean: "ConjectureMachines.Semantics.Zf.zfProvable_sound_zfSet"
+      module: "Cryptids.Semantics.Zf.Soundness"
+      status: "proved"
+    - source: "Soundness of ZFProvable in ZFSet.{0} (¬ ZFInconsistent)"
+      lean: "ConjectureMachines.Semantics.Zf.not_zfInconsistent"
+      module: "Cryptids.Semantics.Zf.Soundness"
+      status: "proved"
     - source: "zf_432 <-> WadeZFInconsistent"
       lean: "ConjectureMachines.Semantics.Zf.halts_zf432_iff_wadeZFInconsistent"
       module: "Cryptids.Semantics.Zf"
       status: "proved"
-    - source: "Soundness of ZFProvable in ZFSet.{0}"
-      lean: "ConjectureMachines.Semantics.Zf.not_zfInconsistent"
-      module: "Cryptids.Semantics.Zf.Soundness"
-      status: "proved"
-    - source: "zf_393 <-> ZFInconsistent"
-      lean: "ConjectureMachines.Zf393.halts_zf393_iff_zfInconsistent"
-      module: "Cryptids.Semantics.Zf393"
-      status: "proved"
-    - source: "Unconditional non-halting of zf_393"
-      lean: "ConjectureMachines.Zf393.not_halts_zf393"
-      module: "Cryptids.Semantics.Zf393"
+    - source: "riemann_744 <-> ∃ x, MatiyasevichRiemannCounterexample x"
+      lean: "ConjectureMachines.Semantics.Riemann.halts_riemann744_iff_exists_counterexample"
+      module: "Cryptids.Semantics.Riemann"
       status: "proved"
     - source: "riemann_744 <-> ¬ RiemannHypothesis"
       lean: "ConjectureMachines.Semantics.Riemann.halts_riemann744_iff_not_riemannHypothesis"
@@ -282,6 +332,10 @@ alignment:
     - source: "riemann_120 <-> ¬ RiemannHypothesis"
       lean: "ConjectureMachines.Riemann120.halts_riemann120_iff_not_riemannHypothesis"
       module: "Cryptids.Semantics.Riemann120"
+      status: "proved"
+    - source: "riemann_104 < riemann_120 state reduction"
+      lean: "ConjectureMachines.Riemann104.candidate_fewer_states"
+      module: "Cryptids.Riemann104"
       status: "proved"
     - source: "riemann_104 <-> riemann_120 halting equivalence"
       lean: "ConjectureMachines.Riemann104.candidate_equivalent"

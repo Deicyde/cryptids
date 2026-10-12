@@ -9,8 +9,8 @@ against the self-contained challenge specification in [`Challenge.lean`](../Chal
 [`Challenge.lean`](../Challenge.lean) imports **only** Mathlib and Lean core (`Lean.Elab.Term`),
 defines all baseline and candidate machines (`reference` and `candidate`), states the target
 mathematical propositions (`GoldbachConjecture`, `MatiyasevichRiemannCounterexample`,
-`ZFProvable`, `WadeZFProvable`, etc.), and states all 23 target equivalence and semantics theorems
-with `sorry`.
+`ZFProvable`, `WadeZFProvable`, etc.), and states all 19 target state-reduction, equivalence, and
+semantics theorems with `sorry`.
 
 Comparator exports both `Challenge` and `Cryptids` via `lean4export`, verifies in a Bubblewrap
 sandbox that:
@@ -23,7 +23,7 @@ sandbox that:
 
 | Config File | Challenge Module | Solution Module | Verified Theorems |
 | :--- | :--- | :--- | :--- |
-| [`all.json`](./all.json) | `Challenge` | `Cryptids` | All 17 state-reduction, equivalence, and semantics theorems |
+| [`all.json`](./all.json) | `Challenge` | `Cryptids` | All 19 state-reduction, equivalence, and semantics theorems |
 | [`goldbach_21.json`](./goldbach_21.json) | `Challenge` | `Cryptids.Goldbach21` | `candidate_fewer_states`, `candidate_equivalent` |
 | [`goldbach_semantics.json`](./goldbach_semantics.json) | `Challenge` | `Cryptids.Semantics.Goldbach` | `halts_reference_iff_not_goldbach`, `halts_candidate_iff_not_goldbach` |
 | [`zf_380.json`](./zf_380.json) | `Challenge` | `Cryptids.Zf380` | `candidate_fewer_states`, `candidate_equivalent` |

@@ -1461,6 +1461,336 @@ def zf393RegNSteps : ℕ → Zf393RegCfg → Option Zf393RegCfg
 def Zf393RegHalts : Prop :=
   ∃ n c, zf393RegNSteps n zf393RegInit = some c ∧ zf393RegStep c = none
 
+
+inductive BootState where
+  | b0 | b1 | b2 | b3 | b4 | b68
+  deriving DecidableEq
+
+def stateOfBoot : BootState → Fin 393
+  | .b0 => 0 | .b1 => 1 | .b2 => 2 | .b3 => 3 | .b4 => 4 | .b68 => 68
+
+def bitOfBool : Bool → Fin 2
+  | false => 0 | true => 1
+
+def stepBootR (q' : BootState) (w : Bool) (L : List Bool) (R : List Bool) :
+    Option (BootState × List Bool × Bool × List Bool) :=
+  match R with
+  | [] => some (q', w :: L, false, [])
+  | r :: rs => some (q', w :: L, r, rs)
+
+def stepBootL (q' : BootState) (w : Bool) (L : List Bool) (R : List Bool) :
+    Option (BootState × List Bool × Bool × List Bool) :=
+  match L with
+  | [] => some (q', [], false, w :: R)
+  | l :: ls => some (q', ls, l, w :: R)
+
+def stepBoot (q : BootState) (L : List Bool) (h : Bool) (R : List Bool) :
+    Option (BootState × List Bool × Bool × List Bool) :=
+  match q, h with
+  | .b0, false => stepBootR .b1 true L R
+  | .b0, true => stepBootL .b2 false L R
+  | .b1, false => stepBootR .b2 false L R
+  | .b1, true => stepBootR .b1 false L R
+  | .b2, false => stepBootL .b3 true L R
+  | .b2, true => stepBootR .b4 false L R
+  | .b3, false => stepBootL .b4 false L R
+  | .b3, true => stepBootL .b68 false L R
+  | .b4, false => stepBootL .b0 true L R
+  | .b4, true => stepBootL .b1 false L R
+  | .b68, _ => none
+
+def runBoot : ℕ → BootState → List Bool → Bool → List Bool →
+    Option (BootState × List Bool × Bool × List Bool)
+  | 0, q, L, h, R => some (q, L, h, R)
+  | n + 1, q, L, h, R =>
+    match stepBoot q L h R with
+    | none => none
+    | some (q', L', h', R') => runBoot n q' L' h' R'
+
+theorem runBoot_add (m n : ℕ) (q : BootState) (L : List Bool) (h : Bool)
+    (R : List Bool) :
+    runBoot (m + n) q L h R =
+      match runBoot m q L h R with
+      | none => none
+      | some (q', L', h', R') => runBoot n q' L' h' R' := by
+  induction m generalizing q L h R with
+  | zero => rw [Nat.zero_add]; rfl
+  | succ m ih =>
+    rw [Nat.succ_add, runBoot, runBoot]
+    rcases stepBoot q L h R with _ | ⟨q', L', h', R'⟩
+    · rfl
+    · exact ih q' L' h' R'
+
+
+def bootChkL_0 : List Bool := [
+  true, true, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, false, true, false, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, false, true, false, false, false,
+  true, false, false, false, true, false, false, false, false, true, false, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  true]
+
+def bootChkR_0 : List Bool := [
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true]
+
+theorem boot_chk_0 :
+    runBoot 5000 .b0 [] false [] =
+      some (.b1, bootChkL_0, true, bootChkR_0) := by
+  decide
+
+def bootChkL_1 : List Bool := [
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, true, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, false, true, false, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, true, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, true, true, false, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, true]
+
+def bootChkR_1 : List Bool := [
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true]
+
+theorem boot_chk_1 :
+    runBoot 5000 .b1 bootChkL_0 true bootChkR_0 =
+      some (.b4, bootChkL_1, false, bootChkR_1) := by
+  decide
+
+def bootChkL_2 : List Bool := [
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, true, true, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, true, true, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, true, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, true]
+
+def bootChkR_2 : List Bool := [
+  true, true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true]
+
+theorem boot_chk_2 :
+    runBoot 5000 .b4 bootChkL_1 false bootChkR_1 =
+      some (.b0, bootChkL_2, false, bootChkR_2) := by
+  decide
+
+def bootChkL_3 : List Bool := [
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, false, true, false, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, false, true, false, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  true, true, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, true, true, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, true, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, false, true, false, false, true]
+
+def bootChkR_3 : List Bool := [
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true]
+
+theorem boot_chk_3 :
+    runBoot 5000 .b0 bootChkL_2 false bootChkR_2 =
+      some (.b1, bootChkL_3, true, bootChkR_3) := by
+  decide
+
+def bootChkL_4 : List Bool := [
+  false, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, false, true, false, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, true, false, true, false, false, false, true, false, false, false, true, false,
+  false, true, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, true, true, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, true]
+
+def bootChkR_4 : List Bool := [
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true]
+
+theorem boot_chk_4 :
+    runBoot 5000 .b1 bootChkL_3 true bootChkR_3 =
+      some (.b4, bootChkL_4, false, bootChkR_4) := by
+  decide
+
+def bootChkL_5 : List Bool := [
+  false, true, false, false, false, true, false, false, false, true, false, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, false, true, false, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, true, true, false, false, false, true, false, false,
+  true, true, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, true]
+
+def bootChkR_5 : List Bool := [
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true]
+
+theorem boot_chk_5 :
+    runBoot 5000 .b4 bootChkL_4 false bootChkR_4 =
+      some (.b1, bootChkL_5, true, bootChkR_5) := by
+  decide
+
+def bootChkL_6 : List Bool := [
+  false, false, false, true, false, false, false, true, false, false, true, true, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, false, true, false, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, false, true, false, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, false, true, false, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, false, true, false, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, false, true, false,
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, false, true, false, false, false,
+  true, false, false, false, true, false, false, false, true, false, false, false, true,
+  false, false, false, true, false, false, false, true, false, false, true, true, true,
+  false, false, true, true, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, false, true, false, false, false, true, false, false, true]
+
+def bootChkR_6 : List Bool := [
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true]
+
+theorem boot_chk_6 :
+    runBoot 5000 .b1 bootChkL_5 true bootChkR_5 =
+      some (.b0, bootChkL_6, true, bootChkR_6) := by
+  decide
+
+def bootChkL_7 : List Bool := [
+  false, false, true, false, false, false, true, false, false, false, true, false, false,
+  false, true, false, false, true]
+
+def bootChkR_7 : List Bool := [
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true,
+  false, true, false, true, false, true, false, true, false, true, false, true, false,
+  true, false, true, false, true, false, true, false, true, false, true, false, true]
+
+theorem boot_chk_7 :
+    runBoot 4734 .b0 bootChkL_6 true bootChkR_6 =
+      some (.b68, bootChkL_7, false, bootChkR_7) := by
+  decide
+
+theorem boot_phase1_39734 :
+    runBoot 39734 .b0 [] false [] = some (.b68, bootChkL_7, false, bootChkR_7) := by
+  have h : (39734 : ℕ) = 5000 + (5000 + (5000 + (5000 + (5000 + (5000 + (5000 + 4734)))))) := rfl
+  simp only [h, runBoot_add, boot_chk_0, boot_chk_1, boot_chk_2, boot_chk_3, boot_chk_4,
+    boot_chk_5, boot_chk_6, boot_chk_7]
+
 end ConjectureMachines.Zf393
 
 end

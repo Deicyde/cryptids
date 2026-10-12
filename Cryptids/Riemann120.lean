@@ -49,614 +49,8 @@ abbrev riemann120 : Machine 120 2 := Machines.riemann120
 
 @[simp] theorem riemann120_states : riemann120.states = 120 := rfl
 
-def rh121Rows : Array (Array (Option (Fin 2 × Dir × Fin 121))) := #[
-  #[some (1, .right, 1), some (1, .left, 2)],
-  #[some (0, .left, 0), some (0, .left, 3)],
-  #[some (1, .left, 0), some (1, .right, 4)],
-  #[some (1, .left, 1), some (1, .right, 5)],
-  #[some (1, .right, 6), some (0, .right, 7)],
-  #[some (0, .right, 3), some (0, .right, 1)],
-  #[some (0, .right, 8), none],
-  #[some (0, .right, 9), some (1, .right, 7)],
-  #[some (1, .right, 8), some (1, .left, 10)],
-  #[some (0, .right, 11), some (1, .right, 9)],
-  #[some (0, .left, 10), some (1, .left, 12)],
-  #[some (1, .right, 13), some (1, .right, 11)],
-  #[some (0, .left, 14), some (1, .left, 12)],
-  #[some (0, .left, 15), some (0, .right, 11)],
-  #[some (0, .left, 16), some (1, .left, 12)],
-  #[some (0, .left, 17), some (1, .left, 15)],
-  #[some (0, .left, 18), some (1, .left, 12)],
-  #[some (0, .left, 19), some (1, .left, 15)],
-  #[some (0, .right, 20), some (1, .left, 12)],
-  #[some (1, .right, 21), some (0, .left, 19)],
-  #[some (0, .right, 20), some (1, .right, 22)],
-  #[some (0, .right, 21), some (0, .right, 23)],
-  #[some (0, .right, 24), some (1, .right, 25)],
-  #[some (0, .left, 24), some (0, .right, 23)],
-  #[some (1, .left, 10), some (1, .right, 26)],
-  #[some (0, .right, 27), some (0, .right, 27)],
-  #[some (0, .right, 24), some (1, .right, 28)],
-  #[some (0, .right, 29), some (1, .right, 30)],
-  #[some (0, .right, 4), some (1, .right, 31)],
-  #[some (0, .right, 31), some (1, .right, 32)],
-  #[some (0, .right, 33), some (1, .right, 34)],
-  #[some (1, .right, 6), some (0, .right, 35)],
-  #[some (0, .right, 36), some (0, .left, 37)],
-  #[some (0, .right, 38), some (1, .right, 39)],
-  #[some (0, .right, 40), some (1, .right, 41)],
-  #[some (0, .right, 42), some (1, .right, 35)],
-  #[some (1, .right, 6), some (0, .right, 43)],
-  #[some (0, .left, 37), some (0, .left, 10)],
-  #[some (0, .right, 44), some (1, .right, 45)],
-  #[some (0, .right, 46), some (0, .left, 37)],
-  #[some (0, .right, 47), some (1, .right, 48)],
-  #[some (0, .right, 49), some (1, .right, 50)],
-  #[some (0, .right, 51), some (1, .right, 42)],
-  #[some (0, .right, 52), some (1, .right, 43)],
-  #[some (1, .right, 6), some (0, .right, 53)],
-  #[some (0, .right, 54), some (1, .right, 55)],
-  #[some (1, .right, 6), some (0, .right, 56)],
-  #[some (1, .right, 6), some (0, .right, 57)],
-  #[some (0, .right, 58), some (0, .left, 37)],
-  #[some (0, .right, 59), some (1, .right, 60)],
-  #[some (0, .right, 61), some (1, .right, 62)],
-  #[some (1, .left, 63), some (0, .right, 64)],
-  #[some (0, .right, 53), some (1, .right, 52)],
-  #[some (0, .right, 7), some (1, .right, 53)],
-  #[some (0, .right, 65), some (1, .right, 66)],
-  #[some (0, .right, 67), some (1, .right, 68)],
-  #[some (0, .right, 69), some (1, .right, 56)],
-  #[some (0, .right, 35), some (1, .right, 57)],
-  #[some (0, .right, 70), some (1, .right, 36)],
-  #[some (0, .right, 71), some (1, .right, 72)],
-  #[some (0, .right, 73), some (1, .right, 74)],
-  #[some (0, .right, 47), some (1, .right, 75)],
-  #[some (0, .right, 76), some (1, .right, 77)],
-  #[some (0, .left, 78), some (1, .left, 63)],
-  #[some (0, .left, 51), some (1, .right, 79)],
-  #[some (0, .right, 47), some (1, .right, 80)],
-  #[some (0, .right, 81), some (1, .right, 82)],
-  #[some (0, .right, 73), some (1, .right, 83)],
-  #[some (0, .right, 84), some (1, .right, 84)],
-  #[some (0, .right, 57), some (1, .right, 69)],
-  #[some (1, .right, 6), some (0, .right, 85)],
-  #[some (1, .right, 6), some (0, .right, 69)],
-  #[some (0, .right, 54), some (1, .right, 86)],
-  #[some (1, .right, 6), some (0, .right, 87)],
-  #[some (0, .right, 44), some (0, .left, 37)],
-  #[some (0, .right, 88), some (1, .right, 89)],
-  #[some (0, .right, 71), some (1, .right, 90)],
-  #[some (0, .right, 46), none],
-  #[some (0, .left, 91), some (1, .left, 63)],
-  #[some (0, .right, 92), some (1, .right, 79)],
-  #[some (0, .right, 70), some (0, .left, 37)],
-  #[some (0, .right, 71), some (1, .right, 93)],
-  #[some (0, .right, 31), some (1, .right, 94)],
-  #[some (0, .right, 70), some (1, .right, 84)],
-  #[some (0, .right, 81), some (1, .right, 95)],
-  #[some (0, .right, 43), some (1, .right, 85)],
-  #[some (0, .right, 96), some (0, .left, 97)],
-  #[some (0, .right, 56), some (1, .right, 87)],
-  #[some (0, .right, 4), some (1, .right, 98)],
-  #[some (0, .right, 99), some (0, .left, 97)],
-  #[some (0, .right, 96), some (0, .left, 37)],
-  #[some (0, .left, 19), some (0, .left, 91)],
-  #[some (0, .left, 100), some (1, .right, 79)],
-  #[some (0, .right, 4), some (0, .left, 37)],
-  #[some (0, .right, 101), some (0, .left, 37)],
-  #[some (0, .right, 102), some (1, .right, 103)],
-  #[some (0, .right, 46), some (0, .left, 19)],
-  #[some (0, .left, 97), some (0, .left, 37)],
-  #[some (0, .right, 104), some (1, .right, 105)],
-  #[some (1, .right, 6), some (0, .right, 52)],
-  #[some (1, .left, 106), some (1, .left, 100)],
-  #[some (0, .right, 107), some (1, .right, 108)],
-  #[some (0, .right, 109), some (1, .right, 60)],
-  #[some (0, .right, 31), some (1, .right, 89)],
-  #[some (0, .right, 110), some (1, .right, 60)],
-  #[some (0, .right, 104), some (1, .right, 111)],
-  #[some (0, .left, 15), some (0, .left, 100)],
-  #[some (0, .right, 73), some (1, .right, 112)],
-  #[some (0, .right, 65), some (1, .right, 99)],
-  #[some (0, .right, 47), some (1, .right, 113)],
-  #[some (0, .right, 47), some (1, .right, 114)],
-  #[some (0, .right, 115), some (1, .right, 116)],
-  #[some (0, .right, 44), some (0, .left, 91)],
-  #[some (0, .right, 70), some (1, .right, 89)],
-  #[some (0, .right, 117), some (0, .left, 37)],
-  #[some (0, .right, 46), some (1, .right, 118)],
-  #[some (0, .right, 73), some (1, .right, 32)],
-  #[some (0, .right, 4), some (1, .right, 119)],
-  #[some (0, .right, 120), some (0, .left, 37)],
-  #[some (0, .right, 47), some (1, .right, 70)],
-  #[some (0, .right, 46), some (1, .right, 70)]
-]
 
-def riemann121 : TM 121 2 := ⟨fun q a => (rh121Rows.getD q.val #[]).getD a.val none⟩
 
-@[simp] theorem riemann121_states : riemann121.states = 121 := rfl
-
-def rh120Trans (q : Fin 120) (a : Fin 2) :
-    Option (Fin 2 × Dir × Fin 120) :=
-  if q.val < 60 then
-    if q.val < 30 then
-      if q.val < 15 then
-        if q.val < 7 then
-          if q.val < 3 then
-            if q.val < 1 then
-              if a.val == 0 then some (1, .right, 1)
-              else some (1, .left, 2)
-            else
-              if q.val < 2 then
-                if a.val == 0 then some (0, .left, 0)
-                else some (0, .left, 3)
-              else
-                if a.val == 0 then some (1, .left, 0)
-                else some (1, .right, 4)
-          else
-            if q.val < 5 then
-              if q.val < 4 then
-                if a.val == 0 then some (1, .left, 1)
-                else some (1, .right, 5)
-              else
-                if a.val == 0 then some (1, .right, 6)
-                else some (0, .right, 7)
-            else
-              if q.val < 6 then
-                if a.val == 0 then some (0, .right, 3)
-                else some (0, .right, 1)
-              else
-                if a.val == 0 then some (0, .right, 8)
-                else none
-        else
-          if q.val < 11 then
-            if q.val < 9 then
-              if q.val < 8 then
-                if a.val == 0 then some (0, .right, 9)
-                else some (1, .right, 7)
-              else
-                if a.val == 0 then some (1, .right, 8)
-                else some (1, .left, 10)
-            else
-              if q.val < 10 then
-                if a.val == 0 then some (0, .right, 11)
-                else some (1, .right, 9)
-              else
-                if a.val == 0 then some (0, .left, 10)
-                else some (1, .left, 12)
-          else
-            if q.val < 13 then
-              if q.val < 12 then
-                if a.val == 0 then some (1, .right, 13)
-                else some (1, .right, 11)
-              else
-                if a.val == 0 then some (0, .left, 14)
-                else some (1, .left, 12)
-            else
-              if q.val < 14 then
-                if a.val == 0 then some (0, .left, 15)
-                else some (0, .right, 11)
-              else
-                if a.val == 0 then some (0, .left, 16)
-                else some (1, .left, 12)
-      else
-        if q.val < 22 then
-          if q.val < 18 then
-            if q.val < 16 then
-              if a.val == 0 then some (0, .left, 17)
-              else some (1, .left, 15)
-            else
-              if q.val < 17 then
-                if a.val == 0 then some (0, .left, 18)
-                else some (1, .left, 12)
-              else
-                if a.val == 0 then some (0, .left, 19)
-                else some (1, .left, 15)
-          else
-            if q.val < 20 then
-              if q.val < 19 then
-                if a.val == 0 then some (0, .right, 20)
-                else some (1, .left, 12)
-              else
-                if a.val == 0 then some (1, .right, 21)
-                else some (0, .left, 19)
-            else
-              if q.val < 21 then
-                if a.val == 0 then some (0, .right, 20)
-                else some (1, .right, 22)
-              else
-                if a.val == 0 then some (0, .right, 21)
-                else some (0, .right, 23)
-        else
-          if q.val < 26 then
-            if q.val < 24 then
-              if q.val < 23 then
-                if a.val == 0 then some (0, .right, 24)
-                else some (1, .right, 25)
-              else
-                if a.val == 0 then some (0, .left, 24)
-                else some (0, .right, 23)
-            else
-              if q.val < 25 then
-                if a.val == 0 then some (1, .left, 10)
-                else some (1, .right, 26)
-              else
-                if a.val == 0 then some (0, .right, 27)
-                else some (0, .right, 27)
-          else
-            if q.val < 28 then
-              if q.val < 27 then
-                if a.val == 0 then some (0, .right, 24)
-                else some (1, .right, 28)
-              else
-                if a.val == 0 then some (0, .right, 29)
-                else some (1, .right, 30)
-            else
-              if q.val < 29 then
-                if a.val == 0 then some (0, .right, 4)
-                else some (1, .right, 31)
-              else
-                if a.val == 0 then some (0, .right, 31)
-                else some (1, .right, 32)
-    else
-      if q.val < 45 then
-        if q.val < 37 then
-          if q.val < 33 then
-            if q.val < 31 then
-              if a.val == 0 then some (0, .right, 33)
-              else some (1, .right, 34)
-            else
-              if q.val < 32 then
-                if a.val == 0 then some (1, .right, 6)
-                else some (0, .right, 35)
-              else
-                if a.val == 0 then some (0, .right, 36)
-                else some (0, .left, 37)
-          else
-            if q.val < 35 then
-              if q.val < 34 then
-                if a.val == 0 then some (0, .right, 38)
-                else some (1, .right, 39)
-              else
-                if a.val == 0 then some (0, .right, 40)
-                else some (1, .right, 41)
-            else
-              if q.val < 36 then
-                if a.val == 0 then some (0, .right, 42)
-                else some (1, .right, 35)
-              else
-                if a.val == 0 then some (1, .right, 6)
-                else some (0, .right, 43)
-        else
-          if q.val < 41 then
-            if q.val < 39 then
-              if q.val < 38 then
-                if a.val == 0 then some (0, .left, 37)
-                else some (0, .left, 10)
-              else
-                if a.val == 0 then some (0, .right, 44)
-                else some (1, .right, 45)
-            else
-              if q.val < 40 then
-                if a.val == 0 then some (0, .right, 46)
-                else some (0, .left, 37)
-              else
-                if a.val == 0 then some (0, .right, 47)
-                else some (1, .right, 48)
-          else
-            if q.val < 43 then
-              if q.val < 42 then
-                if a.val == 0 then some (0, .right, 49)
-                else some (1, .right, 50)
-              else
-                if a.val == 0 then some (0, .right, 51)
-                else some (1, .right, 42)
-            else
-              if q.val < 44 then
-                if a.val == 0 then some (0, .right, 52)
-                else some (1, .right, 43)
-              else
-                if a.val == 0 then some (1, .right, 6)
-                else some (0, .right, 53)
-      else
-        if q.val < 52 then
-          if q.val < 48 then
-            if q.val < 46 then
-              if a.val == 0 then some (0, .right, 54)
-              else some (1, .right, 55)
-            else
-              if q.val < 47 then
-                if a.val == 0 then some (1, .right, 6)
-                else some (0, .right, 56)
-              else
-                if a.val == 0 then some (1, .right, 6)
-                else some (0, .right, 57)
-          else
-            if q.val < 50 then
-              if q.val < 49 then
-                if a.val == 0 then some (0, .right, 58)
-                else some (0, .left, 37)
-              else
-                if a.val == 0 then some (0, .right, 59)
-                else some (1, .right, 60)
-            else
-              if q.val < 51 then
-                if a.val == 0 then some (0, .right, 61)
-                else some (1, .right, 62)
-              else
-                if a.val == 0 then some (1, .left, 63)
-                else some (0, .right, 64)
-        else
-          if q.val < 56 then
-            if q.val < 54 then
-              if q.val < 53 then
-                if a.val == 0 then some (0, .right, 53)
-                else some (1, .right, 52)
-              else
-                if a.val == 0 then some (0, .right, 7)
-                else some (1, .right, 53)
-            else
-              if q.val < 55 then
-                if a.val == 0 then some (0, .right, 65)
-                else some (1, .right, 66)
-              else
-                if a.val == 0 then some (0, .right, 67)
-                else some (1, .right, 68)
-          else
-            if q.val < 58 then
-              if q.val < 57 then
-                if a.val == 0 then some (0, .right, 69)
-                else some (1, .right, 56)
-              else
-                if a.val == 0 then some (0, .right, 35)
-                else some (1, .right, 57)
-            else
-              if q.val < 59 then
-                if a.val == 0 then some (0, .right, 70)
-                else some (1, .right, 36)
-              else
-                if a.val == 0 then some (0, .right, 71)
-                else some (1, .right, 72)
-  else
-    if q.val < 90 then
-      if q.val < 75 then
-        if q.val < 67 then
-          if q.val < 63 then
-            if q.val < 61 then
-              if a.val == 0 then some (0, .right, 73)
-              else some (1, .right, 74)
-            else
-              if q.val < 62 then
-                if a.val == 0 then some (0, .right, 47)
-                else some (1, .right, 75)
-              else
-                if a.val == 0 then some (0, .right, 76)
-                else some (1, .right, 77)
-          else
-            if q.val < 65 then
-              if q.val < 64 then
-                if a.val == 0 then some (0, .left, 78)
-                else some (1, .left, 63)
-              else
-                if a.val == 0 then some (0, .left, 51)
-                else some (1, .right, 79)
-            else
-              if q.val < 66 then
-                if a.val == 0 then some (0, .right, 47)
-                else some (1, .right, 80)
-              else
-                if a.val == 0 then some (0, .right, 81)
-                else some (1, .right, 82)
-        else
-          if q.val < 71 then
-            if q.val < 69 then
-              if q.val < 68 then
-                if a.val == 0 then some (0, .right, 73)
-                else some (1, .right, 83)
-              else
-                if a.val == 0 then some (0, .right, 84)
-                else some (1, .right, 84)
-            else
-              if q.val < 70 then
-                if a.val == 0 then some (0, .right, 57)
-                else some (1, .right, 69)
-              else
-                if a.val == 0 then some (1, .right, 6)
-                else some (0, .right, 85)
-          else
-            if q.val < 73 then
-              if q.val < 72 then
-                if a.val == 0 then some (1, .right, 6)
-                else some (0, .right, 69)
-              else
-                if a.val == 0 then some (0, .right, 54)
-                else some (1, .right, 86)
-            else
-              if q.val < 74 then
-                if a.val == 0 then some (1, .right, 6)
-                else some (0, .right, 87)
-              else
-                if a.val == 0 then some (0, .right, 44)
-                else some (0, .left, 37)
-      else
-        if q.val < 82 then
-          if q.val < 78 then
-            if q.val < 76 then
-              if a.val == 0 then some (0, .right, 88)
-              else some (1, .right, 89)
-            else
-              if q.val < 77 then
-                if a.val == 0 then some (0, .right, 71)
-                else some (1, .right, 90)
-              else
-                if a.val == 0 then some (0, .right, 46)
-                else none
-          else
-            if q.val < 80 then
-              if q.val < 79 then
-                if a.val == 0 then some (0, .left, 91)
-                else some (1, .left, 63)
-              else
-                if a.val == 0 then some (0, .right, 92)
-                else some (1, .right, 79)
-            else
-              if q.val < 81 then
-                if a.val == 0 then some (0, .right, 70)
-                else some (0, .left, 37)
-              else
-                if a.val == 0 then some (0, .right, 71)
-                else some (1, .right, 93)
-        else
-          if q.val < 86 then
-            if q.val < 84 then
-              if q.val < 83 then
-                if a.val == 0 then some (0, .right, 31)
-                else some (1, .right, 94)
-              else
-                if a.val == 0 then some (0, .right, 70)
-                else some (1, .right, 84)
-            else
-              if q.val < 85 then
-                if a.val == 0 then some (0, .right, 81)
-                else some (1, .right, 95)
-              else
-                if a.val == 0 then some (0, .right, 43)
-                else some (1, .right, 85)
-          else
-            if q.val < 88 then
-              if q.val < 87 then
-                if a.val == 0 then some (0, .right, 96)
-                else some (0, .left, 32)
-              else
-                if a.val == 0 then some (0, .right, 56)
-                else some (1, .right, 87)
-            else
-              if q.val < 89 then
-                if a.val == 0 then some (0, .right, 4)
-                else some (1, .right, 97)
-              else
-                if a.val == 0 then some (0, .right, 98)
-                else some (0, .left, 32)
-    else
-      if q.val < 105 then
-        if q.val < 97 then
-          if q.val < 93 then
-            if q.val < 91 then
-              if a.val == 0 then some (0, .right, 96)
-              else some (0, .left, 37)
-            else
-              if q.val < 92 then
-                if a.val == 0 then some (0, .left, 19)
-                else some (0, .left, 91)
-              else
-                if a.val == 0 then some (0, .left, 99)
-                else some (1, .right, 79)
-          else
-            if q.val < 95 then
-              if q.val < 94 then
-                if a.val == 0 then some (0, .right, 4)
-                else some (0, .left, 37)
-              else
-                if a.val == 0 then some (0, .right, 100)
-                else some (0, .left, 37)
-            else
-              if q.val < 96 then
-                if a.val == 0 then some (0, .right, 101)
-                else some (1, .right, 102)
-              else
-                if a.val == 0 then some (0, .right, 46)
-                else some (0, .left, 19)
-        else
-          if q.val < 101 then
-            if q.val < 99 then
-              if q.val < 98 then
-                if a.val == 0 then some (0, .right, 103)
-                else some (1, .right, 104)
-              else
-                if a.val == 0 then some (1, .right, 6)
-                else some (0, .right, 52)
-            else
-              if q.val < 100 then
-                if a.val == 0 then some (1, .left, 105)
-                else some (1, .left, 99)
-              else
-                if a.val == 0 then some (0, .right, 106)
-                else some (1, .right, 107)
-          else
-            if q.val < 103 then
-              if q.val < 102 then
-                if a.val == 0 then some (0, .right, 108)
-                else some (1, .right, 60)
-              else
-                if a.val == 0 then some (0, .right, 31)
-                else some (1, .right, 89)
-            else
-              if q.val < 104 then
-                if a.val == 0 then some (0, .right, 109)
-                else some (1, .right, 60)
-              else
-                if a.val == 0 then some (0, .right, 103)
-                else some (1, .right, 110)
-      else
-        if q.val < 112 then
-          if q.val < 108 then
-            if q.val < 106 then
-              if a.val == 0 then some (0, .left, 15)
-              else some (0, .left, 99)
-            else
-              if q.val < 107 then
-                if a.val == 0 then some (0, .right, 73)
-                else some (1, .right, 111)
-              else
-                if a.val == 0 then some (0, .right, 65)
-                else some (1, .right, 98)
-          else
-            if q.val < 110 then
-              if q.val < 109 then
-                if a.val == 0 then some (0, .right, 47)
-                else some (1, .right, 112)
-              else
-                if a.val == 0 then some (0, .right, 47)
-                else some (1, .right, 113)
-            else
-              if q.val < 111 then
-                if a.val == 0 then some (0, .right, 114)
-                else some (1, .right, 115)
-              else
-                if a.val == 0 then some (0, .right, 44)
-                else some (0, .left, 91)
-        else
-          if q.val < 116 then
-            if q.val < 114 then
-              if q.val < 113 then
-                if a.val == 0 then some (0, .right, 70)
-                else some (1, .right, 89)
-              else
-                if a.val == 0 then some (0, .right, 116)
-                else some (0, .left, 37)
-            else
-              if q.val < 115 then
-                if a.val == 0 then some (0, .right, 46)
-                else some (1, .right, 117)
-              else
-                if a.val == 0 then some (0, .right, 73)
-                else some (1, .right, 32)
-          else
-            if q.val < 118 then
-              if q.val < 117 then
-                if a.val == 0 then some (0, .right, 4)
-                else some (1, .right, 118)
-              else
-                if a.val == 0 then some (0, .right, 119)
-                else some (0, .left, 37)
-            else
-              if q.val < 119 then
-                if a.val == 0 then some (0, .right, 47)
-                else some (1, .right, 70)
-              else
-                if a.val == 0 then some (0, .right, 46)
-                else some (1, .right, 70)
 
 def rh121Trans (q : Fin 121) (a : Fin 2) :
     Option (Fin 2 × Dir × Fin 121) :=
@@ -1144,18 +538,508 @@ def rh121Trans (q : Fin 121) (a : Fin 2) :
                 else some (1, .right, 70)
 
 set_option maxHeartbeats 0 in
+-- Finite state-table decision procedure.
 -- Finite window decision / large-step symbolic transition reduction.
-@[simp]
-theorem rh120Trans_eq (q : Fin 120) (a : Fin 2) :
-    riemann120.transition q a = rh120Trans q a := by
-  revert q a; decide
 
-set_option maxHeartbeats 0 in
--- Finite window decision / large-step symbolic transition reduction.
+
+def ed121Trans (q : Fin 121) (a : Fin 2) : Option (Fin 2 × Dir × Fin 121) :=
+  if q.val < 60 then
+    if q.val < 30 then
+      if q.val < 15 then
+        if q.val < 7 then
+          if q.val < 3 then
+            if q.val < 1 then
+              if a.val == 0 then none
+              else none
+            else
+              if q.val < 2 then
+                if a.val == 0 then none
+                else none
+              else
+                none
+          else
+            if q.val < 5 then
+              if q.val < 4 then
+                none
+              else
+                if a.val == 0 then some (1, .right, 6)
+                else some (0, .right, 7)
+            else
+              if q.val < 6 then
+                none
+              else
+                if a.val == 0 then some (0, .right, 8)
+                else some (0, .right, 57)
+        else
+          if q.val < 11 then
+            if q.val < 9 then
+              if q.val < 8 then
+                if a.val == 0 then some (0, .right, 9)
+                else some (1, .right, 7)
+              else
+                if a.val == 0 then some (1, .right, 8)
+                else some (1, .left, 10)
+            else
+              if q.val < 10 then
+                if a.val == 0 then some (0, .right, 11)
+                else some (1, .right, 9)
+              else
+                if a.val == 0 then some (0, .left, 10)
+                else some (1, .left, 12)
+          else
+            if q.val < 13 then
+              if q.val < 12 then
+                if a.val == 0 then some (1, .right, 13)
+                else some (1, .right, 11)
+              else
+                if a.val == 0 then some (0, .left, 14)
+                else some (1, .left, 12)
+            else
+              if q.val < 14 then
+                if a.val == 0 then some (0, .left, 15)
+                else some (0, .right, 11)
+              else
+                if a.val == 0 then some (0, .left, 16)
+                else some (1, .left, 12)
+      else
+        if q.val < 22 then
+          if q.val < 18 then
+            if q.val < 16 then
+              if a.val == 0 then some (0, .left, 17)
+              else some (1, .left, 15)
+            else
+              if q.val < 17 then
+                if a.val == 0 then some (0, .left, 18)
+                else some (1, .left, 12)
+              else
+                if a.val == 0 then some (0, .left, 19)
+                else some (1, .left, 15)
+          else
+            if q.val < 20 then
+              if q.val < 19 then
+                if a.val == 0 then some (0, .right, 20)
+                else some (1, .left, 12)
+              else
+                if a.val == 0 then some (1, .right, 21)
+                else some (0, .left, 19)
+            else
+              if q.val < 21 then
+                if a.val == 0 then some (0, .right, 20)
+                else some (1, .right, 27)
+              else
+                if a.val == 0 then some (0, .right, 21)
+                else some (0, .right, 23)
+        else
+          if q.val < 26 then
+            if q.val < 24 then
+              if q.val < 23 then
+                if a.val == 0 then none
+                else none
+              else
+                if a.val == 0 then some (0, .left, 24)
+                else some (0, .right, 23)
+            else
+              if q.val < 25 then
+                if a.val == 0 then some (1, .left, 10)
+                else some (0, .left, 10)
+              else
+                if a.val == 0 then none
+                else none
+          else
+            if q.val < 28 then
+              if q.val < 27 then
+                none
+              else
+                if a.val == 0 then some (0, .right, 29)
+                else some (1, .right, 30)
+            else
+              if q.val < 29 then
+                none
+              else
+                if a.val == 0 then some (0, .right, 31)
+                else some (1, .right, 32)
+    else
+      if q.val < 45 then
+        if q.val < 37 then
+          if q.val < 33 then
+            if q.val < 31 then
+              if a.val == 0 then some (0, .right, 33)
+              else some (1, .right, 34)
+            else
+              if q.val < 32 then
+                if a.val == 0 then some (1, .right, 6)
+                else some (0, .right, 35)
+              else
+                if a.val == 0 then some (0, .right, 36)
+                else some (0, .left, 24)
+          else
+            if q.val < 35 then
+              if q.val < 34 then
+                if a.val == 0 then some (0, .right, 38)
+                else some (1, .right, 39)
+              else
+                if a.val == 0 then some (0, .right, 40)
+                else some (1, .right, 41)
+            else
+              if q.val < 36 then
+                if a.val == 0 then some (0, .right, 42)
+                else some (1, .right, 35)
+              else
+                if a.val == 0 then some (1, .right, 6)
+                else some (0, .right, 43)
+        else
+          if q.val < 41 then
+            if q.val < 39 then
+              if q.val < 38 then
+                if a.val == 0 then none
+                else none
+              else
+                if a.val == 0 then some (0, .right, 44)
+                else some (1, .right, 45)
+            else
+              if q.val < 40 then
+                if a.val == 0 then some (0, .right, 46)
+                else some (0, .left, 24)
+              else
+                if a.val == 0 then some (0, .right, 47)
+                else some (1, .right, 48)
+          else
+            if q.val < 43 then
+              if q.val < 42 then
+                if a.val == 0 then some (0, .right, 49)
+                else some (1, .right, 50)
+              else
+                if a.val == 0 then some (0, .right, 51)
+                else some (1, .right, 42)
+            else
+              if q.val < 44 then
+                if a.val == 0 then some (0, .right, 52)
+                else some (1, .right, 43)
+              else
+                if a.val == 0 then some (1, .right, 6)
+                else some (0, .right, 53)
+      else
+        if q.val < 52 then
+          if q.val < 48 then
+            if q.val < 46 then
+              if a.val == 0 then some (0, .right, 54)
+              else some (1, .right, 55)
+            else
+              if q.val < 47 then
+                if a.val == 0 then some (1, .right, 6)
+                else some (0, .right, 56)
+              else
+                if a.val == 0 then some (1, .right, 6)
+                else some (0, .right, 57)
+          else
+            if q.val < 50 then
+              if q.val < 49 then
+                if a.val == 0 then some (0, .right, 58)
+                else some (0, .left, 24)
+              else
+                if a.val == 0 then some (0, .right, 59)
+                else some (1, .right, 60)
+            else
+              if q.val < 51 then
+                if a.val == 0 then some (0, .right, 62)
+                else some (1, .right, 77)
+              else
+                if a.val == 0 then some (1, .left, 63)
+                else some (0, .right, 64)
+        else
+          if q.val < 56 then
+            if q.val < 54 then
+              if q.val < 53 then
+                if a.val == 0 then some (0, .right, 53)
+                else some (1, .right, 52)
+              else
+                if a.val == 0 then some (0, .right, 7)
+                else some (1, .right, 53)
+            else
+              if q.val < 55 then
+                if a.val == 0 then some (0, .right, 65)
+                else some (1, .right, 66)
+              else
+                if a.val == 0 then some (0, .right, 67)
+                else some (1, .right, 68)
+          else
+            if q.val < 58 then
+              if q.val < 57 then
+                if a.val == 0 then some (0, .right, 69)
+                else some (1, .right, 56)
+              else
+                if a.val == 0 then some (0, .right, 35)
+                else some (1, .right, 57)
+            else
+              if q.val < 59 then
+                if a.val == 0 then some (0, .right, 70)
+                else some (1, .right, 36)
+              else
+                if a.val == 0 then some (0, .right, 71)
+                else some (1, .right, 72)
+  else
+    if q.val < 90 then
+      if q.val < 75 then
+        if q.val < 67 then
+          if q.val < 63 then
+            if q.val < 61 then
+              if a.val == 0 then some (0, .right, 73)
+              else some (1, .right, 74)
+            else
+              if q.val < 62 then
+                if a.val == 0 then some (0, .right, 47)
+                else some (1, .right, 75)
+              else
+                if a.val == 0 then some (0, .right, 61)
+                else some (1, .right, 76)
+          else
+            if q.val < 65 then
+              if q.val < 64 then
+                if a.val == 0 then some (0, .left, 78)
+                else some (1, .left, 63)
+              else
+                if a.val == 0 then some (0, .left, 51)
+                else some (1, .right, 79)
+            else
+              if q.val < 66 then
+                if a.val == 0 then some (0, .right, 47)
+                else some (1, .right, 80)
+              else
+                if a.val == 0 then some (0, .right, 81)
+                else some (1, .right, 82)
+        else
+          if q.val < 71 then
+            if q.val < 69 then
+              if q.val < 68 then
+                if a.val == 0 then some (0, .right, 73)
+                else some (1, .right, 83)
+              else
+                if a.val == 0 then some (0, .right, 84)
+                else some (1, .right, 84)
+            else
+              if q.val < 70 then
+                if a.val == 0 then some (0, .right, 57)
+                else some (1, .right, 69)
+              else
+                if a.val == 0 then some (1, .right, 6)
+                else some (1, .right, 32)
+          else
+            if q.val < 73 then
+              if q.val < 72 then
+                if a.val == 0 then some (1, .right, 6)
+                else some (0, .right, 69)
+              else
+                if a.val == 0 then some (0, .right, 54)
+                else some (1, .right, 86)
+            else
+              if q.val < 74 then
+                if a.val == 0 then some (1, .right, 6)
+                else some (0, .right, 87)
+              else
+                if a.val == 0 then some (0, .right, 44)
+                else some (0, .left, 87)
+      else
+        if q.val < 82 then
+          if q.val < 78 then
+            if q.val < 76 then
+              if a.val == 0 then some (0, .right, 88)
+              else some (1, .right, 89)
+            else
+              if q.val < 77 then
+                if a.val == 0 then some (0, .right, 71)
+                else some (1, .right, 86)
+              else
+                if a.val == 0 then some (0, .right, 46)
+                else none
+          else
+            if q.val < 80 then
+              if q.val < 79 then
+                if a.val == 0 then some (0, .left, 17)
+                else some (1, .left, 63)
+              else
+                if a.val == 0 then some (0, .right, 92)
+                else some (1, .right, 79)
+            else
+              if q.val < 81 then
+                if a.val == 0 then some (0, .right, 70)
+                else some (0, .left, 24)
+              else
+                if a.val == 0 then some (0, .right, 71)
+                else some (1, .right, 93)
+        else
+          if q.val < 86 then
+            if q.val < 84 then
+              if q.val < 83 then
+                if a.val == 0 then some (0, .right, 31)
+                else some (1, .right, 94)
+              else
+                if a.val == 0 then some (0, .right, 70)
+                else some (1, .right, 84)
+            else
+              if q.val < 85 then
+                if a.val == 0 then some (0, .right, 81)
+                else some (1, .right, 95)
+              else
+                if a.val == 0 then none
+                else none
+          else
+            if q.val < 88 then
+              if q.val < 87 then
+                if a.val == 0 then some (0, .right, 39)
+                else some (0, .left, 32)
+              else
+                if a.val == 0 then some (0, .right, 56)
+                else some (0, .left, 23)
+            else
+              if q.val < 89 then
+                if a.val == 0 then some (0, .right, 4)
+                else some (1, .right, 98)
+              else
+                if a.val == 0 then some (0, .right, 99)
+                else some (0, .left, 32)
+    else
+      if q.val < 105 then
+        if q.val < 97 then
+          if q.val < 93 then
+            if q.val < 91 then
+              if a.val == 0 then none
+              else none
+            else
+              if q.val < 92 then
+                if a.val == 0 then none
+                else none
+              else
+                if a.val == 0 then some (0, .left, 100)
+                else some (1, .right, 79)
+          else
+            if q.val < 95 then
+              if q.val < 94 then
+                if a.val == 0 then some (0, .right, 4)
+                else some (0, .left, 24)
+              else
+                if a.val == 0 then some (0, .right, 101)
+                else some (0, .left, 24)
+            else
+              if q.val < 96 then
+                if a.val == 0 then some (0, .right, 102)
+                else some (1, .right, 103)
+              else
+                if a.val == 0 then none
+                else none
+        else
+          if q.val < 101 then
+            if q.val < 99 then
+              if q.val < 98 then
+                if a.val == 0 then none
+                else none
+              else
+                if a.val == 0 then some (0, .right, 104)
+                else some (1, .right, 105)
+            else
+              if q.val < 100 then
+                if a.val == 0 then some (1, .right, 6)
+                else some (0, .right, 52)
+              else
+                if a.val == 0 then some (1, .left, 106)
+                else some (1, .left, 100)
+          else
+            if q.val < 103 then
+              if q.val < 102 then
+                if a.val == 0 then some (0, .right, 60)
+                else some (1, .right, 108)
+              else
+                if a.val == 0 then some (0, .right, 109)
+                else some (1, .right, 60)
+            else
+              if q.val < 104 then
+                if a.val == 0 then some (0, .right, 31)
+                else some (1, .right, 89)
+              else
+                if a.val == 0 then some (0, .right, 110)
+                else some (1, .right, 60)
+      else
+        if q.val < 113 then
+          if q.val < 109 then
+            if q.val < 107 then
+              if q.val < 106 then
+                if a.val == 0 then some (0, .right, 104)
+                else some (1, .right, 111)
+              else
+                if a.val == 0 then some (0, .left, 15)
+                else some (0, .left, 100)
+            else
+              if q.val < 108 then
+                if a.val == 0 then none
+                else none
+              else
+                if a.val == 0 then some (0, .right, 65)
+                else some (1, .right, 99)
+          else
+            if q.val < 111 then
+              if q.val < 110 then
+                if a.val == 0 then some (0, .right, 47)
+                else some (1, .right, 113)
+              else
+                if a.val == 0 then some (0, .right, 47)
+                else some (1, .right, 114)
+            else
+              if q.val < 112 then
+                if a.val == 0 then some (0, .right, 115)
+                else some (1, .right, 116)
+              else
+                if a.val == 0 then none
+                else none
+        else
+          if q.val < 117 then
+            if q.val < 115 then
+              if q.val < 114 then
+                if a.val == 0 then some (0, .right, 70)
+                else some (1, .right, 89)
+              else
+                if a.val == 0 then some (0, .right, 117)
+                else some (0, .left, 24)
+            else
+              if q.val < 116 then
+                if a.val == 0 then some (0, .right, 46)
+                else some (1, .right, 118)
+              else
+                if a.val == 0 then some (0, .right, 73)
+                else some (1, .right, 32)
+          else
+            if q.val < 119 then
+              if q.val < 118 then
+                if a.val == 0 then some (0, .right, 4)
+                else some (1, .right, 119)
+              else
+                if a.val == 0 then some (0, .right, 120)
+                else some (0, .left, 24)
+            else
+              if q.val < 120 then
+                if a.val == 0 then some (0, .right, 47)
+                else some (1, .right, 70)
+              else
+                if a.val == 0 then some (0, .right, 46)
+                else some (1, .right, 70)
+
+
+def commonTrans (q : Fin 121) (a : Fin 2) : Option (Fin 2 × Dir × Fin 121) :=
+  if rh121Trans q a == ed121Trans q a then rh121Trans q a else none
+
+def riemann121 : Machine 121 2 := ⟨rh121Trans⟩
+def edited121 : Machine 121 2 := ⟨ed121Trans⟩
+def common121 : Machine 121 2 := ⟨commonTrans⟩
+
 @[simp]
 theorem rh121Trans_eq (q : Fin 121) (a : Fin 2) :
-    riemann121.transition q a = rh121Trans q a := by
-  revert q a; decide
+    riemann121.transition q a = rh121Trans q a := rfl
+
+@[simp]
+theorem ed121Trans_eq (q : Fin 121) (a : Fin 2) :
+    edited121.transition q a = ed121Trans q a := rfl
+
+@[simp]
+theorem commonTrans_eq (q : Fin 121) (a : Fin 2) :
+    common121.transition q a = commonTrans q a := rfl
 
 def win5Masks (q : Fin 121) : UInt32 :=
   if q.val < 60 then
@@ -1520,7 +1404,7 @@ def win5Masks (q : Fin 121) : UInt32 :=
               else
                 0x00ff0000
 /-!
-## 2. Five-Cell Window Invariant (`Win5Inv`) & `Halts riemann120 ↔ Halts riemann121`
+## 2. Five-Cell Window Invariant (`Win5Inv`) & `Halts reference ↔ Halts riemann121`
 -/
 
 /-- Pack 5 consecutive tape cells `[l₁, l₀, h, r₀, r₁]` into `Fin 32` (MSB = `l₁`). -/
@@ -1549,7 +1433,7 @@ def checkWin5Step (q : Fin 121) (l₁ l₀ h r₀ r₁ ext : Fin 2) : Bool :=
   | some (w, Dir.right, q') => checkWin5Valid q' l₀ w r₀ r₁ ext
   | some (w, Dir.left, q') => checkWin5Valid q' ext l₁ l₀ w r₀
 
-/-- Quotient state projection from `riemann121` (`Fin 121`) to `riemann120` (`Fin 120`),
+/-- Quotient state projection from `riemann121` (`Fin 121`) to `reference` (`Fin 120`),
 merging compatible states `32` (`N24`) and `97` (`6.continue.2`) into state `32`. -/
 def proj121To120 (q : Fin 121) : Fin 120 :=
   if q.val = 97 then ⟨32, by decide⟩
@@ -1561,6 +1445,7 @@ def projCfg (c : Cfg 121 2) : Cfg 120 2 :=
   ⟨proj121To120 c.state, c.tape⟩
 
 set_option maxHeartbeats 0 in
+-- Finite state-table decision procedure.
 -- Finite window decision / large-step symbolic transition reduction.
 theorem checkWin5Step_ok (q : Fin 121) (l₁ l₀ h r₀ r₁ ext : Fin 2) :
     checkWin5Valid q l₁ l₀ h r₀ r₁ = true →
@@ -1568,6 +1453,7 @@ theorem checkWin5Step_ok (q : Fin 121) (l₁ l₀ h r₀ r₁ ext : Fin 2) :
   revert q l₁ l₀ h r₀ r₁ ext; decide
 
 set_option maxHeartbeats 0 in
+-- Finite state-table decision procedure.
 -- Finite window decision / large-step symbolic transition reduction.
 theorem proj_transition_eq (q : Fin 121) (l₁ l₀ h r₀ r₁ : Fin 2) :
     checkWin5Valid q l₁ l₀ h r₀ r₁ = true →
@@ -1642,7 +1528,8 @@ theorem projCfg_nSteps (n : ℕ) :
     Option.map projCfg (nSteps riemann121 n init) = nSteps riemann120 n init :=
   projCfg_nSteps_aux n init win5Inv_init
 
-theorem halts_riemann120_iff_halts_riemann121 : Halts riemann120 ↔ Halts riemann121 := by
+theorem halts_riemann120_iff_halts_riemann121 :
+    ConjectureMachines.Halts riemann120 ↔ ConjectureMachines.Halts riemann121 := by
   have hrel : Respects (step riemann121) (step riemann120)
       (fun c₁ c₂ => Win5Inv c₁ = true ∧ c₂ = projCfg c₁) := by
     intro c₁ c₂ ⟨hinv, hc₂⟩
@@ -1659,9 +1546,6 @@ theorem halts_riemann120_iff_halts_riemann121 : Halts riemann120 ↔ Halts riema
 
 
 
-/-!
-## 3. Shared Arithmetic Quantities (`primorial`, `shuniaProd`, `ShuniaCounterexample`)
--/
 
 /-- Product of all primes `p ≤ n`. -/
 def primorial (n : ℕ) : ℕ :=
@@ -1693,3 +1577,5 @@ def ShuniaCounterexample (n : ℕ) : Prop :=
   (quarterClock (n - 1) + 1) * 2 ^ quarterClock (n - 1) ≤ shuniaDeficit n
 
 end ConjectureMachines.Riemann120
+
+end

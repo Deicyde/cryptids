@@ -37,8 +37,8 @@ It independently:
      `2w + 4` across all outer-loop stage checkpoints.
    - ZF (393 vs 380 states): identical bootstrap tape at `t = 39,753` and
      bit-exact tape agreement at every post-boot outer-loop checkpoint.
-   - Riemann (120 vs 104 states): bit-exact relative tape agreement across
-     all `main().0` (`state 11` vs `state 10`) stage checkpoints.
+   - Riemann (120 vs 104 states): 9,037-step self-bootstrap to `rhRootCfg`
+     (`state 19`) and >1,000 post-boot root register-machine dispatches.
 """
 
 from __future__ import annotations
@@ -723,7 +723,7 @@ def run_verification(
           f"source->table->Lean verified ({spec['lean_file']})"
       )
 
-  # 3. Parse and verify all 5 candidate directories, standalone machine files, and Lean proof files
+  # 3. Parse and verify all 3 candidate directories, standalone machine files, and Lean proof files
   cand_machines: dict[str, Machine] = {}
   for cspec in CANDIDATES:
     cid = str(cspec["id"])

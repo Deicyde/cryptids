@@ -438,7 +438,7 @@ theorem halts_riemann120_iff_not_riemannHypothesis :
 ```
 
 1. **Layer 1 (`Riemann120.lean` & `Riemann120/Backend.lean`)**: Proves the 5-cell window invariant
-   quotienting `riemann121` (`121` states) onto `riemann120` (`120` states), the 39,792-step blank-tape
+   quotienting `riemann121` (`121` states) onto `riemann120` (`120` states), the 89,775,610-step blank-tape
    bootstrap to `main.0`, the moving `00` register-selection invariant across all 5 registers
    `[m, j, x, f, v]`, and the lockstep simulation `Halts riemann120 ↔ RhRegHalts`.
 2. **Layer 2 (`Riemann120/Program.lean`)**: Verifies all subroutines of `riemann121` (`move`, `fold`,
