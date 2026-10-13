@@ -1533,29 +1533,37 @@ theorem boot_fast_19_cand :
       some (64, [], 0, bootR_39753) := by
   rfl
 
+attribute [irreducible] runFast
+
 theorem boot_ref :
     nSteps refM 39753 init = some (cfgOfFast 64 [] 0 bootR_39753) := by
   rw [init_eq_cfgOfFast, nSteps_of_runFast]
   have hadd : (39753 : ℕ) = 39734 + 19 := rfl
+  have h0 : (0 : Fin 393) = stateOfBootRef .b0 := rfl
+  have hL : ([] : List (Fin 2)) = [].map bitOfBool := rfl
+  have hh : (0 : Fin 2) = bitOfBool false := rfl
   have h34 :=
     runFast_of_runBootRef 39734 (q := .b0) (L := []) (h := false) (R := []) boot_phase1_39734
-  dsimp only [stateOfBootRef, Zf393.stateOfBoot, List.map, bitOfBool] at h34
-  rw [hadd, runFast_add, h34]
-  dsimp only
-  rw [boot_fast_19_ref]
-  rfl
+  have h68 : stateOfBootRef .b68 = 68 := rfl
+  have hhh : bitOfBool false = 0 := rfl
+  rw [hadd, runFast_add, h0, hL, hh, h34]
+  simp only [h68, hhh]
+  rw [boot_fast_19_ref, Option.map_some, List.map_nil]
 
 theorem boot_cand :
     nSteps candM 39753 init = some (cfgOfFast 64 [] 0 bootR_39753) := by
   rw [init_eq_cfgOfFast, nSteps_of_runFast]
   have hadd : (39753 : ℕ) = 39734 + 19 := rfl
+  have h0 : (0 : Fin 380) = stateOfBootCand .b0 := rfl
+  have hL : ([] : List (Fin 2)) = [].map bitOfBool := rfl
+  have hh : (0 : Fin 2) = bitOfBool false := rfl
   have h34 :=
     runFast_of_runBootCand 39734 (q := .b0) (L := []) (h := false) (R := []) boot_phase1_39734
-  dsimp only [stateOfBootCand, Zf393.stateOfBoot, List.map, bitOfBool] at h34
-  rw [hadd, runFast_add, h34]
-  dsimp only
-  rw [boot_fast_19_cand]
-  rfl
+  have h65 : stateOfBootCand .b68 = 65 := rfl
+  have hhh : bitOfBool false = 0 := rfl
+  rw [hadd, runFast_add, h0, hL, hh, h34]
+  simp only [h65, hhh]
+  rw [boot_fast_19_cand, Option.map_some, List.map_nil]
 
 def renum (q : Nat) : Fin 380 :=
   let s :=
