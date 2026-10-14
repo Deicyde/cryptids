@@ -10,7 +10,7 @@ This repository contains two Lean 4 (`v4.35.0-rc4`) formalization libraries for 
 | Library | Scope | Key Results | Documentation |
 | :--- | :--- | :--- | :--- |
 | [`Cryptids/`](Cryptids/) | `(Q, 2)` Turing machines for Goldbach, ZF consistency, and the Riemann Hypothesis | Certified state reductions (`25 → 21`, `393 → 380`, `120 → 104`) and end-to-end halting equivalences (`Halts M ↔ ¬ GoldbachConjecture`, `ZFInconsistent`, `¬ RiemannHypothesis`) | [`Cryptids/README.md`](Cryptids/README.md), [`Cryptids/Semantics/README.md`](Cryptids/Semantics/README.md) |
-| [`BusyBeaver/`](BusyBeaver/) | `BB(6)` holdout `(6, 2)` Turing machines (some are potential Cryptids, subject to community acceptance) | Shared execution semantics (`BusyBeaver/Defs.lean`), RLE loader and `ConjectureMachines` bridge (`BusyBeaver/Bridge.lean`), and certified behavioral proofs | [`BusyBeaver/README.md`](BusyBeaver/README.md) |
+| [`BusyBeaver/`](BusyBeaver/) | `BB(6)` holdout `(6, 2)` Turing machines (some are potential Cryptids, subject to community acceptance) | Shared execution semantics (`BusyBeaver/Defs.lean`), foundational lemmas (`BusyBeaver/Basic.lean`), RLE loader and `ConjectureMachines` bridge (`BusyBeaver/Bridge.lean`), and certified behavioral proofs | [`BusyBeaver/README.md`](BusyBeaver/README.md) |
 
 All Lean 4 proofs are checked by the kernel without `sorry` and depend only on the standard axioms (`propext`, `Classical.choice`, `Quot.sound`).
 
@@ -39,7 +39,7 @@ lake build BusyBeaver
 ## Repository Structure
 
 - [`Cryptids/`](Cryptids/README.md) — Conjecture-checking Turing machines ([`Machines.lean`](Cryptids/Machines.lean), [`Propositions.lean`](Cryptids/Propositions.lean)), state-reduction proofs ([`Goldbach21.lean`](Cryptids/Goldbach21.lean), [`Zf380.lean`](Cryptids/Zf380.lean), [`Riemann104.lean`](Cryptids/Riemann104.lean)), and end-to-end mathematical semantics ([`Cryptids/Semantics/`](Cryptids/Semantics/README.md)).
-- [`BusyBeaver/`](BusyBeaver/README.md) — Busy Beaver holdout specifications ([`Defs.lean`](BusyBeaver/Defs.lean)), RLE loader and bridge to `ConjectureMachines` ([`Bridge.lean`](BusyBeaver/Bridge.lean)), and machine behavioral proofs.
+- [`BusyBeaver/`](BusyBeaver/README.md) — Busy Beaver holdout specifications ([`Defs.lean`](BusyBeaver/Defs.lean)), foundational lemmas ([`Basic.lean`](BusyBeaver/Basic.lean)), RLE loader and bridge to `ConjectureMachines` ([`Bridge.lean`](BusyBeaver/Bridge.lean)), and machine behavioral proofs.
 - [`Challenge.lean`](Challenge.lean) & [`comparator/`](comparator/) — Self-contained target theorem specification and configuration files for [`leanprover/comparator`](comparator/README.md).
 - [`artifacts/`](artifacts/) — Canonical `machine.txt` transition tables and reduction write-ups for [`goldbach_21`](artifacts/goldbach_21/README.md), [`zf_380`](artifacts/zf_380/README.md), and [`riemann_104`](artifacts/riemann_104/README.md).
 - [`baselines/`](baselines/) — Verbatim upstream source files, canonical 5-tuple tables, and [`PROVENANCE.md`](baselines/PROVENANCE.md).
@@ -52,7 +52,7 @@ Pull requests and issues are welcome, especially for smaller Turing machines for
 
 ## Acknowledgements
 
-We thank Eric Wieser for careful review, as well as the Busy Beaver Challenge community, Yijun Leng, Stefan O'Rear, Yuri Matiyasevich, Scott Aaronson, Adam Yedidia, Andrew Wade, and Joseph Shunia for the baseline Turing machines and compilers, and the Mathlib community.
+We thank Eric Wieser for careful review, as well as the Busy Beaver Challenge community, `int-y1` (whose `BusyLean` project pioneered Lean 4 Busy Beaver formalizations and directed-head configuration representations), Yijun Leng, Stefan O'Rear, Yuri Matiyasevich, Scott Aaronson, Adam Yedidia, Andrew Wade, and Joseph Shunia for the baseline Turing machines and compilers, and the Mathlib community.
 
 ## License and disclaimer
 

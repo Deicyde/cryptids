@@ -12,6 +12,10 @@ All proofs in `BusyBeaver/` target one of three machine-checked behavioral predi
 | `IsNotHalt M` (`IsDoesNotHalt M`) | Every configuration reachable from `init []` has a well-defined successor (`(step M cfg).isSome`). |
 | `IsCryptid M` | `M`'s blank-tape trajectory enters a closed accelerated regular-expression `TapePatternSet` in which every member configuration advances (`ReachesPlus`) either to another member or to a halting state. |
 
+## Foundational Lemmas ([`Basic.lean`](./Basic.lean))
+
+[`BusyBeaver/Basic.lean`](./Basic.lean) provides clean-room multi-step and reachability lemmas (`multiStep`, `ReachesIn`, `ReachesStar`, `ReachesPlus` with `Trans` instances), closed-invariant non-halting theorems (`NeverHaltsFrom.of_reachesPlus_invariant`, `IsNotHalt.of_reachesPlus_invariant`), finite block repetition (`l ^ n`) identities, and directed-head (`Cfg.headRight` / `Cfg.headLeft`) step transitions.
+
 ## Machine Loader and Bridge ([`Bridge.lean`](./Bridge.lean))
 
 Machines can be defined using either the `.txt` transition-table loader `load_machine_rows%` from [`Cryptids/Machines.lean`](../Cryptids/Machines.lean) or the elaboration-time `bbchallenge.org` RLE string parser `load_rle_rows%`:
@@ -50,3 +54,7 @@ Build the `BusyBeaver` library target:
 lake exe cache get
 lake build BusyBeaver
 ```
+
+## Acknowledgements
+
+We thank the Busy Beaver Challenge community and `int-y1` (`BusyLean`) for pioneering Lean 4 Busy Beaver holdout formalizations and inspiring the directed-head configuration style (`Cfg.headRight` / `Cfg.headLeft`).

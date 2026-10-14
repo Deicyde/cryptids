@@ -1,0 +1,548 @@
+/-
+Copyright (c) 2026 Google LLC. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+module
+
+public import BusyBeaver.Defs
+
+/-!
+# Basic Lemmas for `BusyBeaver` Turing Machines (`BusyBeaver.Basic`)
+
+Foundational lemmas for reasoning about `BusyBeaver.Machine` execution, multi-step reachability
+(`multiStep`, `ReachesIn`, `ReachesStar`, `ReachesPlus`), halting/non-halting invariants
+(`HaltsFrom`, `NeverHaltsFrom`), finite block repetition (`l ^ n`), and directed-head tape
+configurations (`Cfg.headRight`, `Cfg.headLeft`).
+-/
+
+@[expose] public section
+
+namespace BusyBeaver
+
+open Turing
+
+variable {Γ Λ : Type*} [Inhabited Γ] [Inhabited Λ]
+
+/-! ## Multi-Step Execution (`multiStep`) -/
+
+@[simp]
+theorem step_none (M : Machine Γ Λ) (T : Tape Γ) :
+    step M ⟨none, T⟩ = none :=
+  rfl
+
+@[simp]
+theorem multiStep_zero (M : Machine Γ Λ) (c : Cfg Γ Λ) :
+    multiStep M c 0 = some c :=
+  rfl
+
+@[simp]
+theorem multiStep_one (M : Machine Γ Λ) (c : Cfg Γ Λ) :
+    multiStep M c 1 = step M c :=
+  rfl
+
+private theorem iterate_bind_step_none (M : Machine Γ Λ) (n : ℕ) :
+    (Option.bind · (step M))^[n] none = none := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    rw [Function.iterate_succ_apply, Option.bind_none, ih]
+
+/-- Split `multiStep` at the first step: `n + 1` steps from `c` is one step from `c` followed by
+`n` steps. -/
+theorem multiStep_succ (M : Machine Γ Λ) (c : Cfg Γ Λ) (n : ℕ) :
+    multiStep M c (n + 1) = (step M c).bind (fun c' => multiStep M c' n) := by
+  unfold multiStep
+  rw [Function.iterate_succ_apply]
+  rcases h : step M c with _ | c'
+  · change (Option.bind · (step M))^[n] (step M c) = _
+    rw [h, iterate_bind_step_none, Option.bind_none]
+  · change (Option.bind · (step M))^[n] (step M c) = _
+    rw [h]
+    rfl
+
+/-- Split `multiStep` at the last step: `n + 1` steps from `c` is `n` steps from `c` followed by
+one step. -/
+theorem multiStep_succ' (M : Machine Γ Λ) (c : Cfg Γ Λ) (n : ℕ) :
+    multiStep M c (n + 1) = (multiStep M c n).bind (step M) := by
+  unfold multiStep
+  rw [Function.iterate_succ_apply']
+
+theorem multiStep_of_step {M : Machine Γ Λ} {c c' : Cfg Γ Λ}
+    (h : step M c = some c') (n : ℕ) :
+    multiStep M c (n + 1) = multiStep M c' n := by
+  rw [multiStep_succ, h, Option.bind_some]
+
+theorem multiStep_of_step_eq_none {M : Machine Γ Λ} {c : Cfg Γ Λ}
+    (h : step M c = none) (n : ℕ) :
+    multiStep M c (n + 1) = none := by
+  rw [multiStep_succ, h, Option.bind_none]
+
+/-- Addition law for `multiStep`: `m + n` steps is `m` steps followed by `n` steps. -/
+theorem multiStep_add (M : Machine Γ Λ) (c : Cfg Γ Λ) (m n : ℕ) :
+    multiStep M c (m + n) = (multiStep M c m).bind (fun c' => multiStep M c' n) := by
+  unfold multiStep
+  rw [Nat.add_comm m n, Function.iterate_add_apply]
+  rcases h : (Option.bind · (step M))^[m] (some c) with _ | c'
+  · rw [iterate_bind_step_none, Option.bind_none]
+  · rfl
+
+theorem multiStep_trans {M : Machine Γ Λ} {c₁ c₂ c₃ : Cfg Γ Λ} {m n : ℕ}
+    (h₁ : multiStep M c₁ m = some c₂) (h₂ : multiStep M c₂ n = some c₃) :
+    multiStep M c₁ (m + n) = some c₃ := by
+  rw [multiStep_add, h₁, Option.bind_some, h₂]
+
+/-! ## Exact, Reflexive-Transitive, and Positive Reachability -/
+
+@[simp]
+theorem ReachesIn.zero (M : Machine Γ Λ) (c : Cfg Γ Λ) :
+    ReachesIn M 0 c c :=
+  rfl
+
+theorem ReachesIn.single {M : Machine Γ Λ} {c₁ c₂ : Cfg Γ Λ}
+    (h : step M c₁ = some c₂) :
+    ReachesIn M 1 c₁ c₂ :=
+  h
+
+theorem ReachesIn.step_left {M : Machine Γ Λ} {c₁ c₂ c₃ : Cfg Γ Λ} {n : ℕ}
+    (h₁ : step M c₁ = some c₂) (h₂ : ReachesIn M n c₂ c₃) :
+    ReachesIn M (n + 1) c₁ c₃ := by
+  unfold ReachesIn at *
+  rw [multiStep_of_step h₁, h₂]
+
+theorem ReachesIn.step_right {M : Machine Γ Λ} {c₁ c₂ c₃ : Cfg Γ Λ} {n : ℕ}
+    (h₁ : ReachesIn M n c₁ c₂) (h₂ : step M c₂ = some c₃) :
+    ReachesIn M (n + 1) c₁ c₃ := by
+  unfold ReachesIn at *
+  rw [multiStep_succ', h₁, Option.bind_some, h₂]
+
+theorem ReachesIn.trans {M : Machine Γ Λ} {c₁ c₂ c₃ : Cfg Γ Λ} {m n : ℕ}
+    (h₁ : ReachesIn M m c₁ c₂) (h₂ : ReachesIn M n c₂ c₃) :
+    ReachesIn M (m + n) c₁ c₃ :=
+  multiStep_trans h₁ h₂
+
+theorem ReachesIn.to_star {M : Machine Γ Λ} {n : ℕ} {c₁ c₂ : Cfg Γ Λ}
+    (h : ReachesIn M n c₁ c₂) :
+    ReachesStar M c₁ c₂ :=
+  ⟨n, h⟩
+
+theorem ReachesIn.to_plus {M : Machine Γ Λ} {n : ℕ} {c₁ c₂ : Cfg Γ Λ}
+    (hn : n > 0) (h : ReachesIn M n c₁ c₂) :
+    ReachesPlus M c₁ c₂ :=
+  ⟨n, hn, h⟩
+
+@[refl, simp]
+theorem ReachesStar.refl (M : Machine Γ Λ) (c : Cfg Γ Λ) :
+    ReachesStar M c c :=
+  ⟨0, rfl⟩
+
+theorem ReachesStar.single {M : Machine Γ Λ} {c₁ c₂ : Cfg Γ Λ}
+    (h : step M c₁ = some c₂) :
+    ReachesStar M c₁ c₂ :=
+  ⟨1, h⟩
+
+theorem ReachesStar.head {M : Machine Γ Λ} {c₁ c₂ c₃ : Cfg Γ Λ}
+    (h₁ : step M c₁ = some c₂) (h₂ : ReachesStar M c₂ c₃) :
+    ReachesStar M c₁ c₃ := by
+  obtain ⟨n, hn⟩ := h₂
+  exact ⟨n + 1, ReachesIn.step_left h₁ hn⟩
+
+theorem ReachesStar.tail {M : Machine Γ Λ} {c₁ c₂ c₃ : Cfg Γ Λ}
+    (h₁ : ReachesStar M c₁ c₂) (h₂ : step M c₂ = some c₃) :
+    ReachesStar M c₁ c₃ := by
+  obtain ⟨n, hn⟩ := h₁
+  exact ⟨n + 1, ReachesIn.step_right hn h₂⟩
+
+theorem ReachesStar.trans {M : Machine Γ Λ} {c₁ c₂ c₃ : Cfg Γ Λ}
+    (h₁ : ReachesStar M c₁ c₂) (h₂ : ReachesStar M c₂ c₃) :
+    ReachesStar M c₁ c₃ := by
+  obtain ⟨m, hm⟩ := h₁
+  obtain ⟨n, hn⟩ := h₂
+  exact ⟨m + n, multiStep_trans hm hn⟩
+
+theorem ReachesPlus.single {M : Machine Γ Λ} {c₁ c₂ : Cfg Γ Λ}
+    (h : step M c₁ = some c₂) :
+    ReachesPlus M c₁ c₂ :=
+  ⟨1, Nat.one_pos, h⟩
+
+theorem ReachesPlus.to_star {M : Machine Γ Λ} {c₁ c₂ : Cfg Γ Λ}
+    (h : ReachesPlus M c₁ c₂) :
+    ReachesStar M c₁ c₂ := by
+  obtain ⟨n, _, hn⟩ := h
+  exact ⟨n, hn⟩
+
+theorem ReachesPlus.head {M : Machine Γ Λ} {c₁ c₂ c₃ : Cfg Γ Λ}
+    (h₁ : step M c₁ = some c₂) (h₂ : ReachesStar M c₂ c₃) :
+    ReachesPlus M c₁ c₃ := by
+  obtain ⟨n, hn⟩ := h₂
+  exact ⟨n + 1, Nat.succ_pos n, ReachesIn.step_left h₁ hn⟩
+
+theorem ReachesPlus.tail {M : Machine Γ Λ} {c₁ c₂ c₃ : Cfg Γ Λ}
+    (h₁ : ReachesStar M c₁ c₂) (h₂ : step M c₂ = some c₃) :
+    ReachesPlus M c₁ c₃ := by
+  obtain ⟨n, hn⟩ := h₁
+  exact ⟨n + 1, Nat.succ_pos n, ReachesIn.step_right hn h₂⟩
+
+theorem ReachesPlus.trans {M : Machine Γ Λ} {c₁ c₂ c₃ : Cfg Γ Λ}
+    (h₁ : ReachesPlus M c₁ c₂) (h₂ : ReachesPlus M c₂ c₃) :
+    ReachesPlus M c₁ c₃ := by
+  obtain ⟨m, hm_pos, hm⟩ := h₁
+  obtain ⟨n, hn_pos, hn⟩ := h₂
+  exact ⟨m + n, Nat.add_pos_left hm_pos n, multiStep_trans hm hn⟩
+
+theorem ReachesPlus.trans_star {M : Machine Γ Λ} {c₁ c₂ c₃ : Cfg Γ Λ}
+    (h₁ : ReachesPlus M c₁ c₂) (h₂ : ReachesStar M c₂ c₃) :
+    ReachesPlus M c₁ c₃ := by
+  obtain ⟨m, hm_pos, hm⟩ := h₁
+  obtain ⟨n, hn⟩ := h₂
+  exact ⟨m + n, Nat.add_pos_left hm_pos n, multiStep_trans hm hn⟩
+
+theorem ReachesStar.trans_plus {M : Machine Γ Λ} {c₁ c₂ c₃ : Cfg Γ Λ}
+    (h₁ : ReachesStar M c₁ c₂) (h₂ : ReachesPlus M c₂ c₃) :
+    ReachesPlus M c₁ c₃ := by
+  obtain ⟨m, hm⟩ := h₁
+  obtain ⟨n, hn_pos, hn⟩ := h₂
+  exact ⟨m + n, Nat.add_pos_right m hn_pos, multiStep_trans hm hn⟩
+
+theorem ReachesPlus.of_star_ne {M : Machine Γ Λ} {c₁ c₂ : Cfg Γ Λ}
+    (h : ReachesStar M c₁ c₂) (hne : c₁ ≠ c₂) :
+    ReachesPlus M c₁ c₂ := by
+  obtain ⟨n, hn⟩ := h
+  rcases n with _ | n
+  · simp only [multiStep_zero, Option.some.injEq] at hn
+    exact absurd hn hne
+  · exact ⟨n + 1, Nat.succ_pos n, hn⟩
+
+instance (M : Machine Γ Λ) : Trans (ReachesStar M) (ReachesStar M) (ReachesStar M) :=
+  ⟨ReachesStar.trans⟩
+
+instance (M : Machine Γ Λ) : Trans (ReachesPlus M) (ReachesPlus M) (ReachesPlus M) :=
+  ⟨ReachesPlus.trans⟩
+
+instance (M : Machine Γ Λ) : Trans (ReachesPlus M) (ReachesStar M) (ReachesPlus M) :=
+  ⟨ReachesPlus.trans_star⟩
+
+instance (M : Machine Γ Λ) : Trans (ReachesStar M) (ReachesPlus M) (ReachesPlus M) :=
+  ⟨ReachesStar.trans_plus⟩
+
+/-! ## Halting and Non-Halting Invariants -/
+
+/-- `M` eventually reaches a halting configuration starting from `c`. -/
+def HaltsFrom (M : Machine Γ Λ) (c : Cfg Γ Λ) : Prop :=
+  ∃ cfg : Cfg Γ Λ, ReachesStar M c cfg ∧ (step M cfg).isNone
+
+/-- Every configuration reachable by `M` from `c` has a well-defined successor. -/
+def NeverHaltsFrom (M : Machine Γ Λ) (c : Cfg Γ Λ) : Prop :=
+  ∀ cfg : Cfg Γ Λ, ReachesStar M c cfg → (step M cfg).isSome
+
+@[simp]
+theorem isHalt_iff_haltsFrom_init (M : Machine Γ Λ) :
+    IsHalt M ↔ HaltsFrom M (init []) :=
+  Iff.rfl
+
+@[simp]
+theorem isNotHalt_iff_neverHaltsFrom_init (M : Machine Γ Λ) :
+    IsNotHalt M ↔ NeverHaltsFrom M (init []) :=
+  Iff.rfl
+
+theorem HaltsFrom.of_reachesStar {M : Machine Γ Λ} {c₁ c₂ : Cfg Γ Λ}
+    (h₁ : ReachesStar M c₁ c₂) (h₂ : HaltsFrom M c₂) :
+    HaltsFrom M c₁ := by
+  obtain ⟨cfg, hreach, hnone⟩ := h₂
+  exact ⟨cfg, h₁.trans hreach, hnone⟩
+
+theorem NeverHaltsFrom.of_reachesStar {M : Machine Γ Λ} {c₁ c₂ : Cfg Γ Λ}
+    (h₁ : ReachesStar M c₁ c₂) (h₂ : NeverHaltsFrom M c₁) :
+    NeverHaltsFrom M c₂ := by
+  intro cfg hreach
+  exact h₂ cfg (h₁.trans hreach)
+
+theorem multiStep_eq_none_of_isNone {M : Machine Γ Λ} {c cfg : Cfg Γ Λ} {k d : ℕ}
+    (hk : multiStep M c k = some cfg) (hnone : (step M cfg).isNone) (hd : d > 0) :
+    multiStep M c (k + d) = none := by
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le' hd
+  rw [multiStep_add, hk, Option.bind_some, multiStep_of_step_eq_none]
+  exact Option.isNone_iff_eq_none.mp hnone
+
+/-- If `P` is a configuration invariant starting at `c₀` such that every `P`-configuration steps
+in `ReachesPlus` (`n > 0` steps) to another `P`-configuration, then `M` never halts from `c₀`. -/
+theorem NeverHaltsFrom.of_reachesPlus_invariant {M : Machine Γ Λ} {P : Cfg Γ Λ → Prop}
+    (hstep : ∀ c, P c → ∃ c', ReachesPlus M c c' ∧ P c') {c₀ : Cfg Γ Λ} (h₀ : P c₀) :
+    NeverHaltsFrom M c₀ := by
+  have h_unbounded : ∀ k : ℕ, ∃ N ≥ k, ∃ c', multiStep M c₀ N = some c' ∧ P c' := by
+    intro k
+    induction k with
+    | zero => exact ⟨0, Nat.le_refl 0, c₀, rfl, h₀⟩
+    | succ k ih =>
+      obtain ⟨N, hNk, c₁, hms₁, hP₁⟩ := ih
+      obtain ⟨c₂, ⟨m, hm_pos, hms₂⟩, hP₂⟩ := hstep c₁ hP₁
+      refine ⟨N + m, by omega, c₂, multiStep_trans hms₁ hms₂, hP₂⟩
+  intro cfg ⟨k, hk⟩
+  rcases hstep_cfg : step M cfg with _ | _
+  · obtain ⟨N, hNk, c', hmsN, _⟩ := h_unbounded (k + 1)
+    have hnone : (step M cfg).isNone := by simp [hstep_cfg]
+    have hnoneN : multiStep M c₀ N = none := by
+      have hsplit : N = k + (N - k) := by omega
+      rw [hsplit]
+      exact multiStep_eq_none_of_isNone hk hnone (by omega)
+    rw [hnoneN] at hmsN
+    cases hmsN
+  · rfl
+
+/-- If `M` reaches an invariant `P` from `init []` that is closed under `ReachesPlus`, then
+`IsNotHalt M`. -/
+theorem IsNotHalt.of_reachesPlus_invariant {M : Machine Γ Λ} {P : Cfg Γ Λ → Prop}
+    {c₀ : Cfg Γ Λ} (hinit : ReachesStar M (init []) c₀) (h₀ : P c₀)
+    (hstep : ∀ c, P c → ∃ c', ReachesPlus M c c' ∧ P c') :
+    IsNotHalt M := by
+  have h_never_c₀ := NeverHaltsFrom.of_reachesPlus_invariant hstep h₀
+  obtain ⟨k₀, hk₀⟩ := hinit
+  intro cfg ⟨k, hk⟩
+  rcases Nat.lt_or_ge k k₀ with hlt | hge
+  · rcases hstep_cfg : step M cfg with _ | _
+    · have hnone : (step M cfg).isNone := by simp [hstep_cfg]
+      have hnone_k₀ : multiStep M (init []) k₀ = none := by
+        have hsplit : k₀ = k + (k₀ - k) := by omega
+        rw [hsplit]
+        exact multiStep_eq_none_of_isNone hk hnone (by omega)
+      rw [hnone_k₀] at hk₀
+      cases hk₀
+    · rfl
+  · have hsplit : k = k₀ + (k - k₀) := by omega
+    rw [hsplit, multiStep_add, hk₀, Option.bind_some] at hk
+    exact h_never_c₀ cfg ⟨k - k₀, hk⟩
+
+/-! ## Finite Block Repetition (`l ^ n`) -/
+
+section ListPow
+
+omit [Inhabited Γ]
+
+@[simp]
+theorem list_pow_zero (l : List Γ) : l ^ (0 : ℕ) = [] :=
+  rfl
+
+@[simp]
+theorem list_pow_one (l : List Γ) : l ^ (1 : ℕ) = l := by
+  simp [HPow.hPow]
+
+theorem list_pow_succ (l : List Γ) (n : ℕ) : l ^ (n + 1) = l ++ l ^ n := by
+  simp [HPow.hPow, List.replicate_succ]
+
+theorem list_pow_add (l : List Γ) (m n : ℕ) : l ^ (m + n) = l ^ m ++ l ^ n := by
+  change (List.replicate (m + n) l).flatten =
+    (List.replicate m l).flatten ++ (List.replicate n l).flatten
+  rw [List.replicate_add, List.flatten_append]
+
+theorem list_pow_succ' (l : List Γ) (n : ℕ) : l ^ (n + 1) = l ^ n ++ l := by
+  rw [list_pow_add, list_pow_one]
+
+theorem list_pow_add_comm (l : List Γ) (m n : ℕ) : l ^ m ++ l ^ n = l ^ n ++ l ^ m := by
+  rw [← list_pow_add, ← list_pow_add, Nat.add_comm]
+
+@[simp]
+theorem nil_pow (n : ℕ) : ([] : List Γ) ^ n = [] := by
+  induction n with
+  | zero => rfl
+  | succ n ih => rw [list_pow_succ, List.nil_append, ih]
+
+theorem singleton_pow (a : Γ) (n : ℕ) : ([a] : List Γ) ^ n = List.replicate n a := by
+  induction n with
+  | zero => rfl
+  | succ n ih => rw [list_pow_succ, List.singleton_append, ih, List.replicate_succ]
+
+theorem list_pow_mul (l : List Γ) (m n : ℕ) : l ^ (m * n) = (l ^ m) ^ n := by
+  induction n with
+  | zero => simp
+  | succ n ih => rw [Nat.mul_succ, list_pow_add, ih, list_pow_succ']
+
+end ListPow
+
+/-! ## Half-Tape (`ListBlank`) & Directed-Head (`Cfg.headRight` / `Cfg.headLeft`) Lemmas -/
+
+@[simp]
+theorem ListBlank.mk_nil : ListBlank.mk ([] : List Γ) = default :=
+  rfl
+
+@[simp]
+theorem ListBlank.head_default : (default : ListBlank Γ).head = default :=
+  rfl
+
+@[simp]
+theorem ListBlank.head_default_fin {n : ℕ} [NeZero n] :
+    (default : ListBlank (Fin n)).head = 0 :=
+  rfl
+
+@[simp]
+theorem ListBlank.tail_default : (default : ListBlank Γ).tail = default :=
+  Quotient.sound' (Or.inl ⟨0, rfl⟩)
+
+@[simp]
+theorem ListBlank.cons_default_default :
+    ListBlank.cons (default : Γ) (default : ListBlank Γ) = default := by
+  simpa using ListBlank.cons_head_tail (default : ListBlank Γ)
+
+@[simp]
+theorem ListBlank.cons_zero_default {n : ℕ} [NeZero n] :
+    ListBlank.cons (0 : Fin n) (default : ListBlank (Fin n)) = default :=
+  ListBlank.cons_default_default
+
+@[simp]
+theorem ListBlank.append_nil (L : ListBlank Γ) :
+    ListBlank.append ([] : List Γ) L = L :=
+  rfl
+
+@[simp]
+theorem ListBlank.append_cons (a : Γ) (l : List Γ) (L : ListBlank Γ) :
+    ListBlank.append (a :: l) L = ListBlank.cons a (ListBlank.append l L) :=
+  rfl
+
+theorem ListBlank.append_pow_succ (l : List Γ) (n : ℕ) (L : ListBlank Γ) :
+    ListBlank.append (l ^ (n + 1)) L = ListBlank.append l (ListBlank.append (l ^ n) L) := by
+  rw [list_pow_succ, ListBlank.append_assoc]
+
+theorem ListBlank.append_pow_add (l : List Γ) (m n : ℕ) (L : ListBlank Γ) :
+    ListBlank.append (l ^ (m + n)) L = ListBlank.append (l ^ m) (ListBlank.append (l ^ n) L) := by
+  rw [list_pow_add, ListBlank.append_assoc]
+
+theorem init_nil_eq_headRight :
+    (init ([] : List Γ) : Cfg Γ Λ) = Cfg.headRight default default default :=
+  rfl
+
+theorem init_nil_eq_headLeft :
+    (init ([] : List Γ) : Cfg Γ Λ) = Cfg.headLeft default default default := by
+  simp [init, Cfg.headLeft, Tape.mk₁, Tape.mk₂, Tape.mk']
+
+omit [Inhabited Λ] in
+theorem Cfg.headRight_cons (q : Λ) (a : Γ) (l r : ListBlank Γ) :
+    Cfg.headRight q l (ListBlank.cons a r) = Cfg.headLeft q (ListBlank.cons a l) r := by
+  simp [Cfg.headRight, Cfg.headLeft]
+
+omit [Inhabited Λ] in
+theorem Cfg.headLeft_cons (q : Λ) (a : Γ) (l r : ListBlank Γ) :
+    Cfg.headLeft q (ListBlank.cons a l) r = Cfg.headRight q l (ListBlank.cons a r) := by
+  simp [Cfg.headRight, Cfg.headLeft]
+
+theorem step_headRight_right {M : Machine Γ Λ} {q q' : Λ} {a b : Γ}
+    (hM : M q a = some (some q', Stmt.write b Dir.right)) (l r : ListBlank Γ) :
+    step M (Cfg.headRight q l (ListBlank.cons a r)) =
+      some (Cfg.headRight q' (ListBlank.cons b l) r) := by
+  simp [Cfg.headRight, step, hM, Tape.write, Tape.move]
+
+theorem step_headRight_left {M : Machine Γ Λ} {q q' : Λ} {a b : Γ}
+    (hM : M q a = some (some q', Stmt.write b Dir.left)) (l r : ListBlank Γ) :
+    step M (Cfg.headRight q l (ListBlank.cons a r)) =
+      some (Cfg.headLeft q' l (ListBlank.cons b r)) := by
+  simp [Cfg.headRight, Cfg.headLeft, step, hM, Tape.write, Tape.move]
+
+theorem step_headLeft_right {M : Machine Γ Λ} {q q' : Λ} {a b : Γ}
+    (hM : M q a = some (some q', Stmt.write b Dir.right)) (l r : ListBlank Γ) :
+    step M (Cfg.headLeft q (ListBlank.cons a l) r) =
+      some (Cfg.headRight q' (ListBlank.cons b l) r) := by
+  simp [Cfg.headRight, Cfg.headLeft, step, hM, Tape.write, Tape.move]
+
+theorem step_headLeft_left {M : Machine Γ Λ} {q q' : Λ} {a b : Γ}
+    (hM : M q a = some (some q', Stmt.write b Dir.left)) (l r : ListBlank Γ) :
+    step M (Cfg.headLeft q (ListBlank.cons a l) r) =
+      some (Cfg.headLeft q' l (ListBlank.cons b r)) := by
+  simp [Cfg.headLeft, step, hM, Tape.write, Tape.move]
+
+theorem step_headRight_none {M : Machine Γ Λ} {q : Λ} {a : Γ}
+    (hM : M q a = none) (l r : ListBlank Γ) :
+    step M (Cfg.headRight q l (ListBlank.cons a r)) = none := by
+  simp [Cfg.headRight, step, hM]
+
+theorem step_headLeft_none {M : Machine Γ Λ} {q : Λ} {a : Γ}
+    (hM : M q a = none) (l r : ListBlank Γ) :
+    step M (Cfg.headLeft q (ListBlank.cons a l) r) = none := by
+  simp [Cfg.headLeft, step, hM]
+
+theorem step_headRight_default_right {M : Machine Γ Λ} {q q' : Λ} {b : Γ}
+    (hM : M q default = some (some q', Stmt.write b Dir.right)) (l : ListBlank Γ) :
+    step M (Cfg.headRight q l default) =
+      some (Cfg.headRight q' (ListBlank.cons b l) default) := by
+  simpa using step_headRight_right hM l default
+
+theorem step_headRight_default_left {M : Machine Γ Λ} {q q' : Λ} {b : Γ}
+    (hM : M q default = some (some q', Stmt.write b Dir.left)) (l : ListBlank Γ) :
+    step M (Cfg.headRight q l default) =
+      some (Cfg.headLeft q' l (ListBlank.cons b default)) := by
+  simpa using step_headRight_left hM l default
+
+theorem step_headLeft_default_right {M : Machine Γ Λ} {q q' : Λ} {b : Γ}
+    (hM : M q default = some (some q', Stmt.write b Dir.right)) (r : ListBlank Γ) :
+    step M (Cfg.headLeft q default r) =
+      some (Cfg.headRight q' (ListBlank.cons b default) r) := by
+  simpa using step_headLeft_right hM default r
+
+theorem step_headLeft_default_left {M : Machine Γ Λ} {q q' : Λ} {b : Γ}
+    (hM : M q default = some (some q', Stmt.write b Dir.left)) (r : ListBlank Γ) :
+    step M (Cfg.headLeft q default r) =
+      some (Cfg.headLeft q' default (ListBlank.cons b r)) := by
+  simpa using step_headLeft_left hM default r
+
+/-! ## Tape Pattern Evaluation (`evalTapeExpr`, `evalTapePattern`) -/
+
+@[simp]
+theorem evalTapeExpr_default (vars : ℕ → ℕ) :
+    evalTapeExpr (TapeExpr.default : TapeExpr Γ) vars = default :=
+  rfl
+
+@[simp]
+theorem evalTapeExpr_sym (a : Γ) (rest : TapeExpr Γ) (vars : ℕ → ℕ) :
+    evalTapeExpr (.sym a rest) vars = ListBlank.cons a (evalTapeExpr rest vars) :=
+  rfl
+
+@[simp]
+theorem evalTapeExpr_rep (blk : List Γ) (v : ℕ) (rest : TapeExpr Γ) (vars : ℕ → ℕ) :
+    evalTapeExpr (.rep blk v rest) vars =
+      ListBlank.append (blk ^ vars v) (evalTapeExpr rest vars) :=
+  rfl
+
+@[simp]
+theorem evalTapePattern_some (q : Λ) (l r : TapeExpr Γ) (vars : ℕ → ℕ) :
+    evalTapePattern ⟨l, some q, r⟩ vars =
+      Cfg.headRight q (evalTapeExpr l vars) (evalTapeExpr r vars) :=
+  rfl
+
+/-! ## Concrete Step Execution Tactics (`bb_refl`, `bb_step`, `bb_steps`) -/
+
+/-- Close a reflexive `ReachesStar` goal after normalizing directed-head configurations and
+`ListBlank` prefixes. -/
+macro "bb_refl" : tactic =>
+  `(tactic| (
+    try simp only [Cfg.headRight, Cfg.headLeft, init, Tape.mk₁, Tape.mk₂, Tape.mk',
+      List.cons_append, List.nil_append, List.append_nil,
+      ListBlank.mk_nil, ListBlank.append, ListBlank.head_cons, ListBlank.tail_cons,
+      ListBlank.head_default, ListBlank.head_default_fin, ListBlank.tail_default,
+      ListBlank.cons_default_default, ListBlank.cons_zero_default]
+    exact ReachesStar.refl _ _))
+
+/-- Execute one concrete `BusyBeaver.step` on a `ReachesPlus` or `ReachesStar` goal and normalize
+the resulting tape configuration. -/
+macro "bb_step" : tactic =>
+  `(tactic| (
+    first
+    | refine ReachesPlus.head (by
+        try simp only [Cfg.headRight, Cfg.headLeft, init, Tape.mk₁, Tape.mk₂, Tape.mk',
+          List.cons_append, List.nil_append, List.append_nil,
+          ListBlank.mk_nil, ListBlank.append, ListBlank.head_cons, ListBlank.tail_cons,
+          ListBlank.head_default, ListBlank.head_default_fin, ListBlank.tail_default,
+          ListBlank.cons_default_default, ListBlank.cons_zero_default]
+        rfl) ?_
+    | refine ReachesStar.head (by
+        try simp only [Cfg.headRight, Cfg.headLeft, init, Tape.mk₁, Tape.mk₂, Tape.mk',
+          List.cons_append, List.nil_append, List.append_nil,
+          ListBlank.mk_nil, ListBlank.append, ListBlank.head_cons, ListBlank.tail_cons,
+          ListBlank.head_default, ListBlank.head_default_fin, ListBlank.tail_default,
+          ListBlank.cons_default_default, ListBlank.cons_zero_default]
+        rfl) ?_
+    try simp only [Tape.write, Tape.move, ListBlank.head_cons, ListBlank.tail_cons,
+      ListBlank.head_default, ListBlank.head_default_fin, ListBlank.tail_default,
+      ListBlank.cons_default_default, ListBlank.cons_zero_default]))
+
+/-- Repeatedly step a `ReachesPlus` or `ReachesStar` goal until it closes by reflexivity (`bb_refl`)
+or reaches a symbolic head symbol. -/
+macro "bb_steps" : tactic =>
+  `(tactic| repeat (first | bb_refl | bb_step))
+
+end BusyBeaver
