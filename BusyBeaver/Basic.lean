@@ -355,6 +355,27 @@ theorem list_pow_mul (l : List Γ) (m n : ℕ) : l ^ (m * n) = (l ^ m) ^ n := by
   | zero => simp
   | succ n ih => rw [Nat.mul_succ, list_pow_add, ih, list_pow_succ']
 
+theorem pair_pow_eq_singleton_pow_two_mul (a : Γ) (k : ℕ) :
+    ([a, a] : List Γ) ^ k = ([a] : List Γ) ^ (2 * k) := by
+  induction k with
+  | zero => rfl
+  | succ k ih =>
+    rw [Nat.mul_succ, list_pow_add, ih, list_pow_add]
+    rfl
+
+theorem one_pow_two_mul (k : ℕ) :
+    ([1, 1] : List (Fin 2)) ^ k = ([1] : List (Fin 2)) ^ (2 * k) :=
+  pair_pow_eq_singleton_pow_two_mul 1 k
+
+theorem nat_even_or_odd_two_mul (n : ℕ) :
+    (∃ k, n = 2 * k) ∨ (∃ k, n = 2 * k + 1) := by
+  induction n with
+  | zero => exact Or.inl ⟨0, rfl⟩
+  | succ n ih =>
+    rcases ih with ⟨k, rfl⟩ | ⟨k, rfl⟩
+    · exact Or.inr ⟨k, rfl⟩
+    · exact Or.inl ⟨k + 1, by omega⟩
+
 end ListPow
 
 /-! ## Half-Tape (`ListBlank`) & Directed-Head (`Cfg.headRight` / `Cfg.headLeft`) Lemmas -/
@@ -386,6 +407,14 @@ theorem ListBlank.cons_zero_default {n : ℕ} [NeZero n] :
     ListBlank.cons (0 : Fin n) (default : ListBlank (Fin n)) = default :=
   ListBlank.cons_default_default
 
+theorem ListBlank.default_eq_append_default :
+    (default : ListBlank Γ) = ListBlank.append [default] default := by
+  simp
+
+theorem ListBlank.default_eq_append_zero {n : ℕ} [NeZero n] :
+    (default : ListBlank (Fin n)) = ListBlank.append [0] default := by
+  simp
+
 @[simp]
 theorem ListBlank.append_nil (L : ListBlank Γ) :
     ListBlank.append ([] : List Γ) L = L :=
@@ -396,6 +425,31 @@ theorem ListBlank.append_cons (a : Γ) (l : List Γ) (L : ListBlank Γ) :
     ListBlank.append (a :: l) L = ListBlank.cons a (ListBlank.append l L) :=
   rfl
 
+theorem ListBlank.append_append (s : ListBlank Γ) (l₁ l₂ : List Γ) :
+    ListBlank.append l₂ (ListBlank.append l₁ s) = ListBlank.append (l₂ ++ l₁) s :=
+  (ListBlank.append_assoc l₂ l₁ s).symm
+
+theorem ListBlank.append_comm_of_comm {l₁ l₂ : List Γ} (h : l₁ ++ l₂ = l₂ ++ l₁)
+    (s : ListBlank Γ) :
+    ListBlank.append l₂ (ListBlank.append l₁ s) = ListBlank.append l₁ (ListBlank.append l₂ s) := by
+  rw [ListBlank.append_append, ← h, ← ListBlank.append_append]
+
+theorem ListBlank.append_pow_comm (u : List Γ) (k : ℕ) (s : ListBlank Γ) :
+    ListBlank.append (u ^ k) (ListBlank.append u s) =
+      ListBlank.append u (ListBlank.append (u ^ k) s) := by
+  apply ListBlank.append_comm_of_comm
+  rw [← list_pow_succ, ← list_pow_succ']
+
+theorem swap_single_pair_pow (a : Γ) (k : ℕ) (s : ListBlank Γ) :
+    ListBlank.append (([a, a] : List Γ) ^ k) (ListBlank.append [a] s) =
+      ListBlank.append [a] (ListBlank.append (([a, a] : List Γ) ^ k) s) := by
+  rw [pair_pow_eq_singleton_pow_two_mul, ListBlank.append_pow_comm]
+
+theorem swap_1_11_pow (k : ℕ) (s : ListBlank (Fin 2)) :
+    ListBlank.append (([1, 1] : List (Fin 2)) ^ k) (ListBlank.append [1] s) =
+      ListBlank.append [1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) s) :=
+  swap_single_pair_pow 1 k s
+
 theorem ListBlank.append_pow_succ (l : List Γ) (n : ℕ) (L : ListBlank Γ) :
     ListBlank.append (l ^ (n + 1)) L = ListBlank.append l (ListBlank.append (l ^ n) L) := by
   rw [list_pow_succ, ListBlank.append_assoc]
@@ -403,6 +457,39 @@ theorem ListBlank.append_pow_succ (l : List Γ) (n : ℕ) (L : ListBlank Γ) :
 theorem ListBlank.append_pow_add (l : List Γ) (m n : ℕ) (L : ListBlank Γ) :
     ListBlank.append (l ^ (m + n)) L = ListBlank.append (l ^ m) (ListBlank.append (l ^ n) L) := by
   rw [list_pow_add, ListBlank.append_assoc]
+
+theorem append_10_pow_one (k : ℕ) (s : ListBlank (Fin 2)) :
+    ListBlank.append (([1, 0] : List (Fin 2)) ^ k) (ListBlank.append [1] s) =
+      ListBlank.append [1] (ListBlank.append (([0, 1] : List (Fin 2)) ^ k) s) := by
+  induction k generalizing s with
+  | zero => rfl
+  | succ k ih =>
+    rw [ListBlank.append_pow_succ, ListBlank.append_pow_succ, ih]
+    rfl
+
+theorem append_01_pow_zero (k : ℕ) (s : ListBlank (Fin 2)) :
+    ListBlank.append (([0, 1] : List (Fin 2)) ^ k) (ListBlank.append [0] s) =
+      ListBlank.append [0] (ListBlank.append (([1, 0] : List (Fin 2)) ^ k) s) := by
+  induction k generalizing s with
+  | zero => rfl
+  | succ k ih =>
+    rw [ListBlank.append_pow_succ, ListBlank.append_pow_succ, ih]
+    rfl
+
+theorem append_zero_10_pow_one (k : ℕ) (s : ListBlank (Fin 2)) :
+    ListBlank.append [0]
+      (ListBlank.append (([1, 0] : List (Fin 2)) ^ k) (ListBlank.append [1] s)) =
+      ListBlank.append (([0, 1] : List (Fin 2)) ^ k) (ListBlank.append [0, 1] s) := by
+  rw [append_10_pow_one]
+  change ListBlank.append [0, 1] (ListBlank.append (([0, 1] : List (Fin 2)) ^ k) s) = _
+  exact (ListBlank.append_pow_comm ([0, 1] : List (Fin 2)) k s).symm
+
+theorem append_zero_10_pow_one_succ (k : ℕ) (s : ListBlank (Fin 2)) :
+    ListBlank.append [0]
+      (ListBlank.append (([1, 0] : List (Fin 2)) ^ k) (ListBlank.append [1] s)) =
+      ListBlank.append (([0, 1] : List (Fin 2)) ^ (k + 1)) s := by
+  rw [append_10_pow_one, ListBlank.append_pow_succ]
+  rfl
 
 theorem init_nil_eq_headRight :
     (init ([] : List Γ) : Cfg Γ Λ) = Cfg.headRight default default default :=
@@ -504,7 +591,40 @@ theorem evalTapePattern_some (q : Λ) (l r : TapeExpr Γ) (vars : ℕ → ℕ) :
       Cfg.headRight q (evalTapeExpr l vars) (evalTapeExpr r vars) :=
   rfl
 
-/-! ## Concrete Step Execution Tactics (`bb_refl`, `bb_step`, `bb_steps`) -/
+/-- Configuration `cfg` advances in `ReachesPlus` either to a member of `ps` or to a halting
+configuration of `M`. -/
+def StepsToClosed (M : Machine Γ Λ) (ps : TapePatternSet Γ Λ) (cfg : Cfg Γ Λ) : Prop :=
+  ∃ cfg', ReachesPlus M cfg cfg' ∧
+    (IsInPatternSet ps cfg' ∨ (step M cfg').isNone)
+
+theorem StepsToClosed.of_reachesPlus {M : Machine Γ Λ} {ps : TapePatternSet Γ Λ}
+    {c₁ c₂ : Cfg Γ Λ} (h : ReachesPlus M c₁ c₂) (hc₂ : StepsToClosed M ps c₂) :
+    StepsToClosed M ps c₁ := by
+  obtain ⟨cfg', h', h_end⟩ := hc₂
+  exact ⟨cfg', h.trans h', h_end⟩
+
+/-! ## Standard 6-State Labels (`SixState`)
+
+Standard control state labels `A..F` (`0..5 : Fin 6`) for 6-state Busy Beaver machines. -/
+
+namespace SixState
+
+/-- State `A` (`0 : Fin 6`), the initial state. -/
+abbrev A : Fin 6 := 0
+/-- State `B` (`1 : Fin 6`). -/
+abbrev B : Fin 6 := 1
+/-- State `C` (`2 : Fin 6`). -/
+abbrev C : Fin 6 := 2
+/-- State `D` (`3 : Fin 6`). -/
+abbrev D : Fin 6 := 3
+/-- State `E` (`4 : Fin 6`). -/
+abbrev E : Fin 6 := 4
+/-- State `F` (`5 : Fin 6`). -/
+abbrev F : Fin 6 := 5
+
+end SixState
+
+/-! ## Concrete Step Execution Tactics (`bb_refl`, `bb_step`, `bb_steps`, `bb_halt`) -/
 
 /-- Close a reflexive `ReachesStar` goal after normalizing directed-head configurations and
 `ListBlank` prefixes. -/
@@ -544,5 +664,16 @@ macro "bb_step" : tactic =>
 or reaches a symbolic head symbol. -/
 macro "bb_steps" : tactic =>
   `(tactic| repeat (first | bb_refl | bb_step))
+
+/-- Close a `(step M cfg).isNone` halting goal after normalizing directed-head configurations and
+`ListBlank` prefixes. -/
+macro "bb_halt" : tactic =>
+  `(tactic| (
+    try simp only [Cfg.headRight, Cfg.headLeft, init, Tape.mk₁, Tape.mk₂, Tape.mk',
+      List.cons_append, List.nil_append, List.append_nil,
+      ListBlank.mk_nil, ListBlank.append, ListBlank.head_cons, ListBlank.tail_cons,
+      ListBlank.head_default, ListBlank.head_default_fin, ListBlank.tail_default,
+      ListBlank.cons_default_default, ListBlank.cons_zero_default]
+    rfl))
 
 end BusyBeaver

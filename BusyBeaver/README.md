@@ -14,18 +14,18 @@ All proofs in `BusyBeaver/` target one of three machine-checked behavioral predi
 
 ## Foundational Lemmas ([`Basic.lean`](./Basic.lean))
 
-[`BusyBeaver/Basic.lean`](./Basic.lean) provides clean-room multi-step and reachability lemmas (`multiStep`, `ReachesIn`, `ReachesStar`, `ReachesPlus` with `Trans` instances), closed-invariant non-halting theorems (`NeverHaltsFrom.of_reachesPlus_invariant`, `IsNotHalt.of_reachesPlus_invariant`), finite block repetition (`l ^ n`) identities, and directed-head (`Cfg.headRight` / `Cfg.headLeft`) step transitions.
+[`BusyBeaver/Basic.lean`](./Basic.lean) provides clean-room multi-step and reachability lemmas (`multiStep`, `ReachesIn`, `ReachesStar`, `ReachesPlus` with `Trans` instances), closed-invariant non-halting theorems (`NeverHaltsFrom.of_reachesPlus_invariant`, `IsNotHalt.of_reachesPlus_invariant`), finite block repetition (`l ^ n`) and `ListBlank` identities, standard 6-state labels (`BusyBeaver.SixState.A..F`), directed-head (`Cfg.headRight` / `Cfg.headLeft`) step transitions, and concrete execution/halting tactics (`bb_steps`, `bb_halt`).
 
 ## Machine Loader and Bridge ([`Bridge.lean`](./Bridge.lean))
 
-Machines can be defined using either the `.txt` transition-table loader `load_machine_rows%` from [`Cryptids/Machines.lean`](../Cryptids/Machines.lean) or the elaboration-time `bbchallenge.org` RLE string parser `load_rle_rows%`:
+Machines can be defined using either the `.txt` transition-table loader `load_machine_rows%` from [`Cryptids/Machines.lean`](../Cryptids/Machines.lean) or the elaboration-time `bbchallenge.org` RLE string parsers `load_rle_machine%` and `load_rle_rows%`:
 
 ```lean
-def targetRows : List (List (Option (Fin 2 × Turing.Dir × Fin 6))) :=
-  load_rle_rows% "1RB1RA_0LC1LE_1LD1LC_1LA0LB_1LF1RE_---0RA"
+def machine : ConjectureMachines.Machine 6 2 :=
+  load_rle_machine% "1RB1RA_0LC1LE_1LD1LC_1LA0LB_1LF1RE_---0RA"
 
-def target : ConjectureMachines.Machine 6 2 :=
-  ConjectureMachines.Machine.ofRows targetRows
+abbrev target : BusyBeaver.Machine (Fin 2) (Fin 6) :=
+  machine.toBB
 ```
 
 The canonical embedding `ConjectureMachines.Machine.toBB` maps any `ConjectureMachines.Machine states symbols` to `BusyBeaver.Machine (Fin symbols) (Fin states)`, with certified halting equivalence:
@@ -57,4 +57,4 @@ lake build BusyBeaver
 
 ## Acknowledgements
 
-We thank the Busy Beaver Challenge community and `int-y1` (`BusyLean`) for pioneering Lean 4 Busy Beaver holdout formalizations and inspiring the directed-head configuration style (`Cfg.headRight` / `Cfg.headLeft`).
+We thank the [Formal Conjectures](https://github.com/google-deepmind/formal-conjectures) project for the Busy Beaver Post-Turing machine model (`BusyBeaver.Machine`), the Busy Beaver Challenge community, and `int-y1` (`BusyLean`) for pioneering Lean 4 Busy Beaver holdout formalizations and inspiring the directed-head configuration style (`Cfg.headRight` / `Cfg.headLeft`).

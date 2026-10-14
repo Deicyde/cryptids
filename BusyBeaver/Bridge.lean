@@ -14,9 +14,10 @@ meta import Lean.Elab.Term
 Connects `ConjectureMachines.Machine states symbols` to `BusyBeaver.Machine (Fin symbols)
 (Fin states)`:
 
-- `load_rle_rows%` — Elaboration-time parser for standard `bbchallenge.org` RLE transition strings
-  (such as `"1RB1RA_0LC1LE_1LD1LC_1LA0LB_1LF1RE_---0RA"`), complementing `load_machine_rows%` for
-  `.txt` tables.
+- `load_rle_rows%` / `load_rle_machine%` — Elaboration-time parsers for standard
+  `bbchallenge.org` RLE transition strings (such as
+  `"1RB1RA_0LC1LE_1LD1LC_1LA0LB_1LF1RE_---0RA"`), complementing `load_machine_rows%` for `.txt`
+  tables.
 - `ConjectureMachines.Machine.toBB` / `ConjectureMachines.Cfg.toBB` — Canonical embedding of finite
   Turing machines and configurations into `BusyBeaver`.
 - `isHalt_toBB_iff_halts` & `isNotHalt_toBB_iff_not_halts` — Halting equivalence between
@@ -66,10 +67,31 @@ elab "load_rle_rows% " rle:str : term <= expectedType? => do
     rowStxs := rowStxs.push (← parseRleBlock b)
   elabTerm (← `([$rowStxs,*])) expectedType?
 
+/-- Elaboration-time parser turning a standard `bbchallenge.org` RLE string directly into a
+`ConjectureMachines.Machine`. -/
+elab "load_rle_machine% " rle:str : term <= expectedType? => do
+  let blocks := rle.getString.trimAscii.toString.splitOn "_"
+  if blocks.isEmpty then
+    throwError "Empty RLE string"
+  let mut rowStxs : Array (TSyntax `term) := #[]
+  for b in blocks do
+    rowStxs := rowStxs.push (← parseRleBlock b)
+  elabTerm (← `(ConjectureMachines.Machine.ofRows [$rowStxs,*])) expectedType?
+
 end BusyBeaver
 end
 
 @[expose] public section
+
+namespace BusyBeaver
+
+/-- Canonical `NeZero 2` instance for `(states, 2)` Turing machines. -/
+instance (priority := high) instNeZeroTwo : @NeZero ℕ Zero.ofOfNat0 2 := Nat.instNeZeroSucc
+
+/-- Canonical `NeZero 6` instance for `(6, symbols)` Turing machines. -/
+instance (priority := high) instNeZeroSix : @NeZero ℕ Zero.ofOfNat0 6 := Nat.instNeZeroSucc
+
+end BusyBeaver
 
 namespace ConjectureMachines
 
