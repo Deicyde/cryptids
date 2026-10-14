@@ -1,0 +1,8 @@
+/* Keep the docstring delimiters (`/--`, `/-!`, `-/`) on one line. Verso sizes them with
+   `width: min-content`, which lets the browser break `/--` after its first hyphen. */
+.code-box .verso-text::before,
+.code-box .verso-text::after,
+.code-box .md-text::before,
+.code-box .md-text::after {
+    white-space: nowrap;
+}
