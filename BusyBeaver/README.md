@@ -43,6 +43,7 @@ theorem isNotHalt_toBB_iff_not_halts (M : ConjectureMachines.Machine states symb
 | Machine (`bbchallenge` RLE) | States | Symbols | Proved Property | Lean 4 Proof |
 | :--- | :--- | :--- | :--- | :--- |
 | `1RB0LC_0LC1RF_1LE1RD_0RC1RC_0LA1LA_---1RA` | `6` | `2` | `IsCryptid` | [`M_1RB0LC_0LC1RF_1LE1RD_0RC1RC_0LA1LA_HHH1RA.lean`](./Machines/M_1RB0LC_0LC1RF_1LE1RD_0RC1RC_0LA1LA_HHH1RA.lean) |
+| `1RB0LF_1LC1RA_0RE0RD_---1LE_1LF1RC_1LC1LA` | `6` | `2` | `IsCryptid` | [`M_1RB0LF_1LC1RA_0RE0RD_HHH1LE_1LF1RC_1LC1LA.lean`](./Machines/M_1RB0LF_1LC1RA_0RE0RD_HHH1LE_1LF1RC_1LC1LA.lean) |
 
 ## Building
 
