@@ -1,0 +1,613 @@
+/-
+Copyright (c) 2026 Google LLC. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+module
+
+public import BusyBeaver.Basic
+public import BusyBeaver.Bridge
+
+/-!
+# Busy Beaver Cryptid `1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE`
+
+Formal `IsCryptid` proof for the 6-state, 2-symbol Busy Beaver cryptid
+`1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE`.
+
+Starting from the blank tape (`init []`), the trajectory reaches the guarded configuration family
+$$A(k, m, f) := 0^\infty\,(11)^k\,0\,(11)^m\,0\,\mathrm{D}{>}\,1\,1^f\,0^\infty
+  \quad (k \ge 1,\; m \ge 1,\; f \ge 1)$$
+at $A(3, 1, 2)$ in 76 steps, and every member configuration advances in `ReachesPlus` either to
+another member of the pattern set or to a halting configuration.
+-/
+
+@[expose] public section
+
+namespace BusyBeaver.M_1RB1RB_1LC0RE_HHH1LD_0RA1LB_1RA1LF_0LE1LE
+
+open SixState Turing
+
+/-- The `(6, 2)` Turing machine in `ConjectureMachines.Machine` form. -/
+def machine : ConjectureMachines.Machine 6 2 :=
+  load_rle_machine% "1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE"
+
+/-- The `(6, 2)` Turing machine in `BusyBeaver.Machine` form. -/
+abbrev target : Machine (Fin 2) (Fin 6) :=
+  machine.toBB
+
+private theorem split_11_pow_add_two (m : ℕ) (s : ListBlank (Fin 2)) :
+    ListBlank.append (([1, 1] : List (Fin 2)) ^ (m + 2)) s =
+      ListBlank.append [1, 1, 1]
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ m) (ListBlank.append [1] s)) := by
+  rw [Nat.add_comm m 2, ListBlank.append_pow_add, swap_1_11_pow]
+  rfl
+
+/-- Leftward shift across `(11)^k` in state `E`, preserving `(11)^k`. -/
+private theorem shift_E_11 (k : ℕ) (l r : ListBlank (Fin 2)) :
+    ReachesStar target
+      (Cfg.headLeft E (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l) r)
+      (Cfg.headLeft E l (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) r)) := by
+  induction k generalizing l r with
+  | zero => exact ReachesStar.refl _ _
+  | succ k ih =>
+    have h1 :
+        ReachesPlus target
+          (Cfg.headLeft E
+            (ListBlank.append [1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l))
+            r)
+          (Cfg.headLeft E
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l)
+            (ListBlank.append [1, 1] r)) := by
+      bb_steps
+    have h2 := ih l (ListBlank.append [1, 1] r)
+    have h3 := (h1.trans_star h2).to_star
+    have h_pow_l :
+        ListBlank.append [1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l) =
+          ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) l := by
+      rw [← ListBlank.append_pow_succ]
+    have h_pow_r :
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ k) (ListBlank.append [1, 1] r) =
+          ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) r := by
+      rw [ListBlank.append_append, ← list_pow_succ']
+    rwa [h_pow_l, h_pow_r] at h3
+
+/-- Rightward shift across `(11)^k` in state `E` with `[0, 1, 1, 0]` behind the head. -/
+private theorem shift_E_0110 (k : ℕ) (l r : ListBlank (Fin 2)) :
+    ReachesStar target
+      (Cfg.headRight E
+        (ListBlank.append [0, 1, 1, 0] l)
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) r))
+      (Cfg.headRight E
+        (ListBlank.append [0, 1, 1, 0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l))
+        r) := by
+  induction k generalizing l r with
+  | zero => exact ReachesStar.refl _ _
+  | succ k ih =>
+    have h1 :
+        ReachesPlus target
+          (Cfg.headRight E
+            (ListBlank.append [0, 1, 1, 0] l)
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) r))
+          (Cfg.headRight E
+            (ListBlank.append [0, 1, 1, 0] (ListBlank.append [1, 1] l))
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) r)) := by
+      rw [ListBlank.append_pow_succ]
+      bb_steps
+    have h2 := ih (ListBlank.append [1, 1] l) r
+    have h3 := (h1.trans_star h2).to_star
+    have h_pow :
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ k) (ListBlank.append [1, 1] l) =
+          ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) l := by
+      rw [ListBlank.append_append, ← list_pow_succ']
+    rwa [h_pow] at h3
+
+/-- Rightward shift across `(11)^k` in state `B` with `[1, 1, 0]` behind the head. -/
+private theorem shift_B_110 (k : ℕ) (l r : ListBlank (Fin 2)) :
+    ReachesStar target
+      (Cfg.headRight B
+        (ListBlank.append [1, 1, 0] l)
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) r))
+      (Cfg.headRight B
+        (ListBlank.append [1, 1, 0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l))
+        r) := by
+  induction k generalizing l r with
+  | zero => exact ReachesStar.refl _ _
+  | succ k ih =>
+    have h1 :
+        ReachesPlus target
+          (Cfg.headRight B
+            (ListBlank.append [1, 1, 0] l)
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) r))
+          (Cfg.headRight B
+            (ListBlank.append [1, 1, 0] (ListBlank.append [1, 1] l))
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) r)) := by
+      rw [ListBlank.append_pow_succ]
+      bb_steps
+    have h2 := ih (ListBlank.append [1, 1] l) r
+    have h3 := (h1.trans_star h2).to_star
+    have h_pow :
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ k) (ListBlank.append [1, 1] l) =
+          ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) l := by
+      rw [ListBlank.append_append, ← list_pow_succ']
+    rwa [h_pow] at h3
+
+/-- Canonical tape pattern
+$A(k, m, f) := 0^\infty\,(11)^k\,0\,(11)^m\,0\,\mathrm{D}{>}\,1\,1^f\,0^\infty$. -/
+private def pat_A : TapePattern (Fin 2) (Fin 6) :=
+  { left := .sym 0 (.rep [1, 1] 1 (.sym 0 (.rep [1, 1] 0 .default)))
+    head := some D
+    right := .sym 1 (.rep [1] 2 .default) }
+
+/-- Guard condition $k \ge 1 \land m \ge 1 \land f \ge 1$. -/
+private def cond_A : VarCond :=
+  .and (.ge_const 0 1) (.and (.ge_const 1 1) (.ge_const 2 1))
+
+/-- Closed pattern set for `1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE`. -/
+private def ps : TapePatternSet (Fin 2) (Fin 6) :=
+  [(pat_A, cond_A)]
+
+/-- Configuration $A(k, m, f)$. -/
+private def cfg_A (k m f : ℕ) : Cfg (Fin 2) (Fin 6) :=
+  Cfg.headRight D
+    (ListBlank.append [0]
+      (ListBlank.append (([1, 1] : List (Fin 2)) ^ m)
+        (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) default))))
+    (ListBlank.append [1]
+      (ListBlank.append (([1] : List (Fin 2)) ^ f) default))
+
+private theorem eval_pat_A (vars : ℕ → ℕ) :
+    evalTapePattern pat_A vars = cfg_A (vars 0) (vars 1) (vars 2) :=
+  rfl
+
+private theorem in_ps_A (k m f : ℕ) (hk : k ≥ 1) (hm : m ≥ 1) (hf : f ≥ 1) :
+    IsInPatternSet ps (cfg_A k m f) :=
+  ⟨(pat_A, cond_A), List.Mem.head _,
+    fun i => match i with | 0 => k | 1 => m | 2 => f | _ => 0, rfl, ⟨hk, hm, hf⟩⟩
+
+private theorem cfg_A_zero (m f : ℕ) :
+    cfg_A 0 m f =
+      Cfg.headRight D
+        (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ m) default))
+        (ListBlank.append [1]
+          (ListBlank.append (([1] : List (Fin 2)) ^ f) default)) := by
+  unfold cfg_A
+  simp
+
+/-! ## Accelerated Transitions from $A(k, m, f)$ -/
+
+/-- Main contraction step: $A(k + 1, m + 2, f) \to^+ A(k, m + 1, f + 6)$. -/
+private theorem step_macro (k m f : ℕ) :
+    ReachesPlus target (cfg_A (k + 1) (m + 2) f) (cfg_A k (m + 1) (f + 6)) := by
+  unfold cfg_A
+  set l_k := ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) default
+  set r_f := ListBlank.append (([1] : List (Fin 2)) ^ f) default
+  rw [split_11_pow_add_two m (ListBlank.append [0] l_k)]
+  have h1 :
+      ReachesPlus target
+        (Cfg.headRight D
+          (ListBlank.append [0]
+            (ListBlank.append [1, 1, 1]
+              (ListBlank.append (([1, 1] : List (Fin 2)) ^ m)
+                (ListBlank.append [1] (ListBlank.append [0] l_k)))))
+          (ListBlank.append [1] r_f))
+        (Cfg.headLeft E
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ m)
+            (ListBlank.append [1, 0] l_k))
+          (ListBlank.append [0, 1, 1, 1, 1] r_f)) := by
+    bb_steps
+  have h2 := shift_E_11 m (ListBlank.append [1, 0] l_k) (ListBlank.append [0, 1, 1, 1, 1] r_f)
+  have h12 := h1.trans_star h2
+  set r_m :=
+    ListBlank.append (([1, 1] : List (Fin 2)) ^ m) (ListBlank.append [0, 1, 1, 1, 1] r_f)
+  have h3 :
+      ReachesPlus target
+        (Cfg.headLeft E (ListBlank.append [1, 0] l_k) r_m)
+        (Cfg.headLeft E l_k (ListBlank.append [0, 1] r_m)) := by
+    bb_steps
+  have h123 := h12.trans h3
+  have h4 := shift_E_11 (k + 1) default (ListBlank.append [0, 1] r_m)
+  have h1234 := h123.trans_star h4
+  rw [ListBlank.append_pow_succ] at h1234
+  set r_k :=
+    ListBlank.append (([1, 1] : List (Fin 2)) ^ k) (ListBlank.append [0, 1] r_m)
+  have h5 :
+      ReachesPlus target
+        (Cfg.headLeft E default (ListBlank.append [1, 1] r_k))
+        (Cfg.headRight E (ListBlank.append [0, 1, 1, 0] default) r_k) := by
+    bb_steps
+  have h12345 := h1234.trans h5
+  have h6 := shift_E_0110 k default (ListBlank.append [0, 1] r_m)
+  have h123456 := h12345.trans_star h6
+  set l_k' := ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) default)
+  have h7 :
+      ReachesPlus target
+        (Cfg.headRight E
+          (ListBlank.append [0, 1, 1, 0]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) default))
+          (ListBlank.append [0, 1] r_m))
+        (Cfg.headRight B
+          (ListBlank.append [1, 1, 0] (ListBlank.append [1, 1] l_k'))
+          r_m) := by
+    bb_steps
+  have h1234567 := h123456.trans h7
+  have h8 := shift_B_110 m (ListBlank.append [1, 1] l_k') (ListBlank.append [0, 1, 1, 1, 1] r_f)
+  have h12345678 := h1234567.trans_star h8
+  have h_pow_m :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ m) (ListBlank.append [1, 1] l_k') =
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ (m + 1)) l_k' := by
+    rw [ListBlank.append_append, ← list_pow_succ']
+  rw [h_pow_m] at h12345678
+  have h9 :
+      ReachesPlus target
+        (Cfg.headRight B
+          (ListBlank.append [1, 1, 0]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (m + 1)) l_k'))
+          (ListBlank.append [0, 1, 1, 1, 1] r_f))
+        (Cfg.headRight D
+          (ListBlank.append [0]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (m + 1)) l_k'))
+          (ListBlank.append [1]
+            (ListBlank.append (([1] : List (Fin 2)) ^ (f + 6)) default))) := by
+    have h_f :
+        ListBlank.append (([1] : List (Fin 2)) ^ (f + 6)) (default : ListBlank (Fin 2)) =
+          ListBlank.append [1, 1, 1, 1, 1, 1] r_f := by
+      rw [Nat.add_comm f 6, ListBlank.append_pow_add]
+      rfl
+    rw [h_f]
+    bb_steps
+  exact h12345678.trans h9
+
+/-- Boundary step when $m = 1$: $A(k + 1, 1, f) \to^+ A(0, k + 1, f + 3)$. -/
+private theorem step_m1 (k f : ℕ) :
+    ReachesPlus target (cfg_A (k + 1) 1 f) (cfg_A 0 (k + 1) (f + 3)) := by
+  rw [cfg_A_zero]
+  unfold cfg_A
+  have h_m1 : (([1, 1] : List (Fin 2)) ^ 1) = [1, 1] := rfl
+  have h_f :
+      ListBlank.append (([1] : List (Fin 2)) ^ (f + 3)) (default : ListBlank (Fin 2)) =
+        ListBlank.append [1, 1, 1]
+          (ListBlank.append (([1] : List (Fin 2)) ^ f) default) := by
+    rw [Nat.add_comm f 3, ListBlank.append_pow_add]
+    rfl
+  rw [h_m1, h_f]
+  bb_steps
+
+/-- Halting transition from $A(0, 1, d + 1)$. -/
+private theorem step_zero_one (d : ℕ) :
+    ∃ cfg', ReachesPlus target (cfg_A 0 1 (d + 1)) cfg' ∧ (step target cfg').isNone := by
+  rw [cfg_A_zero]
+  have h_m1 : (([1, 1] : List (Fin 2)) ^ 1) = [1, 1] := rfl
+  have h_d :
+      ListBlank.append (([1] : List (Fin 2)) ^ (d + 1)) (default : ListBlank (Fin 2)) =
+        ListBlank.append [1] (ListBlank.append (([1] : List (Fin 2)) ^ d) default) := by
+    rw [Nat.add_comm d 1, ListBlank.append_pow_add]
+    rfl
+  rw [h_m1, h_d]
+  set r_d := ListBlank.append (([1] : List (Fin 2)) ^ d) default
+  refine ⟨Cfg.headLeft C default (ListBlank.append [1, 1, 1, 1, 1, 1] r_d), ?_, ?_⟩
+  · bb_steps
+  · bb_halt
+
+/-- Shared 15-step opening for $A(0, 2, f)$. -/
+private theorem sweep_zero_two (r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight D
+        (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ 2) default))
+        (ListBlank.append [1] r))
+      (Cfg.headRight E
+        (ListBlank.append [0, 1, 1, 0] (ListBlank.append [1, 1] default))
+        (ListBlank.append [1, 1] r)) := by
+  have h2 : (([1, 1] : List (Fin 2)) ^ 2) = [1, 1, 1, 1] := rfl
+  rw [h2]
+  bb_steps
+
+/-- Shared sweep across $0^\infty\,(11)^{v+3}\,0\,\mathrm{D}{>}\,1\,r$. -/
+private theorem sweep_D_zero (v : ℕ) (r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight D
+        (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (v + 3)) default))
+        (ListBlank.append [1] r))
+      (Cfg.headRight E
+        (ListBlank.append [0, 1, 1, 0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (v + 1)) default))
+        (ListBlank.append [0, 1, 1, 1, 1] r)) := by
+  have h_split :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ (v + 3)) (default : ListBlank (Fin 2)) =
+        ListBlank.append [1, 1, 1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (v + 1))
+            (ListBlank.append [1] default)) :=
+    split_11_pow_add_two (v + 1) default
+  rw [h_split]
+  set l_v :=
+    ListBlank.append (([1, 1] : List (Fin 2)) ^ (v + 1)) (ListBlank.append [1] default)
+  have h1 :
+      ReachesPlus target
+        (Cfg.headRight D
+          (ListBlank.append [0] (ListBlank.append [1, 1, 1] l_v))
+          (ListBlank.append [1] r))
+        (Cfg.headLeft E l_v (ListBlank.append [0, 1, 1, 1, 1] r)) := by
+    bb_steps
+  have h2 := shift_E_11 (v + 1) (ListBlank.append [1] default) (ListBlank.append [0, 1, 1, 1, 1] r)
+  have h12 := h1.trans_star h2
+  set r_v :=
+    ListBlank.append (([1, 1] : List (Fin 2)) ^ (v + 1)) (ListBlank.append [0, 1, 1, 1, 1] r)
+  have h3 :
+      ReachesPlus target
+        (Cfg.headLeft E (ListBlank.append [1] default) r_v)
+        (Cfg.headRight E (ListBlank.append [0, 1, 1, 0] default) r_v) := by
+    bb_steps
+  have h123 := h12.trans h3
+  have h4 := shift_E_0110 (v + 1) default (ListBlank.append [0, 1, 1, 1, 1] r)
+  exact h123.trans_star h4
+
+/-- Shared rightward completion across `0\,(11)^{u+1}\,r_{\mathrm{rem}}`. -/
+private theorem shift_0110_block (a u : ℕ) (r_rem : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight E
+        (ListBlank.append [0, 1, 1, 0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default))
+        (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (u + 1)) r_rem)))
+      (Cfg.headRight E
+        (ListBlank.append [0, 1, 1, 0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (u + 1))
+            (ListBlank.append [0]
+              (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default))))
+        r_rem) := by
+  set l_a := ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default
+  rw [ListBlank.append_pow_succ (([1, 1] : List (Fin 2))) u r_rem]
+  set r_u := ListBlank.append (([1, 1] : List (Fin 2)) ^ u) r_rem
+  have h1 :
+      ReachesPlus target
+        (Cfg.headRight E
+          (ListBlank.append [0, 1, 1, 0] l_a)
+          (ListBlank.append [0] (ListBlank.append [1, 1] r_u)))
+        (Cfg.headRight E
+          (ListBlank.append [0, 1, 1, 0] (ListBlank.append [1, 1, 0] l_a))
+          r_u) := by
+    bb_steps
+  have h2 := shift_E_0110 u (ListBlank.append [1, 1, 0] l_a) r_rem
+  have h12 := h1.trans_star h2
+  have h_pow :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ u) (ListBlank.append [1, 1, 0] l_a) =
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ (u + 1)) (ListBlank.append [0] l_a) := by
+    change ListBlank.append (([1, 1] : List (Fin 2)) ^ u)
+      (ListBlank.append [1, 1] (ListBlank.append [0] l_a)) = _
+    rw [ListBlank.append_append, ← list_pow_succ']
+  rwa [h_pow] at h12
+
+private theorem finish_0110_even (a u : ℕ) :
+    ReachesPlus target
+      (Cfg.headRight E
+        (ListBlank.append [0, 1, 1, 0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default))
+        (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (u + 1)) default)))
+      (cfg_A a (u + 1) 5) := by
+  have h1 := shift_0110_block a u default
+  have h2 :
+      ReachesPlus target
+        (Cfg.headRight E
+          (ListBlank.append [0, 1, 1, 0]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (u + 1))
+              (ListBlank.append [0]
+                (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default))))
+          default)
+        (cfg_A a (u + 1) 5) := by
+    unfold cfg_A
+    have h5 : (([1] : List (Fin 2)) ^ 5) = [1, 1, 1, 1, 1] := rfl
+    rw [h5]
+    bb_steps
+  exact h1.trans h2
+
+private theorem finish_0110_odd (a u : ℕ) :
+    ReachesPlus target
+      (Cfg.headRight E
+        (ListBlank.append [0, 1, 1, 0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default))
+        (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (u + 1))
+            (ListBlank.append [1] default))))
+      (cfg_A a (u + 2) 2) := by
+  have h1 := shift_0110_block a u (ListBlank.append [1] default)
+  set l_a := ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default)
+  have h2 :
+      ReachesPlus target
+        (Cfg.headRight E
+          (ListBlank.append [0, 1, 1, 0]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (u + 1)) l_a))
+          (ListBlank.append [1] default))
+        (cfg_A a (u + 2) 2) := by
+    unfold cfg_A
+    have h2_pow : (([1] : List (Fin 2)) ^ 2) = [1, 1] := rfl
+    have h_u2 :
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ (u + 2)) l_a =
+          ListBlank.append [1, 1]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (u + 1)) l_a) := by
+      rw [← ListBlank.append_pow_succ]
+    rw [h2_pow, h_u2]
+    bb_steps
+  exact h1.trans h2
+
+/-- Even-exponent transition from $A(0, 2, 2j + 4)$. -/
+private theorem step_zero_two_even (j : ℕ) :
+    ReachesPlus target (cfg_A 0 2 (2 * j + 4)) (cfg_A (j + 4) 1 2) := by
+  rw [cfg_A_zero]
+  have h1 := sweep_zero_two (ListBlank.append (([1] : List (Fin 2)) ^ (2 * j + 4)) default)
+  have h_r :
+      ListBlank.append [1, 1]
+        (ListBlank.append (([1] : List (Fin 2)) ^ (2 * j + 4)) (default : ListBlank (Fin 2))) =
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ (j + 3)) default := by
+    have h_eq : 2 * (j + 3) = 2 + (2 * j + 4) := by omega
+    rw [one_pow_two_mul, h_eq, ListBlank.append_pow_add ([1] : List (Fin 2)) 2 (2 * j + 4)]
+    rfl
+  rw [h_r] at h1
+  have h2 := shift_E_0110 (j + 3) (ListBlank.append [1, 1] default) default
+  have h12 := h1.trans_star h2
+  have h_l :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ (j + 3))
+        (ListBlank.append [1, 1] (default : ListBlank (Fin 2))) =
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ (j + 4)) default := by
+    rw [ListBlank.append_append, ← list_pow_succ']
+  rw [h_l] at h12
+  have h3 :
+      ReachesPlus target
+        (Cfg.headRight E
+          (ListBlank.append [0, 1, 1, 0]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (j + 4)) default))
+          default)
+        (cfg_A (j + 4) 1 2) := by
+    unfold cfg_A
+    have h_m1 : (([1, 1] : List (Fin 2)) ^ 1) = [1, 1] := rfl
+    have h_f2 : (([1] : List (Fin 2)) ^ 2) = [1, 1] := rfl
+    rw [h_m1, h_f2]
+    bb_steps
+  exact h12.trans h3
+
+/-- Odd-exponent transition from $A(0, 2, 2j + 5)$. -/
+private theorem step_zero_two_odd (j : ℕ) :
+    ReachesPlus target (cfg_A 0 2 (2 * j + 5)) (cfg_A (j + 3) 3 5) := by
+  rw [cfg_A_zero]
+  have h1 := sweep_zero_two (ListBlank.append (([1] : List (Fin 2)) ^ (2 * j + 5)) default)
+  have h_r :
+      ListBlank.append [1, 1]
+        (ListBlank.append (([1] : List (Fin 2)) ^ (2 * j + 5)) (default : ListBlank (Fin 2))) =
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ (j + 3)) (ListBlank.append [1] default) := by
+    have h_eq : 2 * j + 5 = 2 * (j + 2) + 1 := by omega
+    rw [h_eq, ListBlank.append_pow_add ([1] : List (Fin 2)) (2 * (j + 2)) 1,
+      ← one_pow_two_mul, list_pow_one, ← ListBlank.append_pow_succ]
+  rw [h_r] at h1
+  have h2 := shift_E_0110 (j + 3) (ListBlank.append [1, 1] default) (ListBlank.append [1] default)
+  have h12 := h1.trans_star h2
+  have h_l :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ (j + 3))
+        (ListBlank.append [1, 1] (default : ListBlank (Fin 2))) =
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ (j + 4)) default := by
+    rw [ListBlank.append_append, ← list_pow_succ']
+  rw [h_l] at h12
+  have h3 :
+      ReachesPlus target
+        (Cfg.headRight E
+          (ListBlank.append [0, 1, 1, 0]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (j + 4)) default))
+          (ListBlank.append [1] default))
+        (Cfg.headRight D
+          (ListBlank.append [0]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (j + 5)) default))
+          (ListBlank.append [1] (ListBlank.append [1, 1] default))) := by
+    rw [ListBlank.append_pow_succ (([1, 1] : List (Fin 2))) (j + 4)]
+    bb_steps
+  have h123 := h12.trans h3
+  have h4 := sweep_D_zero (j + 2) (ListBlank.append [1, 1] default)
+  have h1234 := h123.trans h4
+  have h_r2 :
+      ListBlank.append [0, 1, 1, 1, 1] (ListBlank.append [1, 1] (default : ListBlank (Fin 2))) =
+        ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ 3) default) := rfl
+  rw [h_r2] at h1234
+  exact h1234.trans (finish_0110_even (j + 3) 2)
+
+/-- Even-exponent transition from $A(0, v + 3, 2j + 4)$. -/
+private theorem step_zero_ge3_even (v j : ℕ) :
+    ReachesPlus target (cfg_A 0 (v + 3) (2 * j + 4)) (cfg_A (v + 1) (j + 4) 5) := by
+  rw [cfg_A_zero]
+  have h1 := sweep_D_zero v (ListBlank.append (([1] : List (Fin 2)) ^ (2 * j + 4)) default)
+  have h_r :
+      ListBlank.append [0, 1, 1, 1, 1]
+        (ListBlank.append (([1] : List (Fin 2)) ^ (2 * j + 4)) (default : ListBlank (Fin 2))) =
+        ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (j + 4)) default) := by
+    have h_eq : 2 * (j + 4) = 4 + (2 * j + 4) := by omega
+    change ListBlank.append [0]
+      (ListBlank.append [1, 1, 1, 1]
+        (ListBlank.append (([1] : List (Fin 2)) ^ (2 * j + 4)) default)) = _
+    rw [one_pow_two_mul, h_eq, ListBlank.append_pow_add ([1] : List (Fin 2)) 4 (2 * j + 4)]
+    rfl
+  rw [h_r] at h1
+  exact h1.trans (finish_0110_even (v + 1) (j + 3))
+
+/-- Odd-exponent transition from $A(0, v + 3, 2j + 5)$. -/
+private theorem step_zero_ge3_odd (v j : ℕ) :
+    ReachesPlus target (cfg_A 0 (v + 3) (2 * j + 5)) (cfg_A (v + 1) (j + 5) 2) := by
+  rw [cfg_A_zero]
+  have h1 := sweep_D_zero v (ListBlank.append (([1] : List (Fin 2)) ^ (2 * j + 5)) default)
+  have h_r :
+      ListBlank.append [0, 1, 1, 1, 1]
+        (ListBlank.append (([1] : List (Fin 2)) ^ (2 * j + 5)) (default : ListBlank (Fin 2))) =
+        ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (j + 4))
+            (ListBlank.append [1] default)) := by
+    have h_eq : 2 * j + 5 = 2 * (j + 2) + 1 := by omega
+    have h_eq2 : (j + 2) + 2 = j + 4 := by omega
+    change ListBlank.append [0]
+      (ListBlank.append (([1, 1] : List (Fin 2)) ^ 2)
+        (ListBlank.append (([1] : List (Fin 2)) ^ (2 * j + 5)) default)) = _
+    rw [h_eq, ListBlank.append_pow_add ([1] : List (Fin 2)) (2 * (j + 2)) 1,
+      ← one_pow_two_mul, list_pow_one, ← ListBlank.append_pow_add,
+      Nat.add_comm 2 (j + 2), h_eq2]
+  rw [h_r] at h1
+  exact h1.trans (finish_0110_odd (v + 1) (j + 3))
+
+/-! ## Cryptid Closure -/
+
+private theorem step_zero_closed (w d : ℕ) :
+    StepsToClosed target ps (cfg_A 0 (w + 1) (d + 4)) := by
+  rcases w with _ | _ | v
+  · obtain ⟨cfg', h_step, h_halt⟩ := step_zero_one (d + 3)
+    exact ⟨cfg', h_step, Or.inr h_halt⟩
+  · rcases nat_even_or_odd_two_mul d with ⟨j, rfl⟩ | ⟨j, rfl⟩
+    · exact ⟨cfg_A (j + 4) 1 2, step_zero_two_even j,
+        Or.inl (in_ps_A (j + 4) 1 2 (by omega) (by decide) (by decide))⟩
+    · have h_eq : 2 * j + 1 + 4 = 2 * j + 5 := by omega
+      rw [h_eq]
+      exact ⟨cfg_A (j + 3) 3 5, step_zero_two_odd j,
+        Or.inl (in_ps_A (j + 3) 3 5 (by omega) (by decide) (by decide))⟩
+  · rcases nat_even_or_odd_two_mul d with ⟨j, rfl⟩ | ⟨j, rfl⟩
+    · exact ⟨cfg_A (v + 1) (j + 4) 5, step_zero_ge3_even v j,
+        Or.inl (in_ps_A (v + 1) (j + 4) 5 (by omega) (by omega) (by decide))⟩
+    · have h_eq : 2 * j + 1 + 4 = 2 * j + 5 := by omega
+      rw [h_eq]
+      exact ⟨cfg_A (v + 1) (j + 5) 2, step_zero_ge3_odd v j,
+        Or.inl (in_ps_A (v + 1) (j + 5) 2 (by omega) (by omega) (by decide))⟩
+
+private theorem step_A_closed (k m f : ℕ) (hk : k ≥ 1) (hm : m ≥ 1) (hf : f ≥ 1) :
+    StepsToClosed target ps (cfg_A k m f) := by
+  rcases k with _ | k'
+  · omega
+  · rcases m with _ | _ | m'
+    · omega
+    · rcases f with _ | d
+      · omega
+      · exact StepsToClosed.of_reachesPlus (step_m1 k' (d + 1)) (step_zero_closed k' d)
+    · rcases k' with _ | k''
+      · rcases f with _ | d
+        · omega
+        · have h_step := step_macro 0 m' (d + 1)
+          have h_eq : d + 1 + 6 = (d + 3) + 4 := by omega
+          rw [h_eq] at h_step
+          exact StepsToClosed.of_reachesPlus h_step (step_zero_closed m' (d + 3))
+      · exact ⟨cfg_A (k'' + 1) (m' + 1) (f + 6), step_macro (k'' + 1) m' f,
+          Or.inl (in_ps_A (k'' + 1) (m' + 1) (f + 6) (by omega) (by omega) (by omega))⟩
+
+/-- `1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE` is a cryptid. -/
+theorem is_cryptid : IsCryptid target := by
+  refine ⟨ps, ⟨cfg_A 3 1 2, ?_, in_ps_A 3 1 2 (by decide) (by decide) (by decide)⟩, ?_⟩
+  · have h_init : ReachesPlus target (init []) (cfg_A 3 1 2) := by
+      unfold cfg_A
+      have hk3 : (([1, 1] : List (Fin 2)) ^ 3) = [1, 1, 1, 1, 1, 1] := rfl
+      have hm1 : (([1, 1] : List (Fin 2)) ^ 1) = [1, 1] := rfl
+      have hf2 : (([1] : List (Fin 2)) ^ 2) = [1, 1] := rfl
+      rw [hk3, hm1, hf2]
+      bb_steps
+    exact h_init.to_star
+  · intro cfg h_in
+    rcases h_in with ⟨entry, h_mem, vars, rfl, h_cond⟩
+    simp only [ps, List.mem_cons, List.not_mem_nil, or_false] at h_mem
+    subst h_mem
+    rw [eval_pat_A]
+    exact step_A_closed (vars 0) (vars 1) (vars 2) h_cond.1 h_cond.2.1 h_cond.2.2
+
+end BusyBeaver.M_1RB1RB_1LC0RE_HHH1LD_0RA1LB_1RA1LF_0LE1LE
