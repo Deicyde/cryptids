@@ -1,8 +1,32 @@
-name: Lean Action CI
+name: Cryptids CI
 
 on:
   push:
+    paths:
+      - 'Cryptids/**'
+      - 'Cryptids.lean'
+      - 'Challenge.lean'
+      - 'artifacts/**'
+      - 'baselines/**'
+      - 'comparator/**'
+      - '!comparator/busy_beaver.json'
+      - 'lakefile.toml'
+      - 'lake-manifest.json'
+      - 'lean-toolchain'
+      - '.github/workflows/lean_action_ci.yml'
   pull_request:
+    paths:
+      - 'Cryptids/**'
+      - 'Cryptids.lean'
+      - 'Challenge.lean'
+      - 'artifacts/**'
+      - 'baselines/**'
+      - 'comparator/**'
+      - '!comparator/busy_beaver.json'
+      - 'lakefile.toml'
+      - 'lake-manifest.json'
+      - 'lean-toolchain'
+      - '.github/workflows/lean_action_ci.yml'
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -25,6 +49,8 @@ jobs:
 
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
+        with:
+          build-args: "Cryptids Challenge"
         env:
           LEAN_NUM_THREADS: "1"
 

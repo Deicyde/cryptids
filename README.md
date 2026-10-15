@@ -30,17 +30,18 @@ lake comparator --config comparator/all.json
 python3 verify.py
 ```
 
-Build the Busy Beaver library (`BusyBeaver`):
+Build the Busy Beaver library (`BusyBeaver` and `BusyBeaverChallenge`) and audit with [`leanprover/comparator`](comparator/README.md):
 
 ```bash
-lake build BusyBeaver
+lake build BusyBeaver BusyBeaverChallenge
+lake comparator --config comparator/busy_beaver.json
 ```
 
 ## Repository Structure
 
 - [`Cryptids/`](Cryptids/README.md) — Conjecture-checking Turing machines ([`Machines.lean`](Cryptids/Machines.lean), [`Propositions.lean`](Cryptids/Propositions.lean)), state-reduction proofs ([`Goldbach21.lean`](Cryptids/Goldbach21.lean), [`Zf380.lean`](Cryptids/Zf380.lean), [`Riemann104.lean`](Cryptids/Riemann104.lean)), and end-to-end mathematical semantics ([`Cryptids/Semantics/`](Cryptids/Semantics/README.md)).
 - [`BusyBeaver/`](BusyBeaver/README.md) — Busy Beaver holdout specifications ([`Defs.lean`](BusyBeaver/Defs.lean)), foundational lemmas ([`Basic.lean`](BusyBeaver/Basic.lean)), RLE loader and bridge to `ConjectureMachines` ([`Bridge.lean`](BusyBeaver/Bridge.lean)), and machine behavioral proofs.
-- [`Challenge.lean`](Challenge.lean) & [`comparator/`](comparator/) — Self-contained target theorem specification and configuration files for [`leanprover/comparator`](comparator/README.md).
+- [`Challenge.lean`](Challenge.lean), [`BusyBeaverChallenge.lean`](BusyBeaverChallenge.lean) & [`comparator/`](comparator/) — Self-contained target theorem specifications and configuration files for [`leanprover/comparator`](comparator/README.md).
 - [`artifacts/`](artifacts/) — Canonical `machine.txt` transition tables and reduction write-ups for [`goldbach_21`](artifacts/goldbach_21/README.md), [`zf_380`](artifacts/zf_380/README.md), and [`riemann_104`](artifacts/riemann_104/README.md).
 - [`baselines/`](baselines/) — Verbatim upstream source files, canonical 5-tuple tables, and [`PROVENANCE.md`](baselines/PROVENANCE.md).
 - [`RELATED_WORK.md`](RELATED_WORK.md) — Literature lineage and `(Q, 2)` Turing machine conventions.

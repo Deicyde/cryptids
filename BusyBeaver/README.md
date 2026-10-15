@@ -54,13 +54,14 @@ theorem isNotHalt_toBB_iff_not_halts (M : ConjectureMachines.Machine states symb
 | `1RB1RD_0LC1RA_0RA1LC_1RA1LE_1RF0LD_---0RE` | `6` | `2` | `IsCryptid` | [`M_1RB1RD_0LC1RA_0RA1LC_1RA1LE_1RF0LD_HHH0RE.lean`](./Machines/M_1RB1RD_0LC1RA_0RA1LC_1RA1LE_1RF0LD_HHH0RE.lean) |
 | `1RB1RD_0LC1RA_1RA1LC_0RB1LE_1RF0LD_---0RE` | `6` | `2` | `IsCryptid` | [`M_1RB1RD_0LC1RA_1RA1LC_0RB1LE_1RF0LD_HHH0RE.lean`](./Machines/M_1RB1RD_0LC1RA_1RA1LC_0RB1LE_1RF0LD_HHH0RE.lean) |
 
-## Building
+## Building and Verifying
 
-Build the `BusyBeaver` library target:
+Build the `BusyBeaver` and `BusyBeaverChallenge` targets and audit with [`leanprover/comparator`](../comparator/README.md):
 
 ```bash
 lake exe cache get
-lake build BusyBeaver
+lake build BusyBeaver BusyBeaverChallenge
+lake comparator --config comparator/busy_beaver.json
 ```
 
 ## Acknowledgements

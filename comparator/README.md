@@ -1,21 +1,27 @@
 # Verification with `leanprover/comparator`
 
 This directory contains configuration files for verifying the proofs in [`Cryptids/`](../Cryptids/)
-against the self-contained challenge specification in [`Challenge.lean`](../Challenge.lean) using
-[`leanprover/comparator`](https://github.com/leanprover/comparator).
+and [`BusyBeaver/`](../BusyBeaver/) against the self-contained challenge specifications in
+[`Challenge.lean`](../Challenge.lean) and [`BusyBeaverChallenge.lean`](../BusyBeaverChallenge.lean)
+using [`leanprover/comparator`](https://github.com/leanprover/comparator).
 
 ## Overview
 
-[`Challenge.lean`](../Challenge.lean) imports **only** Mathlib and Lean core (`Lean.Elab.Term`),
-defines all baseline and candidate machines (`reference` and `candidate`), states the target
-mathematical propositions (`GoldbachConjecture`, `MatiyasevichRiemannCounterexample`,
-`ZFProvable`, `WadeZFProvable`, etc.), and states all 19 target state-reduction, equivalence, and
-semantics theorems with `sorry`.
+- [`Challenge.lean`](../Challenge.lean) imports **only** Mathlib and Lean core (`Lean.Elab.Term`),
+  defines all conjecture-checking baseline and candidate machines (`reference` and `candidate`),
+  states the target mathematical propositions (`GoldbachConjecture`,
+  `MatiyasevichRiemannCounterexample`, `ZFProvable`, `WadeZFProvable`, etc.), and states all 19
+  target state-reduction, equivalence, and semantics theorems with `sorry`.
+- [`BusyBeaverChallenge.lean`](../BusyBeaverChallenge.lean) imports **only** Mathlib and Lean core
+  (`Lean.Elab.Term`), defines the shared `BusyBeaver` Post-Turing execution model, accelerated
+  `TapePatternSet` semantics (`IsCryptid`, `IsHalt`, `IsNotHalt`), and `load_rle_machine%` once,
+  and states all 11 `BB(6)` holdout theorems (`BusyBeaver.M_<SAN>.is_cryptid`) with `sorry`.
 
-Comparator exports both `Challenge` and `Cryptids` via `lean4export`, verifies in a Bubblewrap
-sandbox that:
-1. Every target theorem and all of its transitive definition dependencies (`reference`, `candidate`,
-   `Halts`, `GoldbachConjecture`, etc.) match identically between `Challenge` and `Cryptids`.
+Comparator exports both the challenge module (`Challenge` or `BusyBeaverChallenge`) and the
+solution module (`Cryptids` or `BusyBeaver`) via `leanexport`, verifying in a Bubblewrap sandbox
+that:
+1. Every target theorem and all of its transitive definition dependencies match identically between
+   the challenge module and the solution module.
 2. Only the standard Lean 4 axioms (`propext`, `Quot.sound`, `Classical.choice`) are used.
 3. The exported proof terms are accepted by the Lean default kernel.
 
@@ -23,7 +29,8 @@ sandbox that:
 
 | Config File | Challenge Module | Solution Module | Verified Theorems |
 | :--- | :--- | :--- | :--- |
-| [`all.json`](./all.json) | `Challenge` | `Cryptids` | All 19 state-reduction, equivalence, and semantics theorems |
+| [`all.json`](./all.json) | `Challenge` | `Cryptids` | All 19 conjecture-checking state-reduction, equivalence, and semantics theorems |
+| [`busy_beaver.json`](./busy_beaver.json) | `BusyBeaverChallenge` | `BusyBeaver` | All 11 `BB(6)` holdout `is_cryptid` theorems |
 | [`goldbach_21.json`](./goldbach_21.json) | `Challenge` | `Cryptids.Goldbach21` | `candidate_fewer_states`, `candidate_equivalent` |
 | [`goldbach_semantics.json`](./goldbach_semantics.json) | `Challenge` | `Cryptids.Semantics.Goldbach` | `halts_reference_iff_not_goldbach`, `halts_candidate_iff_not_goldbach` |
 | [`zf_380.json`](./zf_380.json) | `Challenge` | `Cryptids.Zf380` | `candidate_fewer_states`, `candidate_equivalent` |
@@ -40,4 +47,5 @@ From the repository root (with `bwrap` installed):
 ```bash
 lake exe cache get
 lake comparator --config comparator/all.json
+lake comparator --config comparator/busy_beaver.json
 ```

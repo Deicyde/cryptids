@@ -28,3 +28,6 @@ name = "Challenge"
 
 [[lean_lib]]
 name = "BusyBeaver"
+
+[[lean_lib]]
+name = "BusyBeaverChallenge"
