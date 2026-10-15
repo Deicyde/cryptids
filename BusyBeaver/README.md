@@ -40,11 +40,9 @@ theorem isNotHalt_toBB_iff_not_halts (M : ConjectureMachines.Machine states symb
 
 ## Formalized Machines
 
-*(Individual `BB(6)` holdout proofs will be listed here as they are added.)*
-
 | Machine (`bbchallenge` RLE) | States | Symbols | Proved Property | Lean 4 Proof |
 | :--- | :--- | :--- | :--- | :--- |
-| *Forthcoming* | `6` | `2` | `IsHalt` / `IsNotHalt` / `IsCryptid` | — |
+| `1RB0LC_0LC1RF_1LE1RD_0RC1RC_0LA1LA_---1RA` | `6` | `2` | `IsCryptid` | [`M_1RB0LC_0LC1RF_1LE1RD_0RC1RC_0LA1LA_HHH1RA.lean`](./Machines/M_1RB0LC_0LC1RF_1LE1RD_0RC1RC_0LA1LA_HHH1RA.lean) |
 
 ## Building
 

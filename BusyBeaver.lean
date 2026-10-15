@@ -7,6 +7,7 @@ module
 public import BusyBeaver.Defs
 public import BusyBeaver.Basic
 public import BusyBeaver.Bridge
+public import BusyBeaver.Machines.M_1RB0LC_0LC1RF_1LE1RD_0RC1RC_0LA1LA_HHH1RA
 
 /-!
 # Busy Beaver Holdouts & Cryptids (`BusyBeaver`)
