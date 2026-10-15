@@ -46,8 +46,11 @@ jobs:
           LEAN_NUM_THREADS: "1"
         run: |
           # Work around Verso v4.35.0-rc4 passing `module`-mode setup.importArts (which omits
-          # `.olean.private`) to `importModules (level := .private)` in `verso-literate`.
-          sed -i 's/let setup ← ModuleSetup.load file/let _setup ← ModuleSetup.load file/; s/importArts := setup.importArts/importArts := {}/' .lake/packages/verso/src/verso-literate/VersoLiterateMain.lean
+          # `.olean.private`) to `importModules (level := .private)` in `verso-literate`, and enable
+          # KaTeX math rendering (`MD_FLAG_LATEXMATHSPANS` + `.math.inline`/`.math.display`) in
+          # Markdown docstrings.
+          sed -i 's/let setup ← ModuleSetup.load file/let _setup ← ModuleSetup.load file/; s/importArts := setup.importArts/importArts := {}/; s/MD4Lean\.parse (stx\[1\]\.getAtomVal\.dropSuffix "-\/")\.copy/MD4Lean.parse (stx[1].getAtomVal.dropSuffix "-\/").copy (MD4Lean.MD_DIALECT_GITHUB ||| MD4Lean.MD_FLAG_LATEXMATHSPANS)/; s/MD4Lean\.parse x/MD4Lean.parse x (MD4Lean.MD_DIALECT_GITHUB ||| MD4Lean.MD_FLAG_LATEXMATHSPANS)/' .lake/packages/verso/src/verso-literate/VersoLiterateMain.lean
+          sed -i 's/| \.latexMath _x => \.empty -- TODO/| .latexMath x => {{<code class="math inline">{{String.join x.toList}}<\/code>}}/; s/| \.latexMathDisplay _x => \.empty -- TODO/| .latexMathDisplay x => {{<code class="math display">{{String.join x.toList}}<\/code>}}/' .lake/packages/verso/src/verso-literate-code/VersoLiterateCode.lean
           path=$(lake query :literateHtml)
           echo "path=$path" >> "$GITHUB_OUTPUT"
           rm -rf .lake/packages/mathlib .lake/build/lib .lake/build/ir
