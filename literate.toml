@@ -1,14 +1,25 @@
 landing_page = "Cryptids"
 extra_css = ["literate-overrides.css"]
 
+order = ["Cryptids", "BusyBeaver"]
+
 [metadata]
-title = "Cryptids"
-description = "Smaller Turing machines whose halting problem is equivalent to major open problems in mathematics, formalized in Lean 4."
+title = "Cryptids & Busy Beaver"
+description = "Formally verified conjecture-checking and Busy Beaver Turing machines in Lean 4."
 
 [[targets]]
 library = "Cryptids"
 
+[[targets]]
+library = "BusyBeaver"
+
 [order_children]
+"BusyBeaver" = [
+  "BusyBeaver.Defs",
+  "BusyBeaver.Basic",
+  "BusyBeaver.Bridge",
+  "BusyBeaver.Machines",
+]
 "Cryptids" = [
   "Cryptids.Propositions",
   "Cryptids.Machines",
