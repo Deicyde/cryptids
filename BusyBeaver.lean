@@ -16,6 +16,7 @@ public import BusyBeaver.Machines.M_1RB1LE_1RC1RA_0LD1RB_1LE1LD_1RF0LA_HHH0RE
 public import BusyBeaver.Machines.M_1RB1LF_0RC1RD_1LA1LD_1LE0RA_HHH1LC_0LA1LA
 public import BusyBeaver.Machines.M_1RB1RB_1LC0RE_HHH1LD_0RA1LB_1RA1LF_0LE1LE
 public import BusyBeaver.Machines.M_1RB1RC_1LC1LC_1RE0LD_1LB1RF_HHH1RA_0RD1RD
+public import BusyBeaver.Machines.M_1RB1RD_0LC1RA_0RA1LC_1RA1LE_1RF0LD_HHH0RE
 
 /-!
 # Busy Beaver Holdouts & Cryptids (`BusyBeaver`)
