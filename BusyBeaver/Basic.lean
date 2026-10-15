@@ -603,6 +603,64 @@ theorem StepsToClosed.of_reachesPlus {M : Machine Γ Λ} {ps : TapePatternSet Γ
   obtain ⟨cfg', h', h_end⟩ := hc₂
   exact ⟨cfg', h.trans h', h_end⟩
 
+/-! ## Collatz-Like Acceleration (`CollatzHalts`, `IsValidAcceleration`) -/
+
+theorem CollatzHalts.of_next_eq_none {S : Type*} {next : S → Option S} {s : S}
+    (h : next s = none) :
+    CollatzHalts next s :=
+  ⟨1, by simp [h]⟩
+
+theorem CollatzHalts.of_next_eq_some {S : Type*} {next : S → Option S} {s s' : S}
+    (h : next s = some s') (h' : CollatzHalts next s') :
+    CollatzHalts next s := by
+  obtain ⟨n, hn⟩ := h'
+  refine ⟨n + 1, ?_⟩
+  rw [Function.iterate_succ_apply]
+  simpa [h] using hn
+
+theorem IsValidAcceleration.haltsFrom_of_collatzHalts {M : Machine Γ Λ} {S : Type*}
+    {start : S} {encode : S → Cfg Γ Λ} {next : S → Option S}
+    (h : IsValidAcceleration M start encode next) {s : S} (hs : CollatzHalts next s) :
+    HaltsFrom M (encode s) := by
+  obtain ⟨n, hn⟩ := hs
+  induction n generalizing s with
+  | zero =>
+    simp at hn
+  | succ n ih =>
+    rw [Function.iterate_succ_apply] at hn
+    rcases hnext : next s with _ | s'
+    · exact h.step_none s hnext
+    · refine HaltsFrom.of_reachesStar (h.step_some s s' hnext).to_star (ih ?_)
+      simpa [hnext] using hn
+
+/-- A valid Collatz-like acceleration of `M` preserves and reflects halting: `M` halts from the
+blank tape if and only if the accelerated transition function `next` halts from `start`. -/
+theorem IsValidAcceleration.isHalt_iff {M : Machine Γ Λ} {S : Type*}
+    {start : S} {encode : S → Cfg Γ Λ} {next : S → Option S}
+    (h : IsValidAcceleration M start encode next) :
+    IsHalt M ↔ CollatzHalts next start := by
+  constructor
+  · intro h_halt
+    by_contra h_not_collatz
+    have h_not_halt : IsNotHalt M :=
+      IsNotHalt.of_reachesPlus_invariant
+        (P := fun cfg => ∃ s, cfg = encode s ∧ ¬ CollatzHalts next s)
+        h.init_reaches
+        ⟨start, rfl, h_not_collatz⟩
+        (fun cfg hP => by
+          obtain ⟨s, rfl, hns⟩ := hP
+          rcases hnext : next s with _ | s'
+          · exact False.elim (hns (CollatzHalts.of_next_eq_none hnext))
+          · refine ⟨encode s', h.step_some s s' hnext, s', rfl, ?_⟩
+            intro hs'
+            exact hns (CollatzHalts.of_next_eq_some hnext hs'))
+    obtain ⟨cfg, hreach, hnone⟩ := h_halt
+    have hsome := h_not_halt cfg hreach
+    rw [Option.isNone_iff_eq_none] at hnone
+    simp [hnone] at hsome
+  · intro h_collatz
+    exact HaltsFrom.of_reachesStar h.init_reaches (h.haltsFrom_of_collatzHalts h_collatz)
+
 /-! ## Standard 6-State Labels (`SixState`)
 
 Standard control state labels `A..F` (`0..5 : Fin 6`) for 6-state Busy Beaver machines. -/

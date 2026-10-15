@@ -459,20 +459,20 @@ private def pat_79 : TapePattern (Fin 2) (Fin 6) :=
 
 /-- Canonical tape pattern
 $D(a, b, c) := 0^\infty\,(10)^b\,(11)^{a+1}\,\mathrm{D}{>}\,1^{c+1}\,0^\infty$. -/
-private def pat_D : TapePattern (Fin 2) (Fin 6) :=
+def pat_D : TapePattern (Fin 2) (Fin 6) :=
   { left := .sym 1 (.sym 1 (.rep [1, 1] 0 (.rep [0, 1] 1 .default)))
     head := some D
     right := .sym 1 (.rep [1] 2 .default) }
 
 /-- Canonical tape pattern
 $E(a, b, c) := 0^\infty\,(10)^b\,(11)^{a+1}\,\mathrm{E}{>}\,1^{c+1}\,0^\infty$. -/
-private def pat_E : TapePattern (Fin 2) (Fin 6) :=
+def pat_E : TapePattern (Fin 2) (Fin 6) :=
   { left := .sym 1 (.sym 1 (.rep [1, 1] 0 (.rep [0, 1] 1 .default)))
     head := some E
     right := .sym 1 (.rep [1] 2 .default) }
 
 /-- Closed pattern set for `1RB1LE_1RC1RA_0LD1RB_1LE1LD_1RF0LA_---0RE`. -/
-private def ps : TapePatternSet (Fin 2) (Fin 6) :=
+def ps : TapePatternSet (Fin 2) (Fin 6) :=
   [(pat_D, .true), (pat_E, .true)]
 
 private theorem mem_ps_D : (pat_D, VarCond.true) ∈ ps :=
@@ -1376,9 +1376,9 @@ private theorem init_reaches_ps :
     init_reaches_pat_D,
     in_ps_D fun k => match k with | 0 => 1 | 1 => 0 | 2 => 0 | _ => 0⟩
 
-/-- `1RB1LE_1RC1RA_0LD1RB_1LE1LD_1RF0LA_---0RE` is a cryptid. -/
-theorem is_cryptid : IsCryptid target := by
-  refine ⟨ps, init_reaches_ps, ?_⟩
+/-- `ps` is a closed accelerated `TapePatternSet` for `target` (Level A). -/
+theorem is_closed_pattern_set : IsClosedPatternSet target ps := by
+  refine ⟨init_reaches_ps, ?_⟩
   intro cfg h_in
   rcases h_in with ⟨entry, h_mem, vars, rfl, _⟩
   rcases h_mem with ⟨⟩ | ⟨_, h_mem⟩
@@ -1386,5 +1386,382 @@ theorem is_cryptid : IsCryptid target := by
   rcases h_mem with ⟨⟩ | ⟨_, h_mem⟩
   · exact step_pat_E vars
   · nomatch h_mem
+
+/-- `1RB1LE_1RC1RA_0LD1RB_1LE1LD_1RF0LA_---0RE` is a cryptid. -/
+theorem is_cryptid : IsCryptid target :=
+  ⟨ps, is_closed_pattern_set⟩
+
+/-! ## Collatz-Like Acceleration (Level B) -/
+
+/-- Symbolic configuration state space for `1RB1LE_1RC1RA_0LD1RB_1LE1LD_1RF0LA_---0RE`. -/
+inductive State where
+  /-- $D(a, b, c) := 0^\infty\,(10)^b\,(11)^{a+1}\,\mathrm{D}{>}\,1^{c+1}\,0^\infty$. -/
+  | D (a b c : ℕ)
+  /-- $E(a, b, c) := 0^\infty\,(10)^b\,(11)^{a+1}\,\mathrm{E}{>}\,1^{c+1}\,0^\infty$. -/
+  | E (a b c : ℕ)
+
+/-- Initial symbolic state $D(1, 0, 0)$, reached after 14 raw TM steps. -/
+def start : State := .D 1 0 0
+
+/-- Decode a symbolic `State` into a concrete Turing machine configuration. -/
+def encode : State → Cfg (Fin 2) (Fin 6)
+  | .D a b c =>
+    evalTapePattern pat_D fun k => match k with | 0 => a | 1 => b | 2 => c | _ => 0
+  | .E a b c =>
+    evalTapePattern pat_E fun k => match k with | 0 => a | 1 => b | 2 => c | _ => 0
+
+/-- Accelerated Collatz-like transition function. -/
+def next : State → Option State
+  | .D (a + 1) b c => some (.D a b (c + 2))
+  | .D 0 0 0 => some (.D 2 0 0)
+  | .D 0 0 (c + 1) => some (.E 1 0 (c + 1))
+  | .D 0 1 0 => some (.D 0 2 0)
+  | .D 0 1 1 => some (.D 1 2 0)
+  | .D 0 1 2 => some (.D 2 2 0)
+  | .D 0 1 (c + 3) => some (.E 1 2 (c + 1))
+  | .D 0 (b + 2) c => some (.E 1 b (c + 2))
+  | .E (a + 1) b 0 => some (.E a b 1)
+  | .E 0 0 0 => some (.D 0 0 1)
+  | .E 0 (b + 1) 0 => some (.D 1 b 0)
+  | .E a 0 1 => some (.D (a + 1) 0 1)
+  | .E a 0 2 => some (.D (a + 2) 0 1)
+  | .E _ 0 3 => none
+  | .E a 0 4 => some (.D 0 (a + 3) 0)
+  | .E a 0 5 => some (.D 1 (a + 3) 0)
+  | .E a 0 6 => some (.D 2 (a + 3) 0)
+  | .E a 0 (c + 7) => some (.E 1 (a + 3) (c + 1))
+  | .E a (b + 1) 1 => some (.D (a + 2) b 0)
+  | .E a (b + 1) 2 => some (.D (a + 3) b 0)
+  | .E a (b + 1) (c + 3) => some (.E (a + 2) b (c + 1))
+
+private abbrev v2 (x y : ℕ) : ℕ → ℕ :=
+  fun k => match k with | 0 => x | 1 => y | _ => 0
+
+private abbrev v3 (x y z : ℕ) : ℕ → ℕ :=
+  fun k => match k with | 0 => x | 1 => y | 2 => z | _ => 0
+
+private abbrev v4 (x y z w : ℕ) : ℕ → ℕ :=
+  fun k => match k with | 0 => x | 1 => y | 2 => z | 3 => w | _ => 0
+
+local macro "pat_steps" : tactic =>
+  `(tactic| (
+    dsimp only [encode, v2, v3, v4, pat_D, pat_E,
+      pat_0, pat_12, pat_17, pat_28, pat_29, pat_30, pat_34, pat_43,
+      pat_50, pat_54, pat_63, pat_68, pat_71, pat_72, pat_73, pat_78, pat_79,
+      evalTapePattern, evalTapeExpr]
+    simp only [list_pow_zero, list_pow_succ, List.cons_append, List.singleton_append,
+      List.nil_append, ListBlank.append_nil, ListBlank.append_cons,
+      ListBlank.head_cons, ListBlank.tail_cons]
+    bb_steps))
+
+private theorem reach_17 (v : ℕ) : ∀ w c,
+    ReachesPlus target (evalTapePattern pat_17 (v3 v w c))
+      (evalTapePattern pat_12 (v2 (v + w + 1) c)) := by
+  induction v with
+  | zero =>
+    intro w c
+    rw [Nat.zero_add]
+    pat_steps
+  | succ v ih =>
+    intro w c
+    have h1 : ReachesPlus target (evalTapePattern pat_17 (v3 (v + 1) w c))
+        (evalTapePattern pat_17 (v3 v (w + 1) c)) := by pat_steps
+    have h_eq : v + 1 + w + 1 = v + (w + 1) + 1 := by omega
+    rw [h_eq]
+    exact h1.trans (ih (w + 1) c)
+
+private theorem reach_29 (u : ℕ) : ∀ w c,
+    ReachesPlus target (evalTapePattern pat_29 (v3 w u c))
+      (evalTapePattern pat_34 (v2 (w + u) c)) := by
+  induction u with
+  | zero =>
+    intro w c
+    rw [Nat.add_zero]
+    pat_steps
+  | succ u ih =>
+    intro w c
+    have h1 : ReachesPlus target (evalTapePattern pat_29 (v3 w (u + 1) c))
+        (evalTapePattern pat_29 (v3 (w + 1) u c)) := by pat_steps
+    have h_eq : w + (u + 1) = w + 1 + u := by omega
+    rw [h_eq]
+    exact h1.trans (ih (w + 1) c)
+
+private theorem reach_50 (v : ℕ) : ∀ w u,
+    ReachesPlus target (evalTapePattern pat_50 (v3 v w u))
+      (evalTapePattern pat_54 (v2 (v + w) u)) := by
+  induction v with
+  | zero =>
+    intro w u
+    rw [Nat.zero_add]
+    pat_steps
+  | succ v ih =>
+    intro w u
+    have h1 : ReachesPlus target (evalTapePattern pat_50 (v3 (v + 1) w u))
+        (evalTapePattern pat_50 (v3 v (w + 1) u)) := by pat_steps
+    have h_eq : v + 1 + w = v + (w + 1) := by omega
+    rw [h_eq]
+    exact h1.trans (ih (w + 1) u)
+
+private theorem reach_71 (u : ℕ) : ∀ w c,
+    ReachesPlus target (evalTapePattern pat_71 (v3 w u c))
+      (evalTapePattern pat_63 (v2 (w + u + 1) c)) := by
+  induction u with
+  | zero =>
+    intro w c
+    rw [Nat.add_zero]
+    pat_steps
+  | succ u ih =>
+    intro w c
+    have h1 : ReachesPlus target (evalTapePattern pat_71 (v3 w (u + 1) c))
+        (evalTapePattern pat_71 (v3 (w + 1) u c)) := by pat_steps
+    have h_eq : w + (u + 1) + 1 = w + 1 + u + 1 := by omega
+    rw [h_eq]
+    exact h1.trans (ih (w + 1) c)
+
+private theorem reach_73 (v : ℕ) : ∀ b w c,
+    ReachesPlus target (evalTapePattern pat_73 (v4 v b w c))
+      (evalTapePattern pat_68 (v3 b (v + w + 1) c)) := by
+  induction v with
+  | zero =>
+    intro b w c
+    rw [Nat.zero_add]
+    pat_steps
+  | succ v ih =>
+    intro b w c
+    have h1 : ReachesPlus target (evalTapePattern pat_73 (v4 (v + 1) b w c))
+        (evalTapePattern pat_73 (v4 v b (w + 1) c)) := by pat_steps
+    have h_eq : v + 1 + w + 1 = v + (w + 1) + 1 := by omega
+    rw [h_eq]
+    exact h1.trans (ih b (w + 1) c)
+
+private theorem reach_78 (u : ℕ) : ∀ w c,
+    ReachesPlus target (evalTapePattern pat_78 (v3 w u c))
+      (evalTapePattern pat_0 (v2 (w + u + 1) c)) := by
+  induction u with
+  | zero =>
+    intro w c
+    rw [Nat.add_zero]
+    pat_steps
+  | succ u ih =>
+    intro w c
+    have h1 : ReachesPlus target (evalTapePattern pat_78 (v3 w (u + 1) c))
+        (evalTapePattern pat_78 (v3 (w + 1) u c)) := by pat_steps
+    have h_eq : w + (u + 1) + 1 = w + 1 + u + 1 := by omega
+    rw [h_eq]
+    exact h1.trans (ih (w + 1) c)
+
+private theorem reach_79 (u : ℕ) : ∀ w b c,
+    ReachesPlus target (evalTapePattern pat_79 (v4 w b u c))
+      (evalTapePattern pat_43 (v3 (w + u + 1) b c)) := by
+  induction u with
+  | zero =>
+    intro w b c
+    rw [Nat.add_zero]
+    pat_steps
+  | succ u ih =>
+    intro w b c
+    have h1 : ReachesPlus target (evalTapePattern pat_79 (v4 w b (u + 1) c))
+        (evalTapePattern pat_79 (v4 (w + 1) b u c)) := by pat_steps
+    have h_eq : w + (u + 1) + 1 = w + 1 + u + 1 := by omega
+    rw [h_eq]
+    exact h1.trans (ih (w + 1) b c)
+
+private theorem reach_E_zero_pos (a c : ℕ) :
+    ReachesPlus target (encode (.E a 0 (c + 1))) (evalTapePattern pat_28 (v2 (a + 1) c)) := by
+  have h1 : ReachesPlus target (encode (.E a 0 (c + 1))) (evalTapePattern pat_12 (v2 a c)) := by
+    rcases a with _ | v
+    · pat_steps
+    · have ha : ReachesPlus target (encode (.E (v + 1) 0 (c + 1)))
+          (evalTapePattern pat_17 (v3 v 0 c)) := by pat_steps
+      have hb := reach_17 v 0 c
+      rw [Nat.add_zero] at hb
+      exact ha.trans hb
+  have h2 : ReachesPlus target (evalTapePattern pat_12 (v2 a c))
+      (evalTapePattern pat_29 (v3 0 a c)) := by pat_steps
+  have h3 := reach_29 a 0 c
+  rw [Nat.zero_add] at h3
+  have h4 : ReachesPlus target (evalTapePattern pat_34 (v2 a c))
+      (evalTapePattern pat_28 (v2 (a + 1) c)) := by pat_steps
+  exact ((h1.trans h2).trans h3).trans h4
+
+private theorem reach_E_zero_ge3 (a u : ℕ) :
+    ReachesPlus target (encode (.E a 0 (u + 3))) (evalTapePattern pat_63 (v2 (a + 2) u)) := by
+  have h1 := reach_E_zero_pos a (u + 2)
+  have h2 : ReachesPlus target (evalTapePattern pat_28 (v2 (a + 1) (u + 2)))
+      (evalTapePattern pat_50 (v3 (a + 1) 0 u)) := by pat_steps
+  have h3 := reach_50 (a + 1) 0 u
+  rw [Nat.add_zero] at h3
+  have h4 : ReachesPlus target (evalTapePattern pat_54 (v2 (a + 1) u))
+      (evalTapePattern pat_71 (v3 0 (a + 1) u)) := by pat_steps
+  have h5 := reach_71 (a + 1) 0 u
+  rw [Nat.zero_add] at h5
+  exact (((h1.trans h2).trans h3).trans h4).trans h5
+
+private theorem reach_E_succ_pos (a b c : ℕ) :
+    ReachesPlus target (encode (.E a (b + 1) (c + 1)))
+      (evalTapePattern pat_72 (v3 b a c)) := by
+  rcases a with _ | v
+  · pat_steps
+  · have h1 : ReachesPlus target (encode (.E (v + 1) (b + 1) (c + 1)))
+        (evalTapePattern pat_73 (v4 v b 0 c)) := by pat_steps
+    have h2 := reach_73 v b 0 c
+    rw [Nat.add_zero] at h2
+    have h3 : ReachesPlus target (evalTapePattern pat_68 (v3 b (v + 1) c))
+        (evalTapePattern pat_72 (v3 b (v + 1) c)) := by pat_steps
+    exact (h1.trans h2).trans h3
+
+private theorem reach_E_one_pos (a c : ℕ) :
+    ReachesPlus target (encode (.E a 1 (c + 1)))
+      (evalTapePattern pat_0 (v2 (a + 1) c)) := by
+  have h1 := reach_E_succ_pos a 0 c
+  have h2 : ReachesPlus target (evalTapePattern pat_72 (v3 0 a c))
+      (evalTapePattern pat_78 (v3 0 a c)) := by pat_steps
+  have h3 := reach_78 a 0 c
+  rw [Nat.zero_add] at h3
+  exact (h1.trans h2).trans h3
+
+private theorem reach_E_ge2_pos (a b c : ℕ) :
+    ReachesPlus target (encode (.E a (b + 2) (c + 1)))
+      (evalTapePattern pat_43 (v3 (a + 1) b c)) := by
+  have h1 := reach_E_succ_pos a (b + 1) c
+  have h2 : ReachesPlus target (evalTapePattern pat_72 (v3 (b + 1) a c))
+      (evalTapePattern pat_79 (v4 0 b a c)) := by pat_steps
+  have h3 := reach_79 a 0 b c
+  rw [Nat.zero_add] at h3
+  exact (h1.trans h2).trans h3
+
+/-- `start`, `encode`, and `next` form a valid Collatz-like acceleration of `target`. -/
+theorem is_valid_acceleration : IsValidAcceleration target start encode next where
+  init_reaches := init_reaches_pat_D
+  step_some := by
+    rintro (⟨a, b, c⟩ | ⟨a, b, c⟩) s' hnext
+    · rcases a with _ | a
+      · rcases b with _ | _ | b
+        · rcases c with _ | c
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            pat_steps
+        · rcases c with _ | _ | _ | c
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            pat_steps
+        · rcases b with _ | b
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            pat_steps
+      · simp only [next, Option.some.injEq] at hnext
+        subst hnext
+        pat_steps
+    · rcases c with _ | c
+      · rcases a with _ | a
+        · rcases b with _ | _ | b
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            pat_steps
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          pat_steps
+      · rcases b with _ | _ | b
+        · rcases c with _ | _ | _ | _ | _ | _ | c
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            refine (reach_E_zero_pos a 0).trans ?_
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            refine (reach_E_zero_pos a 1).trans ?_
+            pat_steps
+          · simp [next] at hnext
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            refine (reach_E_zero_ge3 a 1).trans ?_
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            refine (reach_E_zero_ge3 a 2).trans ?_
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            refine (reach_E_zero_ge3 a 3).trans ?_
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            refine (reach_E_zero_ge3 a (c + 4)).trans ?_
+            pat_steps
+        · rcases c with _ | _ | c
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            refine (reach_E_one_pos a 0).trans ?_
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            refine (reach_E_one_pos a 1).trans ?_
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            refine (reach_E_one_pos a (c + 2)).trans ?_
+            pat_steps
+        · rcases c with _ | _ | c
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            refine (reach_E_ge2_pos a b 0).trans ?_
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            refine (reach_E_ge2_pos a b 1).trans ?_
+            pat_steps
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            refine (reach_E_ge2_pos a b (c + 2)).trans ?_
+            pat_steps
+  step_none := by
+    rintro (⟨a, b, c⟩ | ⟨a, b, c⟩) hnext
+    · rcases a with _ | a <;> rcases b with _ | _ | b <;> rcases c with _ | _ | _ | c <;>
+        simp [next] at hnext
+    · rcases c with _ | c
+      · rcases a with _ | a <;> rcases b with _ | b <;> simp [next] at hnext
+      · rcases b with _ | b
+        · rcases c with _ | _ | _ | _ | _ | _ | c
+          · simp [next] at hnext
+          · simp [next] at hnext
+          · have h1 := reach_E_zero_ge3 a 0
+            have h2 :
+                ReachesPlus target (evalTapePattern pat_63 (v2 (a + 2) 0))
+                  (Cfg.headRight F
+                    (ListBlank.append [1, 0, 1]
+                      (ListBlank.append (([0, 1] : List (Fin 2)) ^ (a + 3)) default))
+                    default) := by pat_steps
+            exact ⟨_, (h1.trans h2).to_star, by bb_halt⟩
+          · simp [next] at hnext
+          · simp [next] at hnext
+          · simp [next] at hnext
+          · simp [next] at hnext
+        · rcases c with _ | _ | c <;> simp [next] at hnext
+
+/-- `target` halts from the blank tape if and only if the Collatz-like acceleration `next` halts
+from `start`. -/
+theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start :=
+  is_valid_acceleration.isHalt_iff
 
 end BusyBeaver.M_1RB1LE_1RC1RA_0LD1RB_1LE1LD_1RF0LA_HHH0RE

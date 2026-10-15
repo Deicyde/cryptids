@@ -269,7 +269,7 @@ private theorem sweep_C_00 (m c : ℕ) (r : ListBlank (Fin 2)) :
 
 /-- First canonical tape pattern ($h = 3$):
 $C(a, f, g, 3) := 0^\infty\,1^{a+1}\,\mathrm{C}{>}\,00\,1^{f+4}\,(01)^g\,1^3\,011\,0^\infty$. -/
-private def pat_A : TapePattern (Fin 2) (Fin 6) :=
+private abbrev pat_A : TapePattern (Fin 2) (Fin 6) :=
   { left  := .sym 1 (.rep [1] 0 .default)
     head  := some C
     right := .sym 0 (.sym 0 (.sym 1 (.sym 1 (.sym 1 (.sym 1
@@ -278,7 +278,7 @@ private def pat_A : TapePattern (Fin 2) (Fin 6) :=
 
 /-- Second canonical tape pattern ($h = 6$):
 $C(a, f, g, 6) := 0^\infty\,1^{a+1}\,\mathrm{C}{>}\,00\,1^{f+4}\,(01)^g\,1^6\,011\,0^\infty$. -/
-private def pat_B : TapePattern (Fin 2) (Fin 6) :=
+private abbrev pat_B : TapePattern (Fin 2) (Fin 6) :=
   { left  := .sym 1 (.rep [1] 0 .default)
     head  := some C
     right := .sym 0 (.sym 0 (.sym 1 (.sym 1 (.sym 1 (.sym 1
@@ -286,9 +286,19 @@ private def pat_B : TapePattern (Fin 2) (Fin 6) :=
                 (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1
                   (.sym 0 (.sym 1 (.sym 1 .default)))))))))))))))) }
 
-/-- Closed pattern set for `1RB1LA_1LC0RE_1LF1LD_1RE0LC_1LB1RA_---0LA`. -/
-private def ps : TapePatternSet (Fin 2) (Fin 6) :=
-  [(pat_A, .true), (pat_B, .true)]
+/-- Closed pattern set for `1RB1LA_1LC0RE_1LF1LD_1RE0LC_1LB1RA_---0LA` (Level A). -/
+def ps : TapePatternSet (Fin 2) (Fin 6) :=
+  [({ left  := .sym 1 (.rep [1] 0 .default)
+      head  := some SixState.C
+      right := .sym 0 (.sym 0 (.sym 1 (.sym 1 (.sym 1 (.sym 1
+                (.rep [1] 1 (.rep [0, 1] 2
+                  (.sym 1 (.sym 1 (.sym 1 (.sym 0 (.sym 1 (.sym 1 .default))))))))))))) }, .true),
+   ({ left  := .sym 1 (.rep [1] 0 .default)
+      head  := some SixState.C
+      right := .sym 0 (.sym 0 (.sym 1 (.sym 1 (.sym 1 (.sym 1
+                (.rep [1] 1 (.rep [0, 1] 2
+                  (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1
+                    (.sym 0 (.sym 1 (.sym 1 .default)))))))))))))))) }, .true)]
 
 /-- Configuration $C(a, f, g, h)$. -/
 private def cfg_C (a f g h : ℕ) : Cfg (Fin 2) (Fin 6) :=
@@ -832,20 +842,257 @@ private theorem step_C_h6 (a f g : ℕ) :
     · exact ⟨cfg_C a' (f + 3) (g' + 2) 6, rule_dec_a a' f (g' + 2) 6,
         Or.inl (in_ps_B a' (f + 3) (g' + 2))⟩
 
+private theorem init_reaches_start : ReachesStar target (init []) (cfg_C 4 0 0 3) := by
+  have h_init : ReachesPlus target (init []) (cfg_C 4 0 0 3) := by
+    unfold cfg_C
+    bb_steps
+  exact h_init.to_star
+
+/-- `ps` is a closed accelerated `TapePatternSet` for `target` (Level A). -/
+theorem is_closed_pattern_set : IsClosedPatternSet target ps := by
+  refine ⟨⟨cfg_C 4 0 0 3, init_reaches_start, in_ps_A 4 0 0⟩, ?_⟩
+  intro cfg h_in
+  rcases h_in with ⟨entry, h_mem, vars, rfl, _⟩
+  simp only [ps, List.mem_cons, List.not_mem_nil, or_false] at h_mem
+  rcases h_mem with rfl | rfl
+  · rw [eval_pat_A]
+    exact step_C_h3 (vars 0) (vars 1) (vars 2)
+  · rw [eval_pat_B]
+    exact step_C_h6 (vars 0) (vars 1) (vars 2)
+
 /-- `1RB1LA_1LC0RE_1LF1LD_1RE0LC_1LB1RA_---0LA` is a cryptid. -/
-theorem is_cryptid : IsCryptid target := by
-  refine ⟨ps, ⟨cfg_C 4 0 0 3, ?_, in_ps_A 4 0 0⟩, ?_⟩
-  · have h_init : ReachesPlus target (init []) (cfg_C 4 0 0 3) := by
-      unfold cfg_C
-      bb_steps
-    exact h_init.to_star
-  · intro cfg h_in
-    rcases h_in with ⟨entry, h_mem, vars, rfl, _⟩
-    simp only [ps, List.mem_cons, List.not_mem_nil, or_false] at h_mem
-    rcases h_mem with rfl | rfl
-    · rw [eval_pat_A]
-      exact step_C_h3 (vars 0) (vars 1) (vars 2)
-    · rw [eval_pat_B]
-      exact step_C_h6 (vars 0) (vars 1) (vars 2)
+theorem is_cryptid : IsCryptid target :=
+  ⟨ps, is_closed_pattern_set⟩
+
+/-! ## Collatz-Like Acceleration (Level B, Box 1) -/
+
+/-- Symbolic configuration state space for `1RB1LA_1LC0RE_1LF1LD_1RE0LC_1LB1RA_---0LA`. -/
+inductive State where
+  /-- $C(a, b, c, 3) :=
+    0^\infty\,1^{a+1}\,\mathrm{C}{>}\,00\,1^{b+4}\,(01)^c\,1^3\,011\,0^\infty$. -/
+  | C_3 (a b c : ℕ)
+  /-- $C(a, b, c, 6) :=
+    0^\infty\,1^{a+1}\,\mathrm{C}{>}\,00\,1^{b+4}\,(01)^c\,1^6\,011\,0^\infty$. -/
+  | C_6 (a b c : ℕ)
+  /-- $M(a, b, c, 3)$ for $a \in \{0, 1\}$. -/
+  | M_3 (a : Bool) (b c : ℕ)
+  /-- $M(a, b, c + 1, 6)$ for $a \in \{0, 1\}$. -/
+  | M_6_pos (a : Bool) (b c : ℕ)
+  /-- $L(a, b + 1, 3)$ for $a \in \{0, 1\}$. -/
+  | L_3 (a : Bool) (b : ℕ)
+  /-- $L(a, b, 6)$ for $a \in \{0, 1\}$. -/
+  | L_6 (a : Bool) (b : ℕ)
+
+/-- Initial symbolic state $C(4, 0, 0, 3)$, reached after 162 raw TM steps. -/
+def start : State := .C_3 4 0 0
+
+/-- Decode a symbolic `State` into a concrete Turing machine configuration. -/
+def encode : State → Cfg (Fin 2) (Fin 6)
+  | .C_3 a b c =>
+    Cfg.headRight SixState.C
+      (ListBlank.append (([1] : List (Fin 2)) ^ (a + 1)) default)
+      (ListBlank.append [0, 0]
+        (ListBlank.append (([1] : List (Fin 2)) ^ (b + 4))
+          (ListBlank.append (([0, 1] : List (Fin 2)) ^ c)
+            (ListBlank.append (([1] : List (Fin 2)) ^ 3)
+              (ListBlank.append [0, 1, 1] default)))))
+  | .C_6 a b c =>
+    Cfg.headRight SixState.C
+      (ListBlank.append (([1] : List (Fin 2)) ^ (a + 1)) default)
+      (ListBlank.append [0, 0]
+        (ListBlank.append (([1] : List (Fin 2)) ^ (b + 4))
+          (ListBlank.append (([0, 1] : List (Fin 2)) ^ c)
+            (ListBlank.append (([1] : List (Fin 2)) ^ 6)
+              (ListBlank.append [0, 1, 1] default)))))
+  | .M_3 a b c =>
+    Cfg.headRight SixState.A
+      (ListBlank.append [1] (ListBlank.append [0]
+        (ListBlank.append (([1] : List (Fin 2)) ^ ((if a then 1 else 0) + 3)) default)))
+      (ListBlank.append [0]
+        (ListBlank.append (([1] : List (Fin 2)) ^ (b + 4))
+          (ListBlank.append (([0, 1] : List (Fin 2)) ^ c)
+            (ListBlank.append (([1] : List (Fin 2)) ^ 3)
+              (ListBlank.append [0, 1, 1] default)))))
+  | .M_6_pos a b c =>
+    Cfg.headRight SixState.A
+      (ListBlank.append [1] (ListBlank.append [0]
+        (ListBlank.append (([1] : List (Fin 2)) ^ ((if a then 1 else 0) + 3)) default)))
+      (ListBlank.append [0]
+        (ListBlank.append (([1] : List (Fin 2)) ^ (b + 4))
+          (ListBlank.append (([0, 1] : List (Fin 2)) ^ (c + 1))
+            (ListBlank.append (([1] : List (Fin 2)) ^ 6)
+              (ListBlank.append [0, 1, 1] default)))))
+  | .L_3 a b =>
+    Cfg.headRight SixState.C
+      (ListBlank.append (([1] : List (Fin 2)) ^ ((b + 1) + 6))
+        (ListBlank.append [0]
+          (ListBlank.append (([1] : List (Fin 2)) ^ ((if a then 1 else 0) + 3)) default)))
+      (ListBlank.append [1]
+        (ListBlank.append (([1] : List (Fin 2)) ^ 3)
+          (ListBlank.append [0, 1, 1] default)))
+  | .L_6 a b =>
+    Cfg.headRight SixState.C
+      (ListBlank.append (([1] : List (Fin 2)) ^ (b + 6))
+        (ListBlank.append [0]
+          (ListBlank.append (([1] : List (Fin 2)) ^ ((if a then 1 else 0) + 3)) default)))
+      (ListBlank.append [1]
+        (ListBlank.append (([1] : List (Fin 2)) ^ 6)
+          (ListBlank.append [0, 1, 1] default)))
+
+/-- Accelerated Collatz-like transition function (Box 1). -/
+def next : State → Option State
+  | .C_3 0 b c => some (.M_3 false b c)
+  | .C_3 1 b c => some (.M_3 true b c)
+  | .C_3 (a + 2) b c => some (.C_3 a (b + 3) c)
+  | .C_6 0 b 0 => some (.M_3 false (b + 3) 0)
+  | .C_6 1 b 0 => some (.M_3 true (b + 3) 0)
+  | .C_6 0 b (c + 1) => some (.M_6_pos false b c)
+  | .C_6 1 b (c + 1) => some (.M_6_pos true b c)
+  | .C_6 (a + 2) b c => some (.C_6 a (b + 3) c)
+  | .M_3 a b 0 => some (.L_3 a b)
+  | .M_3 a b 1 => some (.L_6 a b)
+  | .M_3 a b (c + 2) => some (.C_3 (b + 4 + if a then 1 else 0) 3 c)
+  | .M_6_pos a b 0 => some (.C_3 (b + 4 + if a then 1 else 0) 0 3)
+  | .M_6_pos a b (c + 1) => some (.C_6 (b + 4 + if a then 1 else 0) 3 c)
+  | .L_3 a b =>
+    if b % 2 = 0 then some (.C_3 (if a then 1 else 0) 0 (b / 2 + 3))
+    else if a then some (.C_3 6 3 (b / 2))
+    else none
+  | .L_6 a b =>
+    if b % 2 = 1 then some (.C_6 (if a then 1 else 0) 0 (b / 2 + 3))
+    else if !a then none
+    else if b = 0 then some (.C_3 6 0 3)
+    else some (.C_6 6 3 (b / 2 - 1))
+
+private theorem encode_C_6 (a b c : ℕ) : encode (.C_6 a b c) = cfg_C a b c 6 := rfl
+private theorem encode_L_3 (a : Bool) (b : ℕ) :
+    encode (.L_3 a b) = cfg_L (if a then 1 else 0) (b + 1) 3 := rfl
+private theorem encode_L_6 (a : Bool) (b : ℕ) :
+    encode (.L_6 a b) = cfg_L (if a then 1 else 0) b 6 := rfl
+
+/-- `start`, `encode`, and `next` form a valid Collatz-like acceleration of `target`. -/
+theorem is_valid_acceleration : IsValidAcceleration target start encode next where
+  init_reaches := init_reaches_start
+  step_some := by
+    rintro (⟨a, b, c⟩ | ⟨a, b, c⟩ | ⟨a, b, c⟩ | ⟨a, b, c⟩ | ⟨a, b⟩ | ⟨a, b⟩) s' hnext
+    · rcases a with _ | _ | a
+      · simp only [next, Option.some.injEq] at hnext
+        subst hnext
+        exact step_C_a0_to_M b c 3
+      · simp only [next, Option.some.injEq] at hnext
+        subst hnext
+        exact step_C_a1_to_M b c 3
+      · simp only [next, Option.some.injEq] at hnext
+        subst hnext
+        exact rule_dec_a a b c 3
+    · rcases a with _ | _ | a
+      · rcases c with _ | c
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          rw [encode_C_6, cfg_C_g0_h6]
+          exact step_C_a0_to_M (b + 3) 0 3
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          exact step_C_a0_to_M b (c + 1) 6
+      · rcases c with _ | c
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          rw [encode_C_6, cfg_C_g0_h6]
+          exact step_C_a1_to_M (b + 3) 0 3
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          exact step_C_a1_to_M b (c + 1) 6
+      · rcases c with _ | c
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          exact rule_dec_a a b 0 6
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          exact rule_dec_a a b (c + 1) 6
+    · rcases c with _ | _ | c
+      · simp only [next, Option.some.injEq] at hnext
+        subst hnext
+        exact step_M_g0_h3 (if a then 1 else 0) b
+      · simp only [next, Option.some.injEq] at hnext
+        subst hnext
+        exact step_M_g1_h3 (if a then 1 else 0) b
+      · simp only [next, Option.some.injEq] at hnext
+        subst hnext
+        exact step_M_g2 (if a then 1 else 0) b c 3
+    · rcases c with _ | c
+      · simp only [next, Option.some.injEq] at hnext
+        subst hnext
+        exact step_M_g1_h6 (if a then 1 else 0) b
+      · simp only [next, Option.some.injEq] at hnext
+        subst hnext
+        exact step_M_g2 (if a then 1 else 0) b c 6
+    · rcases nat_even_or_odd_two_mul b with ⟨k, rfl⟩ | ⟨k, rfl⟩
+      · have hmod : (2 * k) % 2 = 0 := by omega
+        have hdiv : (2 * k) / 2 = k := by omega
+        simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+        subst hnext
+        exact step_L_odd (if a then 1 else 0) k 3
+      · have hmod : (2 * k + 1) % 2 ≠ 0 := by omega
+        have hdiv : (2 * k + 1) / 2 = k := by omega
+        rcases a with _ | _
+        · simp [next] at hnext
+        · simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+          subst hnext
+          rw [encode_L_3]
+          have h_eq : 2 * k + 1 + 1 = 2 * (k + 1) := by omega
+          rw [h_eq]
+          exact step_L_even_a1_succ k 3
+    · rcases nat_even_or_odd_two_mul b with ⟨k, rfl⟩ | ⟨k, rfl⟩
+      · have hmod : (2 * k) % 2 ≠ 1 := by omega
+        rcases a with _ | _
+        · simp [next] at hnext
+        · rcases k with _ | j
+          · have hs : s' = .C_3 6 0 3 := by
+              change some (.C_3 6 0 3) = some s' at hnext
+              exact (Option.some.inj hnext).symm
+            subst hs
+            exact step_L_even_a1_zero
+          · have hne0 : 2 * (j + 1) ≠ 0 := by omega
+            have hdiv : 2 * (j + 1) / 2 - 1 = j := by omega
+            simp only [next, hmod, Bool.not_true, Bool.false_eq_true, ↓reduceIte,
+              hne0, hdiv, Option.some.injEq] at hnext
+            subst hnext
+            exact step_L_even_a1_succ j 6
+      · have hmod : (2 * k + 1) % 2 = 1 := by omega
+        have hdiv : (2 * k + 1) / 2 = k := by omega
+        simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+        subst hnext
+        exact step_L_odd (if a then 1 else 0) k 6
+  step_none := by
+    rintro (⟨a, b, c⟩ | ⟨a, b, c⟩ | ⟨a, b, c⟩ | ⟨a, b, c⟩ | ⟨a, b⟩ | ⟨a, b⟩) hnext
+    · rcases a with _ | _ | a <;> simp [next] at hnext
+    · rcases a with _ | _ | a <;> rcases c with _ | c <;> simp [next] at hnext
+    · rcases c with _ | _ | c <;> simp [next] at hnext
+    · rcases c with _ | c <;> simp [next] at hnext
+    · rcases nat_even_or_odd_two_mul b with ⟨k, rfl⟩ | ⟨k, rfl⟩
+      · have hmod : (2 * k) % 2 = 0 := by omega
+        simp [next, hmod] at hnext
+      · rcases a with _ | _
+        · rw [encode_L_3]
+          have h_eq : 2 * k + 1 + 1 = 2 * (k + 1) := by omega
+          rw [h_eq]
+          obtain ⟨cfg', hp, hh⟩ := step_L_even_a0_halt (k + 1) 3
+          exact ⟨cfg', hp.to_star, hh⟩
+        · simp [next] at hnext
+    · rcases nat_even_or_odd_two_mul b with ⟨k, rfl⟩ | ⟨k, rfl⟩
+      · rcases a with _ | _
+        · rw [encode_L_6]
+          obtain ⟨cfg', hp, hh⟩ := step_L_even_a0_halt k 6
+          exact ⟨cfg', hp.to_star, hh⟩
+        · have hmod : (2 * k) % 2 ≠ 1 := by omega
+          simp only [next, hmod, Bool.not_true, Bool.false_eq_true, ↓reduceIte] at hnext
+          split_ifs at hnext
+      · have hmod : (2 * k + 1) % 2 = 1 := by omega
+        simp [next, hmod] at hnext
+
+/-- `target` halts from the blank tape if and only if the Collatz-like acceleration `next` halts
+from `start`. -/
+theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start :=
+  is_valid_acceleration.isHalt_iff
 
 end BusyBeaver.M_1RB1LA_1LC0RE_1LF1LD_1RE0LC_1LB1RA_HHH0LA

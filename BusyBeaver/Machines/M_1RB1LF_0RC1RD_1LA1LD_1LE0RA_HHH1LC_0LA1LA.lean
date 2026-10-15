@@ -717,7 +717,7 @@ private theorem isNone_E_zero (r : ListBlank (Fin 2)) :
   bb_halt
 
 /-- Canonical tape pattern $C(a, b) := 0^\infty\,110\,\mathrm{A}{>}\,(11)^a\,0\,1^b\,0^\infty$. -/
-private def pat_C : TapePattern (Fin 2) (Fin 6) :=
+def pat_C : TapePattern (Fin 2) (Fin 6) :=
   { left := .sym 0 (.sym 1 (.sym 1 .default))
     head := some A
     right := .rep [1, 1] 0 (.sym 0 (.rep [1] 1 .default)) }
@@ -734,7 +734,7 @@ private theorem eval_pat_C (vars : ℕ → ℕ) :
   rfl
 
 /-- Closed pattern set for `1RB1LF_0RC1RD_1LA1LD_1LE0RA_---1LC_0LA1LA`. -/
-private def ps : TapePatternSet (Fin 2) (Fin 6) := [(pat_C, .ge_const 1 6)]
+def ps : TapePatternSet (Fin 2) (Fin 6) := [(pat_C, .ge_const 1 6)]
 
 private theorem in_ps_C (a b : ℕ) (h : b ≥ 6) : IsInPatternSet ps (cfg_C a b) :=
   ⟨(pat_C, .ge_const 1 6), List.Mem.head _,
@@ -944,14 +944,279 @@ private theorem init_reaches_pat_C : ReachesStar target (init []) (cfg_C 0 9) :=
   rw [← h0, h_r9] at h2
   exact (h1.trans h2).to_star
 
-/-- `1RB1LF_0RC1RD_1LA1LD_1LE0RA_---1LC_0LA1LA` is a cryptid. -/
-theorem is_cryptid : IsCryptid target := by
-  refine ⟨ps, ⟨cfg_C 0 9, init_reaches_pat_C, in_ps_C 0 9 (by decide)⟩, ?_⟩
+/-- `ps` is a closed accelerated `TapePatternSet` for `target` (Level A). -/
+theorem is_closed_pattern_set : IsClosedPatternSet target ps := by
+  refine ⟨⟨cfg_C 0 9, init_reaches_pat_C, in_ps_C 0 9 (by decide)⟩, ?_⟩
   intro cfg h_in
   rcases h_in with ⟨entry, h_mem, vars, rfl, h_cond⟩
   simp only [ps, List.mem_cons, List.not_mem_nil, or_false] at h_mem
   subst h_mem
   rw [eval_pat_C]
   exact step_closed (vars 0) (vars 1) h_cond
+
+/-- `1RB1LF_0RC1RD_1LA1LD_1LE0RA_---1LC_0LA1LA` is a cryptid. -/
+theorem is_cryptid : IsCryptid target :=
+  ⟨ps, is_closed_pattern_set⟩
+
+/-! ## Collatz-Like Acceleration (Level B) -/
+
+/-- Symbolic configuration state space for `1RB1LF_0RC1RD_1LA1LD_1LE0RA_---1LC_0LA1LA`. -/
+inductive State where
+  /-- $C(a, b + 6) := 0^\infty\,110\,\mathrm{A}{>}\,(11)^a\,0\,1^{b+6}\,0^\infty$. -/
+  | C (a b : ℕ)
+  /-- $M_3(a, c, d) := 0^\infty\,110\,\mathrm{A}{>}\,(11)^a\,01\,(11)^c\,0\,1^d\,0^\infty$. -/
+  | M_3 (a c d : ℕ)
+  /-- $M_4(a, b, c, d) :=
+    0^\infty\,(11)^{a+1}\,110\,\mathrm{A}{>}\,(11)^b\,01\,(11)^c\,0\,1^d\,0^\infty$. -/
+  | M_4 (a b c d : ℕ)
+
+/-- Initial symbolic state $C(0, 9)$, reached after 74 raw TM steps. -/
+def start : State := .C 0 3
+
+/-- Decode a symbolic `State` into a concrete Turing machine configuration. -/
+def encode : State → Cfg (Fin 2) (Fin 6)
+  | .C a b =>
+    Cfg.headRight SixState.A
+      (ListBlank.append [0, 1, 1] default)
+      (ListBlank.append (([1, 1] : List (Fin 2)) ^ a)
+        (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ (b + 6)) default)))
+  | .M_3 a c d =>
+    Cfg.headRight SixState.A
+      (ListBlank.append [0, 1, 1] default)
+      (ListBlank.append (([1, 1] : List (Fin 2)) ^ a)
+        (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ c)
+          (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ d) default)))))
+  | .M_4 a b c d =>
+    Cfg.headRight SixState.A
+      (ListBlank.append [0, 1, 1]
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) default))
+      (ListBlank.append (([1, 1] : List (Fin 2)) ^ b)
+        (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ c)
+          (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ d) default)))))
+
+/-- Accelerated Collatz-like transition function. -/
+def next : State → Option State
+  | .C 0 b =>
+    if b % 2 = 0 then some (.C (b / 2 + 1) 3)
+    else some (.C (b / 2 + 3) 0)
+  | .C (a + 1) b =>
+    if b % 2 = 0 then some (.M_4 a (b / 2 + 1) 4 0)
+    else some (.M_3 a (b / 2 + 2) 6)
+  | .M_3 0 0 _ => none
+  | .M_3 1 0 _ => none
+  | .M_3 (a + 2) 0 d => some (.C (a + 1) (d + 3))
+  | .M_3 0 (c + 1) d => some (.C (c + 1) d)
+  | .M_3 (a + 1) (c + 1) d => some (.M_3 a c (d + 6))
+  | .M_4 a 0 c d => some (.C (a + c + 1) d)
+  | .M_4 0 1 0 _ => none
+  | .M_4 (a + 1) 1 0 d => some (.C (a + 1) (d + 6))
+  | .M_4 a (b + 2) 0 d => some (.M_3 a b (d + 9))
+  | .M_4 a (b + 1) (c + 1) d => some (.M_4 a b c (d + 6))
+
+private theorem encode_C (a b : ℕ) : encode (.C a b) = cfg_C a (b + 6) := rfl
+private theorem encode_M3 (a c d : ℕ) : encode (.M_3 a c d) = cfg_M3 a c d := rfl
+private theorem encode_M4 (a b c d : ℕ) : encode (.M_4 a b c d) = cfg_M4 a b c d := rfl
+
+private theorem step_M3_succ_zero (c d : ℕ) :
+    ReachesPlus target (cfg_M3 0 (c + 1) d) (cfg_C (c + 1) (d + 6)) := by
+  have h1 :
+      cfg_M3 0 (c + 1) d =
+        Cfg.headRight A
+          (ListBlank.append [0, 1, 1]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ 0) default))
+          (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (c + 1))
+            (ListBlank.append [0]
+              (ListBlank.append (([1] : List (Fin 2)) ^ d) default)))) :=
+    rfl
+  rw [h1]
+  have h2 := odd_collapse 0 (c + 1) c (by omega)
+    (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+  rw [← ListBlank.append_pow_add ([1] : List (Fin 2)) 6 d default, Nat.add_comm 6 d] at h2
+  exact h2
+
+private theorem step_M3_succ_succ (a c d : ℕ) :
+    ReachesPlus target (cfg_M3 (a + 1) (c + 1) d) (cfg_M3 a c (d + 6)) := by
+  have h1 := bounce_0_block a
+    (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (c + 1))
+      (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ d) default))))
+  have h0 : (default : ListBlank (Fin 2)) = ListBlank.append [0] default := by simp
+  have h2 := odd_step a c default (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+  rw [← h0, ← ListBlank.append_pow_add ([1] : List (Fin 2)) 6 d default,
+    Nat.add_comm 6 d] at h2
+  exact h1.trans h2
+
+/-- `start`, `encode`, and `next` form a valid Collatz-like acceleration of `target`. -/
+theorem is_valid_acceleration : IsValidAcceleration target start encode next where
+  init_reaches := init_reaches_pat_C
+  step_some := by
+    rintro (⟨a, b⟩ | ⟨a, c, d⟩ | ⟨a, b, c, d⟩) s' hnext
+    · rcases nat_even_or_odd_two_mul b with ⟨k, rfl⟩ | ⟨k, rfl⟩
+      · have hmod : (2 * k) % 2 = 0 := by omega
+        have hdiv : (2 * k) / 2 = k := by omega
+        have h_eq :
+            ListBlank.append (([1] : List (Fin 2)) ^ (2 * k + 6))
+              (default : ListBlank (Fin 2)) =
+              ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1 + 2)) default := by
+          have hk : 2 * k + 6 = 2 * (k + 1 + 2) := by omega
+          rw [hk, one_pow_two_mul]
+        rcases a with _ | a
+        · simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+          subst hnext
+          rw [encode_C, encode_C]
+          unfold cfg_C
+          rw [h_eq]
+          have h0 : (default : ListBlank (Fin 2)) = ListBlank.append [0] default := by simp
+          have h1 := even_end (k + 1) default
+          have h_r9 :
+              ListBlank.append [0, 1]
+                (ListBlank.append (([1, 1] : List (Fin 2)) ^ 4) (default : ListBlank (Fin 2))) =
+                ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ 9) default) :=
+            rfl
+          rw [← h0, h_r9] at h1
+          exact h1
+        · simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+          subst hnext
+          rw [encode_C, encode_M4]
+          unfold cfg_C
+          rw [h_eq]
+          have h1 := bounce_0_block a
+            (ListBlank.append [0]
+              (ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1 + 2)) default))
+          have h2 := shift_R_block a default
+            (ListBlank.append [0]
+              (ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1 + 2)) default))
+          have h12 := h1.trans h2
+          have h3 := even_end (k + 1)
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) default)
+          have h123 := h12.trans h3
+          have h_m4 :
+              Cfg.headRight A
+                (ListBlank.append [0, 1, 1]
+                  (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) default))
+                (ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1))
+                  (ListBlank.append [0, 1]
+                    (ListBlank.append (([1, 1] : List (Fin 2)) ^ 4) default))) =
+                cfg_M4 a (k + 1) 4 0 := by
+            unfold cfg_M4
+            have h0 :
+                ListBlank.append [0]
+                  (ListBlank.append (([1] : List (Fin 2)) ^ 0)
+                    (default : ListBlank (Fin 2))) = default := by
+              simp
+            rw [h0]
+          rwa [h_m4] at h123
+      · have hmod : (2 * k + 1) % 2 ≠ 0 := by omega
+        have hdiv : (2 * k + 1) / 2 = k := by omega
+        have h_odd : 2 * k + 1 + 6 = 2 * (k + 3) + 1 := by omega
+        rcases a with _ | a
+        · simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+          subst hnext
+          rw [encode_C, encode_C, h_odd, cfg_C_odd_eq_M3]
+          exact step_M3_succ_zero (k + 2) 0
+        · simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+          subst hnext
+          rw [encode_C, encode_M3, h_odd, cfg_C_odd_eq_M3]
+          exact step_M3_succ_succ a (k + 2) 0
+    · rcases c with _ | c
+      · rcases a with _ | _ | a
+        · simp [next] at hnext
+        · simp [next] at hnext
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          rw [encode_M3, encode_C]
+          have h1 := bounce_0_block (a + 1)
+            (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ 0)
+              (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ d) default))))
+          have h2 := unit_collapse_default a (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+          have h9 : 9 + d = d + 3 + 6 := by omega
+          rw [← ListBlank.append_pow_add ([1] : List (Fin 2)) 9 d default, h9] at h2
+          exact h1.trans h2
+      · rcases a with _ | a
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          exact step_M3_succ_zero c d
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          exact step_M3_succ_succ a c d
+    · rcases b with _ | b
+      · simp only [next, Option.some.injEq] at hnext
+        subst hnext
+        rw [encode_M4, encode_C]
+        have h1 := odd_collapse (a + 1) c (a + c) (by omega)
+          (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+        rw [← ListBlank.append_pow_add ([1] : List (Fin 2)) 6 d default, Nat.add_comm 6 d] at h1
+        exact h1
+      · rcases c with _ | c
+        · rcases b with _ | b
+          · rcases a with _ | a
+            · simp [next] at hnext
+            · simp only [next, Option.some.injEq] at hnext
+              subst hnext
+              rw [encode_M4, encode_C]
+              have h1 := bounce_succ_block (a + 1) 0
+                (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ 0)
+                  (ListBlank.append [0]
+                    (ListBlank.append (([1] : List (Fin 2)) ^ d) default))))
+              have h2 := unit_b1_succ a (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+              have h12 : 12 + d = d + 6 + 6 := by omega
+              rw [← ListBlank.append_pow_add ([1] : List (Fin 2)) 12 d default, h12] at h2
+              exact h1.trans h2
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            rw [encode_M4, encode_M3]
+            have h1 := bounce_succ_block a (b + 1)
+              (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ 0)
+                (ListBlank.append [0]
+                  (ListBlank.append (([1] : List (Fin 2)) ^ d) default))))
+            have h0 : (default : ListBlank (Fin 2)) = ListBlank.append [0] default := by simp
+            have h2 := unit_step a b default (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+            rw [← h0, ← ListBlank.append_pow_add ([1] : List (Fin 2)) 9 d default,
+              Nat.add_comm 9 d] at h2
+            exact h1.trans h2
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          rw [encode_M4, encode_M4]
+          have h1 := bounce_succ_block a b
+            (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (c + 1))
+              (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ d) default))))
+          have h2 := odd_step b c
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) default)
+            (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+          rw [← ListBlank.append_pow_add ([1] : List (Fin 2)) 6 d default,
+            Nat.add_comm 6 d] at h2
+          exact h1.trans h2
+  step_none := by
+    rintro (⟨a, b⟩ | ⟨a, c, d⟩ | ⟨a, b, c, d⟩) hnext
+    · rcases a with _ | a <;> (simp only [next] at hnext; split_ifs at hnext)
+    · rcases c with _ | c
+      · rcases a with _ | _ | a
+        · exact ⟨_, (halt_M3_0 (ListBlank.append (([1] : List (Fin 2)) ^ d) default)).to_star,
+            isNone_E_zero _⟩
+        · have h1 := bounce_0_block 0
+            (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ 0)
+              (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ d) default))))
+          have h2 := halt_M3_1 (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+          exact ⟨_, (h1.trans h2).to_star, isNone_E_zero _⟩
+        · simp [next] at hnext
+      · rcases a with _ | a <;> simp [next] at hnext
+    · rcases b with _ | b
+      · simp [next] at hnext
+      · rcases c with _ | c
+        · rcases b with _ | b
+          · rcases a with _ | a
+            · have h1 := bounce_succ_block 0 0
+                (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ 0)
+                  (ListBlank.append [0]
+                    (ListBlank.append (([1] : List (Fin 2)) ^ d) default))))
+              have h2 := halt_M4_0 (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+              exact ⟨_, (h1.trans h2).to_star, isNone_E_zero _⟩
+            · simp [next] at hnext
+          · simp [next] at hnext
+        · simp [next] at hnext
+
+/-- `target` halts from the blank tape if and only if the Collatz-like acceleration `next` halts
+from `start`. -/
+theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start :=
+  is_valid_acceleration.isHalt_iff
 
 end BusyBeaver.M_1RB1LF_0RC1RD_1LA1LD_1LE0RA_HHH1LC_0LA1LA

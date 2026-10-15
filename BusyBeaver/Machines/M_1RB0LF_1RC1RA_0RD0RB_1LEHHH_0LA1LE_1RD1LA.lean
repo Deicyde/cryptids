@@ -236,13 +236,13 @@ private def cfg_ScanE1 (b m n : ℕ) : Cfg (Fin 2) (Fin 6) :=
             (ListBlank.append [0, 1, 0, 0, 1] default)))))
 
 /-- Tape pattern for `cfg_Junc`. -/
-private def pat_Junc : TapePattern (Fin 2) (Fin 6) :=
+private abbrev pat_Junc : TapePattern (Fin 2) (Fin 6) :=
   { left := .sym 1 (.rep [0, 1] 0 (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1 .default))))))
     head := some A
     right := .sym 1 (.sym 1 (.rep [0, 1] 1 (.rep [1] 2 (.sym 0 (.sym 1 .default))))) }
 
 /-- Tape pattern for `cfg_ScanE`. -/
-private def pat_ScanE : TapePattern (Fin 2) (Fin 6) :=
+private abbrev pat_ScanE : TapePattern (Fin 2) (Fin 6) :=
   { left := .rep [0, 1] 0 (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1 .default)))))
     head := some E
     right := .sym 1 (.rep [1, 1, 0, 1] 1
@@ -250,22 +250,37 @@ private def pat_ScanE : TapePattern (Fin 2) (Fin 6) :=
         (.rep [1, 1] 2 (.sym 0 (.sym 1 .default)))))))))) }
 
 /-- Tape pattern for `cfg_ScanE0`. -/
-private def pat_ScanE0 : TapePattern (Fin 2) (Fin 6) :=
+private abbrev pat_ScanE0 : TapePattern (Fin 2) (Fin 6) :=
   { left := .rep [0, 1] 0 (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1 .default)))))
     head := some E
     right := .sym 1 (.rep [1, 1, 0, 1] 1 (.sym 1 (.sym 1 (.sym 0 (.sym 1 .default))))) }
 
 /-- Tape pattern for `cfg_ScanE1`. -/
-private def pat_ScanE1 : TapePattern (Fin 2) (Fin 6) :=
+private abbrev pat_ScanE1 : TapePattern (Fin 2) (Fin 6) :=
   { left := .rep [0, 1] 0 (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1 .default)))))
     head := some E
     right := .sym 1 (.rep [1, 1, 0, 1] 1
       (.sym 1 (.sym 1 (.sym 1 (.rep [0, 1] 2
         (.sym 0 (.sym 1 (.sym 0 (.sym 0 (.sym 1 .default)))))))))) }
 
-/-- Closed pattern set for `1RB0LF_1RC1RA_0RD0RB_1LE---_0LA1LE_1RD1LA`. -/
-private def ps : TapePatternSet (Fin 2) (Fin 6) :=
-  [(pat_Junc, .true), (pat_ScanE, .true), (pat_ScanE0, .true), (pat_ScanE1, .true)]
+/-- Closed pattern set for `1RB0LF_1RC1RA_0RD0RB_1LE---_0LA1LE_1RD1LA` (Level A). -/
+def ps : TapePatternSet (Fin 2) (Fin 6) :=
+  [({ left := .sym 1 (.rep [0, 1] 0 (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1 .default))))))
+      head := some SixState.A
+      right := .sym 1 (.sym 1 (.rep [0, 1] 1 (.rep [1] 2 (.sym 0 (.sym 1 .default))))) }, .true),
+   ({ left := .rep [0, 1] 0 (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1 .default)))))
+      head := some SixState.E
+      right := .sym 1 (.rep [1, 1, 0, 1] 1
+        (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1
+          (.rep [1, 1] 2 (.sym 0 (.sym 1 .default)))))))))) }, .true),
+   ({ left := .rep [0, 1] 0 (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1 .default)))))
+      head := some SixState.E
+      right := .sym 1 (.rep [1, 1, 0, 1] 1 (.sym 1 (.sym 1 (.sym 0 (.sym 1 .default))))) }, .true),
+   ({ left := .rep [0, 1] 0 (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1 .default)))))
+      head := some SixState.E
+      right := .sym 1 (.rep [1, 1, 0, 1] 1
+        (.sym 1 (.sym 1 (.sym 1 (.rep [0, 1] 2
+          (.sym 0 (.sym 1 (.sym 0 (.sym 0 (.sym 1 .default)))))))))) }, .true)]
 
 private theorem eval_pat_Junc (vars : ℕ → ℕ) :
     evalTapePattern pat_Junc vars = cfg_Junc (vars 0) (vars 1) (vars 2) :=
@@ -652,9 +667,93 @@ private theorem finish_C_ScanE1 (u p n : ℕ) :
   have h_arith : p + (n + 2) = p + n + 2 := by omega
   rwa [h_arith] at h3
 
-private theorem step_Junc (u v w : ℕ) :
-    ∃ cfg', ReachesPlus target (cfg_Junc u v w) cfg' ∧
-      (IsInPatternSet ps cfg' ∨ (step target cfg').isNone) := by
+/-! ## Collatz-Like Acceleration (Level B, Box 1) -/
+
+/-- Symbolic configuration state space for `1RB0LF_1RC1RA_0RD0RB_1LE---_0LA1LE_1RD1LA`. -/
+inductive State where
+  /-- $J(u, v, w) := 0^\infty\,1^5\,(10)^u\,1\,\mathrm{A}{>}\,11\,(01)^v\,1^w\,01\,0^\infty$. -/
+  | J (u v w : ℕ)
+  /-- $S_E(b, m, k) :=
+    0^\infty\,1^5\,(10)^b\,\mathrm{E}{>}\,1\,(1101)^m\,1^6\,(11)^k\,01\,0^\infty$. -/
+  | S_E (b m k : ℕ)
+  /-- $S_{E,0}(b, m) := 0^\infty\,1^5\,(10)^b\,\mathrm{E}{>}\,1\,(1101)^m\,1101\,0^\infty$. -/
+  | S_E0 (b m : ℕ)
+  /-- $S_{E,1}(b, m, n) :=
+    0^\infty\,1^5\,(10)^b\,\mathrm{E}{>}\,1\,(1101)^m\,111\,(01)^n\,01001\,0^\infty$. -/
+  | S_E1 (b m n : ℕ)
+
+/-- Initial symbolic state $J(0, 0, 0)$. -/
+def start : State := .J 0 0 0
+
+/-- Decode a symbolic `State` into a concrete Turing machine configuration. -/
+def encode : State → Cfg (Fin 2) (Fin 6)
+  | .J u v w =>
+    Cfg.headRight SixState.A
+      (ListBlank.append [1]
+        (ListBlank.append (([0, 1] : List (Fin 2)) ^ u)
+          (ListBlank.append [1, 1, 1, 1, 1] default)))
+      (ListBlank.append [1, 1]
+        (ListBlank.append (([0, 1] : List (Fin 2)) ^ v)
+          (ListBlank.append (([1] : List (Fin 2)) ^ w)
+            (ListBlank.append [0, 1] default))))
+  | .S_E b m k =>
+    Cfg.headRight SixState.E
+      (ListBlank.append (([0, 1] : List (Fin 2)) ^ b)
+        (ListBlank.append [1, 1, 1, 1, 1] default))
+      (ListBlank.append [1]
+        (ListBlank.append (([1, 1, 0, 1] : List (Fin 2)) ^ m)
+          (ListBlank.append [1, 1, 1, 1, 1, 1]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+              (ListBlank.append [0, 1] default)))))
+  | .S_E0 b m =>
+    Cfg.headRight SixState.E
+      (ListBlank.append (([0, 1] : List (Fin 2)) ^ b)
+        (ListBlank.append [1, 1, 1, 1, 1] default))
+      (ListBlank.append [1]
+        (ListBlank.append (([1, 1, 0, 1] : List (Fin 2)) ^ m)
+          (ListBlank.append [1, 1, 0, 1] default)))
+  | .S_E1 b m n =>
+    Cfg.headRight SixState.E
+      (ListBlank.append (([0, 1] : List (Fin 2)) ^ b)
+        (ListBlank.append [1, 1, 1, 1, 1] default))
+      (ListBlank.append [1]
+        (ListBlank.append (([1, 1, 0, 1] : List (Fin 2)) ^ m)
+          (ListBlank.append [1, 1, 1]
+            (ListBlank.append (([0, 1] : List (Fin 2)) ^ n)
+              (ListBlank.append [0, 1, 0, 0, 1] default)))))
+
+/-- Accelerated Collatz-like transition function (Box 1). -/
+def next : State → Option State
+  | .J 0 v 0 => some (.S_E0 (v + 3) 0)
+  | .J 0 v 1 => some (.S_E1 (v + 2) 0 0)
+  | .J 0 v 2 => some (.S_E (v + 2) 0 0)
+  | .J 0 v (w + 3) => some (.J (v + 3) 0 w)
+  | .J 1 v 0 => some (.S_E 0 0 (v + 3))
+  | .J (u + 2) v 0 => some (.S_E1 u 0 (v + 2))
+  | .J 1 _ 1 => none
+  | .J (u + 2) v 1 => some (.S_E u 0 (v + 2))
+  | .J (u + 1) v (w + 2) => some (.J u (v + 2) w)
+  | .S_E 0 0 k => some (.J 0 0 (2 * k + 6))
+  | .S_E 0 (m + 1) k => some (.J 2 (2 * m + 4) (2 * k + 1))
+  | .S_E 1 m k => some (.J 0 (2 * m + 3) (2 * k + 1))
+  | .S_E (b + 2) m k => some (.S_E b (m + 1) k)
+  | .S_E0 0 m => some (.S_E 2 0 (2 * m))
+  | .S_E0 1 m => some (.S_E 0 0 (2 * m + 1))
+  | .S_E0 (b + 2) m => some (.S_E0 b (m + 1))
+  | .S_E1 0 m n => some (.S_E 2 0 (2 * m + n + 2))
+  | .S_E1 1 m n => some (.S_E 0 0 (2 * m + n + 3))
+  | .S_E1 (b + 2) m n => some (.S_E1 b (m + 1) n)
+
+private theorem encode_in_ps : ∀ s : State, IsInPatternSet ps (encode s)
+  | .J u v w => in_ps_Junc u v w
+  | .S_E b m k => in_ps_ScanE b m k
+  | .S_E0 b m => in_ps_ScanE0 b m
+  | .S_E1 b m n => in_ps_ScanE1 b m n
+
+private theorem step_Junc_next (u v w : ℕ) :
+    match next (.J u v w) with
+    | some s' => ReachesPlus target (cfg_Junc u v w) (encode s')
+    | none => ∃ cfg', ReachesPlus target (cfg_Junc u v w) cfg' ∧ (step target cfg').isNone := by
   rcases u with _ | u'
   · have h_pre := step_u0_to_B v
       (ListBlank.append (([1] : List (Fin 2)) ^ w)
@@ -671,8 +770,7 @@ private theorem step_Junc (u v w : ℕ) :
         unfold cfg_ScanE0
         simp only [list_pow_zero, ListBlank.append_nil]
         bb_steps
-      exact ⟨cfg_ScanE0 (v + 3) 0, h_pre.trans h_post,
-        Or.inl (in_ps_ScanE0 (v + 3) 0)⟩
+      exact h_pre.trans h_post
     · have h_post :
           ReachesPlus target
             (Cfg.headRight B
@@ -685,8 +783,7 @@ private theorem step_Junc (u v w : ℕ) :
         rw [ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) (v + 2)]
         simp only [list_pow_one, list_pow_zero, ListBlank.append_nil]
         bb_steps
-      exact ⟨cfg_ScanE1 (v + 2) 0 0, h_pre.trans h_post,
-        Or.inl (in_ps_ScanE1 (v + 2) 0 0)⟩
+      exact h_pre.trans h_post
     · have h_post :
           ReachesPlus target
             (Cfg.headRight B
@@ -700,8 +797,7 @@ private theorem step_Junc (u v w : ℕ) :
         rw [ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) (v + 2), h2]
         simp only [list_pow_zero, ListBlank.append_nil]
         bb_steps
-      exact ⟨cfg_ScanE (v + 2) 0 0, h_pre.trans h_post,
-        Or.inl (in_ps_ScanE (v + 2) 0 0)⟩
+      exact h_pre.trans h_post
     · have h_post :
           ReachesPlus target
             (Cfg.headRight B
@@ -721,8 +817,7 @@ private theorem step_Junc (u v w : ℕ) :
           rfl
         rw [h_w3, list_pow_zero, ListBlank.append_nil]
         bb_steps
-      exact ⟨cfg_Junc (v + 3) 0 w', h_pre.trans h_post,
-        Or.inl (in_ps_Junc (v + 3) 0 w')⟩
+      exact h_pre.trans h_post
   · have h_l_split :
         ListBlank.append [1]
           (ListBlank.append (([0, 1] : List (Fin 2)) ^ (u' + 1))
@@ -816,8 +911,7 @@ private theorem step_Junc (u v w : ℕ) :
         have h_fin := finish_A_001 0 0 (v + 3)
         have h_tot := h_pre2.trans (h_14.trans h_fin)
         have h_z : 0 + (v + 3) = v + 3 := by omega
-        rw [h_z] at h_tot
-        exact ⟨cfg_ScanE 0 0 (v + 3), h_tot, Or.inl (in_ps_ScanE 0 0 (v + 3))⟩
+        rwa [h_z] at h_tot
       · have h_6 :
             ReachesPlus target
               (Cfg.headRight A
@@ -846,8 +940,7 @@ private theorem step_Junc (u v w : ℕ) :
           rw [h_r_comm, ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) b,
             list_pow_zero, ListBlank.append_nil]
           bb_steps
-        exact ⟨cfg_ScanE1 b 0 (v + 2), h_pre2.trans h_6,
-          Or.inl (in_ps_ScanE1 b 0 (v + 2))⟩
+        exact h_pre2.trans h_6
     · have h_mid :
           ReachesPlus target
             (Cfg.headRight A
@@ -872,7 +965,7 @@ private theorem step_Junc (u v w : ℕ) :
                   (ListBlank.append [1, 1]
                     (ListBlank.append (([1, 1] : List (Fin 2)) ^ (v + 1))
                       (ListBlank.append (([0, 1] : List (Fin 2)) ^ u')
-                        (ListBlank.append [1, 1, 1, 1, 1] default)))))
+                         (ListBlank.append [1, 1, 1, 1, 1] default)))))
                 (ListBlank.append (([1] : List (Fin 2)) ^ 1)
                   (ListBlank.append [0, 1] default)))
               (Cfg.headRight A
@@ -910,7 +1003,7 @@ private theorem step_Junc (u v w : ℕ) :
         have h_isNone : (step target cfg_halt).isNone := by
           dsimp [cfg_halt]
           bb_halt
-        exact ⟨cfg_halt, h_pre3.trans h_halt_step, Or.inr h_isNone⟩
+        exact ⟨cfg_halt, h_pre3.trans h_halt_step, h_isNone⟩
       · rw [ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) b] at h_pre2
         have h_4 :
             ReachesPlus target
@@ -943,8 +1036,7 @@ private theorem step_Junc (u v w : ℕ) :
         have h_fin := finish_A_001 b 1 (v + 1)
         have h_tot := h_pre2.trans (h_4.trans h_fin)
         have h_arith : 1 + (v + 1) = v + 2 := by omega
-        rw [h_arith] at h_tot
-        exact ⟨cfg_ScanE b 0 (v + 2), h_tot, Or.inl (in_ps_ScanE b 0 (v + 2))⟩
+        rwa [h_arith] at h_tot
     · have h_w2 :
           ListBlank.append (([1] : List (Fin 2)) ^ (w' + 2))
             (ListBlank.append [0, 1] default) =
@@ -959,29 +1051,28 @@ private theorem step_Junc (u v w : ℕ) :
           (ListBlank.append [1, 1, 1, 1, 1] default))
         (ListBlank.append (([1] : List (Fin 2)) ^ w')
           (ListBlank.append [0, 1] default))
-      have h_tot := h_pre.trans_star h_sh
-      exact ⟨cfg_Junc u' (v + 2) w', h_tot, Or.inl (in_ps_Junc u' (v + 2) w')⟩
+      rcases u' with _ | u'' <;> exact h_pre.trans_star h_sh
 
-private theorem step_ScanE (b m k : ℕ) :
-    ∃ cfg', ReachesPlus target (cfg_ScanE b m k) cfg' ∧
-      (IsInPatternSet ps cfg' ∨ (step target cfg').isNone) := by
+private theorem step_ScanE_next (b m k : ℕ) :
+    match next (.S_E b m k) with
+    | some s' => ReachesPlus target (cfg_ScanE b m k) (encode s')
+    | none => ∃ cfg', ReachesPlus target (cfg_ScanE b m k) cfg' ∧ (step target cfg').isNone := by
   rcases b with _ | _ | b'
   · rcases m with _ | m'
-    · have h1 : ReachesPlus target (cfg_ScanE 0 0 k) (cfg_Junc 0 0 (2 * k + 6)) := by
-        unfold cfg_ScanE cfg_Junc
-        have h_r :
-            ListBlank.append (([1] : List (Fin 2)) ^ (2 * k + 6))
-              (ListBlank.append [0, 1] default) =
-              ListBlank.append [1, 1, 1, 1, 1, 1]
-                (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
-                  (ListBlank.append [0, 1] default)) := by
-          have h_add : 2 * k + 6 = 6 + 2 * k := by omega
-          rw [h_add, ListBlank.append_pow_add, one_pow_two_mul]
-          rfl
-        rw [h_r]
-        simp only [list_pow_zero, ListBlank.append_nil]
-        bb_steps
-      exact ⟨cfg_Junc 0 0 (2 * k + 6), h1, Or.inl (in_ps_Junc 0 0 (2 * k + 6))⟩
+    · dsimp only [next, encode]
+      unfold cfg_ScanE
+      have h_r :
+          ListBlank.append (([1] : List (Fin 2)) ^ (2 * k + 6))
+            (ListBlank.append [0, 1] default) =
+            ListBlank.append [1, 1, 1, 1, 1, 1]
+              (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+                (ListBlank.append [0, 1] default)) := by
+        have h_add : 2 * k + 6 = 6 + 2 * k := by omega
+        rw [h_add, ListBlank.append_pow_add, one_pow_two_mul]
+        rfl
+      rw [h_r]
+      simp only [list_pow_zero, ListBlank.append_nil]
+      bb_steps
     · have h_pre := enter_C_b0 (m' + 1)
         (ListBlank.append [1, 1, 1, 1]
           (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
@@ -989,9 +1080,7 @@ private theorem step_ScanE (b m k : ℕ) :
       have h_post := finish_C_ScanE 2 (2 * (m' + 1)) k
       have h_tot := h_pre.trans h_post
       have h_arith : 2 * (m' + 1) + 2 = 2 * m' + 4 := by omega
-      rw [h_arith] at h_tot
-      exact ⟨cfg_Junc 2 (2 * m' + 4) (2 * k + 1), h_tot,
-        Or.inl (in_ps_Junc 2 (2 * m' + 4) (2 * k + 1))⟩
+      rwa [h_arith] at h_tot
   · have h_pre := enter_C_b1 m
       (ListBlank.append [1, 1, 1, 1]
         (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
@@ -999,82 +1088,112 @@ private theorem step_ScanE (b m k : ℕ) :
     have h_post := finish_C_ScanE 0 (1 + 2 * m) k
     have h_tot := h_pre.trans h_post
     have h_arith : 1 + 2 * m + 2 = 2 * m + 3 := by omega
-    rw [h_arith] at h_tot
-    exact ⟨cfg_Junc 0 (2 * m + 3) (2 * k + 1), h_tot,
-      Or.inl (in_ps_Junc 0 (2 * m + 3) (2 * k + 1))⟩
-  · have h1 : ReachesPlus target (cfg_ScanE (b' + 2) m k) (cfg_ScanE b' (m + 1) k) := by
-      unfold cfg_ScanE
-      rw [ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) (b' + 1),
-        ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) b',
-        ListBlank.append_pow_succ ([1, 1, 0, 1] : List (Fin 2)) m]
-      bb_steps
-    exact ⟨cfg_ScanE b' (m + 1) k, h1, Or.inl (in_ps_ScanE b' (m + 1) k)⟩
+    rwa [h_arith] at h_tot
+  · dsimp only [next, encode]
+    unfold cfg_ScanE
+    rw [ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) (b' + 1),
+      ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) b',
+      ListBlank.append_pow_succ ([1, 1, 0, 1] : List (Fin 2)) m]
+    bb_steps
 
-private theorem step_ScanE0 (b m : ℕ) :
-    ∃ cfg', ReachesPlus target (cfg_ScanE0 b m) cfg' ∧
-      (IsInPatternSet ps cfg' ∨ (step target cfg').isNone) := by
+private theorem step_ScanE0_next (b m : ℕ) :
+    match next (.S_E0 b m) with
+    | some s' => ReachesPlus target (cfg_ScanE0 b m) (encode s')
+    | none => ∃ cfg', ReachesPlus target (cfg_ScanE0 b m) cfg' ∧ (step target cfg').isNone := by
   rcases b with _ | _ | b'
-  · have h_pre := enter_C_b0 m (ListBlank.append [0, 1] default)
-    have h_post := finish_C_ScanE0 2 (2 * m)
-    exact ⟨cfg_ScanE 2 0 (2 * m), h_pre.trans h_post, Or.inl (in_ps_ScanE 2 0 (2 * m))⟩
-  · have h_pre := enter_C_b1 m (ListBlank.append [0, 1] default)
-    have h_post := finish_C_ScanE0 0 (1 + 2 * m)
-    have h_tot := h_pre.trans h_post
+  · exact (enter_C_b0 m (ListBlank.append [0, 1] default)).trans (finish_C_ScanE0 2 (2 * m))
+  · have h_tot := (enter_C_b1 m (ListBlank.append [0, 1] default)).trans
+      (finish_C_ScanE0 0 (1 + 2 * m))
     have h_arith : 1 + 2 * m = 2 * m + 1 := by omega
-    rw [h_arith] at h_tot
-    exact ⟨cfg_ScanE 0 0 (2 * m + 1), h_tot, Or.inl (in_ps_ScanE 0 0 (2 * m + 1))⟩
-  · have h1 : ReachesPlus target (cfg_ScanE0 (b' + 2) m) (cfg_ScanE0 b' (m + 1)) := by
-      unfold cfg_ScanE0
-      rw [ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) (b' + 1),
-        ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) b',
-        ListBlank.append_pow_succ ([1, 1, 0, 1] : List (Fin 2)) m]
-      bb_steps
-    exact ⟨cfg_ScanE0 b' (m + 1), h1, Or.inl (in_ps_ScanE0 b' (m + 1))⟩
+    rwa [h_arith] at h_tot
+  · dsimp only [next, encode]
+    unfold cfg_ScanE0
+    rw [ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) (b' + 1),
+      ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) b',
+      ListBlank.append_pow_succ ([1, 1, 0, 1] : List (Fin 2)) m]
+    bb_steps
 
-private theorem step_ScanE1 (b m n : ℕ) :
-    ∃ cfg', ReachesPlus target (cfg_ScanE1 b m n) cfg' ∧
-      (IsInPatternSet ps cfg' ∨ (step target cfg').isNone) := by
+private theorem step_ScanE1_next (b m n : ℕ) :
+    match next (.S_E1 b m n) with
+    | some s' => ReachesPlus target (cfg_ScanE1 b m n) (encode s')
+    | none =>
+      ∃ cfg', ReachesPlus target (cfg_ScanE1 b m n) cfg' ∧ (step target cfg').isNone := by
   rcases b with _ | _ | b'
-  · have h_pre := enter_C_b0 m
+  · exact (enter_C_b0 m
       (ListBlank.append [1]
         (ListBlank.append (([0, 1] : List (Fin 2)) ^ n)
-          (ListBlank.append [0, 1, 0, 0, 1] default)))
-    have h_post := finish_C_ScanE1 2 (2 * m) n
-    exact ⟨cfg_ScanE 2 0 (2 * m + n + 2), h_pre.trans h_post,
-      Or.inl (in_ps_ScanE 2 0 (2 * m + n + 2))⟩
-  · have h_pre := enter_C_b1 m
+          (ListBlank.append [0, 1, 0, 0, 1] default)))).trans (finish_C_ScanE1 2 (2 * m) n)
+  · have h_tot := (enter_C_b1 m
       (ListBlank.append [1]
         (ListBlank.append (([0, 1] : List (Fin 2)) ^ n)
-          (ListBlank.append [0, 1, 0, 0, 1] default)))
-    have h_post := finish_C_ScanE1 0 (1 + 2 * m) n
-    have h_tot := h_pre.trans h_post
+          (ListBlank.append [0, 1, 0, 0, 1] default)))).trans (finish_C_ScanE1 0 (1 + 2 * m) n)
     have h_arith : 1 + 2 * m + n + 2 = 2 * m + n + 3 := by omega
-    rw [h_arith] at h_tot
-    exact ⟨cfg_ScanE 0 0 (2 * m + n + 3), h_tot,
-      Or.inl (in_ps_ScanE 0 0 (2 * m + n + 3))⟩
-  · have h1 : ReachesPlus target (cfg_ScanE1 (b' + 2) m n) (cfg_ScanE1 b' (m + 1) n) := by
-      unfold cfg_ScanE1
-      rw [ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) (b' + 1),
-        ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) b',
-        ListBlank.append_pow_succ ([1, 1, 0, 1] : List (Fin 2)) m]
-      bb_steps
-    exact ⟨cfg_ScanE1 b' (m + 1) n, h1, Or.inl (in_ps_ScanE1 b' (m + 1) n)⟩
+    rwa [h_arith] at h_tot
+  · dsimp only [next, encode]
+    unfold cfg_ScanE1
+    rw [ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) (b' + 1),
+      ListBlank.append_pow_succ ([0, 1] : List (Fin 2)) b',
+      ListBlank.append_pow_succ ([1, 1, 0, 1] : List (Fin 2)) m]
+    bb_steps
+
+private theorem step_state : ∀ s : State,
+    match next s with
+    | some s' => ReachesPlus target (encode s) (encode s')
+    | none => ∃ cfg', ReachesPlus target (encode s) cfg' ∧ (step target cfg').isNone
+  | .J u v w => step_Junc_next u v w
+  | .S_E b m k => step_ScanE_next b m k
+  | .S_E0 b m => step_ScanE0_next b m
+  | .S_E1 b m n => step_ScanE1_next b m n
+
+private theorem step_state_closed (s : State) :
+    ∃ cfg', ReachesPlus target (encode s) cfg' ∧
+      (IsInPatternSet ps cfg' ∨ (step target cfg').isNone) := by
+  have h := step_state s
+  rcases hnext : next s with _ | s'
+  · rw [hnext] at h
+    obtain ⟨cfg', hp, hh⟩ := h
+    exact ⟨cfg', hp, Or.inr hh⟩
+  · rw [hnext] at h
+    exact ⟨encode s', h, Or.inl (encode_in_ps s')⟩
+
+private theorem init_reaches_start : ReachesStar target (init []) (cfg_Junc 0 0 0) := by
+  have h_init : ReachesPlus target (init []) (cfg_Junc 0 0 0) := by
+    unfold cfg_Junc
+    simp only [list_pow_zero, ListBlank.append_nil]
+    bb_steps
+  exact h_init.to_star
+
+/-- `ps` is a closed accelerated `TapePatternSet` for `target` (Level A). -/
+theorem is_closed_pattern_set : IsClosedPatternSet target ps := by
+  refine ⟨⟨cfg_Junc 0 0 0, init_reaches_start, in_ps_Junc 0 0 0⟩, ?_⟩
+  intro cfg h_in
+  rcases h_in with ⟨entry, h_mem, vars, rfl, _⟩
+  simp only [ps, List.mem_cons, List.not_mem_nil, or_false] at h_mem
+  rcases h_mem with rfl | rfl | rfl | rfl
+  · exact step_state_closed (.J (vars 0) (vars 1) (vars 2))
+  · exact step_state_closed (.S_E (vars 0) (vars 1) (vars 2))
+  · exact step_state_closed (.S_E0 (vars 0) (vars 1))
+  · exact step_state_closed (.S_E1 (vars 0) (vars 1) (vars 2))
 
 /-- `1RB0LF_1RC1RA_0RD0RB_1LE---_0LA1LE_1RD1LA` is a cryptid. -/
-theorem is_cryptid : IsCryptid target := by
-  refine ⟨ps, ⟨cfg_Junc 0 0 0, ?_, in_ps_Junc 0 0 0⟩, ?_⟩
-  · have h_init : ReachesPlus target (init []) (cfg_Junc 0 0 0) := by
-      unfold cfg_Junc
-      simp only [list_pow_zero, ListBlank.append_nil]
-      bb_steps
-    exact h_init.to_star
-  · intro cfg h_in
-    rcases h_in with ⟨entry, h_mem, vars, rfl, _⟩
-    simp only [ps, List.mem_cons, List.not_mem_nil, or_false] at h_mem
-    rcases h_mem with rfl | rfl | rfl | rfl
-    · rw [eval_pat_Junc]; exact step_Junc (vars 0) (vars 1) (vars 2)
-    · rw [eval_pat_ScanE]; exact step_ScanE (vars 0) (vars 1) (vars 2)
-    · rw [eval_pat_ScanE0]; exact step_ScanE0 (vars 0) (vars 1)
-    · rw [eval_pat_ScanE1]; exact step_ScanE1 (vars 0) (vars 1) (vars 2)
+theorem is_cryptid : IsCryptid target :=
+  ⟨ps, is_closed_pattern_set⟩
+
+/-- `start`, `encode`, and `next` form a valid Collatz-like acceleration of `target`. -/
+theorem is_valid_acceleration : IsValidAcceleration target start encode next where
+  init_reaches := init_reaches_start
+  step_some := fun s s' hnext => by
+    have h := step_state s
+    rwa [hnext] at h
+  step_none := fun s hnext => by
+    have h := step_state s
+    rw [hnext] at h
+    obtain ⟨cfg', hp, hh⟩ := h
+    exact ⟨cfg', hp.to_star, hh⟩
+
+/-- `target` halts from the blank tape if and only if the Collatz-like acceleration `next` halts
+from `start`. -/
+theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start :=
+  is_valid_acceleration.isHalt_iff
 
 end BusyBeaver.M_1RB0LF_1RC1RA_0RD0RB_1LEHHH_0LA1LE_1RD1LA

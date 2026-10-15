@@ -23,6 +23,6 @@ public import BusyBeaver.Machines.M_1RB1RD_0LC1RA_1RA1LC_0RB1LE_1RF0LD_HHH0RE
 # Busy Beaver Holdouts & Cryptids (`BusyBeaver`)
 
 Formal Lean 4 specifications and kernel-verified behavioral proofs (`IsHalt`, `IsNotHalt`,
-`IsCryptid`) for Busy Beaver holdout and cryptid Turing machines, connected to
-`ConjectureMachines.Machine` via `BusyBeaver.Bridge`.
+`IsClosedPatternSet`, `IsCryptid`, `IsValidAcceleration`, `CollatzHalts`) for Busy Beaver holdout
+and cryptid Turing machines, connected to `ConjectureMachines.Machine` via `BusyBeaver.Bridge`.
 -/

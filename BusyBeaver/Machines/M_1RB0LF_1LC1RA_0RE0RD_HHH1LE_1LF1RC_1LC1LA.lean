@@ -149,13 +149,13 @@ private theorem shift_F_01 (k : ℕ) (l r : ListBlank (Fin 2)) :
 /-! ## Canonical Pattern Set -/
 
 /-- Canonical tape pattern $A(a, b) := 0^\infty\,\mathrm{E}{>}\,(10)^a\,1^b\,0^\infty$. -/
-private def pat_A : TapePattern (Fin 2) (Fin 6) :=
+def pat_A : TapePattern (Fin 2) (Fin 6) :=
   { left := .default
     head := some E
     right := .rep [1, 0] 0 (.rep [1] 1 .default) }
 
 /-- Closed pattern set for `1RB0LF_1LC1RA_0RE0RD_---1LE_1LF1RC_1LC1LA`. -/
-private def ps : TapePatternSet (Fin 2) (Fin 6) :=
+def ps : TapePatternSet (Fin 2) (Fin 6) :=
   [(pat_A, .ge_const 1 1)]
 
 /-- Configuration $A(a, b)$. -/
@@ -495,20 +495,113 @@ private theorem step_A_closed (a b : ℕ) (hb : b ≥ 1) :
   · obtain ⟨cfg', h_reach, h_in⟩ := step_P_closed a 0 (d + 3) (by omega)
     exact ⟨cfg', (step_A_to_P a d).trans h_reach, Or.inl h_in⟩
 
+private theorem init_reaches_start : ReachesStar target (init []) (cfg_A 0 3) := by
+  have h_init : ReachesPlus target (init []) (cfg_A 0 3) := by
+    unfold cfg_A
+    have h3 : (([1] : List (Fin 2)) ^ 3) = [1, 1, 1] := rfl
+    rw [list_pow_zero, ListBlank.append_nil, h3]
+    bb_steps
+  exact h_init.to_star
+
+/-- `ps` is a closed accelerated `TapePatternSet` for `target` (Level A). -/
+theorem is_closed_pattern_set : IsClosedPatternSet target ps := by
+  refine ⟨⟨cfg_A 0 3, init_reaches_start, in_ps_A 0 3 (by decide)⟩, ?_⟩
+  intro cfg h_in
+  rcases h_in with ⟨entry, h_mem, vars, rfl, h_cond⟩
+  simp only [ps, List.mem_cons, List.not_mem_nil, or_false] at h_mem
+  rcases h_mem with rfl
+  rw [eval_pat_A]
+  exact step_A_closed (vars 0) (vars 1) h_cond
+
 /-- `1RB0LF_1LC1RA_0RE0RD_---1LE_1LF1RC_1LC1LA` is a cryptid. -/
-theorem is_cryptid : IsCryptid target := by
-  refine ⟨ps, ⟨cfg_A 0 3, ?_, in_ps_A 0 3 (by decide)⟩, ?_⟩
-  · have h_init : ReachesPlus target (init []) (cfg_A 0 3) := by
-      unfold cfg_A
-      have h3 : (([1] : List (Fin 2)) ^ 3) = [1, 1, 1] := rfl
-      rw [list_pow_zero, ListBlank.append_nil, h3]
-      bb_steps
-    exact h_init.to_star
-  · intro cfg h_in
-    rcases h_in with ⟨entry, h_mem, vars, rfl, h_cond⟩
-    simp only [ps, List.mem_cons, List.not_mem_nil, or_false] at h_mem
-    rcases h_mem with rfl
-    rw [eval_pat_A]
-    exact step_A_closed (vars 0) (vars 1) h_cond
+theorem is_cryptid : IsCryptid target :=
+  ⟨ps, is_closed_pattern_set⟩
+
+/-! ## Collatz-Like Acceleration (Level B) -/
+
+/-- Symbolic configuration state space for `1RB0LF_1LC1RA_0RE0RD_---1LE_1LF1RC_1LC1LA`. -/
+inductive State where
+  /-- $C(a, b + 1) := 0^\infty\,\mathrm{E}{>}\,(10)^a\,1^{b+1}\,0^\infty$. -/
+  | C (a b : ℕ)
+  /-- $P(k, n, p + 1) := 0^\infty\,(10)^k\,{<}\mathrm{A}\,(10)^n\,1^{p+1}\,0^\infty$. -/
+  | P (k n p : ℕ)
+
+/-- Initial symbolic state $C(0, 3)$, reached after 7 raw TM steps. -/
+def start : State := .C 0 2
+
+/-- Decode a symbolic `State` into a concrete Turing machine configuration. -/
+def encode : State → Cfg (Fin 2) (Fin 6)
+  | .C a b =>
+    Cfg.headRight SixState.E default
+      (ListBlank.append (([1, 0] : List (Fin 2)) ^ a)
+        (ListBlank.append (([1] : List (Fin 2)) ^ (b + 1)) default))
+  | .P k n p =>
+    Cfg.headLeft SixState.A
+      (ListBlank.append (([0, 1] : List (Fin 2)) ^ k) default)
+      (ListBlank.append (([1, 0] : List (Fin 2)) ^ n)
+        (ListBlank.append (([1] : List (Fin 2)) ^ (p + 1)) default))
+
+/-- Accelerated Collatz-like transition function. -/
+def next : State → Option State
+  | .C a 0 => some (.C 2 (2 * a + 1))
+  | .C _ 1 => none
+  | .C a (d + 2) => some (.P a 0 (d + 2))
+  | .P 0 n 0 => some (.C (n + 1) 2)
+  | .P 0 n 1 => some (.C (n + 1) 0)
+  | .P 0 n (p + 2) => some (.C (n + 2) p)
+  | .P (k + 1) n 0 => some (.P k (n + 1) 2)
+  | .P (k + 1) n 1 => some (.P k (n + 1) 0)
+  | .P (k + 1) n (p + 2) => some (.P k (n + 2) p)
+
+private theorem encode_C (a b : ℕ) : encode (.C a b) = cfg_A a (b + 1) := rfl
+private theorem encode_P (k n p : ℕ) : encode (.P k n p) = cfg_P k n (p + 1) := rfl
+
+/-- `start`, `encode`, and `next` form a valid Collatz-like acceleration of `target`. -/
+theorem is_valid_acceleration : IsValidAcceleration target start encode next where
+  init_reaches := init_reaches_start
+  step_some := by
+    rintro (⟨a, b⟩ | ⟨k, n, p⟩) s' hnext
+    · rcases b with _ | _ | d
+      · simp only [next, Option.some.injEq] at hnext
+        subst hnext
+        exact step_A_one a
+      · simp [next] at hnext
+      · simp only [next, Option.some.injEq] at hnext
+        subst hnext
+        exact step_A_to_P a d
+    · rcases k with _ | k
+      · rcases p with _ | _ | p
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          exact cfg_P_zero_one n
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          exact cfg_P_zero_two n
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          exact cfg_P_zero_ge2 n (p + 1)
+      · rcases p with _ | _ | p
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          exact cfg_P_succ_one k n
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          exact cfg_P_succ_two k n
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          exact cfg_P_succ_ge2 k n (p + 1)
+  step_none := by
+    rintro (⟨a, b⟩ | ⟨k, n, p⟩) hnext
+    · rcases b with _ | _ | d
+      · simp [next] at hnext
+      · obtain ⟨cfg', hp, hh⟩ := step_A_two a
+        exact ⟨cfg', hp.to_star, hh⟩
+      · simp [next] at hnext
+    · rcases k with _ | k <;> rcases p with _ | _ | p <;> simp [next] at hnext
+
+/-- `target` halts from the blank tape if and only if the Collatz-like acceleration `next` halts
+from `start`. -/
+theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start :=
+  is_valid_acceleration.isHalt_iff
 
 end BusyBeaver.M_1RB0LF_1LC1RA_0RE0RD_HHH1LE_1LF1RC_1LC1LA

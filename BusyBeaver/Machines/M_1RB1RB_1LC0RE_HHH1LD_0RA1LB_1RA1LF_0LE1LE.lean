@@ -134,18 +134,21 @@ private theorem shift_B_110 (k : ℕ) (l r : ListBlank (Fin 2)) :
 
 /-- Canonical tape pattern
 $A(k, m, f) := 0^\infty\,(11)^k\,0\,(11)^m\,0\,\mathrm{D}{>}\,1\,1^f\,0^\infty$. -/
-private def pat_A : TapePattern (Fin 2) (Fin 6) :=
+private abbrev pat_A : TapePattern (Fin 2) (Fin 6) :=
   { left := .sym 0 (.rep [1, 1] 1 (.sym 0 (.rep [1, 1] 0 .default)))
     head := some D
     right := .sym 1 (.rep [1] 2 .default) }
 
 /-- Guard condition $k \ge 1 \land m \ge 1 \land f \ge 1$. -/
-private def cond_A : VarCond :=
+private abbrev cond_A : VarCond :=
   .and (.ge_const 0 1) (.and (.ge_const 1 1) (.ge_const 2 1))
 
-/-- Closed pattern set for `1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE`. -/
-private def ps : TapePatternSet (Fin 2) (Fin 6) :=
-  [(pat_A, cond_A)]
+/-- Closed pattern set for `1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE` (Level A). -/
+def ps : TapePatternSet (Fin 2) (Fin 6) :=
+  [({ left := .sym 0 (.rep [1, 1] 1 (.sym 0 (.rep [1, 1] 0 .default)))
+      head := some SixState.D
+      right := .sym 1 (.rep [1] 2 .default) },
+    .and (.ge_const 0 1) (.and (.ge_const 1 1) (.ge_const 2 1)))]
 
 /-- Configuration $A(k, m, f)$. -/
 private def cfg_A (k m f : ℕ) : Cfg (Fin 2) (Fin 6) :=
@@ -592,22 +595,236 @@ private theorem step_A_closed (k m f : ℕ) (hk : k ≥ 1) (hm : m ≥ 1) (hf : 
       · exact ⟨cfg_A (k'' + 1) (m' + 1) (f + 6), step_macro (k'' + 1) m' f,
           Or.inl (in_ps_A (k'' + 1) (m' + 1) (f + 6) (by omega) (by omega) (by omega))⟩
 
+private theorem init_reaches_start : ReachesStar target (init []) (cfg_A 3 1 2) := by
+  have h_init : ReachesPlus target (init []) (cfg_A 3 1 2) := by
+    unfold cfg_A
+    have hk3 : (([1, 1] : List (Fin 2)) ^ 3) = [1, 1, 1, 1, 1, 1] := rfl
+    have hm1 : (([1, 1] : List (Fin 2)) ^ 1) = [1, 1] := rfl
+    have hf2 : (([1] : List (Fin 2)) ^ 2) = [1, 1] := rfl
+    rw [hk3, hm1, hf2]
+    bb_steps
+  exact h_init.to_star
+
+/-- `ps` is a closed accelerated `TapePatternSet` for `target` (Level A). -/
+theorem is_closed_pattern_set : IsClosedPatternSet target ps := by
+  refine ⟨⟨cfg_A 3 1 2, init_reaches_start, in_ps_A 3 1 2 (by decide) (by decide) (by decide)⟩,
+    ?_⟩
+  intro cfg h_in
+  rcases h_in with ⟨entry, h_mem, vars, rfl, h_cond⟩
+  simp only [ps, List.mem_cons, List.not_mem_nil, or_false] at h_mem
+  subst h_mem
+  exact step_A_closed (vars 0) (vars 1) (vars 2) h_cond.1 h_cond.2.1 h_cond.2.2
+
 /-- `1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE` is a cryptid. -/
-theorem is_cryptid : IsCryptid target := by
-  refine ⟨ps, ⟨cfg_A 3 1 2, ?_, in_ps_A 3 1 2 (by decide) (by decide) (by decide)⟩, ?_⟩
-  · have h_init : ReachesPlus target (init []) (cfg_A 3 1 2) := by
-      unfold cfg_A
-      have hk3 : (([1, 1] : List (Fin 2)) ^ 3) = [1, 1, 1, 1, 1, 1] := rfl
-      have hm1 : (([1, 1] : List (Fin 2)) ^ 1) = [1, 1] := rfl
-      have hf2 : (([1] : List (Fin 2)) ^ 2) = [1, 1] := rfl
-      rw [hk3, hm1, hf2]
-      bb_steps
-    exact h_init.to_star
-  · intro cfg h_in
-    rcases h_in with ⟨entry, h_mem, vars, rfl, h_cond⟩
-    simp only [ps, List.mem_cons, List.not_mem_nil, or_false] at h_mem
-    subst h_mem
-    rw [eval_pat_A]
-    exact step_A_closed (vars 0) (vars 1) (vars 2) h_cond.1 h_cond.2.1 h_cond.2.2
+theorem is_cryptid : IsCryptid target :=
+  ⟨ps, is_closed_pattern_set⟩
+
+/-! ## Collatz-Like Acceleration (Level B) -/
+
+private theorem step_macro_iter (n : ℕ) : ∀ k m f,
+    ReachesPlus target (cfg_A (k + n + 2) (m + n + 2) f)
+      (cfg_A (k + 1) (m + 1) (f + 6 * (n + 1))) := by
+  induction n with
+  | zero =>
+    intro k m f
+    simpa using step_macro (k + 1) m f
+  | succ n ih =>
+    intro k m f
+    have hk : k + (n + 1) + 2 = (k + n + 2) + 1 := by omega
+    have hm : m + (n + 1) + 2 = (m + n + 1) + 2 := by omega
+    rw [hk, hm]
+    have h2 := (step_macro (k + n + 2) (m + n + 1) f).trans (ih k m (f + 6))
+    have h_f : f + 6 + 6 * (n + 1) = f + 6 * (n + 1 + 1) := by omega
+    rwa [h_f] at h2
+
+/-- Symbolic configuration state space for `1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE`. -/
+inductive State where
+  /-- $C(2(k+1), 2(m+1), f+1) :=
+    0^\infty\,1^{2(k+1)}\,0\,1^{2(m+1)}\,0\,\mathrm{D}{>}\,1\,1^{f+1}\,0^\infty$. -/
+  | C (k m f : ℕ)
+
+/-- Initial symbolic state $C(6, 2, 2)$, reached after 76 raw TM steps. -/
+def start : State := .C 2 0 1
+
+/-- Decode a symbolic `State` into a concrete Turing machine configuration. -/
+def encode : State → Cfg (Fin 2) (Fin 6)
+  | .C k m f =>
+    Cfg.headRight SixState.D
+      (ListBlank.append [0]
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ (m + 1))
+          (ListBlank.append [0]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) default))))
+      (ListBlank.append [1]
+        (ListBlank.append (([1] : List (Fin 2)) ^ (f + 1)) default))
+
+/-- Accelerated Collatz-like transition function. -/
+def next : State → Option State
+  | .C 0 0 _ => none
+  | .C 0 1 _ => none
+  | .C 0 2 f =>
+    if f % 2 = 0 then some (.C (f / 2 + 3) 2 4)
+    else some (.C (f / 2 + 5) 0 1)
+  | .C 0 (m + 3) f =>
+    if f % 2 = 0 then some (.C m (f / 2 + 5) 1)
+    else some (.C m (f / 2 + 5) 4)
+  | .C 1 0 f =>
+    if f % 2 = 0 then some (.C (f / 2 + 3) 0 1)
+    else some (.C (f / 2 + 2) 2 4)
+  | .C (k + 2) 0 f =>
+    if f % 2 = 0 then some (.C k (f / 2 + 3) 4)
+    else some (.C k (f / 2 + 4) 1)
+  | .C (k + 1) (m + 1) f =>
+    if k < m then some (.C 0 (m - k) (f + 6 * (k + 1)))
+    else if m < k then some (.C (k - m) 0 (f + 6 * (m + 1)))
+    else some (.C 0 0 (f + 6 * (k + 1)))
+
+private theorem encode_C (k m f : ℕ) : encode (.C k m f) = cfg_A (k + 1) (m + 1) (f + 1) := rfl
+
+/-- `start`, `encode`, and `next` form a valid Collatz-like acceleration of `target`. -/
+theorem is_valid_acceleration : IsValidAcceleration target start encode next where
+  init_reaches := init_reaches_start
+  step_some := by
+    rintro ⟨k, m, f⟩ s' hnext
+    rcases k with _ | _ | k
+    · rcases m with _ | _ | _ | v
+      · simp [next] at hnext
+      · simp [next] at hnext
+      · rcases nat_even_or_odd_two_mul f with ⟨j, rfl⟩ | ⟨j, rfl⟩
+        · have hmod : (2 * j) % 2 = 0 := by omega
+          have hdiv : (2 * j) / 2 = j := by omega
+          simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+          subst hnext
+          have h1 := step_macro 0 1 (2 * j + 1)
+          have h_eq : 2 * j + 1 + 6 = 2 * (j + 1) + 5 := by omega
+          rw [h_eq] at h1
+          exact h1.trans (step_zero_two_odd (j + 1))
+        · have hmod : (2 * j + 1) % 2 ≠ 0 := by omega
+          have hdiv : (2 * j + 1) / 2 = j := by omega
+          simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+          subst hnext
+          have h1 := step_macro 0 1 (2 * j + 1 + 1)
+          have h_eq : 2 * j + 1 + 1 + 6 = 2 * (j + 2) + 4 := by omega
+          rw [h_eq] at h1
+          exact h1.trans (step_zero_two_even (j + 2))
+      · rcases nat_even_or_odd_two_mul f with ⟨j, rfl⟩ | ⟨j, rfl⟩
+        · have hmod : (2 * j) % 2 = 0 := by omega
+          have hdiv : (2 * j) / 2 = j := by omega
+          simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+          subst hnext
+          have h1 := step_macro 0 (v + 2) (2 * j + 1)
+          have h_eq : 2 * j + 1 + 6 = 2 * (j + 1) + 5 := by omega
+          rw [h_eq] at h1
+          exact h1.trans (step_zero_ge3_odd v (j + 1))
+        · have hmod : (2 * j + 1) % 2 ≠ 0 := by omega
+          have hdiv : (2 * j + 1) / 2 = j := by omega
+          simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+          subst hnext
+          have h1 := step_macro 0 (v + 2) (2 * j + 1 + 1)
+          have h_eq : 2 * j + 1 + 1 + 6 = 2 * (j + 2) + 4 := by omega
+          rw [h_eq] at h1
+          exact h1.trans (step_zero_ge3_even v (j + 2))
+    · rcases m with _ | m
+      · rcases nat_even_or_odd_two_mul f with ⟨j, rfl⟩ | ⟨j, rfl⟩
+        · have hmod : (2 * j) % 2 = 0 := by omega
+          have hdiv : (2 * j) / 2 = j := by omega
+          simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+          subst hnext
+          have h1 := step_m1 1 (2 * j + 1)
+          have h_eq : 2 * j + 1 + 3 = 2 * j + 4 := by omega
+          rw [h_eq] at h1
+          exact h1.trans (step_zero_two_even j)
+        · have hmod : (2 * j + 1) % 2 ≠ 0 := by omega
+          have hdiv : (2 * j + 1) / 2 = j := by omega
+          simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+          subst hnext
+          have h1 := step_m1 1 (2 * j + 1 + 1)
+          have h_eq : 2 * j + 1 + 1 + 3 = 2 * j + 5 := by omega
+          rw [h_eq] at h1
+          exact h1.trans (step_zero_two_odd j)
+      · rcases m with _ | m'
+        · simp only [next, lt_self_iff_false, ↓reduceIte, Option.some.injEq] at hnext
+          subst hnext
+          rw [encode_C, encode_C]
+          have h := step_macro 1 0 (f + 1)
+          have h_f : f + 1 + 6 = f + 6 + 1 := by omega
+          rwa [h_f] at h
+        · have hlt : 0 < m' + 1 := by omega
+          have hsub : m' + 1 - 0 = m' + 1 := by omega
+          simp only [next, hlt, ↓reduceIte, hsub, Option.some.injEq] at hnext
+          subst hnext
+          rw [encode_C, encode_C]
+          have h := step_macro 1 (m' + 1) (f + 1)
+          have h_f : f + 1 + 6 = f + 6 + 1 := by omega
+          rwa [h_f] at h
+    · rcases m with _ | m
+      · rcases nat_even_or_odd_two_mul f with ⟨j, rfl⟩ | ⟨j, rfl⟩
+        · have hmod : (2 * j) % 2 = 0 := by omega
+          have hdiv : (2 * j) / 2 = j := by omega
+          simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+          subst hnext
+          have h1 := step_m1 (k + 2) (2 * j + 1)
+          have h_eq : 2 * j + 1 + 3 = 2 * j + 4 := by omega
+          rw [h_eq] at h1
+          exact h1.trans (step_zero_ge3_even k j)
+        · have hmod : (2 * j + 1) % 2 ≠ 0 := by omega
+          have hdiv : (2 * j + 1) / 2 = j := by omega
+          simp only [next, hmod, ↓reduceIte, hdiv, Option.some.injEq] at hnext
+          subst hnext
+          have h1 := step_m1 (k + 2) (2 * j + 1 + 1)
+          have h_eq : 2 * j + 1 + 1 + 3 = 2 * j + 5 := by omega
+          rw [h_eq] at h1
+          exact h1.trans (step_zero_ge3_odd k j)
+      · by_cases hlt1 : k + 1 < m
+        · simp only [next, hlt1, ↓reduceIte, Option.some.injEq] at hnext
+          subst hnext
+          have h_iter := step_macro_iter (k + 1) 0 (m - (k + 1)) (f + 1)
+          have h_k : 0 + (k + 1) + 2 = k + 1 + 1 + 1 := by omega
+          have h_m : m - (k + 1) + (k + 1) + 2 = m + 1 + 1 := by omega
+          have h_f : f + 1 + 6 * (k + 1 + 1) = f + 6 * (k + 1 + 1) + 1 := by omega
+          rw [h_k, h_m, h_f] at h_iter
+          exact h_iter
+        · by_cases hlt2 : m < k + 1
+          · simp only [next, hlt1, ↓reduceIte, hlt2, Option.some.injEq] at hnext
+            subst hnext
+            have h_iter := step_macro_iter m (k + 1 - m) 0 (f + 1)
+            have h_k : k + 1 - m + m + 2 = k + 1 + 1 + 1 := by omega
+            have h_m : 0 + m + 2 = m + 1 + 1 := by omega
+            have h_f : f + 1 + 6 * (m + 1) = f + 6 * (m + 1) + 1 := by omega
+            rw [h_k, h_m, h_f] at h_iter
+            exact h_iter
+          · have heq : m = k + 1 := by omega
+            subst heq
+            simp only [next, hlt1, ↓reduceIte, Option.some.injEq] at hnext
+            subst hnext
+            have h_iter := step_macro_iter (k + 1) 0 0 (f + 1)
+            have h_k : 0 + (k + 1) + 2 = k + 1 + 1 + 1 := by omega
+            have h_f : f + 1 + 6 * (k + 1 + 1) = f + 6 * (k + 1 + 1) + 1 := by omega
+            rw [h_k, h_f] at h_iter
+            exact h_iter
+  step_none := by
+    rintro ⟨k, m, f⟩ hnext
+    rcases k with _ | _ | k
+    · rcases m with _ | _ | _ | v
+      · have h1 := step_m1 0 (f + 1)
+        have h_eq : f + 1 + 3 = (f + 3) + 1 := by omega
+        rw [h_eq] at h1
+        obtain ⟨cfg', h2, hh⟩ := step_zero_one (f + 3)
+        exact ⟨cfg', (h1.trans h2).to_star, hh⟩
+      · have h1 := step_macro 0 0 (f + 1)
+        have h_eq : f + 1 + 6 = (f + 6) + 1 := by omega
+        rw [h_eq] at h1
+        obtain ⟨cfg', h2, hh⟩ := step_zero_one (f + 6)
+        exact ⟨cfg', (h1.trans h2).to_star, hh⟩
+      · simp only [next] at hnext
+        split_ifs at hnext
+      · simp only [next] at hnext
+        split_ifs at hnext
+    · rcases m with _ | m <;> (simp only [next] at hnext; split_ifs at hnext)
+    · rcases m with _ | m <;> (simp only [next] at hnext; split_ifs at hnext)
+
+/-- `target` halts from the blank tape if and only if the Collatz-like acceleration `next` halts
+from `start`. -/
+theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start :=
+  is_valid_acceleration.isHalt_iff
 
 end BusyBeaver.M_1RB1RB_1LC0RE_HHH1LD_0RA1LB_1RA1LF_0LE1LE

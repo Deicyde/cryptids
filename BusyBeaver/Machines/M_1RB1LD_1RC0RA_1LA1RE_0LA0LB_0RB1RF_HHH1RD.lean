@@ -183,12 +183,14 @@ private theorem shift_A_10_left (k : ℕ) (l r : ListBlank (Fin 2)) :
 $A(a, b, c, d) := 0^\infty\,1^a\,(10)^b\,\mathrm{A}{>}\,(01)^c\,1^d\,0^\infty$. -/
 private def pat_A : TapePattern (Fin 2) (Fin 6) :=
   { left := .rep [0, 1] 1 (.rep [1] 0 .default)
-    head := some A
+    head := some SixState.A
     right := .rep [0, 1] 2 (.rep [1] 3 .default) }
 
-/-- Closed pattern set for `1RB1LD_1RC0RA_1LA1RE_0LA0LB_0RB1RF_---1RD`. -/
-private def ps : TapePatternSet (Fin 2) (Fin 6) :=
-  [(pat_A, .true)]
+/-- Closed pattern set for `1RB1LD_1RC0RA_1LA1RE_0LA0LB_0RB1RF_---1RD` (Level A). -/
+def ps : TapePatternSet (Fin 2) (Fin 6) :=
+  [({ left := .rep [0, 1] 1 (.rep [1] 0 .default)
+      head := some SixState.A
+      right := .rep [0, 1] 2 (.rep [1] 3 .default) }, .true)]
 
 /-- Configuration $A(a, b, c, d)$. -/
 private def cfg_A (a b c d : ℕ) : Cfg (Fin 2) (Fin 6) :=
@@ -1092,14 +1094,131 @@ private theorem step_A_closed (a b c d : ℕ) :
       · exact ⟨cfg_A a' (b + 2) 0 d', rule_3 a' b d', Or.inl (in_ps_A a' (b + 2) 0 d')⟩
   · exact ⟨cfg_A a (b + 1) c' d, rule_1 a b c' d, Or.inl (in_ps_A a (b + 1) c' d)⟩
 
-/-- `1RB1LD_1RC0RA_1LA1RE_0LA0LB_0RB1RF_---1RD` is a cryptid. -/
-theorem is_cryptid : IsCryptid target := by
-  refine ⟨ps, ⟨cfg_A 0 0 0 0, ReachesStar.refl _ _, in_ps_A 0 0 0 0⟩, ?_⟩
+/-- `ps` is a closed accelerated `TapePatternSet` for `target` (Level A). -/
+theorem is_closed_pattern_set : IsClosedPatternSet target ps := by
+  refine ⟨⟨cfg_A 0 0 0 0, ReachesStar.refl _ _, in_ps_A 0 0 0 0⟩, ?_⟩
   intro cfg h_in
   rcases h_in with ⟨entry, h_mem, vars, rfl, _⟩
   simp only [ps, List.mem_cons, List.not_mem_nil, or_false] at h_mem
   rcases h_mem with rfl
-  rw [eval_pat_A]
   exact step_A_closed (vars 0) (vars 1) (vars 2) (vars 3)
+
+/-- `1RB1LD_1RC0RA_1LA1RE_0LA0LB_0RB1RF_---1RD` is a cryptid. -/
+theorem is_cryptid : IsCryptid target :=
+  ⟨ps, is_closed_pattern_set⟩
+
+/-! ## Collatz-Like Acceleration (Level B, Box 1) -/
+
+/-- Symbolic configuration state space for `1RB1LD_1RC0RA_1LA1RE_0LA0LB_0RB1RF_---1RD`. -/
+inductive State where
+  /-- $A(a, b, c, d) := 0^\infty\,1^a\,(10)^b\,\mathrm{A}{>}\,(01)^c\,1^d\,0^\infty$. -/
+  | A (a b c d : ℕ)
+
+/-- Initial symbolic state $A(0, 0, 0, 0)$. -/
+def start : State := .A 0 0 0 0
+
+/-- Decode a symbolic `State` into a concrete Turing machine configuration. -/
+def encode : State → Cfg (Fin 2) (Fin 6)
+  | .A a b c d =>
+    Cfg.headRight SixState.A
+      (ListBlank.append (([0, 1] : List (Fin 2)) ^ b)
+        (ListBlank.append (([1] : List (Fin 2)) ^ a) default))
+      (ListBlank.append (([0, 1] : List (Fin 2)) ^ c)
+        (ListBlank.append (([1] : List (Fin 2)) ^ d) default))
+
+/-- Accelerated Collatz-like transition function (Box 1). -/
+def next : State → Option State
+  | .A a b (c + 1) d => some (.A a (b + 1) c d)
+  | .A a b 0 0 => some (.A (a + 1) 0 0 (2 * b + 2))
+  | .A (a + 3) b 0 (d + 1) => some (.A a (b + 2) 0 d)
+  | .A 2 b 0 (d + 1) => some (.A 0 0 (b + 1) d)
+  | .A 1 (b + 1) 0 (d + 1) => some (.A 1 1 (b + 2) d)
+  | .A 1 0 0 (d + 1) => some (.A 0 0 0 (d + 3))
+  | .A 0 0 0 1 => some (.A 0 0 2 5)
+  | .A 0 (b + 1) 0 1 => some (.A 0 0 2 (2 * b + 3))
+  | .A 0 b 0 (d + 2) =>
+    if b ≥ d + 1 then some (.A (3 * d + 2) 1 2 (2 * b - 2 * d - 1))
+    else if d = b then none
+    else if d = b + 1 then some (.A (3 * b + 2) 0 0 6)
+    else if d = b + 2 then some (.A (3 * b + 4) 0 0 4)
+    else some (.A (3 * b + 3) 2 0 (d - b - 3))
+
+private theorem encode_A (a b c d : ℕ) : encode (.A a b c d) = cfg_A a b c d := rfl
+
+/-- `start`, `encode`, and `next` form a valid Collatz-like acceleration of `target`. -/
+theorem is_valid_acceleration : IsValidAcceleration target start encode next where
+  init_reaches := ReachesStar.refl _ _
+  step_some := by
+    rintro ⟨a, b, c, d⟩ s' hnext
+    rcases c with _ | c
+    · rcases d with _ | d
+      · simp only [next, Option.some.injEq] at hnext
+        subst hnext
+        exact rule_2 a b
+      · rcases a with _ | _ | _ | a
+        · rcases d with _ | d
+          · rcases b with _ | b
+            · simp only [next, Option.some.injEq] at hnext
+              subst hnext
+              exact rule_7
+            · simp only [next, Option.some.injEq] at hnext
+              subst hnext
+              exact rule_8 b
+          · simp only [next] at hnext
+            split_ifs at hnext with h1 h2 h3 h4
+            · simp only [Option.some.injEq] at hnext
+              subst hnext
+              exact rule_9 b d h1
+            · simp only [Option.some.injEq] at hnext
+              subst hnext
+              subst h3
+              exact rule_10 b
+            · simp only [Option.some.injEq] at hnext
+              subst hnext
+              subst h4
+              exact rule_11 b
+            · simp only [Option.some.injEq] at hnext
+              subst hnext
+              have h_ge : d + 2 ≥ b + 5 := by omega
+              have h_sub : d + 2 - b - 5 = d - b - 3 := by omega
+              simpa [encode_A, h_sub] using rule_12 b (d + 2) h_ge
+        · rcases b with _ | b
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            exact rule_6 d
+          · simp only [next, Option.some.injEq] at hnext
+            subst hnext
+            exact rule_5 b d
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          exact rule_4 b d
+        · simp only [next, Option.some.injEq] at hnext
+          subst hnext
+          exact rule_3 a b d
+    · simp only [next, Option.some.injEq] at hnext
+      subst hnext
+      exact rule_1 a b c d
+  step_none := by
+    rintro ⟨a, b, c, d⟩ hnext
+    rcases c with _ | c
+    · rcases d with _ | d
+      · simp [next] at hnext
+      · rcases a with _ | _ | _ | a
+        · rcases d with _ | d
+          · rcases b with _ | b <;> simp [next] at hnext
+          · simp only [next] at hnext
+            split_ifs at hnext with h1 h2 h3 h4
+            obtain ⟨cfg', h_plus, h_halt⟩ := rule_13 b
+            rw [encode_A, h2]
+            exact ⟨cfg', h_plus.to_star, h_halt⟩
+        · rcases b with _ | b <;> simp [next] at hnext
+        · simp [next] at hnext
+        · simp [next] at hnext
+    · simp [next] at hnext
+
+/-- `target` halts from the blank tape if and only if the Collatz-like acceleration `next` halts
+from `start`. -/
+theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start :=
+  is_valid_acceleration.isHalt_iff
 
 end BusyBeaver.M_1RB1LD_1RC0RA_1LA1RE_0LA0LB_0RB1RF_HHH1RD

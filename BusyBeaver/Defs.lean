@@ -172,14 +172,40 @@ def IsInPatternSet {Γ Λ : Type*} [Inhabited Γ] [Inhabited Λ]
   ∃ entry : TapePattern Γ Λ × VarCond, entry ∈ ps ∧
     ∃ vars : ℕ → ℕ, cfg = evalTapePattern entry.1 vars ∧ evalVarCond entry.2 vars
 
+/-- `ps` is a closed accelerated `TapePatternSet` for `M` if `M`'s blank-tape trajectory enters
+`ps` and every member configuration of `ps` steps in `ReachesPlus` (`n > 0` steps) either to
+another member of `ps` or to a halting configuration. -/
+def IsClosedPatternSet (M : Machine Γ Λ) (ps : TapePatternSet Γ Λ) : Prop :=
+  (∃ cfg₀, ReachesStar M (init []) cfg₀ ∧ IsInPatternSet ps cfg₀) ∧
+  (∀ cfg, IsInPatternSet ps cfg →
+    ∃ cfg', ReachesPlus M cfg cfg' ∧
+      (IsInPatternSet ps cfg' ∨ (step M cfg').isNone))
+
 /-- `M`'s blank-tape trajectory enters a closed accelerated `TapePatternSet` in which every
 member configuration steps in `ReachesPlus` either to another member or to a halting state. -/
 def IsCryptid (M : Machine Γ Λ) : Prop :=
-  ∃ ps : TapePatternSet Γ Λ,
-    (∃ cfg₀, ReachesStar M (init []) cfg₀ ∧ IsInPatternSet ps cfg₀) ∧
-    (∀ cfg, IsInPatternSet ps cfg →
-      ∃ cfg', ReachesPlus M cfg cfg' ∧
-        (IsInPatternSet ps cfg' ∨ (step M cfg').isNone))
+  ∃ ps : TapePatternSet Γ Λ, IsClosedPatternSet M ps
+
+/-- An abstract partial transition system `next : S → Option S` halts from `s₀ : S` if iterating
+`next` from `some s₀` eventually produces `none`. -/
+def CollatzHalts {S : Type*} (next : S → Option S) (s₀ : S) : Prop :=
+  ∃ n : ℕ, ((Option.bind · next)^[n] (some s₀)).isNone
+
+/-- `encode`, `next`, and `start` form a valid Collatz-like acceleration of `M` when:
+1. `M` reaches `encode start` from the blank tape (`init []`),
+2. Every defined step `next s = some s'` takes `M` from `encode s` to `encode s'` in `ReachesPlus`
+   (at least one raw Turing machine step), and
+3. Every undefined step `next s = none` means `M` reaches a halting configuration from
+   `encode s`. -/
+structure IsValidAcceleration (M : Machine Γ Λ) {S : Type*}
+    (start : S) (encode : S → Cfg Γ Λ) (next : S → Option S) : Prop where
+  /-- `M` reaches `encode start` from the blank tape (`init []`). -/
+  init_reaches : ReachesStar M (init []) (encode start)
+  /-- Every non-halting accelerated step takes at least one Turing machine step. -/
+  step_some : ∀ s s', next s = some s' → ReachesPlus M (encode s) (encode s')
+  /-- Every halting accelerated state reaches a halting Turing machine configuration. -/
+  step_none : ∀ s, next s = none →
+    ∃ cfg', ReachesStar M (encode s) cfg' ∧ (step M cfg').isNone
 
 
 end BusyBeaver
