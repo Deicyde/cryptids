@@ -1,0 +1,957 @@
+/-
+Copyright (c) 2026 Google LLC. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+module
+
+public import BusyBeaver.Basic
+public import BusyBeaver.Bridge
+
+/-!
+# Busy Beaver Cryptid `1RB1LF_0RC1RD_1LA1LD_1LE0RA_---1LC_0LA1LA`
+
+Formal `IsCryptid` proof for the 6-state, 2-symbol Busy Beaver cryptid
+`1RB1LF_0RC1RD_1LA1LD_1LE0RA_---1LC_0LA1LA`.
+
+Starting from the blank tape (`init []`), the trajectory reaches the guarded configuration family
+$$C(a, b) := 0^\infty\,110\,\mathrm{A}{>}\,(11)^a\,0\,1^b\,0^\infty \quad (b \ge 6)$$
+at $C(0, 9)$, and every $C(a, b)$ with $b \ge 6$ advances in `ReachesPlus` either to another
+$C(a', b')$ with $b' \ge 6$ or to a halting configuration.
+-/
+
+@[expose] public section
+
+namespace BusyBeaver.M_1RB1LF_0RC1RD_1LA1LD_1LE0RA_HHH1LC_0LA1LA
+
+open SixState Turing
+
+/-- The `(6, 2)` Turing machine in `ConjectureMachines.Machine` form. -/
+def machine : ConjectureMachines.Machine 6 2 :=
+  load_rle_machine% "1RB1LF_0RC1RD_1LA1LD_1LE0RA_---1LC_0LA1LA"
+
+/-- The `(6, 2)` Turing machine in `BusyBeaver.Machine` form. -/
+abbrev target : Machine (Fin 2) (Fin 6) :=
+  machine.toBB
+
+private theorem shift_R (k : ℕ) (l r : ListBlank (Fin 2)) :
+    ReachesStar target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] (ListBlank.append [0] l))
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) r))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l)))
+        r) := by
+  induction k generalizing l r with
+  | zero => exact ReachesStar.refl _ _
+  | succ k ih =>
+    have h1 :
+        ReachesPlus target
+          (Cfg.headRight A
+            (ListBlank.append [0, 1, 1] (ListBlank.append [0] l))
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) r))
+          (Cfg.headRight A
+            (ListBlank.append [0, 1, 1] (ListBlank.append [0]
+              (ListBlank.append [1, 1] l)))
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) r)) := by
+      rw [ListBlank.append_pow_succ]
+      bb_steps
+    have h2 := ih (ListBlank.append [1, 1] l) r
+    have h3 := (h1.trans_star h2).to_star
+    have h_pow :
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ k) (ListBlank.append [1, 1] l) =
+          ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) l := by
+      rw [ListBlank.append_append, ← list_pow_succ']
+    rwa [h_pow] at h3
+
+private theorem shift_L_A (k : ℕ) (l r : ListBlank (Fin 2)) :
+    ReachesStar target
+      (Cfg.headRight A
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l)
+        (ListBlank.append [1] r))
+      (Cfg.headRight A l
+        (ListBlank.append [1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) r))) := by
+  induction k generalizing l r with
+  | zero => exact ReachesStar.refl _ _
+  | succ k ih =>
+    have h1 :
+        ReachesPlus target
+          (Cfg.headRight A
+            (ListBlank.append [1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l))
+            (ListBlank.append [1] r))
+          (Cfg.headRight A
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l)
+            (ListBlank.append [1] (ListBlank.append [1, 1] r))) := by
+      bb_steps
+    have h2 := ih l (ListBlank.append [1, 1] r)
+    have h3 := (h1.trans_star h2).to_star
+    have h_pow_l :
+        ListBlank.append [1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l) =
+          ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) l := by
+      rw [← ListBlank.append_pow_succ]
+    have h_pow_r :
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ k) (ListBlank.append [1, 1] r) =
+          ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) r := by
+      rw [ListBlank.append_append, ← list_pow_succ']
+    rwa [h_pow_l, h_pow_r] at h3
+
+private theorem shift_L_F (k : ℕ) (l r : ListBlank (Fin 2)) :
+    ReachesStar target
+      (Cfg.headRight F
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l)
+        (ListBlank.append [1, 1] r))
+      (Cfg.headRight F l
+        (ListBlank.append [1, 1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) r))) := by
+  induction k generalizing l r with
+  | zero => exact ReachesStar.refl _ _
+  | succ k ih =>
+    have h1 :
+        ReachesPlus target
+          (Cfg.headRight F
+            (ListBlank.append [1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l))
+            (ListBlank.append [1, 1] r))
+          (Cfg.headRight F
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l)
+            (ListBlank.append [1, 1] (ListBlank.append [1, 1] r))) := by
+      bb_steps
+    have h2 := ih l (ListBlank.append [1, 1] r)
+    have h3 := (h1.trans_star h2).to_star
+    have h_pow_l :
+        ListBlank.append [1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l) =
+          ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) l := by
+      rw [← ListBlank.append_pow_succ]
+    have h_pow_r :
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ k) (ListBlank.append [1, 1] r) =
+          ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) r := by
+      rw [ListBlank.append_append, ← list_pow_succ']
+    rwa [h_pow_l, h_pow_r] at h3
+
+private theorem shift_R_block (k : ℕ) (l r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] l)
+        (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) r)))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) l)))
+        r) := by
+  have h1 :
+      ReachesPlus target
+        (Cfg.headRight A
+          (ListBlank.append [0, 1, 1] l)
+          (ListBlank.append [0]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) r)))
+        (Cfg.headRight A
+          (ListBlank.append [0, 1, 1] (ListBlank.append [0]
+            (ListBlank.append [1, 1] l)))
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) r)) := by
+    rw [ListBlank.append_pow_succ]
+    bb_steps
+  have h2 := shift_R k (ListBlank.append [1, 1] l) r
+  have h3 := h1.trans_star h2
+  have h_pow :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ k) (ListBlank.append [1, 1] l) =
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) l := by
+    rw [ListBlank.append_append, ← list_pow_succ']
+  rwa [h_pow] at h3
+
+private theorem shift_L_even (k : ℕ) (l r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+          (ListBlank.append [0] l)))
+        (ListBlank.append [1] r))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] l)
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+          (ListBlank.append [0, 1] r))) := by
+  have h1 :
+      ReachesPlus target
+        (Cfg.headRight A
+          (ListBlank.append [0, 1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+            (ListBlank.append [0] l)))
+          (ListBlank.append [1] r))
+        (Cfg.headRight F
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+            (ListBlank.append [0] l))
+          (ListBlank.append [1, 1] (ListBlank.append [0, 1] r))) := by
+    bb_steps
+  have h2 := shift_L_F k (ListBlank.append [0] l) (ListBlank.append [0, 1] r)
+  have h12 := h1.trans_star h2
+  have h3 :
+      ReachesPlus target
+        (Cfg.headRight F
+          (ListBlank.append [0] l)
+          (ListBlank.append [1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+            (ListBlank.append [0, 1] r))))
+        (Cfg.headRight A
+          (ListBlank.append [0, 1, 1] l)
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+            (ListBlank.append [0, 1] r))) := by
+    bb_steps
+  exact h12.trans h3
+
+private theorem shift_L_odd (k : ℕ) (l r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+          (ListBlank.append [0] l)))
+        (ListBlank.append [1] r))
+      (Cfg.headRight F l
+        (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+          (ListBlank.append [0, 1] r)))) := by
+  have h1 :
+      ReachesPlus target
+        (Cfg.headRight A
+          (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+            (ListBlank.append [0] l)))
+          (ListBlank.append [1] r))
+        (Cfg.headRight A
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+            (ListBlank.append [0] l))
+          (ListBlank.append [1] (ListBlank.append [0, 1] r))) := by
+    bb_steps
+  have h2 := shift_L_A k (ListBlank.append [0] l) (ListBlank.append [0, 1] r)
+  have h12 := h1.trans_star h2
+  have h3 :
+      ReachesPlus target
+        (Cfg.headRight A
+          (ListBlank.append [0] l)
+          (ListBlank.append [1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+            (ListBlank.append [0, 1] r))))
+        (Cfg.headRight F l
+          (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+            (ListBlank.append [0, 1] r)))) := by
+    bb_steps
+  exact h12.trans h3
+
+private theorem shift_R_0 (k : ℕ) (l r : ListBlank (Fin 2)) :
+    ReachesStar target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] l)
+        (ListBlank.append [0, 1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) r)))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) l))
+        (ListBlank.append [0, 1] r)) := by
+  induction k generalizing l r with
+  | zero => exact ReachesStar.refl _ _
+  | succ k ih =>
+    have h1 :
+        ReachesPlus target
+          (Cfg.headRight A
+            (ListBlank.append [0, 1, 1] l)
+            (ListBlank.append [0, 1]
+              (ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) r)))
+          (Cfg.headRight A
+            (ListBlank.append [0, 1, 1] (ListBlank.append [1, 1] l))
+            (ListBlank.append [0, 1]
+              (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) r))) := by
+      rw [ListBlank.append_pow_succ]
+      bb_steps
+    have h2 := ih (ListBlank.append [1, 1] l) r
+    have h3 := (h1.trans_star h2).to_star
+    have h_pow :
+        ListBlank.append (([1, 1] : List (Fin 2)) ^ k) (ListBlank.append [1, 1] l) =
+          ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1)) l := by
+      rw [ListBlank.append_append, ← list_pow_succ']
+    rwa [h_pow] at h3
+
+private theorem even_end (m : ℕ) (l : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] (ListBlank.append [0] l))
+        (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (m + 2)) default)))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] l)
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ m)
+          (ListBlank.append [0, 1]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ 4) default)))) := by
+  have h1 := shift_R_block (m + 1) (ListBlank.append [0] l) default
+  have h_l :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ (m + 2)) (ListBlank.append [0] l) =
+        ListBlank.append [1, 1] (ListBlank.append [1, 1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ m) (ListBlank.append [0] l))) := by
+    rw [ListBlank.append_pow_succ, ListBlank.append_pow_succ]
+  rw [h_l] at h1
+  have h2 :
+      ReachesPlus target
+        (Cfg.headRight A
+          (ListBlank.append [0, 1, 1] (ListBlank.append [0]
+            (ListBlank.append [1, 1] (ListBlank.append [1, 1]
+              (ListBlank.append (([1, 1] : List (Fin 2)) ^ m)
+                (ListBlank.append [0] l))))))
+          default)
+        (Cfg.headRight A
+          (ListBlank.append [0, 1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ m)
+            (ListBlank.append [0] l)))
+          (ListBlank.append [1]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ 4) default))) := by
+    have h4 : (([1, 1] : List (Fin 2)) ^ 4) = [1, 1, 1, 1, 1, 1, 1, 1] := rfl
+    rw [h4]
+    bb_steps
+  have h12 := h1.trans h2
+  have h3 := shift_L_even m l (ListBlank.append (([1, 1] : List (Fin 2)) ^ 4) default)
+  exact h12.trans h3
+
+private theorem sweep_L_odd_default (k : ℕ) (r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) default))
+        (ListBlank.append [1] r))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] default)
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1))
+          (ListBlank.append [0, 1] r))) := by
+  have h0 : (default : ListBlank (Fin 2)) = ListBlank.append [0] default := by
+    simp
+  have h1 := shift_L_odd k default r
+  rw [← h0] at h1
+  have h2 :
+      ReachesPlus target
+        (Cfg.headRight F default
+          (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+            (ListBlank.append [0, 1] r))))
+        (Cfg.headRight A
+          (ListBlank.append [0, 1, 1] default)
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1))
+            (ListBlank.append [0, 1] r))) := by
+    rw [ListBlank.append_pow_succ]
+    bb_steps
+  exact h1.trans h2
+
+private theorem odd_collapse (a c k : ℕ) (h_k : c + a = k + 1) (r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default))
+        (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ c)
+          (ListBlank.append [0] r))))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] default)
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ (k + 1))
+          (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ 6) r)))) := by
+  have h1 := shift_R_0 c (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default)
+    (ListBlank.append [0] r)
+  have h_l :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ c)
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) (default : ListBlank (Fin 2))) =
+        ListBlank.append [1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) default) := by
+    rw [← ListBlank.append_pow_add, h_k, ListBlank.append_pow_succ]
+  rw [h_l] at h1
+  have h2 :
+      ReachesPlus target
+        (Cfg.headRight A
+          (ListBlank.append [0, 1, 1] (ListBlank.append [1, 1]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) default)))
+          (ListBlank.append [0, 1] (ListBlank.append [0] r)))
+        (Cfg.headRight A
+          (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k) default))
+          (ListBlank.append [1] (ListBlank.append [1, 1, 1, 1, 1] r))) := by
+    bb_steps
+  have h12 := h1.trans_plus h2
+  have h3 := sweep_L_odd_default k (ListBlank.append [1, 1, 1, 1, 1] r)
+  have h6 :
+      ListBlank.append [0, 1] (ListBlank.append [1, 1, 1, 1, 1] r) =
+        ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ 6) r) := rfl
+  rw [h6] at h3
+  exact h12.trans h3
+
+private theorem sweep_L_odd_even (a k : ℕ) (l r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+          (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1))
+            (ListBlank.append [0] l)))))
+        (ListBlank.append [1] r))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] l)
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ a)
+          (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+            (ListBlank.append [0, 1] r))))) := by
+  have h1 := shift_L_odd k
+    (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) (ListBlank.append [0] l)) r
+  have h_l :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) (ListBlank.append [0] l) =
+        ListBlank.append [1, 1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) (ListBlank.append [0] l)) := by
+    rw [ListBlank.append_pow_succ]
+  rw [h_l] at h1
+  have h2 :
+      ReachesPlus target
+        (Cfg.headRight F
+          (ListBlank.append [1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ a)
+            (ListBlank.append [0] l)))
+          (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+            (ListBlank.append [0, 1] r))))
+        (Cfg.headRight F
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) (ListBlank.append [0] l))
+          (ListBlank.append [1, 1] (ListBlank.append [0, 1]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+              (ListBlank.append [0, 1] r))))) := by
+    bb_steps
+  have h12 := h1.trans h2
+  have h3 := shift_L_F a (ListBlank.append [0] l)
+    (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+      (ListBlank.append [0, 1] r)))
+  have h123 := h12.trans_star h3
+  have h4 :
+      ReachesPlus target
+        (Cfg.headRight F
+          (ListBlank.append [0] l)
+          (ListBlank.append [1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ a)
+            (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+              (ListBlank.append [0, 1] r))))))
+        (Cfg.headRight A
+          (ListBlank.append [0, 1, 1] l)
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ a)
+            (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ k)
+              (ListBlank.append [0, 1] r))))) := by
+    bb_steps
+  exact h123.trans h4
+
+private theorem odd_step (b c : ℕ) (l r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] (ListBlank.append [0] l))
+        (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (b + 1))
+          (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (c + 1))
+            (ListBlank.append [0] r))))))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] l)
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ b)
+          (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ c)
+            (ListBlank.append [0]
+              (ListBlank.append (([1] : List (Fin 2)) ^ 6) r)))))) := by
+  have h1 := shift_R_block b (ListBlank.append [0] l)
+    (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (c + 1))
+      (ListBlank.append [0] r)))
+  have h2 := shift_R_0 (c + 1)
+    (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (b + 1))
+      (ListBlank.append [0] l)))
+    (ListBlank.append [0] r)
+  have h12 := h1.trans_star h2
+  have h_l :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ (c + 1))
+        (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (b + 1))
+          (ListBlank.append [0] l))) =
+        ListBlank.append [1, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ c)
+          (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (b + 1))
+            (ListBlank.append [0] l)))) := by
+    rw [ListBlank.append_pow_succ]
+  rw [h_l] at h12
+  have h3 :
+      ReachesPlus target
+        (Cfg.headRight A
+          (ListBlank.append [0, 1, 1] (ListBlank.append [1, 1]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ c)
+              (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (b + 1))
+                (ListBlank.append [0] l))))))
+          (ListBlank.append [0, 1] (ListBlank.append [0] r)))
+        (Cfg.headRight A
+          (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ c)
+            (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (b + 1))
+              (ListBlank.append [0] l)))))
+          (ListBlank.append [1] (ListBlank.append [1, 1, 1, 1, 1] r))) := by
+    bb_steps
+  have h123 := h12.trans h3
+  have h4 := sweep_L_odd_even b c l (ListBlank.append [1, 1, 1, 1, 1] r)
+  have h6 :
+      ListBlank.append [0, 1] (ListBlank.append [1, 1, 1, 1, 1] r) =
+        ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ 6) r) := rfl
+  rw [h6] at h4
+  exact h123.trans h4
+
+private theorem unit_step (a b : ℕ) (l r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1))
+            (ListBlank.append [0] l))))
+        (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (b + 2))
+          (ListBlank.append [0, 1, 0] r))))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] l)
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ a)
+          (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ b)
+            (ListBlank.append [0]
+              (ListBlank.append (([1] : List (Fin 2)) ^ 9) r)))))) := by
+  have h1 := shift_R_block (b + 1)
+    (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1))
+      (ListBlank.append [0] l)))
+    (ListBlank.append [0, 1, 0] r)
+  have h_l :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ (b + 2))
+        (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1))
+          (ListBlank.append [0] l))) =
+        ListBlank.append [1, 1] (ListBlank.append [1, 1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ b)
+            (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1))
+              (ListBlank.append [0] l))))) := by
+    rw [ListBlank.append_pow_succ, ListBlank.append_pow_succ]
+  rw [h_l] at h1
+  have h2 :
+      ReachesPlus target
+        (Cfg.headRight A
+          (ListBlank.append [0, 1, 1] (ListBlank.append [0]
+            (ListBlank.append [1, 1] (ListBlank.append [1, 1]
+              (ListBlank.append (([1, 1] : List (Fin 2)) ^ b)
+                (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1))
+                  (ListBlank.append [0] l))))))))
+          (ListBlank.append [0, 1, 0] r))
+        (Cfg.headRight A
+          (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ b)
+            (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1))
+              (ListBlank.append [0] l)))))
+          (ListBlank.append [1] (ListBlank.append [1, 1, 1, 1, 1, 1, 1, 1] r))) := by
+    bb_steps
+  have h12 := h1.trans h2
+  have h3 := sweep_L_odd_even a b l (ListBlank.append [1, 1, 1, 1, 1, 1, 1, 1] r)
+  have h9 :
+      ListBlank.append [0, 1] (ListBlank.append [1, 1, 1, 1, 1, 1, 1, 1] r) =
+        ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ 9) r) := rfl
+  rw [h9] at h3
+  exact h12.trans h3
+
+private theorem unit_collapse_default (a : ℕ) (r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] default)
+        (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 2))
+          (ListBlank.append [0, 1, 0] r))))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] default)
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1))
+          (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ 9) r)))) := by
+  have h1 := shift_R_block (a + 1) default (ListBlank.append [0, 1, 0] r)
+  have h_l :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 2)) (default : ListBlank (Fin 2)) =
+        ListBlank.append [1, 1] (ListBlank.append [1, 1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default)) := by
+    rw [ListBlank.append_pow_succ, ListBlank.append_pow_succ]
+  rw [h_l] at h1
+  have h2 :
+      ReachesPlus target
+        (Cfg.headRight A
+          (ListBlank.append [0, 1, 1] (ListBlank.append [0]
+            (ListBlank.append [1, 1] (ListBlank.append [1, 1]
+              (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default)))))
+          (ListBlank.append [0, 1, 0] r))
+        (Cfg.headRight A
+          (ListBlank.append [0, 1]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default))
+          (ListBlank.append [1] (ListBlank.append [1, 1, 1, 1, 1, 1, 1, 1] r))) := by
+    bb_steps
+  have h12 := h1.trans h2
+  have h3 := sweep_L_odd_default a (ListBlank.append [1, 1, 1, 1, 1, 1, 1, 1] r)
+  have h9 :
+      ListBlank.append [0, 1] (ListBlank.append [1, 1, 1, 1, 1, 1, 1, 1] r) =
+        ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ 9) r) := rfl
+  rw [h9] at h3
+  exact h12.trans h3
+
+private theorem unit_b1_succ (a : ℕ) (r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 2)) default)))
+        (ListBlank.append [0, 1, 1, 0, 1, 0] r))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] default)
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1))
+          (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ 12) r)))) := by
+  have h_l :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 2)) (default : ListBlank (Fin 2)) =
+        ListBlank.append [1, 1] (ListBlank.append [1, 1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default)) := by
+    rw [ListBlank.append_pow_succ, ListBlank.append_pow_succ]
+  rw [h_l]
+  have h1 :
+      ReachesPlus target
+        (Cfg.headRight A
+          (ListBlank.append [0, 1, 1] (ListBlank.append [0]
+            (ListBlank.append [1, 1] (ListBlank.append [1, 1]
+              (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default)))))
+          (ListBlank.append [0, 1, 1, 0, 1, 0] r))
+        (Cfg.headRight A
+          (ListBlank.append [0, 1]
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) default))
+          (ListBlank.append [1]
+            (ListBlank.append [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] r))) := by
+    bb_steps
+  have h2 := sweep_L_odd_default a (ListBlank.append [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] r)
+  have h12_eq :
+      ListBlank.append [0, 1] (ListBlank.append [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] r) =
+        ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ 12) r) := rfl
+  rw [h12_eq] at h2
+  exact h1.trans h2
+
+private theorem bounce_0 (r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A (ListBlank.append [0, 1, 1] default) (ListBlank.append [1] r))
+      (Cfg.headRight A (ListBlank.append [0, 1, 1] default) (ListBlank.append [0, 1] r)) := by
+  bb_steps
+
+private theorem bounce_succ (a : ℕ) (r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) default))
+        (ListBlank.append [1] r))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) default)))
+        (ListBlank.append [0, 1] r)) := by
+  have h0 : (default : ListBlank (Fin 2)) = ListBlank.append [0] default := by
+    simp
+  have h1 := shift_L_even (a + 1) default r
+  rw [← h0] at h1
+  have h_r :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) (ListBlank.append [0, 1] r) =
+        ListBlank.append [1] (ListBlank.append [1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) (ListBlank.append [0, 1] r))) := by
+    rw [ListBlank.append_pow_succ]
+    rfl
+  rw [h_r] at h1
+  have h2 := bounce_0
+    (ListBlank.append [1]
+      (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) (ListBlank.append [0, 1] r)))
+  have h12 := h1.trans h2
+  have h_r2 :
+      ListBlank.append [0, 1] (ListBlank.append [1]
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) (ListBlank.append [0, 1] r))) =
+        ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1))
+            (ListBlank.append [0, 1] r)) := by
+    rw [ListBlank.append_pow_succ]
+    rfl
+  rw [h_r2] at h12
+  have h3 := shift_R_block a default (ListBlank.append [0, 1] r)
+  exact h12.trans h3
+
+private theorem bounce_0_block (a : ℕ) (r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] default)
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) r))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] default)
+        (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) r))) := by
+  have h_r :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) r =
+        ListBlank.append [1] (ListBlank.append [1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) r)) := by
+    rw [ListBlank.append_pow_succ]
+    rfl
+  rw [h_r]
+  have h1 := bounce_0 (ListBlank.append [1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) r))
+  have h_r2 :
+      ListBlank.append [0, 1] (ListBlank.append [1]
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ a) r)) =
+        ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) r) := by
+    rw [ListBlank.append_pow_succ]
+    rfl
+  rwa [h_r2] at h1
+
+private theorem bounce_succ_block (a b : ℕ) (r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) default))
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ (b + 1)) r))
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) default)))
+        (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (b + 1)) r))) := by
+  have h_r :
+      ListBlank.append (([1, 1] : List (Fin 2)) ^ (b + 1)) r =
+        ListBlank.append [1] (ListBlank.append [1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ b) r)) := by
+    rw [ListBlank.append_pow_succ]
+    rfl
+  rw [h_r]
+  have h1 := bounce_succ a
+    (ListBlank.append [1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ b) r))
+  have h_r2 :
+      ListBlank.append [0, 1] (ListBlank.append [1]
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ b) r)) =
+        ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (b + 1)) r) := by
+    rw [ListBlank.append_pow_succ]
+    rfl
+  rwa [h_r2] at h1
+
+private theorem halt_M3_0 (r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A (ListBlank.append [0, 1, 1] default) (ListBlank.append [0, 1, 0] r))
+      (Cfg.headRight E default (ListBlank.append [0, 1, 1, 1, 1, 1, 1, 1] r)) := by
+  bb_steps
+
+private theorem halt_M3_1 (r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] default)
+        (ListBlank.append [0, 1, 1, 0, 1, 0] r))
+      (Cfg.headRight E default
+        (ListBlank.append [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] r)) := by
+  bb_steps
+
+private theorem halt_M4_0 (r : ListBlank (Fin 2)) :
+    ReachesPlus target
+      (Cfg.headRight A
+        (ListBlank.append [0, 1, 1] (ListBlank.append [0] (ListBlank.append [1, 1] default)))
+        (ListBlank.append [0, 1, 1, 0, 1, 0] r))
+      (Cfg.headRight E default
+        (ListBlank.append [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] r)) := by
+  bb_steps
+
+private theorem isNone_E_zero (r : ListBlank (Fin 2)) :
+    (step target (Cfg.headRight E default (ListBlank.append [0] r))).isNone := by
+  bb_halt
+
+/-- Canonical tape pattern $C(a, b) := 0^\infty\,110\,\mathrm{A}{>}\,(11)^a\,0\,1^b\,0^\infty$. -/
+private def pat_C : TapePattern (Fin 2) (Fin 6) :=
+  { left := .sym 0 (.sym 1 (.sym 1 .default))
+    head := some A
+    right := .rep [1, 1] 0 (.sym 0 (.rep [1] 1 .default)) }
+
+/-- Configuration $C(a, b)$. -/
+private def cfg_C (a b : ℕ) : Cfg (Fin 2) (Fin 6) :=
+  Cfg.headRight A
+    (ListBlank.append [0, 1, 1] default)
+    (ListBlank.append (([1, 1] : List (Fin 2)) ^ a)
+      (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ b) default)))
+
+private theorem eval_pat_C (vars : ℕ → ℕ) :
+    evalTapePattern pat_C vars = cfg_C (vars 0) (vars 1) :=
+  rfl
+
+/-- Closed pattern set for `1RB1LF_0RC1RD_1LA1LD_1LE0RA_---1LC_0LA1LA`. -/
+private def ps : TapePatternSet (Fin 2) (Fin 6) := [(pat_C, .ge_const 1 6)]
+
+private theorem in_ps_C (a b : ℕ) (h : b ≥ 6) : IsInPatternSet ps (cfg_C a b) :=
+  ⟨(pat_C, .ge_const 1 6), List.Mem.head _,
+    fun k => match k with | 0 => a | 1 => b | _ => 0, rfl, h⟩
+
+private def cfg_M3 (a c d : ℕ) : Cfg (Fin 2) (Fin 6) :=
+  Cfg.headRight A
+    (ListBlank.append [0, 1, 1] default)
+    (ListBlank.append (([1, 1] : List (Fin 2)) ^ a)
+      (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ c)
+        (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ d) default)))))
+
+private def cfg_M4 (a b c d : ℕ) : Cfg (Fin 2) (Fin 6) :=
+  Cfg.headRight A
+    (ListBlank.append [0, 1, 1]
+      (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) default))
+    (ListBlank.append (([1, 1] : List (Fin 2)) ^ b)
+      (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ c)
+        (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ d) default)))))
+
+private theorem M3_reaches (c a d : ℕ) :
+    ∃ cfg', ReachesPlus target (cfg_M3 a c d) cfg' ∧
+      (IsInPatternSet ps cfg' ∨ (step target cfg').isNone) := by
+  induction c generalizing a d with
+  | zero =>
+    rcases a with _ | _ | a
+    · refine ⟨_, halt_M3_0 (ListBlank.append (([1] : List (Fin 2)) ^ d) default),
+        Or.inr (isNone_E_zero _)⟩
+    · have h1 := bounce_0_block 0
+        (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ 0)
+          (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ d) default))))
+      have h2 := halt_M3_1 (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+      refine ⟨_, h1.trans h2, Or.inr (isNone_E_zero _)⟩
+    · have h1 := bounce_0_block (a + 1)
+        (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ 0)
+          (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ d) default))))
+      have h2 := unit_collapse_default a (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+      rw [← ListBlank.append_pow_add ([1] : List (Fin 2)) 9 d default] at h2
+      exact ⟨cfg_C (a + 1) (9 + d), h1.trans h2,
+        Or.inl (in_ps_C (a + 1) (9 + d) (by omega))⟩
+  | succ c ih =>
+    rcases a with _ | a
+    · have h1 :
+          cfg_M3 0 (c + 1) d =
+            Cfg.headRight A
+              (ListBlank.append [0, 1, 1]
+                (ListBlank.append (([1, 1] : List (Fin 2)) ^ 0) default))
+              (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (c + 1))
+                (ListBlank.append [0]
+                  (ListBlank.append (([1] : List (Fin 2)) ^ d) default)))) :=
+        rfl
+      rw [h1]
+      have h2 := odd_collapse 0 (c + 1) c (by omega)
+        (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+      rw [← ListBlank.append_pow_add ([1] : List (Fin 2)) 6 d default] at h2
+      exact ⟨cfg_C (c + 1) (6 + d), h2, Or.inl (in_ps_C (c + 1) (6 + d) (by omega))⟩
+    · have h1 := bounce_0_block a
+        (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (c + 1))
+          (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ d) default))))
+      have h0 : (default : ListBlank (Fin 2)) = ListBlank.append [0] default := by
+        simp
+      have h2 := odd_step a c default (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+      rw [← h0, ← ListBlank.append_pow_add ([1] : List (Fin 2)) 6 d default] at h2
+      have h12 : ReachesPlus target (cfg_M3 (a + 1) (c + 1) d) (cfg_M3 a c (6 + d)) :=
+        h1.trans h2
+      rcases ih a (6 + d) with ⟨cfg', h3, h_end⟩
+      exact ⟨cfg', h12.trans h3, h_end⟩
+
+private theorem M4_reaches (c a b d : ℕ) :
+    ∃ cfg', ReachesPlus target (cfg_M4 a b c d) cfg' ∧
+      (IsInPatternSet ps cfg' ∨ (step target cfg').isNone) := by
+  induction c generalizing a b d with
+  | zero =>
+    rcases b with _ | _ | b
+    · have h1 := odd_collapse (a + 1) 0 a (by omega)
+        (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+      rw [← ListBlank.append_pow_add ([1] : List (Fin 2)) 6 d default] at h1
+      exact ⟨cfg_C (a + 1) (6 + d), h1, Or.inl (in_ps_C (a + 1) (6 + d) (by omega))⟩
+    · have h1 := bounce_succ_block a 0
+        (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ 0)
+          (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ d) default))))
+      rcases a with _ | a
+      · have h2 := halt_M4_0 (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+        refine ⟨_, h1.trans h2, Or.inr (isNone_E_zero _)⟩
+      · have h2 := unit_b1_succ a (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+        rw [← ListBlank.append_pow_add ([1] : List (Fin 2)) 12 d default] at h2
+        exact ⟨cfg_C (a + 1) (12 + d), h1.trans h2,
+          Or.inl (in_ps_C (a + 1) (12 + d) (by omega))⟩
+    · have h1 := bounce_succ_block a (b + 1)
+        (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ 0)
+          (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ d) default))))
+      have h0 : (default : ListBlank (Fin 2)) = ListBlank.append [0] default := by
+        simp
+      have h2 := unit_step a b default (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+      rw [← h0, ← ListBlank.append_pow_add ([1] : List (Fin 2)) 9 d default] at h2
+      have h12 : ReachesPlus target (cfg_M4 a (b + 2) 0 d) (cfg_M3 a b (9 + d)) :=
+        h1.trans h2
+      rcases M3_reaches b a (9 + d) with ⟨cfg', h3, h_end⟩
+      exact ⟨cfg', h12.trans h3, h_end⟩
+  | succ c ih =>
+    rcases b with _ | b
+    · have h1 := odd_collapse (a + 1) (c + 1) (c + a + 1) (by omega)
+        (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+      rw [← ListBlank.append_pow_add ([1] : List (Fin 2)) 6 d default] at h1
+      exact ⟨cfg_C (c + a + 2) (6 + d), h1,
+        Or.inl (in_ps_C (c + a + 2) (6 + d) (by omega))⟩
+    · have h1 := bounce_succ_block a b
+        (ListBlank.append [0, 1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ (c + 1))
+          (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ d) default))))
+      have h2 := odd_step b c
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) default)
+        (ListBlank.append (([1] : List (Fin 2)) ^ d) default)
+      rw [← ListBlank.append_pow_add ([1] : List (Fin 2)) 6 d default] at h2
+      have h12 : ReachesPlus target (cfg_M4 a (b + 1) (c + 1) d) (cfg_M4 a b c (6 + d)) :=
+        h1.trans h2
+      rcases ih a b (6 + d) with ⟨cfg', h3, h_end⟩
+      exact ⟨cfg', h12.trans h3, h_end⟩
+
+private theorem cfg_C_odd_eq_M3 (a c : ℕ) :
+    cfg_C a (2 * c + 1) = cfg_M3 a c 0 := by
+  unfold cfg_C cfg_M3
+  have h1 :
+      ListBlank.append (([1] : List (Fin 2)) ^ (2 * c + 1)) (default : ListBlank (Fin 2)) =
+        ListBlank.append [1] (ListBlank.append (([1, 1] : List (Fin 2)) ^ c) default) := by
+    rw [Nat.add_comm (2 * c) 1, ListBlank.append_pow_add ([1] : List (Fin 2)) 1 (2 * c),
+      ← one_pow_two_mul, list_pow_one]
+  have h0 :
+      ListBlank.append [0]
+        (ListBlank.append (([1] : List (Fin 2)) ^ 0) (default : ListBlank (Fin 2))) = default := by
+    simp
+  rw [h1, h0]
+  rfl
+
+private theorem step_closed (a b : ℕ) (h_b : b ≥ 6) :
+    ∃ cfg', ReachesPlus target (cfg_C a b) cfg' ∧
+      (IsInPatternSet ps cfg' ∨ (step target cfg').isNone) := by
+  rcases nat_even_or_odd_two_mul b with ⟨k, rfl⟩ | ⟨c, rfl⟩
+  · obtain ⟨m, rfl⟩ : ∃ m, k = m + 3 := ⟨k - 3, by omega⟩
+    have h_eq :
+        ListBlank.append (([1] : List (Fin 2)) ^ (2 * (m + 3))) (default : ListBlank (Fin 2)) =
+          ListBlank.append (([1, 1] : List (Fin 2)) ^ (m + 1 + 2)) default := by
+      rw [one_pow_two_mul]
+    have h_r9 :
+        ListBlank.append [0, 1]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ 4) (default : ListBlank (Fin 2))) =
+          ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ 9) default) :=
+      rfl
+    rcases a with _ | a
+    · unfold cfg_C
+      rw [h_eq]
+      have h0 : (default : ListBlank (Fin 2)) = ListBlank.append [0] default := by
+        simp
+      have h1 := even_end (m + 1) default
+      rw [← h0, h_r9] at h1
+      exact ⟨cfg_C (m + 1) 9, h1, Or.inl (in_ps_C (m + 1) 9 (by decide))⟩
+    · unfold cfg_C
+      rw [h_eq]
+      have h1 := bounce_0_block a
+        (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (m + 1 + 2)) default))
+      have h2 := shift_R_block a default
+        (ListBlank.append [0]
+          (ListBlank.append (([1, 1] : List (Fin 2)) ^ (m + 1 + 2)) default))
+      have h12 := h1.trans h2
+      have h3 := even_end (m + 1)
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) default)
+      have h123 := h12.trans h3
+      have h_m4 :
+          Cfg.headRight A
+            (ListBlank.append [0, 1, 1]
+              (ListBlank.append (([1, 1] : List (Fin 2)) ^ (a + 1)) default))
+            (ListBlank.append (([1, 1] : List (Fin 2)) ^ (m + 1))
+              (ListBlank.append [0, 1]
+                (ListBlank.append (([1, 1] : List (Fin 2)) ^ 4) default))) =
+            cfg_M4 a (m + 1) 4 0 := by
+        unfold cfg_M4
+        have h0 :
+            ListBlank.append [0]
+              (ListBlank.append (([1] : List (Fin 2)) ^ 0) (default : ListBlank (Fin 2))) =
+              default := by
+          simp
+        rw [h0]
+      rw [h_m4] at h123
+      rcases M4_reaches 4 a (m + 1) 0 with ⟨cfg', h4, h_end⟩
+      exact ⟨cfg', h123.trans h4, h_end⟩
+  · rw [cfg_C_odd_eq_M3]
+    exact M3_reaches c a 0
+
+private theorem init_reaches_pat_C : ReachesStar target (init []) (cfg_C 0 9) := by
+  have h1 :
+      ReachesPlus target
+        (init [])
+        (Cfg.headRight A
+          (ListBlank.append [0, 1, 1] default)
+          (ListBlank.append [0] (ListBlank.append (([1, 1] : List (Fin 2)) ^ 2) default))) := by
+    have h2_pow : (([1, 1] : List (Fin 2)) ^ 2) = [1, 1, 1, 1] := rfl
+    rw [h2_pow]
+    bb_steps
+  have h0 : (default : ListBlank (Fin 2)) = ListBlank.append [0] default := by
+    simp
+  have h2 := even_end 0 default
+  have h_r9 :
+      ListBlank.append [0, 1]
+        (ListBlank.append (([1, 1] : List (Fin 2)) ^ 4) (default : ListBlank (Fin 2))) =
+        ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ 9) default) :=
+    rfl
+  rw [← h0, h_r9] at h2
+  exact (h1.trans h2).to_star
+
+/-- `1RB1LF_0RC1RD_1LA1LD_1LE0RA_---1LC_0LA1LA` is a cryptid. -/
+theorem is_cryptid : IsCryptid target := by
+  refine ⟨ps, ⟨cfg_C 0 9, init_reaches_pat_C, in_ps_C 0 9 (by decide)⟩, ?_⟩
+  intro cfg h_in
+  rcases h_in with ⟨entry, h_mem, vars, rfl, h_cond⟩
+  simp only [ps, List.mem_cons, List.not_mem_nil, or_false] at h_mem
+  subst h_mem
+  rw [eval_pat_C]
+  exact step_closed (vars 0) (vars 1) h_cond
+
+end BusyBeaver.M_1RB1LF_0RC1RD_1LA1LD_1LE0RA_HHH1LC_0LA1LA
