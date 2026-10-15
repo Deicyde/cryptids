@@ -10,8 +10,8 @@ public import BusyBeaver.Bridge
 /-!
 # Busy Beaver Cryptid `1RB1RD_0LC1RA_1RA1LC_0RB1LE_1RF0LD_---0RE`
 
-Formal `IsCryptid` proof for the 6-state, 2-symbol Busy Beaver cryptid
-`1RB1RD_0LC1RA_1RA1LC_0RB1LE_1RF0LD_---0RE`.
+Formal `IsClosedPatternSet`, `IsCryptid`, and `IsValidAcceleration` proofs for the 6-state,
+2-symbol Busy Beaver cryptid `1RB1RD_0LC1RA_1RA1LC_0RB1LE_1RF0LD_---0RE`.
 
 Starting from the blank tape (`init []`), the trajectory reaches the guarded configuration family
 consisting of:
@@ -19,6 +19,63 @@ consisting of:
 - $P_2(a, c) := 0^\infty\,(10)^a\,1\,\mathrm{C}{>}\,0\,1^c\,0^\infty$ ($c \ge 1$),
 at $P_1(1)$ in 3 steps, and every member configuration advances in `ReachesPlus` either to another
 member of the pattern set or to a halting configuration.
+
+## Collatz-like Acceleration Rules
+
+```text
+Consider:
+P_1(c) = 0^inf C> 0 1^c 0^inf
+P_2(a, c) = 0^inf 10^a 1 C> 0 1^c 0^inf
+D_1(a, z, w) = 0^inf 10^a 1^z D> 1 1^w 0^inf
+
+P_1(1) -> P_1(4)
+P_2(0, 1) -> P_1(5)
+P_2(a, 1) -> P_2(a-1, 5) if a >= 1
+P_1(c) -> D_1(0, 2, c-2) if c >= 2
+P_2(a, c) -> D_1(a, 3, c-2) if c >= 2
+
+D_1(0, 2k+1, w) -> D_1(0, 2k+4, w-2) if w >= 2
+D_1(0, 2k+2, w) -> D_1(k+1, 5, w-4) if w >= 4
+D_1(a, 2k+1, w) -> D_1(a-1, 2k+5, w-2) if a >= 1 and w >= 2
+
+D_1(0, 2k+1, 0) -> P_1(2k+4)
+D_1(0, 2k+1, 1) -> P_1(2k+6)
+D_1(0, 2k+2, 0) -> Halt
+D_1(0, 2k+2, 1) -> P_2(k, 3)
+D_1(0, 2k+2, 2) -> P_2(k, 5)
+D_1(0, 2k+2, 3) -> P_2(k, 7)
+D_1(1, 2k+1, 0) -> P_1(2k+5)
+D_1(1, 2k+1, 1) -> P_1(2k+7)
+D_1(a, 2k+1, 0) -> P_2(a-2, 2k+5) if a >= 2
+D_1(a, 2k+1, 1) -> P_2(a-2, 2k+7) if a >= 2
+
+Start: P_1(1), reached after 3 raw TM steps
+```
+
+This initial acceleration can be simplified by composing transitions through $P_1$ and $P_2$,
+yielding a system expressed in terms of the configuration $D_1$:
+
+```text
+Consider:
+D_1(a, z, w) = 0^inf 10^a 1^z D> 1 1^w 0^inf
+
+D_1(0, 2k+1, w) -> D_1(0, 2k+4, w-2) if w >= 2
+D_1(0, 2k+2, w) -> D_1(k+1, 5, w-4) if w >= 4
+D_1(a, 2k+1, w) -> D_1(a-1, 2k+5, w-2) if a >= 1 and w >= 2
+
+D_1(0, 2k+1, 0) -> D_1(0, 2, 2k+2)
+D_1(0, 2k+1, 1) -> D_1(0, 2, 2k+4)
+D_1(0, 2k+2, 0) -> Halt
+D_1(0, 2k+2, 1) -> D_1(k, 3, 1)
+D_1(0, 2k+2, 2) -> D_1(k, 3, 3)
+D_1(0, 2k+2, 3) -> D_1(k, 3, 5)
+D_1(1, 2k+1, 0) -> D_1(0, 2, 2k+3)
+D_1(1, 2k+1, 1) -> D_1(0, 2, 2k+5)
+D_1(a, 2k+1, 0) -> D_1(a-2, 3, 2k+3) if a >= 2
+D_1(a, 2k+1, 1) -> D_1(a-2, 3, 2k+5) if a >= 2
+
+Start: D_1(0, 2, 2), reached after 16 raw TM steps
+```
 -/
 
 @[expose] public section

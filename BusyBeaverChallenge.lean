@@ -916,9 +916,9 @@ theorem is_cryptid : IsCryptid target := by sorry
 inductive State where
   | P_1 (c : ℕ)
   | P_2 (a c : ℕ)
-  | D_1_0_odd (k w : ℕ)
-  | D_1_0_even (k w : ℕ)
-  | D_1_succ_odd (a k w : ℕ)
+  | D_0_odd (k w : ℕ)
+  | D_0_even (k w : ℕ)
+  | D_succ_odd (a k w : ℕ)
 
 def start : State := .P_1 0
 
@@ -930,17 +930,17 @@ def encode : State → Cfg (Fin 2) (Fin 6)
     Cfg.headRight SixState.C
       (ListBlank.append [1] (ListBlank.append (([0, 1] : List (Fin 2)) ^ a) default))
       (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ (c + 1)) default))
-  | .D_1_0_odd k w =>
+  | .D_0_odd k w =>
     Cfg.headRight SixState.D
       (ListBlank.append (([1] : List (Fin 2)) ^ (2 * k + 1))
         (ListBlank.append (([0, 1] : List (Fin 2)) ^ 0) default))
       (ListBlank.append [1] (ListBlank.append (([1] : List (Fin 2)) ^ w) default))
-  | .D_1_0_even k w =>
+  | .D_0_even k w =>
     Cfg.headRight SixState.D
       (ListBlank.append (([1] : List (Fin 2)) ^ (2 * k + 2))
         (ListBlank.append (([0, 1] : List (Fin 2)) ^ 0) default))
       (ListBlank.append [1] (ListBlank.append (([1] : List (Fin 2)) ^ w) default))
-  | .D_1_succ_odd a k w =>
+  | .D_succ_odd a k w =>
     Cfg.headRight SixState.D
       (ListBlank.append (([1] : List (Fin 2)) ^ (2 * k + 1))
         (ListBlank.append (([0, 1] : List (Fin 2)) ^ (a + 1)) default))
@@ -948,23 +948,23 @@ def encode : State → Cfg (Fin 2) (Fin 6)
 
 def next : State → Option State
   | .P_1 0 => some (.P_1 2)
-  | .P_1 (w + 1) => some (.D_1_0_odd 0 w)
+  | .P_1 (w + 1) => some (.D_0_odd 0 w)
   | .P_2 a 0 => some (.P_2 a 2)
-  | .P_2 a (w + 1) => some (.D_1_succ_odd a 0 w)
-  | .D_1_0_odd k 0 => some (.P_1 (2 * k + 3))
-  | .D_1_0_odd k 1 => some (.P_1 (2 * k + 5))
-  | .D_1_0_odd k (w + 2) => some (.D_1_0_even (k + 1) w)
-  | .D_1_0_even _ 0 => none
-  | .D_1_0_even k 1 => some (.P_2 k 2)
-  | .D_1_0_even k 2 => some (.P_2 k 4)
-  | .D_1_0_even k 3 => some (.P_2 k 6)
-  | .D_1_0_even k (w + 4) => some (.D_1_succ_odd k 2 w)
-  | .D_1_succ_odd 0 k 0 => some (.P_1 (2 * k + 4))
-  | .D_1_succ_odd 0 k 1 => some (.P_1 (2 * k + 6))
-  | .D_1_succ_odd (a + 1) k 0 => some (.P_2 a (2 * k + 4))
-  | .D_1_succ_odd (a + 1) k 1 => some (.P_2 a (2 * k + 6))
-  | .D_1_succ_odd 0 k (w + 2) => some (.D_1_0_odd (k + 2) w)
-  | .D_1_succ_odd (a + 1) k (w + 2) => some (.D_1_succ_odd a (k + 2) w)
+  | .P_2 a (w + 1) => some (.D_succ_odd a 0 w)
+  | .D_0_odd k 0 => some (.P_1 (2 * k + 3))
+  | .D_0_odd k 1 => some (.P_1 (2 * k + 5))
+  | .D_0_odd k (w + 2) => some (.D_0_even (k + 1) w)
+  | .D_0_even _ 0 => none
+  | .D_0_even k 1 => some (.P_2 k 2)
+  | .D_0_even k 2 => some (.P_2 k 4)
+  | .D_0_even k 3 => some (.P_2 k 6)
+  | .D_0_even k (w + 4) => some (.D_succ_odd k 2 w)
+  | .D_succ_odd 0 k 0 => some (.P_1 (2 * k + 4))
+  | .D_succ_odd 0 k 1 => some (.P_1 (2 * k + 6))
+  | .D_succ_odd (a + 1) k 0 => some (.P_2 a (2 * k + 4))
+  | .D_succ_odd (a + 1) k 1 => some (.P_2 a (2 * k + 6))
+  | .D_succ_odd 0 k (w + 2) => some (.D_0_odd (k + 2) w)
+  | .D_succ_odd (a + 1) k (w + 2) => some (.D_succ_odd a (k + 2) w)
 
 theorem is_valid_acceleration : IsValidAcceleration target start encode next := by sorry
 theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start := by sorry

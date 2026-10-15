@@ -10,14 +10,37 @@ public import BusyBeaver.Bridge
 /-!
 # Busy Beaver Cryptid `1RB1LD_1RC0RA_1LA1RE_0LA0LB_0RB1RF_---1RD`
 
-Formal `IsCryptid` proof for the 6-state, 2-symbol Busy Beaver cryptid
-`1RB1LD_1RC0RA_1LA1RE_0LA0LB_0RB1RF_---1RD`.
+Formal `IsClosedPatternSet`, `IsCryptid`, and `IsValidAcceleration` proofs for the 6-state,
+2-symbol Busy Beaver cryptid `1RB1LD_1RC0RA_1LA1RE_0LA0LB_0RB1RF_---1RD`.
 
 Starting from the blank tape (`init []`), the trajectory begins immediately in the canonical
 configuration family
 $$A(a, b, c, d) := 0^\infty\,1^a\,(10)^b\,\mathrm{A}{>}\,(01)^c\,1^d\,0^\infty$$
 at $A(0, 0, 0, 0)$, and every member configuration advances in `ReachesPlus` either to another
 member of the pattern set or to a halting configuration (when $a = 0, c = 0, d = b + 2$).
+
+## Collatz-like Acceleration Rules
+
+```text
+Consider:
+A(a, b, c, d) = 0^inf 1^a 10^b A> 01^c 1^d 0^inf
+
+A(a, b, c, d) -> A(a, b+1, c-1, d) if c > 0
+A(a, b, 0, 0) -> A(a+1, 0, 0, 2b+2)
+A(a, b, 0, d) -> A(a-3, b+2, 0, d-1) if d > 0 and a >= 3
+A(2, b, 0, d) -> A(0, 0, b+1, d-1) if d > 0
+A(1, b, 0, d) -> A(1, 1, b+1, d-1) if d > 0 and b > 0
+A(1, 0, 0, d) -> A(0, 0, 0, d+2) if d > 0
+A(0, 0, 0, 1) -> A(0, 0, 2, 5)
+A(0, b, 0, 1) -> A(0, 0, 2, 2b+1) if b > 0
+A(0, b, 0, d) -> A(3d-4, 1, 2, 2b-2d+3) if d >= 2 and b >= d-1
+A(0, b, 0, b+3) -> A(3b+2, 0, 0, 6)
+A(0, b, 0, b+4) -> A(3b+4, 0, 0, 4)
+A(0, b, 0, d) -> A(3b+3, 2, 0, d-b-5) if d >= b+5
+A(0, b, 0, b+2) -> Halt
+
+Start: A(0, 0, 0, 0), already present on the initial blank tape
+```
 -/
 
 @[expose] public section

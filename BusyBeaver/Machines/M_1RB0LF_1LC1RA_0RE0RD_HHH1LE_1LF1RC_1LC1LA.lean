@@ -10,13 +10,28 @@ public import BusyBeaver.Bridge
 /-!
 # Busy Beaver Cryptid `1RB0LF_1LC1RA_0RE0RD_---1LE_1LF1RC_1LC1LA`
 
-Formal `IsCryptid` proof for the 6-state, 2-symbol Busy Beaver cryptid
-`1RB0LF_1LC1RA_0RE0RD_---1LE_1LF1RC_1LC1LA`.
+Formal `IsClosedPatternSet`, `IsCryptid`, and `IsValidAcceleration` proofs for the 6-state,
+2-symbol Busy Beaver cryptid `1RB0LF_1LC1RA_0RE0RD_---1LE_1LF1RC_1LC1LA`.
 
 Starting from the blank tape (`init []`), the trajectory reaches the guarded configuration family
-$$A(a, b) := 0^\infty\,\mathrm{E}{>}\,(10)^a\,1^b\,0^\infty \quad (b \ge 1)$$
-at $A(0, 3)$ in 7 steps, and every $A(a, b)$ with $b \ge 1$ advances in `ReachesPlus` either to
-another $A(a', b')$ with $b' \ge 1$ or to a halting configuration (when $b = 2$).
+$$C(a, b) := 0^\infty\,\mathrm{E}{>}\,(10)^a\,1^b\,0^\infty \quad (b \ge 1)$$
+at $C(0, 3)$ in 7 steps, and every $C(a, b)$ with $b \ge 1$ advances in `ReachesPlus` either to
+another $C(a', b')$ with $b' \ge 1$ or to a halting configuration (when $b = 2$).
+
+## Collatz-like Acceleration Rules
+
+```text
+Consider:
+C(a, b) = 0^inf E> 10^a 1^b 0^inf
+
+C(a, b) -> C(2a+2, b-2a-2) if b > 2a+2
+C(a, 1) -> C(2, 2a+2)
+C(a, 2)  -> Halt
+C(a, 2k) -> C((6a+2k+2)/4, (6a+2k+2)%4+1) if a >= 1 and 2 <= k <= a+1
+C(a, 2k+1) -> C((6a+2k+6)/4, (6a+2k+6)%4+1) if a >= 1 and 1 <= k <= a
+
+Start: C(0,3), reached after 7 raw TM steps
+```
 -/
 
 @[expose] public section

@@ -10,13 +10,75 @@ public import BusyBeaver.Bridge
 /-!
 # Busy Beaver Cryptid `1RB0LC_0LC1RF_1LE1RD_0RC1RC_0LA1LA_---1RA`
 
-Formal `IsCryptid` proof for the 6-state, 2-symbol Busy Beaver cryptid
-`1RB0LC_0LC1RF_1LE1RD_0RC1RC_0LA1LA_---1RA`.
+Formal `IsClosedPatternSet`, `IsCryptid`, and `IsValidAcceleration` proofs for the 6-state,
+2-symbol Busy Beaver cryptid `1RB0LC_0LC1RF_1LE1RD_0RC1RC_0LA1LA_---1RA`.
 
 Starting from the blank tape (`init []`), the trajectory reaches the canonical configuration family
 $$E(a, k, c) := 0^\infty\,1^a\,\mathrm{A}{>}\,0\,(11)^k\,0\,1^c\,0^\infty$$
 at $E(3, 0, 2)$ in 23 steps, and every $E(a, k, c)$ steps in `ReachesPlus` either to another
 $E(a', k', c')$ or to a halting configuration (when $k = 1, c = 1$).
+
+## Collatz-like Acceleration Rules
+
+```text
+Consider:
+E(a, k, c) = 0^inf 1^a A> 0 11^k 0 1^c 0^inf
+M_1(a, k, z) = 0^inf 1^a 0 11^k 1 0 C> 1^z 0^inf
+M_0(n, z) = 0^inf 1^n 1 0 C> 1^z 0^inf
+
+E(a, 0, c) -> M_0(a, c)
+E(a, 1, 2m) -> E(a+3, m, 0)
+E(a, 1, 1) -> Halt
+E(a, 1, 2j+3) -> M_0(a+5, 2j)
+E(a, k+2, 0) -> M_0(a+2, 2k+1)
+E(a, k+2, c) -> M_1(a+3, k, c) if c >= 1
+
+M_1(a, k, 2j+1) -> E(a+3, k, 2j+1)
+M_1(a, k, 2) -> E(a, 1, 2k+2)
+M_1(a, k, 2j+4) -> E(a+3, k+1, 2j+2)
+
+M_0(n, 0) -> E(3, 0, n+2)
+M_0(2m, 2j+1) -> E(3, m, 2j+1)
+M_0(2m+1, 2j+1) -> E(4, m+1, 2j+1)
+M_0(2m, 2) -> E(0, 1, 2m+2)
+M_0(2m+1, 2) -> E(1, 1, 2m+4)
+M_0(2m, 2j+4) -> E(3, m+1, 2j+2)
+M_0(2m+1, 2j+4) -> E(4, m+2, 2j+2)
+
+Start: E(3, 0, 2), reached after 23 raw TM steps
+```
+
+This initial acceleration can be simplified by composing transitions through $M_1$ and $M_0$,
+yielding a system expressed in terms of the configuration $E$:
+
+```text
+Consider:
+E(a, k, c) = 0^inf 1^a A> 0 11^k 0 1^c 0^inf
+
+E(a, 0, 0) -> E(3, 0, a+2)
+E(2m, 0, 2j+1) -> E(3, m, 2j+1)
+E(2m+1, 0, 2j+1) -> E(4, m+1, 2j+1)
+E(2m, 0, 2) -> E(0, 1, 2m+2)
+E(2m+1, 0, 2) -> E(1, 1, 2m+4)
+E(2m, 0, 2j+4) -> E(3, m+1, 2j+2)
+E(2m+1, 0, 2j+4) -> E(4, m+2, 2j+2)
+
+E(a, 1, 2m) -> E(a+3, m, 0)
+E(a, 1, 1) -> Halt
+E(a, 1, 3) -> E(3, 0, a+7)
+E(2m, 1, 5) -> E(1, 1, 2m+8)
+E(2m+1, 1, 5) -> E(0, 1, 2m+8)
+E(2m, 1, 2j+7) -> E(4, m+4, 2j+2)
+E(2m+1, 1, 2j+7) -> E(3, m+4, 2j+2)
+
+E(2m, k+2, 0) -> E(3, m+1, 2k+1)
+E(2m+1, k+2, 0) -> E(4, m+2, 2k+1)
+E(a, k+2, 2j+1) -> E(a+6, k, 2j+1)
+E(a, k+2, 2) -> E(a+3, 1, 2k+2)
+E(a, k+2, 2j+4) -> E(a+6, k+1, 2j+2)
+
+Start: E(3, 0, 2), reached after 23 raw TM steps
+```
 -/
 
 @[expose] public section

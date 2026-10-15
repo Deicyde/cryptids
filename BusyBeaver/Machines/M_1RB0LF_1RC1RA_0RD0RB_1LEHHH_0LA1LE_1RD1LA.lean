@@ -10,13 +10,77 @@ public import BusyBeaver.Bridge
 /-!
 # Busy Beaver Cryptid `1RB0LF_1RC1RA_0RD0RB_1LE---_0LA1LE_1RD1LA`
 
-Formal `IsCryptid` proof for the 6-state, 2-symbol Busy Beaver cryptid
-`1RB0LF_1RC1RA_0RD0RB_1LE---_0LA1LE_1RD1LA`.
+Formal `IsClosedPatternSet`, `IsCryptid`, and `IsValidAcceleration` proofs for the 6-state,
+2-symbol Busy Beaver cryptid `1RB0LF_1RC1RA_0RD0RB_1LE---_0LA1LE_1RD1LA`.
 
 Starting from the blank tape (`init []`), the trajectory reaches the four-pattern configuration
-system (`pat_Junc`, `pat_ScanE`, `pat_ScanE0`, `pat_ScanE1`) at `cfg_Junc 0 0 0` in 35 steps, and
-every member configuration steps in `ReachesPlus` either to another member configuration or to a
-halting configuration.
+system (`J`, `S_E`, `S_{E,0}`, `S_{E,1}`) at `J(0, 0, 0)` in 35 steps, and every member
+configuration steps in `ReachesPlus` either to another member configuration or to a halting
+configuration.
+
+## Collatz-like Acceleration Rules
+
+```text
+Consider:
+J(u, v, w) = 0^inf 1^5 10^u 1 A> 11 01^v 1^w 01 0^inf
+S_E(b, m, k) = 0^inf 1^5 10^b E> 1 1101^m 1^6 11^k 01 0^inf
+S_{E,0}(b, m) = 0^inf 1^5 10^b E> 1 1101^m 1101 0^inf
+S_{E,1}(b, m, n) = 0^inf 1^5 10^b E> 1 1101^m 111 01^n 01001 0^inf
+
+J(0, v, 0) -> S_{E,0}(v+3, 0)
+J(0, v, 1) -> S_{E,1}(v+2, 0, 0)
+J(0, v, 2) -> S_E(v+2, 0, 0)
+J(0, v, w) -> J(v+3, 0, w-3) if w >= 3
+J(1, v, 0) -> S_E(0, 0, v+3)
+J(u, v, 0) -> S_{E,1}(u-2, 0, v+2) if u >= 2
+J(1, v, 1) -> Halt
+J(u, v, 1) -> S_E(u-2, 0, v+2) if u >= 2
+J(u, v, w) -> J(u-1, v+2, w-2) if u >= 1 and w >= 2
+
+S_E(0, 0, k) -> J(0, 0, 2k+6)
+S_E(0, m, k) -> J(2, 2m+2, 2k+1) if m >= 1
+S_E(1, m, k) -> J(0, 2m+3, 2k+1)
+S_E(b, m, k) -> S_E(b-2, m+1, k) if b >= 2
+
+S_{E,0}(0, m) -> S_E(2, 0, 2m)
+S_{E,0}(1, m) -> S_E(0, 0, 2m+1)
+S_{E,0}(b, m) -> S_{E,0}(b-2, m+1) if b >= 2
+
+S_{E,1}(0, m, n) -> S_E(2, 0, 2m+n+2)
+S_{E,1}(1, m, n) -> S_E(0, 0, 2m+n+3)
+S_{E,1}(b, m, n) -> S_{E,1}(b-2, m+1, n) if b >= 2
+
+Start: J(0, 0, 0), reached after 35 raw TM steps
+```
+
+This initial acceleration can be simplified by composing transitions through $S_E$, $S_{E,0}$, and
+$S_{E,1}$, yielding a system expressed in terms of the configuration $J$:
+
+```text
+Consider:
+J(u, v, w) = 0^inf 1^5 10^u 1 A> 11 01^v 1^w 01 0^inf
+
+J(0, v, 0) -> J(0, 0, 2v+12) if v is even
+J(0, v, 0) -> J(2, 4, 2v+7) if v is odd
+J(0, v, 1) -> J(2, 4, 2v+9) if v is even
+J(0, v, 1) -> J(0, 0, 2v+14) if v is odd
+J(0, v, 2) -> J(2, v+4, 1) if v is even
+J(0, v, 2) -> J(0, v+4, 1) if v is odd
+J(0, v, w) -> J(v+3, 0, w-3) if w >= 3
+
+J(1, v, 0) -> J(0, 0, 2v+12)
+J(u, v, 0) -> J(2, 4, 2u+2v+5) if u >= 2 and u is even
+J(u, v, 0) -> J(0, 0, 2u+2v+10) if u >= 3 and u is odd
+
+J(1, v, 1) -> Halt
+J(2, v, 1) -> J(0, 0, 2v+10)
+J(u, v, 1) -> J(2, u, 2v+5) if u >= 4 and u is even
+J(u, v, 1) -> J(0, u, 2v+5) if u >= 3 and u is odd
+
+J(u, v, w) -> J(u-1, v+2, w-2) if u >= 1 and w >= 2
+
+Start: J(0, 0, 0), reached after 35 raw TM steps
+```
 -/
 
 @[expose] public section

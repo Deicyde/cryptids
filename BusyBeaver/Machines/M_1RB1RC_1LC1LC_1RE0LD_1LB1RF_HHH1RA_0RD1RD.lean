@@ -10,18 +10,56 @@ public import BusyBeaver.Bridge
 /-!
 # Busy Beaver Cryptid `1RB1RC_1LC1LC_1RE0LD_1LB1RF_---1RA_0RD1RD`
 
-Formal `IsCryptid` proof for the 6-state, 2-symbol Busy Beaver cryptid
-`1RB1RC_1LC1LC_1RE0LD_1LB1RF_---1RA_0RD1RD`.
+Formal `IsClosedPatternSet`, `IsCryptid`, and `IsValidAcceleration` proofs for the 6-state,
+2-symbol Busy Beaver cryptid `1RB1RC_1LC1LC_1RE0LD_1LB1RF_---1RA_0RD1RD`.
 
 Starting from the blank tape (`init []`), the trajectory reaches the two-pattern configuration
-system (`pat_Even`, `pat_Odd`)
-$$E_{\mathrm{even}}(a, b, c) :=
-  0^\infty\,(11)^{a+1}\,\mathrm{E}{>}\,(11)^{b+1}\,0\,(11)^{c+1}\,0^\infty,$$
-$$E_{\mathrm{odd}}(a, b, c) :=
-  0^\infty\,(11)^a\,111\,\mathrm{E}{>}\,(11)^{b+1}\,0\,(11)^{c+1}\,0^\infty$$
-at $E_{\mathrm{odd}}(2, 2, 0)$ in 100 steps, and every member configuration advances in
-`ReachesPlus` either to another member configuration or to a halting configuration (when
-$b = 0, c = 0$).
+system (`C_0`, `C_1`)
+$$C_0(a, b, c) := 0^\infty\,1^{2a+2}\,\mathrm{E}{>}\,1^{2b+2}\,0\,1^{2c+2}\,0^\infty,$$
+$$C_1(a, b, c) := 0^\infty\,1^{2a+3}\,\mathrm{E}{>}\,1^{2b+2}\,0\,1^{2c+2}\,0^\infty$$
+at $C_1(2, 2, 0)$ in 100 steps, and every member configuration advances in `ReachesPlus` either to
+another member configuration or to a halting configuration (when $b = 0, c = 0$).
+
+## Collatz-like Acceleration Rules
+
+```text
+Consider:
+C_0(a, b, c) = 0^inf 1^{2a+2} E> 1^{2b+2} 0 1^{2c+2} 0^inf
+C_1(a, b, c) = 0^inf 1^{2a+3} E> 1^{2b+2} 0 1^{2c+2} 0^inf
+
+C_0(a, 0, 0) -> Halt
+C_0(a, 0, 1) -> C_1(2, 2, a+1)
+C_0(a, 0, c+2) -> C_0(1, a+3, c)
+C_0(a, b+1, 0) -> C_1(a+1, 0, b)
+C_0(a, b+1, c+1) -> C_0(a+3, b, c)
+
+C_1(a, 0, 0) -> Halt
+C_1(a, 0, 1) -> C_0(1, 0, a+3)
+C_1(a, 0, c+2) -> C_1(2, a+3, c)
+C_1(a, b+1, 0) -> C_0(a+2, 0, b)
+C_1(a, b+1, c+1) -> C_1(a+3, b, c)
+
+Start: C_1(2, 2, 0), reached after 100 raw TM steps
+```
+
+This acceleration can be simplified by merging the two configuration families, using the
+reparameterization $C_0(a,b,c) = C(2a,b,c)$ and $C_1(a,b,c) = C(2a+1,b,c)$:
+
+```text
+Consider:
+C(a, b, c) = 0^inf 1^{a+2} E> 1^{2b+2} 0 1^{2c+2} 0^inf
+
+C(a, 0, 0) -> Halt
+C(2k, 0, 1) -> C(5, 2, k+1)
+C(2k+1, 0, 1) -> C(2, 0, k+3)
+C(2k, 0, c+2) -> C(2, k+3, c)
+C(2k+1, 0, c+2) -> C(5, k+3, c)
+
+C(a, b+1, 0) -> C(a+3, 0, b)
+C(a, b+1, c+1) -> C(a+6, b, c)
+
+Start: C(5, 2, 0), reached after 100 raw TM steps
+```
 -/
 
 @[expose] public section

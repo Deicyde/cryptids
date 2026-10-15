@@ -10,8 +10,8 @@ public import BusyBeaver.Bridge
 /-!
 # Busy Beaver Cryptid `1RB1RD_0LC1RA_0RA1LC_1RA1LE_1RF0LD_---0RE`
 
-Formal `IsCryptid` proof for the 6-state, 2-symbol Busy Beaver cryptid
-`1RB1RD_0LC1RA_0RA1LC_1RA1LE_1RF0LD_---0RE`.
+Formal `IsClosedPatternSet`, `IsCryptid`, and `IsValidAcceleration` proofs for the 6-state,
+2-symbol Busy Beaver cryptid `1RB1RD_0LC1RA_0RA1LC_1RA1LE_1RF0LD_---0RE`.
 
 Starting from the blank tape (`init []`), the trajectory reaches the guarded configuration family
 consisting of:
@@ -19,6 +19,57 @@ consisting of:
 - $P_2(a, c) := 0^\infty\,(10)^a\,1\,\mathrm{C}{>}\,0\,1^c\,0^\infty$ ($c \ge 1$),
 at $P_1(1)$ in 3 steps, and every member configuration advances in `ReachesPlus` either to another
 member of the pattern set or to a halting configuration.
+
+## Collatz-like Acceleration Rules
+
+```text
+Consider:
+P_1(c) = 0^inf C> 0 1^c 0^inf
+P_2(a, c) = 0^inf 10^a 1 C> 0 1^c 0^inf
+D(a, b, w) = 0^inf 10^a 1^b D> 1^{w+1} 0^inf
+where c >= 1
+
+P_1(1) -> P_1(3)
+P_1(w+2) -> D(0, 1, w)
+P_2(a, 1) -> P_2(a, 3)
+P_2(a, w+2) -> D(a+1, 1, w)
+
+D(0, 2k+1, 0) -> P_1(2k+4)
+D(0, 2k+1, 1) -> P_1(2k+6)
+D(0, 2k+1, w+2) -> D(0, 2k+4, w)
+
+D(0, 2k+2, 0) -> Halt
+D(0, 2k+2, 1) -> P_2(k, 3)
+D(0, 2k+2, 2) -> P_2(k, 5)
+D(0, 2k+2, 3) -> P_2(k, 7)
+D(0, 2k+2, w+4) -> D(k+1, 5, w)
+
+D(1, 2k+1, 0) -> P_1(2k+5)
+D(1, 2k+1, 1) -> P_1(2k+7)
+D(a+2, 2k+1, 0) -> P_2(a, 2k+5)
+D(a+2, 2k+1, 1) -> P_2(a, 2k+7)
+D(a+1, 2k+1, w+2) -> D(a, 2k+5, w)
+
+Start: P_1(1), reached after 3 raw TM steps
+```
+
+This initial acceleration can be simplified by composing transitions through $P_1$ and $P_2$,
+yielding a system expressed in terms of the configuration $D$:
+
+```text
+Consider:
+D(a, b, w) = 0^inf 10^a 1^b D> 1^{w+1} 0^inf where b >= 1, and b is odd if a >= 1
+
+D(0, 2k+1, w) -> D(0, 1, 2k+2w+2) if w <= 1
+D(0, 2k+1, w+2) -> D(0, 2k+4, w)
+D(0, 2k+2, 0) -> Halt
+D(0, 2k+2, w) -> D(k+1, 1, 2w-1) if 1 <= w <= 3
+D(0, 2k+2, w+4) -> D(k+1, 5, w)
+D(a+1, 2k+1, w) -> D(a, 1, 2k+2w+3) if w <= 1
+D(a+1, 2k+1, w+2) -> D(a, 2k+5, w)
+
+Start: D(0, 1, 1), reached after 13 raw TM steps
+```
 -/
 
 @[expose] public section
@@ -775,13 +826,13 @@ inductive State where
   | P_1 (c : ℕ)
   /-- $P_2(a, c + 1) := 0^\infty\,(10)^a\,1\,\mathrm{C}{>}\,0\,1^{c+1}\,0^\infty$. -/
   | P_2 (a c : ℕ)
-  /-- $D_1(0, 2k + 1, w) := 0^\infty\,1^{2k+1}\,\mathrm{D}{>}\,1\,1^w\,0^\infty$. -/
-  | D_1_0_odd (k w : ℕ)
-  /-- $D_1(0, 2k + 2, w) := 0^\infty\,1^{2k+2}\,\mathrm{D}{>}\,1\,1^w\,0^\infty$. -/
-  | D_1_0_even (k w : ℕ)
-  /-- $D_1(a + 1, 2k + 1, w) :=
+  /-- $D(0, 2k + 1, w) := 0^\infty\,1^{2k+1}\,\mathrm{D}{>}\,1\,1^w\,0^\infty$. -/
+  | D_0_odd (k w : ℕ)
+  /-- $D(0, 2k + 2, w) := 0^\infty\,1^{2k+2}\,\mathrm{D}{>}\,1\,1^w\,0^\infty$. -/
+  | D_0_even (k w : ℕ)
+  /-- $D(a + 1, 2k + 1, w) :=
     0^\infty\,(10)^{a+1}\,1^{2k+1}\,\mathrm{D}{>}\,1\,1^w\,0^\infty$. -/
-  | D_1_succ_odd (a k w : ℕ)
+  | D_succ_odd (a k w : ℕ)
 
 /-- Initial symbolic state $P_1(1)$, reached after 3 raw TM steps. -/
 def start : State := .P_1 0
@@ -795,17 +846,17 @@ def encode : State → Cfg (Fin 2) (Fin 6)
     Cfg.headRight SixState.C
       (ListBlank.append [1] (ListBlank.append (([0, 1] : List (Fin 2)) ^ a) default))
       (ListBlank.append [0] (ListBlank.append (([1] : List (Fin 2)) ^ (c + 1)) default))
-  | .D_1_0_odd k w =>
+  | .D_0_odd k w =>
     Cfg.headRight SixState.D
       (ListBlank.append (([1] : List (Fin 2)) ^ (2 * k + 1))
         (ListBlank.append (([0, 1] : List (Fin 2)) ^ 0) default))
       (ListBlank.append [1] (ListBlank.append (([1] : List (Fin 2)) ^ w) default))
-  | .D_1_0_even k w =>
+  | .D_0_even k w =>
     Cfg.headRight SixState.D
       (ListBlank.append (([1] : List (Fin 2)) ^ (2 * k + 2))
         (ListBlank.append (([0, 1] : List (Fin 2)) ^ 0) default))
       (ListBlank.append [1] (ListBlank.append (([1] : List (Fin 2)) ^ w) default))
-  | .D_1_succ_odd a k w =>
+  | .D_succ_odd a k w =>
     Cfg.headRight SixState.D
       (ListBlank.append (([1] : List (Fin 2)) ^ (2 * k + 1))
         (ListBlank.append (([0, 1] : List (Fin 2)) ^ (a + 1)) default))
@@ -814,23 +865,23 @@ def encode : State → Cfg (Fin 2) (Fin 6)
 /-- Accelerated Collatz-like transition function (Box 1). -/
 def next : State → Option State
   | .P_1 0 => some (.P_1 2)
-  | .P_1 (w + 1) => some (.D_1_0_odd 0 w)
+  | .P_1 (w + 1) => some (.D_0_odd 0 w)
   | .P_2 a 0 => some (.P_2 a 2)
-  | .P_2 a (w + 1) => some (.D_1_succ_odd a 0 w)
-  | .D_1_0_odd k 0 => some (.P_1 (2 * k + 3))
-  | .D_1_0_odd k 1 => some (.P_1 (2 * k + 5))
-  | .D_1_0_odd k (w + 2) => some (.D_1_0_even (k + 1) w)
-  | .D_1_0_even _ 0 => none
-  | .D_1_0_even k 1 => some (.P_2 k 2)
-  | .D_1_0_even k 2 => some (.P_2 k 4)
-  | .D_1_0_even k 3 => some (.P_2 k 6)
-  | .D_1_0_even k (w + 4) => some (.D_1_succ_odd k 2 w)
-  | .D_1_succ_odd 0 k 0 => some (.P_1 (2 * k + 4))
-  | .D_1_succ_odd 0 k 1 => some (.P_1 (2 * k + 6))
-  | .D_1_succ_odd (a + 1) k 0 => some (.P_2 a (2 * k + 4))
-  | .D_1_succ_odd (a + 1) k 1 => some (.P_2 a (2 * k + 6))
-  | .D_1_succ_odd 0 k (w + 2) => some (.D_1_0_odd (k + 2) w)
-  | .D_1_succ_odd (a + 1) k (w + 2) => some (.D_1_succ_odd a (k + 2) w)
+  | .P_2 a (w + 1) => some (.D_succ_odd a 0 w)
+  | .D_0_odd k 0 => some (.P_1 (2 * k + 3))
+  | .D_0_odd k 1 => some (.P_1 (2 * k + 5))
+  | .D_0_odd k (w + 2) => some (.D_0_even (k + 1) w)
+  | .D_0_even _ 0 => none
+  | .D_0_even k 1 => some (.P_2 k 2)
+  | .D_0_even k 2 => some (.P_2 k 4)
+  | .D_0_even k 3 => some (.P_2 k 6)
+  | .D_0_even k (w + 4) => some (.D_succ_odd k 2 w)
+  | .D_succ_odd 0 k 0 => some (.P_1 (2 * k + 4))
+  | .D_succ_odd 0 k 1 => some (.P_1 (2 * k + 6))
+  | .D_succ_odd (a + 1) k 0 => some (.P_2 a (2 * k + 4))
+  | .D_succ_odd (a + 1) k 1 => some (.P_2 a (2 * k + 6))
+  | .D_succ_odd 0 k (w + 2) => some (.D_0_odd (k + 2) w)
+  | .D_succ_odd (a + 1) k (w + 2) => some (.D_succ_odd a (k + 2) w)
 
 private theorem step_state : ∀ s : State,
     match next s with
@@ -840,28 +891,28 @@ private theorem step_state : ∀ s : State,
   | .P_1 (w + 1) => step_P1_ge2 w
   | .P_2 a 0 => step_P2_c1 a
   | .P_2 a (w + 1) => step_P2_ge2 a w
-  | .D_1_0_odd k 0 => step_D1_case1_w0 k
-  | .D_1_0_odd k 1 => step_D1_case1_w1 k
-  | .D_1_0_odd k (w + 2) => step_D1_case1_ge2 k w
-  | .D_1_0_even k 0 => step_D1_case2_w0 k
-  | .D_1_0_even k 1 => step_D1_case2_w1 k
-  | .D_1_0_even k 2 => step_D1_case2_w2 k
-  | .D_1_0_even k 3 => step_D1_case2_w3 k
-  | .D_1_0_even k (w + 4) => step_D1_case2_ge4 k w
-  | .D_1_succ_odd 0 k 0 => by
+  | .D_0_odd k 0 => step_D1_case1_w0 k
+  | .D_0_odd k 1 => step_D1_case1_w1 k
+  | .D_0_odd k (w + 2) => step_D1_case1_ge2 k w
+  | .D_0_even k 0 => step_D1_case2_w0 k
+  | .D_0_even k 1 => step_D1_case2_w1 k
+  | .D_0_even k 2 => step_D1_case2_w2 k
+  | .D_0_even k 3 => step_D1_case2_w3 k
+  | .D_0_even k (w + 4) => step_D1_case2_ge4 k w
+  | .D_succ_odd 0 k 0 => by
     have h := step_D1_case3_w0 0 k
     rwa [list_pow_zero, ListBlank.append_nil, headLeft_C_default_eq_P1] at h
-  | .D_1_succ_odd 0 k 1 => by
+  | .D_succ_odd 0 k 1 => by
     have h := step_D1_case3_w1 0 k
     rwa [list_pow_zero, ListBlank.append_nil, headLeft_C_default_eq_P1] at h
-  | .D_1_succ_odd (a + 1) k 0 => by
+  | .D_succ_odd (a + 1) k 0 => by
     have h := step_D1_case3_w0 (a + 1) k
     rwa [headLeft_C_succ_eq_P2] at h
-  | .D_1_succ_odd (a + 1) k 1 => by
+  | .D_succ_odd (a + 1) k 1 => by
     have h := step_D1_case3_w1 (a + 1) k
     rwa [headLeft_C_succ_eq_P2] at h
-  | .D_1_succ_odd 0 k (w + 2) => step_D1_case3_ge2 0 k w
-  | .D_1_succ_odd (a + 1) k (w + 2) => step_D1_case3_ge2 (a + 1) k w
+  | .D_succ_odd 0 k (w + 2) => step_D1_case3_ge2 0 k w
+  | .D_succ_odd (a + 1) k (w + 2) => step_D1_case3_ge2 (a + 1) k w
 
 /-- `start`, `encode`, and `next` form a valid Collatz-like acceleration of `target`. -/
 theorem is_valid_acceleration : IsValidAcceleration target start encode next where

@@ -10,13 +10,60 @@ public import BusyBeaver.Bridge
 /-!
 # Busy Beaver Cryptid `1RB1LF_0RC1RD_1LA1LD_1LE0RA_---1LC_0LA1LA`
 
-Formal `IsCryptid` proof for the 6-state, 2-symbol Busy Beaver cryptid
-`1RB1LF_0RC1RD_1LA1LD_1LE0RA_---1LC_0LA1LA`.
+Formal `IsClosedPatternSet`, `IsCryptid`, and `IsValidAcceleration` proofs for the 6-state,
+2-symbol Busy Beaver cryptid `1RB1LF_0RC1RD_1LA1LD_1LE0RA_---1LC_0LA1LA`.
 
 Starting from the blank tape (`init []`), the trajectory reaches the guarded configuration family
 $$C(a, b) := 0^\infty\,110\,\mathrm{A}{>}\,(11)^a\,0\,1^b\,0^\infty \quad (b \ge 6)$$
 at $C(0, 9)$, and every $C(a, b)$ with $b \ge 6$ advances in `ReachesPlus` either to another
 $C(a', b')$ with $b' \ge 6$ or to a halting configuration.
+
+## Collatz-like Acceleration Rules
+
+```text
+Consider:
+C(a, b) = 0^inf 110 A> 11^a 0 1^b 0^inf with b >= 6
+M_3(a, c, d) = 0^inf 110 A> 11^a 01 11^c 0 1^d 0^inf
+M_4(a, b, c, d) = 0^inf 11^{a+1} 110 A> 11^b 01 11^c 0 1^d 0^inf
+
+Notice that C(a, 2c+1) = M_3(a, c, 0)
+
+C(0, 2k+6) -> C(k+1, 9)
+C(a+1, 2k+6) -> M_4(a, k+1, 4, 0)
+
+M_3(0, 0, d) -> Halt
+M_3(1, 0, d) -> Halt
+M_3(a+2, 0, d) -> C(a+1, d+9)
+M_3(0, c+1, d) -> C(c+1, d+6)
+M_3(a+1, c+1, d) -> M_3(a, c, d+6)
+
+M_4(a, 0, c, d) -> C(a+c+1, d+6)
+M_4(0, 1, 0, d) -> Halt
+M_4(a+1, 1, 0, d) -> C(a+1, d+12)
+M_4(a, b+2, 0, d) -> M_3(a, b, d+9)
+M_4(a, b+1, c+1, d) -> M_4(a, b, c, d+6)
+
+Start: C(0, 9), reached after 74 raw TM steps
+```
+
+This initial acceleration can be simplified by composing transitions through $M_3$ and $M_4$,
+yielding a system expressed in terms of the configuration $C$:
+
+```text
+Consider:
+C(a, b) = 0^inf 110 A> 11^a 0 1^b 0^inf with b >= 6
+
+C(0, 2k+6) -> C(k+1, 9)
+C(a+1, 2k+6) -> C(a-k+4, 6k+12) if k <= a+3
+C(a+1, 2k+6) -> Halt if k = a+4 or k = a+5
+C(a+1, 2k+6) -> C(k-a-5, 6a+39) if k >= a+6
+
+C(a, 2k+1) -> C(k-a, 6a+6) if k > a
+C(a, 2k+1) -> Halt if a = k or a = k+1
+C(a, 2k+1) -> C(a-k-1, 6k+9) if a >= k+2
+
+Start: C(0, 9), reached after 74 raw TM steps
+```
 -/
 
 @[expose] public section

@@ -10,13 +10,69 @@ public import BusyBeaver.Bridge
 /-!
 # Busy Beaver Cryptid `1RB1LA_1LC0RE_1LF1LD_1RE0LC_1LB1RA_---0LA`
 
-Formal `IsCryptid` proof for the 6-state, 2-symbol Busy Beaver cryptid
-`1RB1LA_1LC0RE_1LF1LD_1RE0LC_1LB1RA_---0LA`.
+Formal `IsClosedPatternSet`, `IsCryptid`, and `IsValidAcceleration` proofs for the 6-state,
+2-symbol Busy Beaver cryptid `1RB1LA_1LC0RE_1LF1LD_1RE0LC_1LB1RA_---0LA`.
 
 Starting from the blank tape (`init []`), the trajectory reaches the canonical configuration family
-$$C(a, f, g, h) := 0^\infty\,1^{a+1}\,\mathrm{C}{>}\,00\,1^{f+4}\,(01)^g\,1^h\,011\,0^\infty$$
-with $h \in \{3, 6\}$ at $C(4, 0, 0, 3)$, and every $C(a, f, g, h)$ with $h \in \{3, 6\}$ steps in
+$$C(a, b, c, d) := 0^\infty\,1^{a+1}\,\mathrm{C}{>}\,00\,1^{b+4}\,(01)^c\,1^d\,011\,0^\infty$$
+with $d \in \{3, 6\}$ at $C(4, 0, 0, 3)$, and every $C(a, b, c, d)$ with $d \in \{3, 6\}$ steps in
 `ReachesPlus` either to another such configuration or to a halting configuration.
+
+## Collatz-like Acceleration Rules
+
+```text
+Consider:
+C(a,b,c,d) = 0^inf 1^{a+1} C> 00 1^{b+4} 01^c 1^d 011 0^inf
+M(a,b,c,d) = 0^inf 1^{a+3} 01 A> 0 1^{b+4} 01^c 1^d 011 0^inf
+L(a,b,d)   = 0^inf 1^{a+3} 0 1^{b+6} C> 1^{d+1} 011 0^inf
+where d in {3, 6}
+
+Identity:
+C(a,b,0,6) = C(a,b+3,0,3)
+
+C(a+2,b,c,d) -> C(a,b+3,c,d)
+C(0,b,c,d) -> M(0,b,c,d)
+C(1,b,c,d) -> M(1,b,c,d)
+
+M(a,b,c+2,d) -> C(a+b+4,3,c,d)
+M(a,b,1,6) -> C(a+b+4,0,3,3)
+M(a,b,0,3) -> L(a,b+1,3)
+M(a,b,1,3) -> L(a,b,6)
+
+L(a,2k+1,d) -> C(a,0,k+3,d)
+L(0,2k,d) -> Halt
+L(1,0,6) -> C(6,0,3,3)
+L(1,2k+2,d) -> C(6,3,k,d)
+
+Start: C(4,0,0,3), reached after 162 raw TM steps
+```
+
+This initial acceleration can be simplified by composing transitions through $M$ and $L$, yielding
+a system expressed in terms of the configuration $C$:
+
+```text
+Consider:
+C(a,b,c,d) = 0^inf 1^{a+1} C> 00 1^{b+4} 01^c 1^d 011 0^inf
+where d in {3, 6}
+
+C(a,b,0,6) = C(a,b+3,0,3)
+
+C(a+2,b,c,d) -> C(a,b+3,c,d)
+
+C(a,b,c+2,d) -> C(a+b+4,3,c,d) if a <= 1
+C(a,b,1,6) -> C(a+b+4,0,3,3) if a <= 1
+
+C(a,2k,0,3) -> C(a,0,k+3,3) if a <= 1
+C(0,2k+1,0,3) -> Halt
+C(1,2k+1,0,3) -> C(6,3,k,3)
+
+C(a,2k+1,1,3) -> C(a,0,k+3,6) if a <= 1
+C(0,2k,1,3) -> Halt
+C(1,0,1,3) -> C(6,0,3,3)
+C(1,2k+2,1,3) -> C(6,3,k,6)
+
+Start: C(4,0,0,3), reached after 162 raw TM steps
+```
 -/
 
 @[expose] public section

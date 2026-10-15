@@ -10,14 +10,68 @@ public import BusyBeaver.Bridge
 /-!
 # Busy Beaver Cryptid `1RB1LE_1RC1RA_0LD1RB_1LE1LD_1RF0LA_---0RE`
 
-Formal `IsCryptid` proof for the 6-state, 2-symbol Busy Beaver cryptid
-`1RB1LE_1RC1RA_0LD1RB_1LE1LD_1RF0LA_---0RE`.
+Formal `IsClosedPatternSet`, `IsCryptid`, and `IsValidAcceleration` proofs for the 6-state,
+2-symbol Busy Beaver cryptid `1RB1LE_1RC1RA_0LD1RB_1LE1LD_1RF0LA_---0RE`.
 
 Starting from the blank tape (`init []`), the trajectory reaches the canonical configuration family
 $$D(a, b, c) := 0^\infty\,(10)^b\,(11)^{a+1}\,\mathrm{D}{>}\,1^{c+1}\,0^\infty, \quad
   E(a, b, c) := 0^\infty\,(10)^b\,(11)^{a+1}\,\mathrm{E}{>}\,1^{c+1}\,0^\infty$$
 at $D(1, 0, 0)$ in 14 steps, and every configuration in $\{D(a, b, c), E(a, b, c)\}$ steps in
 `ReachesPlus` either to another configuration in the family or to a halting configuration.
+
+## Collatz-like Acceleration Rules
+
+```text
+Consider:
+D(a, b, c) = 0^inf 10^b 1^{2a+2} D> 1^{c+1} 0^inf
+E(a, b, c) = 0^inf 10^b 1^{2a+2} E> 1^{c+1} 0^inf
+
+D(a+1, b, c) -> D(a, b, c+2)
+D(0, 0, 0) -> D(2, 0, 0)
+D(0, 0, c+1) -> E(1, 0, c+1)
+D(0, 1, c) -> D(c, 2, 0) if c <= 2
+D(0, 1, c+3) -> E(1, 2, c+1)
+D(0, b+2, c) -> E(1, b, c+2)
+
+E(a+1, b, 0) -> E(a, b, 1)
+E(0, 0, 0) -> D(0, 0, 1)
+E(0, b+1, 0) -> D(1, b, 0)
+E(a, 0, 1) -> D(a+1, 0, 1)
+E(a, 0, 2) -> D(a+2, 0, 1)
+E(a, 0, 3) -> Halt
+E(a, 0, c+4) -> D(c, a+3, 0) if c <= 2
+E(a, 0, c+7) -> E(1, a+3, c+1)
+E(a, b+1, c) -> D(a+c+1, b, 0) if 1 <= c <= 2
+E(a, b+1, c+3) -> E(a+2, b, c+1)
+
+Start: D(1, 0, 0), reached after 14 raw TM steps
+```
+
+This initial acceleration can be simplified by composing transitions through $D$, yielding a system
+expressed in terms of the configuration $E$:
+
+```text
+Consider:
+E(a, b, c) = 0^inf 10^b 1^{2a+2} E> 1^{c+1} 0^inf
+
+E(a+1, b, 0) -> E(a, b, 1)
+E(0, 0, 0) -> E(1, 0, 1)
+E(0, 1, 0) -> E(1, 0, 2)
+E(0, 2, 0) -> E(1, 0, 6)
+E(0, b+3, 0) -> E(1, b, 4)
+
+E(a, 0, c) -> E(1, 0, 2a+2c+1) if 1 <= c <= 2
+E(a, 0, 3) -> Halt
+E(a, 0, c+4) -> E(1, a+1, 2c+2) if c <= 2
+E(a, 0, c+7) -> E(1, a+3, c+1)
+
+E(a, 1, c) -> E(1, 0, 2a+2c+2) if 1 <= c <= 2
+E(a, 2, c) -> E(1, 2, 2a+2c) if 1 <= c <= 2
+E(a, b+3, c) -> E(1, b, 2a+2c+4) if 1 <= c <= 2
+E(a, b+1, c+3) -> E(a+2, b, c+1)
+
+Start: E(1, 0, 2), reached after 28 raw TM steps
+```
 -/
 
 @[expose] public section
