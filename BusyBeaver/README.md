@@ -1,6 +1,12 @@
 # Busy Beaver Holdouts (`BusyBeaver/`)
 
-This library contains formal Lean 4 specifications and kernel-verified behavioral proofs for Busy Beaver 6 (`BB(6)`) holdouts (some are potential Cryptids, subject to community acceptance), connected to `ConjectureMachines.Machine` via [`BusyBeaver/Bridge.lean`](./Bridge.lean).
+This library contains formal Lean 4 specifications and kernel-verified behavioral proofs for Busy Beaver 6 (`BB(6)`) holdouts, connected to `ConjectureMachines.Machine` via [`BusyBeaver/Bridge.lean`](./Bridge.lean).
+
+## Cryptids and Collatz-like Reductions in `BB(6)`
+
+Broadly speaking, [cryptids](https://wiki.bbchallenge.org/wiki/Cryptids) are Turing machines whose halting problem corresponds to a known open mathematical problem (such as the machines for Goldbach's conjecture, ZF consistency, and the Riemann Hypothesis in [`Cryptids/`](../Cryptids/README.md)). In the context of `BB(6)`, however, the term is commonly used more broadly for holdout machines whose dynamics exhibit a **Collatz-like structure** (piecewise affine or modular transitions on integer counters), rather than encoding the classical Collatz conjecture itself or a named open problem.
+
+Accordingly, for these machines we look for and formalize **Collatz-like reductions** (`HasCollatzReduction` and `IsValidAcceleration`). Some well-known `BB(6)` cryptids, such as [Antihydra](https://wiki.bbchallenge.org/wiki/Antihydra), are widely considered genuinely hard and have attracted dedicated mathematical research. At the same time, other machines with Collatz-like reductions have subsequently been resolved—either through automated deciders or via number-theoretic methods such as Baker's theorem on linear forms in logarithms (e.g., [`1RB1LA_1RC1RE_1LD0RB_1LA0LC_0RF0RD_0RB---`](https://wiki.bbchallenge.org/wiki/1RB1LA_1RC1RE_1LD0RB_1LA0LC_0RF0RD_0RB---)). It is therefore reasonable to expect that some of the machines in this directory will eventually be resolved as halting (`IsHalt`) or non-halting (`IsNotHalt`) over time, with or without the reductions provided here.
 
 ## Behavioral Predicates ([`Defs.lean`](./Defs.lean))
 
