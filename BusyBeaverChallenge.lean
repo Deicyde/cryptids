@@ -171,7 +171,7 @@ def IsNotHalt (M : Machine Γ Λ) : Prop :=
 /-- Alias for `IsNotHalt`. -/
 abbrev IsDoesNotHalt (M : Machine Γ Λ) : Prop := IsNotHalt M
 
-/-- Parametric regular-expression half-tape expressions for `IsCryptid`. -/
+/-- Parametric regular-expression half-tape expressions for `HasCollatzReduction`. -/
 inductive TapeExpr (Γ : Type*) where
   | default : TapeExpr Γ
   | sym (a : Γ) (rest : TapeExpr Γ)
@@ -233,7 +233,7 @@ def IsClosedPatternSet (M : Machine Γ Λ) (ps : TapePatternSet Γ Λ) : Prop :=
 
 /-- `M`'s blank-tape trajectory enters a closed accelerated `TapePatternSet` in which every
 member configuration steps in `ReachesPlus` either to another member or to a halting state. -/
-def IsCryptid (M : Machine Γ Λ) : Prop :=
+def HasCollatzReduction (M : Machine Γ Λ) : Prop :=
   ∃ ps : TapePatternSet Γ Λ, IsClosedPatternSet M ps
 
 /-- An abstract partial transition system `next : S → Option S` halts from `s₀ : S` if iterating
@@ -307,7 +307,7 @@ def ps : TapePatternSet (Fin 2) (Fin 6) :=
       right := .sym 0 (.rep [1, 1] 1 (.sym 0 (.rep [1] 2 .default))) }, .true)]
 
 theorem is_closed_pattern_set : IsClosedPatternSet target ps := by sorry
-theorem is_cryptid : IsCryptid target := by sorry
+theorem has_collatz_reduction : HasCollatzReduction target := by sorry
 
 inductive State where
   | E (a k c : ℕ)
@@ -376,7 +376,7 @@ def ps : TapePatternSet (Fin 2) (Fin 6) :=
   [(pat_A, .ge_const 1 1)]
 
 theorem is_closed_pattern_set : IsClosedPatternSet target ps := by sorry
-theorem is_cryptid : IsCryptid target := by sorry
+theorem has_collatz_reduction : HasCollatzReduction target := by sorry
 
 inductive State where
   | C (a b : ℕ)
@@ -434,7 +434,7 @@ def ps : TapePatternSet (Fin 2) (Fin 6) :=
           (.sym 0 (.sym 1 (.sym 0 (.sym 0 (.sym 1 .default)))))))))) }, .true)]
 
 theorem is_closed_pattern_set : IsClosedPatternSet target ps := by sorry
-theorem is_cryptid : IsCryptid target := by sorry
+theorem has_collatz_reduction : HasCollatzReduction target := by sorry
 
 inductive State where
   | J (u v w : ℕ)
@@ -524,7 +524,7 @@ def ps : TapePatternSet (Fin 2) (Fin 6) :=
                     (.sym 0 (.sym 1 (.sym 1 .default)))))))))))))))) }, .true)]
 
 theorem is_closed_pattern_set : IsClosedPatternSet target ps := by sorry
-theorem is_cryptid : IsCryptid target := by sorry
+theorem has_collatz_reduction : HasCollatzReduction target := by sorry
 
 inductive State where
   | C_3 (a b c : ℕ)
@@ -627,7 +627,7 @@ def ps : TapePatternSet (Fin 2) (Fin 6) :=
       right := .rep [0, 1] 2 (.rep [1] 3 .default) }, .true)]
 
 theorem is_closed_pattern_set : IsClosedPatternSet target ps := by sorry
-theorem is_cryptid : IsCryptid target := by sorry
+theorem has_collatz_reduction : HasCollatzReduction target := by sorry
 
 inductive State where
   | A (a b c d : ℕ)
@@ -681,7 +681,7 @@ def ps : TapePatternSet (Fin 2) (Fin 6) :=
   [(pat_D, .true), (pat_E, .true)]
 
 theorem is_closed_pattern_set : IsClosedPatternSet target ps := by sorry
-theorem is_cryptid : IsCryptid target := by sorry
+theorem has_collatz_reduction : HasCollatzReduction target := by sorry
 
 inductive State where
   | D (a b c : ℕ)
@@ -735,7 +735,7 @@ def pat_C : TapePattern (Fin 2) (Fin 6) :=
 def ps : TapePatternSet (Fin 2) (Fin 6) := [(pat_C, .ge_const 1 6)]
 
 theorem is_closed_pattern_set : IsClosedPatternSet target ps := by sorry
-theorem is_cryptid : IsCryptid target := by sorry
+theorem has_collatz_reduction : HasCollatzReduction target := by sorry
 
 inductive State where
   | C (a b : ℕ)
@@ -798,7 +798,7 @@ def ps : TapePatternSet (Fin 2) (Fin 6) :=
     .and (.ge_const 0 1) (.and (.ge_const 1 1) (.ge_const 2 1)))]
 
 theorem is_closed_pattern_set : IsClosedPatternSet target ps := by sorry
-theorem is_cryptid : IsCryptid target := by sorry
+theorem has_collatz_reduction : HasCollatzReduction target := by sorry
 
 inductive State where
   | C (k m f : ℕ)
@@ -855,7 +855,7 @@ def ps : TapePatternSet (Fin 2) (Fin 6) :=
         (.rep [1, 1] 2 .default)))))) }, .true)]
 
 theorem is_closed_pattern_set : IsClosedPatternSet target ps := by sorry
-theorem is_cryptid : IsCryptid target := by sorry
+theorem has_collatz_reduction : HasCollatzReduction target := by sorry
 
 inductive State where
   | C_0 (a b c : ℕ)
@@ -911,7 +911,7 @@ def ps : TapePatternSet (Fin 2) (Fin 6) :=
       right := .sym 0 (.rep [1] 1 .default) }, .ge_const 1 1)]
 
 theorem is_closed_pattern_set : IsClosedPatternSet target ps := by sorry
-theorem is_cryptid : IsCryptid target := by sorry
+theorem has_collatz_reduction : HasCollatzReduction target := by sorry
 
 inductive State where
   | P_1 (c : ℕ)
@@ -984,7 +984,7 @@ def ps : TapePatternSet (Fin 2) (Fin 6) :=
       right := .sym 0 (.rep [1] 1 .default) }, .ge_const 1 1)]
 
 theorem is_closed_pattern_set : IsClosedPatternSet target ps := by sorry
-theorem is_cryptid : IsCryptid target := by sorry
+theorem has_collatz_reduction : HasCollatzReduction target := by sorry
 
 inductive State where
   | P_1 (c : ℕ)

@@ -9,14 +9,15 @@ public import Mathlib.Data.List.Basic
 public import Mathlib.Data.Nat.Basic
 
 /-!
-# Busy Beaver Holdout & Cryptid Definitions (`BusyBeaver.Defs`)
+# Busy Beaver Holdout Definitions (`BusyBeaver.Defs`)
 
 Canonical Post-Turing machine execution model and behavioral goal predicates for Busy Beaver
-holdouts and cryptids:
+holdouts:
 
 - `IsHalt` — `M` eventually reaches a halting configuration from the blank tape (`init []`).
 - `IsNotHalt` (`IsDoesNotHalt`) — `M` never halts from the blank tape.
-- `IsCryptid` — `M` is governed by a closed accelerated regular-expression tape pattern set.
+- `HasCollatzReduction` — `M` is governed by a closed accelerated regular-expression tape pattern
+  set.
 -/
 
 @[expose] public section
@@ -109,7 +110,7 @@ def IsNotHalt (M : Machine Γ Λ) : Prop :=
 /-- Alias for `IsNotHalt`. -/
 abbrev IsDoesNotHalt (M : Machine Γ Λ) : Prop := IsNotHalt M
 
-/-- Parametric regular-expression half-tape expressions for `IsCryptid`. -/
+/-- Parametric regular-expression half-tape expressions for `HasCollatzReduction`. -/
 inductive TapeExpr (Γ : Type*) where
   /-- All-blank tail (`default : ListBlank Γ`). -/
   | default : TapeExpr Γ
@@ -183,7 +184,7 @@ def IsClosedPatternSet (M : Machine Γ Λ) (ps : TapePatternSet Γ Λ) : Prop :=
 
 /-- `M`'s blank-tape trajectory enters a closed accelerated `TapePatternSet` in which every
 member configuration steps in `ReachesPlus` either to another member or to a halting state. -/
-def IsCryptid (M : Machine Γ Λ) : Prop :=
+def HasCollatzReduction (M : Machine Γ Λ) : Prop :=
   ∃ ps : TapePatternSet Γ Λ, IsClosedPatternSet M ps
 
 /-- An abstract partial transition system `next : S → Option S` halts from `s₀ : S` if iterating

@@ -8,10 +8,10 @@ public import BusyBeaver.Basic
 public import BusyBeaver.Bridge
 
 /-!
-# Busy Beaver Cryptid `1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE`
+# Busy Beaver Holdout `1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE`
 
-Formal `IsClosedPatternSet`, `IsCryptid`, and `IsValidAcceleration` proofs for the 6-state,
-2-symbol Busy Beaver cryptid `1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE`.
+Formal `IsClosedPatternSet`, `HasCollatzReduction`, and `IsValidAcceleration` proofs for the
+6-state, 2-symbol Busy Beaver holdout `1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE`.
 
 Starting from the blank tape (`init []`), the trajectory reaches the guarded configuration family
 $$C(2k, 2m, f) := 0^\infty\,(11)^k\,0\,(11)^m\,0\,\mathrm{D}{>}\,1\,1^f\,0^\infty
@@ -577,7 +577,7 @@ private theorem step_zero_ge3_odd (v j : ℕ) :
   rw [h_r] at h1
   exact h1.trans (finish_0110_odd (v + 1) (j + 3))
 
-/-! ## Cryptid Closure -/
+/-! ## Closedness and `HasCollatzReduction` -/
 
 private theorem step_zero_closed (w d : ℕ) :
     StepsToClosed target ps (cfg_A 0 (w + 1) (d + 4)) := by
@@ -638,8 +638,8 @@ theorem is_closed_pattern_set : IsClosedPatternSet target ps := by
   subst h_mem
   exact step_A_closed (vars 0) (vars 1) (vars 2) h_cond.1 h_cond.2.1 h_cond.2.2
 
-/-- `1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE` is a cryptid. -/
-theorem is_cryptid : IsCryptid target :=
+/-- `1RB1RB_1LC0RE_---1LD_0RA1LB_1RA1LF_0LE1LE` has a Collatz-like reduction. -/
+theorem has_collatz_reduction : HasCollatzReduction target :=
   ⟨ps, is_closed_pattern_set⟩
 
 /-! ## Collatz-Like Acceleration (Level B) -/
