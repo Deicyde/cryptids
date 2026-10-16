@@ -14,9 +14,9 @@ using [`leanprover/comparator`](https://github.com/leanprover/comparator).
   target state-reduction, equivalence, and semantics theorems with `sorry`.
 - [`BusyBeaverChallenge.lean`](../BusyBeaverChallenge.lean) imports **only** Mathlib and Lean core
   (`Lean.Elab.Term`), defines the shared `BusyBeaver` Post-Turing execution model, accelerated
-  `TapePatternSet` and Collatz-like acceleration semantics (`IsClosedPatternSet`, `IsCryptid`,
+  `TapePatternSet` and Collatz-like acceleration semantics (`IsClosedPatternSet`, `HasCollatzReduction`,
   `IsValidAcceleration`, `CollatzHalts`, `IsHalt`, `IsNotHalt`), and `load_rle_machine%` once,
-  and states all 44 `BB(6)` holdout theorems (`is_closed_pattern_set`, `is_cryptid`,
+  and states all 44 `BB(6)` holdout theorems (`is_closed_pattern_set`, `has_collatz_reduction`,
   `is_valid_acceleration`, and `isHalt_iff_acceleration` across the 11 machines) with `sorry`.
 
 Comparator exports both the challenge module (`Challenge` or `BusyBeaverChallenge`) and the
@@ -32,7 +32,7 @@ that:
 | Config File | Challenge Module | Solution Module | Verified Theorems |
 | :--- | :--- | :--- | :--- |
 | [`all.json`](./all.json) | `Challenge` | `Cryptids` | All 19 conjecture-checking state-reduction, equivalence, and semantics theorems |
-| [`busy_beaver.json`](./busy_beaver.json) | `BusyBeaverChallenge` | `BusyBeaver` | All 44 `BB(6)` holdout Level A and Level B theorems (`is_closed_pattern_set`, `is_cryptid`, `is_valid_acceleration`, `isHalt_iff_acceleration`) |
+| [`busy_beaver.json`](./busy_beaver.json) | `BusyBeaverChallenge` | `BusyBeaver` | All 44 `BB(6)` holdout Level A and Level B theorems (`is_closed_pattern_set`, `has_collatz_reduction`, `is_valid_acceleration`, `isHalt_iff_acceleration`) |
 | [`goldbach_21.json`](./goldbach_21.json) | `Challenge` | `Cryptids.Goldbach21` | `candidate_fewer_states`, `candidate_equivalent` |
 | [`goldbach_semantics.json`](./goldbach_semantics.json) | `Challenge` | `Cryptids.Semantics.Goldbach` | `halts_reference_iff_not_goldbach`, `halts_candidate_iff_not_goldbach` |
 | [`zf_380.json`](./zf_380.json) | `Challenge` | `Cryptids.Zf380` | `candidate_fewer_states`, `candidate_equivalent` |
