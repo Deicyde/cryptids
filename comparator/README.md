@@ -10,7 +10,7 @@ using [`leanprover/comparator`](https://github.com/leanprover/comparator).
 - [`Challenge.lean`](../Challenge.lean) imports **only** Mathlib and Lean core (`Lean.Elab.Term`),
   defines all conjecture-checking baseline and candidate machines (`reference` and `candidate`),
   states the target mathematical propositions (`GoldbachConjecture`,
-  `MatiyasevichRiemannCounterexample`, `ZFProvable`, `WadeZFProvable`, etc.), and states all 19
+  `MatiyasevichRiemannCounterexample`, `ZFProvable`, `WadeZFProvable`, etc.), and states all 22
   target state-reduction, equivalence, and semantics theorems with `sorry`.
 - [`BusyBeaverChallenge.lean`](../BusyBeaverChallenge.lean) imports **only** Mathlib and Lean core
   (`Lean.Elab.Term`), defines the shared `BusyBeaver` Post-Turing execution model, accelerated
@@ -31,7 +31,7 @@ that:
 
 | Config File | Challenge Module | Solution Module | Verified Theorems |
 | :--- | :--- | :--- | :--- |
-| [`all.json`](./all.json) | `Challenge` | `Cryptids` | All 19 conjecture-checking state-reduction, equivalence, and semantics theorems |
+| [`all.json`](./all.json) | `Challenge` | `Cryptids` | All 22 conjecture-checking state-reduction, equivalence, and semantics theorems |
 | [`busy_beaver.json`](./busy_beaver.json) | `BusyBeaverChallenge` | `BusyBeaver` | All 212 `BB(6)` holdout Level A and Level B theorems (`is_closed_pattern_set`, `has_collatz_reduction`, `is_valid_acceleration`, `isHalt_iff_acceleration`) |
 | [`goldbach_21.json`](./goldbach_21.json) | `Challenge` | `Cryptids.Goldbach21` | `candidate_fewer_states`, `candidate_equivalent` |
 | [`goldbach_semantics.json`](./goldbach_semantics.json) | `Challenge` | `Cryptids.Semantics.Goldbach` | `halts_reference_iff_not_goldbach`, `halts_candidate_iff_not_goldbach` |
@@ -39,6 +39,7 @@ that:
 | [`zf_393.json`](./zf_393.json) | `Challenge` | `Cryptids.Semantics.Zf393` | `halts_zf393_iff_zfInconsistent`, `not_halts_zf393`, `halts_candidate_iff_zfInconsistent`, `not_halts_candidate` |
 | [`zf_semantics.json`](./zf_semantics.json) | `Challenge` | `Cryptids.Semantics.Zf` | `zfProvable_sound_zfSet`, `not_zfInconsistent`, `halts_zf432_iff_wadeZFInconsistent` |
 | [`riemann_104.json`](./riemann_104.json) | `Challenge` | `Cryptids.Riemann104` | `candidate_fewer_states`, `candidate_equivalent` |
+| [`riemann_95.json`](./riemann_95.json) | `Challenge` | `Cryptids.Semantics.Riemann95` | `candidate_fewer_states`, `candidate_equivalent`, `halts_candidate_iff_not_riemannHypothesis` |
 | [`riemann_120.json`](./riemann_120.json) | `Challenge` | `Cryptids.Semantics.Riemann120` | `halts_riemann120_iff_not_riemannHypothesis`, `halts_candidate_iff_not_riemannHypothesis` |
 | [`riemann_semantics.json`](./riemann_semantics.json) | `Challenge` | `Cryptids.Semantics.Riemann` | `halts_riemann744_iff_exists_counterexample`, `halts_riemann744_iff_not_riemannHypothesis` |
 
