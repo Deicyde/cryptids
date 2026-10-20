@@ -257,6 +257,111 @@ structure IsValidAcceleration (M : Machine Γ Λ) {S : Type*}
   step_none : ∀ s, next s = none →
     ∃ cfg', ReachesStar M (encode s) cfg' ∧ (step M cfg').isNone
 
+/-- Parametric half-tape segment for `HasStackedCollatzReduction`: in addition to single symbols
+and repeated blocks, a `.word words stack_idx` segment expands a variable-length stack word
+`stacks stack_idx : List ℕ` over a finite block vocabulary `words : List (List Γ)`. -/
+inductive StackSeg (Γ : Type*) where
+  /-- Single symbol `a`. -/
+  | sym (a : Γ)
+  /-- Finite block `blk` repeated `vars var_idx` times. -/
+  | rep (blk : List Γ) (var_idx : ℕ)
+  /-- Stack word `stacks stack_idx` expanded over block vocabulary `words`. -/
+  | word (words : List (List Γ)) (stack_idx : ℕ)
+
+/-- Whether a `StackSeg Γ` is a `.word` stack segment. -/
+def StackSeg.isWord {Γ : Type*} : StackSeg Γ → Bool
+  | .word _ _ => true
+  | _ => false
+
+/-- A `StackSeg Γ` is well-formed when every repeated block or stack-vocabulary block is non-empty
+and contains no blank (`default`) symbols, and every `.word` vocabulary is non-empty. -/
+def StackSeg.WellFormed {Γ : Type*} [Inhabited Γ] [DecidableEq Γ] : StackSeg Γ → Bool
+  | .sym _ => true
+  | .rep blk _ => !blk.isEmpty && blk.all (· != default)
+  | .word words _ => !words.isEmpty && words.all (fun w => !w.isEmpty && w.all (· != default))
+
+/-- Parametric stack-word half-tape expression (evaluated from head to blank tail). -/
+abbrev StackExpr (Γ : Type*) := List (StackSeg Γ)
+
+/-- Evaluate a single `StackSeg Γ` under counter assignment `vars : ℕ → ℕ` and stack assignment
+`stks : ℕ → List ℕ`. -/
+def evalStackSeg {Γ : Type*} : StackSeg Γ → (ℕ → ℕ) → (ℕ → List ℕ) → List Γ
+  | .sym a, _, _ => [a]
+  | .rep blk v, vars, _ => blk ^ vars v
+  | .word words s, _, stks => ((stks s).map (fun d => words.getD d [])).flatten
+
+/-- Evaluate a `StackExpr Γ` under counter assignment `vars : ℕ → ℕ` and stack assignment
+`stks : ℕ → List ℕ`. -/
+def evalStackExpr {Γ : Type*} [Inhabited Γ] :
+    StackExpr Γ → (ℕ → ℕ) → (ℕ → List ℕ) → ListBlank Γ
+  | [], _, _ => default
+  | seg :: rest, vars, stks =>
+      ListBlank.append (evalStackSeg seg vars stks) (evalStackExpr rest vars stks)
+
+/-- Parametric stack-word full-tape configuration pattern. -/
+structure StackPattern (Γ Λ : Type*) where
+  /-- Left half-tape expression. -/
+  left : StackExpr Γ
+  /-- Control state (`some q` or `none`). -/
+  head : Option Λ
+  /-- Right half-tape expression (whose head is under the tape head). -/
+  right : StackExpr Γ
+
+/-- A `StackPattern Γ Λ` is well-formed when all segments on both half-tapes are well-formed
+(non-empty and blank-free blocks), at least one half-tape is empty (single-sided tape boundary),
+and at most one `.word` stack segment appears across the pattern. -/
+def StackPattern.WellFormed {Γ Λ : Type*} [Inhabited Γ] [DecidableEq Γ]
+    (p : StackPattern Γ Λ) : Bool :=
+  p.left.all StackSeg.WellFormed &&
+  p.right.all StackSeg.WellFormed &&
+  (p.left.isEmpty || p.right.isEmpty) &&
+  (decide (p.left.countP StackSeg.isWord + p.right.countP StackSeg.isWord ≤ 1))
+
+/-- Evaluate a `StackPattern Γ Λ` under counter assignment `vars : ℕ → ℕ` and stack assignment
+`stks : ℕ → List ℕ`. -/
+def evalStackPattern {Γ Λ : Type*} [Inhabited Γ] [Inhabited Λ]
+    (p : StackPattern Γ Λ) (vars : ℕ → ℕ) (stks : ℕ → List ℕ) : Cfg Γ Λ :=
+  let r := evalStackExpr p.right vars stks
+  ⟨p.head, ⟨r.head, evalStackExpr p.left vars stks, r.tail⟩⟩
+
+/-- Finite list of guarded stack-word tape patterns. -/
+abbrev StackPatternSet (Γ Λ : Type*) := List (StackPattern Γ Λ × VarCond)
+
+/-- A `StackPatternSet Γ Λ` is well-formed when it is non-empty and every pattern in it is
+well-formed (`StackPattern.WellFormed`). -/
+def IsWellFormedStackPatternSet {Γ Λ : Type*} [Inhabited Γ] [DecidableEq Γ]
+    (ps : StackPatternSet Γ Λ) : Prop :=
+  (!ps.isEmpty && ps.all (fun entry => entry.1.WellFormed)) = true
+
+/-- Membership of configuration `cfg` in a `StackPatternSet`. -/
+def IsInStackPatternSet {Γ Λ : Type*} [Inhabited Γ] [Inhabited Λ]
+    (ps : StackPatternSet Γ Λ) (cfg : Cfg Γ Λ) : Prop :=
+  ∃ entry : StackPattern Γ Λ × VarCond, entry ∈ ps ∧
+    ∃ (vars : ℕ → ℕ) (stks : ℕ → List ℕ),
+      cfg = evalStackPattern entry.1 vars stks ∧ evalVarCond entry.2 vars
+
+/-- `ps` is a closed accelerated `StackPatternSet` for `M` if `ps` is well-formed
+(`IsWellFormedStackPatternSet`), `M`'s blank-tape trajectory enters `ps`, and every member
+configuration of `ps` steps in `ReachesPlus` (`n > 0` steps) either to another member of `ps` or
+to a halting configuration.
+
+In `BusyBeaverChallenge.lean`, `IsClosedStackPatternSet` pins an explicit `ps` and is always paired
+with a concrete Level B finite-state transducer acceleration (`IsValidAcceleration`). -/
+def IsClosedStackPatternSet [DecidableEq Γ] (M : Machine Γ Λ) (ps : StackPatternSet Γ Λ) : Prop :=
+  IsWellFormedStackPatternSet ps ∧
+  (∃ cfg₀, ReachesStar M (init []) cfg₀ ∧ IsInStackPatternSet ps cfg₀) ∧
+  (∀ cfg, IsInStackPatternSet ps cfg →
+    ∃ cfg', ReachesPlus M cfg cfg' ∧
+      (IsInStackPatternSet ps cfg' ∨ (step M cfg').isNone))
+
+/-- `M`'s blank-tape trajectory enters a well-formed closed accelerated `StackPatternSet` in which
+every member configuration steps in `ReachesPlus` either to another member or to a halting state.
+This existential summary is always paired in `BusyBeaverChallenge.lean` with a concrete `ps`
+(`IsClosedStackPatternSet M ps`) and an explicit Level B finite-state transducer acceleration
+(`IsValidAcceleration M start encode next`). -/
+def HasStackedCollatzReduction [DecidableEq Γ] (M : Machine Γ Λ) : Prop :=
+  ∃ ps : StackPatternSet Γ Λ, IsClosedStackPatternSet M ps
+
 namespace SixState
 
 /-- State `A` (`0 : Fin 6`), the initial state. -/
@@ -274,8 +379,22 @@ abbrev F : Fin 6 := 5
 
 end SixState
 
+namespace ThreeState
+
+/-- State `A` (`0 : Fin 3`), the initial state. -/
+abbrev A : Fin 3 := 0
+/-- State `B` (`1 : Fin 3`). -/
+abbrev B : Fin 3 := 1
+/-- State `C` (`2 : Fin 3`). -/
+abbrev C : Fin 3 := 2
+
+end ThreeState
+
 /-- Canonical `NeZero 2` instance for `(states, 2)` Turing machines. -/
 instance (priority := high) instNeZeroTwo : @NeZero ℕ Zero.ofOfNat0 2 := Nat.instNeZeroSucc
+
+/-- Canonical `NeZero 3` instance for `(3, 3)` Turing machines. -/
+instance (priority := high) instNeZeroThree : @NeZero ℕ Zero.ofOfNat0 3 := Nat.instNeZeroSucc
 
 /-- Canonical `NeZero 6` instance for `(6, symbols)` Turing machines. -/
 instance (priority := high) instNeZeroSix : @NeZero ℕ Zero.ofOfNat0 6 := Nat.instNeZeroSucc
@@ -4510,5 +4629,349 @@ theorem is_valid_acceleration : IsValidAcceleration target start encode next := 
 
 theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start := by sorry
 end M_1RBHHH_1RC1LE_0RD0RF_0RE0LA_1LF0LB_1LA1LD
+
+namespace M_1RB0LB0RC_2LC2LA1RA_1RA1LCHHH
+def machine : ConjectureMachines.Machine 3 3 :=
+  load_rle_machine% "1RB0LB0RC_2LC2LA1RA_1RA1LC---"
+
+abbrev target : Machine (Fin 3) (Fin 3) :=
+  machine.toBB
+
+inductive State where
+  | A (a c : ℕ)
+  deriving DecidableEq, Repr
+
+def start : State := .A 1 1
+
+def encode : State → Cfg (Fin 3) (Fin 3)
+  | .A a c =>
+    Cfg.headRight ThreeState.A
+      (ListBlank.append (([1, 0] : List (Fin 3)) ^ c) default)
+      (ListBlank.append (([1] : List (Fin 3)) ^ a) (ListBlank.cons 2 default))
+
+def next : State → Option State
+  | .A a c =>
+    if a ≤ c then
+      if a % 2 = 0 then
+        if c % 2 = 0 then none
+        else some (.A 1 (a / 2 + c + 2))
+      else if c % 2 = 0 then
+        some (.A (3 * a) (c - a + 4))
+      else
+        some (.A (3 * a + 2) (c - a + 1))
+    else if c % 4 = 0 ∨ c % 4 = 2 then
+      some (.A (a - c - 1) (3 * (c / 2) + 2))
+    else if c % 4 = 1 then
+      if a = c + 1 then none
+      else some (.A (a - c - 2) (3 * (c / 2) + 5))
+    else if a = c + 1 then
+      none
+    else if a = c + 2 then
+      some (.A (3 * c + 8) 1)
+    else if a = c + 3 then
+      none
+    else
+      some (.A (a - c - 4) (3 * (c / 2) + 8))
+
+theorem is_valid_acceleration : IsValidAcceleration target start encode next := by sorry
+
+theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start := by sorry
+
+def pat_A : TapePattern (Fin 3) (Fin 3) :=
+  { left := .rep [1, 0] 1 .default
+    head := some ThreeState.A
+    right := .rep [1] 0 (.sym 2 .default) }
+
+def ps : TapePatternSet (Fin 3) (Fin 3) :=
+  [(pat_A, .true)]
+
+theorem is_closed_pattern_set : IsClosedPatternSet target ps := by sorry
+
+theorem has_collatz_reduction : HasCollatzReduction target := by sorry
+end M_1RB0LB0RC_2LC2LA1RA_1RA1LCHHH
+
+namespace M_1RB1LB2LC_1LA2RB1RB_HHH0LA2LA
+def machine : ConjectureMachines.Machine 3 3 :=
+  load_rle_machine% "1RB1LB2LC_1LA2RB1RB_---0LA2LA"
+
+abbrev target : Machine (Fin 3) (Fin 3) :=
+  machine.toBB
+
+inductive State where
+  | W (w : List Bool)
+  deriving DecidableEq, Repr
+
+inductive Carry where
+  | ca
+  | cb
+  | cc
+  | cd
+  | ce
+  | cf
+  deriving DecidableEq, Repr
+
+def pass : Carry → List Bool → Option (List Bool)
+  | .ca, [] => some [true]
+  | .ca, false :: zs => List.cons true <$> pass .cc zs
+  | .ca, true :: zs => List.cons false <$> pass .cb zs
+  | .cb, [] => some [false, true]
+  | .cb, false :: zs => some (true :: zs)
+  | .cb, true :: zs => some (false :: zs)
+  | .cc, [] => none
+  | .cc, false :: zs => List.cons true <$> pass .ca zs
+  | .cc, true :: zs => List.cons false <$> pass .cd zs
+  | .cd, [] => some [false, false, true]
+  | .cd, false :: zs => List.cons false <$> pass .ce zs
+  | .cd, true :: zs => List.cons true <$> pass .cf zs
+  | .ce, [] => none
+  | .ce, false :: zs => List.cons false <$> pass .ca zs
+  | .ce, true :: zs => List.cons true <$> pass .cd zs
+  | .cf, [] => some [true, false, false, true]
+  | .cf, false :: zs => List.cons false <$> pass .cd zs
+  | .cf, true :: zs => List.cons true <$> pass .ca zs
+
+def start : State := .W [true]
+
+def encode : State → Cfg (Fin 3) (Fin 3)
+  | .W w =>
+      Cfg.headRight ThreeState.B
+        (ListBlank.append (w.map fun b => if b then 1 else 2) default) default
+
+def next : State → Option State
+  | .W w => (fun w' => .W (false :: w')) <$> pass .ca w
+
+theorem is_valid_acceleration : IsValidAcceleration target start encode next := by sorry
+
+theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start := by sorry
+
+def pat_W : StackPattern (Fin 3) (Fin 3) :=
+  { left := [.word [[2], [1]] 0]
+    head := some ThreeState.B
+    right := [] }
+
+def ps : StackPatternSet (Fin 3) (Fin 3) :=
+  [(pat_W, .true)]
+
+theorem is_closed_stack_pattern_set : IsClosedStackPatternSet target ps := by sorry
+
+theorem has_stacked_collatz_reduction : HasStackedCollatzReduction target := by sorry
+end M_1RB1LB2LC_1LA2RB1RB_HHH0LA2LA
+
+namespace WilyCoyote
+
+inductive State where
+  | W (w : List Bool)
+  deriving DecidableEq, Repr
+
+inductive WilyMode where
+  | s0
+  | s1
+  | s2
+  | s3
+  deriving DecidableEq, Repr
+
+def wilyPass : WilyMode → List Bool → Option (List Bool)
+  | .s0, [] => some [false]
+  | .s0, false :: xs => List.cons true <$> wilyPass .s1 xs
+  | .s0, true :: xs => List.cons false <$> wilyPass .s2 xs
+  | .s1, [] => none
+  | .s1, false :: xs => List.cons true <$> wilyPass .s3 xs
+  | .s1, true :: xs => List.cons false <$> wilyPass .s0 xs
+  | .s2, [] => some [true, true, false, false]
+  | .s2, false :: xs => List.cons false <$> wilyPass .s2 xs
+  | .s2, true :: xs => List.cons true <$> wilyPass .s1 xs
+  | .s3, [] => some [false, false]
+  | .s3, b :: xs => some ((!b) :: xs)
+
+def start : State := .W [false, false]
+
+def encode : State → Cfg (Fin 3) (Fin 3)
+  | .W w =>
+      Cfg.headRight ThreeState.A default
+        (ListBlank.cons 0 (ListBlank.append (w.map fun b => if b then 1 else 2) default))
+
+def next : State → Option State
+  | .W w => (fun w' => .W (false :: w')) <$> wilyPass .s0 w
+
+def pat_W : StackPattern (Fin 3) (Fin 3) :=
+  { left := []
+    head := some ThreeState.A
+    right := [.sym 0, .word [[2], [1]] 0] }
+
+def ps : StackPatternSet (Fin 3) (Fin 3) :=
+  [(pat_W, .true)]
+
+end WilyCoyote
+
+namespace M_1RB2LA1LA_2LA0RA2RC_HHH0LC2RA
+def machine : ConjectureMachines.Machine 3 3 :=
+  load_rle_machine% "1RB2LA1LA_2LA0RA2RC_---0LC2RA"
+
+abbrev target : Machine (Fin 3) (Fin 3) :=
+  machine.toBB
+
+abbrev State := WilyCoyote.State
+abbrev WilyMode := WilyCoyote.WilyMode
+abbrev wilyPass := WilyCoyote.wilyPass
+abbrev start : State := WilyCoyote.start
+abbrev encode : State → Cfg (Fin 3) (Fin 3) := WilyCoyote.encode
+abbrev next : State → Option State := WilyCoyote.next
+abbrev pat_W : StackPattern (Fin 3) (Fin 3) := WilyCoyote.pat_W
+abbrev ps : StackPatternSet (Fin 3) (Fin 3) := WilyCoyote.ps
+
+theorem is_valid_acceleration : IsValidAcceleration target start encode next := by sorry
+
+theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start := by sorry
+
+theorem is_closed_stack_pattern_set : IsClosedStackPatternSet target ps := by sorry
+
+theorem has_stacked_collatz_reduction : HasStackedCollatzReduction target := by sorry
+end M_1RB2LA1LA_2LA0RA2RC_HHH0LC2RA
+
+namespace M_1RB2LA1LA_2LA0RA2RC_HHH1RB2RA
+def machine : ConjectureMachines.Machine 3 3 :=
+  load_rle_machine% "1RB2LA1LA_2LA0RA2RC_---1RB2RA"
+
+abbrev target : Machine (Fin 3) (Fin 3) :=
+  machine.toBB
+
+abbrev State := WilyCoyote.State
+abbrev WilyMode := WilyCoyote.WilyMode
+abbrev wilyPass := WilyCoyote.wilyPass
+abbrev start : State := WilyCoyote.start
+abbrev encode : State → Cfg (Fin 3) (Fin 3) := WilyCoyote.encode
+abbrev next : State → Option State := WilyCoyote.next
+abbrev pat_W : StackPattern (Fin 3) (Fin 3) := WilyCoyote.pat_W
+abbrev ps : StackPatternSet (Fin 3) (Fin 3) := WilyCoyote.ps
+
+theorem is_valid_acceleration : IsValidAcceleration target start encode next := by sorry
+
+theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start := by sorry
+
+theorem is_closed_stack_pattern_set : IsClosedStackPatternSet target ps := by sorry
+
+theorem has_stacked_collatz_reduction : HasStackedCollatzReduction target := by sorry
+end M_1RB2LA1LA_2LA0RA2RC_HHH1RB2RA
+
+namespace M_1RB2LC1RC_2LCHHH2RB_2LA0LB0RA
+def machine : ConjectureMachines.Machine 3 3 :=
+  load_rle_machine% "1RB2LC1RC_2LC---2RB_2LA0LB0RA"
+
+abbrev target : Machine (Fin 3) (Fin 3) :=
+  machine.toBB
+
+inductive State where
+  | A (a c : ℕ)
+  deriving DecidableEq, Repr
+
+def start : State := .A 0 1
+
+def encode : State → Cfg (Fin 3) (Fin 3)
+  | .A a c =>
+    Cfg.headLeft ThreeState.C
+      (ListBlank.append (([2] : List (Fin 3)) ^ a) (ListBlank.append [1] default))
+      (ListBlank.append (([2, 0] : List (Fin 3)) ^ c) default)
+
+def next : State → Option State
+  | .A a c =>
+    if a ≤ c then
+      if a % 2 = 0 then
+        if c % 2 = 0 then none
+        else some (.A 1 (a / 2 + c + 2))
+      else if c % 2 = 0 then
+        some (.A (3 * a) (c - a + 4))
+      else
+        some (.A (3 * a + 2) (c - a + 1))
+    else if c % 4 = 0 ∨ c % 4 = 2 then
+      some (.A (a - c - 1) (3 * (c / 2) + 2))
+    else if c % 4 = 1 then
+      if a = c + 1 then none
+      else some (.A (a - c - 2) (3 * (c / 2) + 5))
+    else if a = c + 1 then
+      none
+    else if a = c + 2 then
+      some (.A (3 * c + 8) 1)
+    else if a = c + 3 then
+      none
+    else
+      some (.A (a - c - 4) (3 * (c / 2) + 8))
+
+theorem is_valid_acceleration : IsValidAcceleration target start encode next := by sorry
+
+theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start := by sorry
+
+def pat_A0 : TapePattern (Fin 3) (Fin 3) :=
+  { left := .default
+    head := some ThreeState.C
+    right := .sym 1 (.rep [2, 0] 1 .default) }
+
+def pat_AS : TapePattern (Fin 3) (Fin 3) :=
+  { left := .rep [2] 0 (.sym 1 .default)
+    head := some ThreeState.C
+    right := .sym 2 (.rep [2, 0] 1 .default) }
+
+def ps : TapePatternSet (Fin 3) (Fin 3) :=
+  [(pat_A0, .true), (pat_AS, .true)]
+
+theorem is_closed_pattern_set : IsClosedPatternSet target ps := by sorry
+
+theorem has_collatz_reduction : HasCollatzReduction target := by sorry
+end M_1RB2LC1RC_2LCHHH2RB_2LA0LB0RA
+
+namespace M_1RB2RA1LC_2LC1RB2RB_HHH2LA1LA
+def machine : ConjectureMachines.Machine 3 3 :=
+  load_rle_machine% "1RB2RA1LC_2LC1RB2RB_---2LA1LA"
+
+abbrev target : Machine (Fin 3) (Fin 3) :=
+  machine.toBB
+
+inductive State where
+  | A (a b c : ℕ)
+  deriving DecidableEq, Repr
+
+def start : State := .A 2 0 0
+
+def encode : State → Cfg (Fin 3) (Fin 3)
+  | .A a b c =>
+      Cfg.headLeft ThreeState.A
+        (ListBlank.append (([1] : List (Fin 3)) ^ (2 * b + 2))
+          (ListBlank.append (([2, 1] : List (Fin 3)) ^ a) default))
+        (ListBlank.append (([1] : List (Fin 3)) ^ (2 * (c + 2))) default)
+
+def next : State → Option State
+  | .A a b c =>
+      let q := b / 6
+      let r := b % 6
+      if r = 0 then
+        some (.A (a + 1) (8 * q + c) 1)
+      else if r = 1 then
+        match a with
+        | 0 => none
+        | a' + 1 => some (.A a' (8 * q + c + 4) 0)
+      else if r = 2 then
+        some (.A a (8 * q + c + 2) 3)
+      else if r = 3 then
+        some (.A (a + 1) (8 * q + c + 4) 0)
+      else if r = 4 then
+        some (.A a (8 * q + c + 6) 1)
+      else
+        some (.A a (8 * q + c + 8) 0)
+
+theorem is_valid_acceleration : IsValidAcceleration target start encode next := by sorry
+
+theorem isHalt_iff_acceleration : IsHalt target ↔ CollatzHalts next start := by sorry
+
+def pat_A : TapePattern (Fin 3) (Fin 3) :=
+  { left := .sym 1 (.rep [1, 1] 1 (.rep [2, 1] 0 .default))
+    head := some ThreeState.A
+    right := .sym 1 (.sym 1 (.sym 1 (.sym 1 (.sym 1 (.rep [1, 1] 2 .default))))) }
+
+def ps : TapePatternSet (Fin 3) (Fin 3) :=
+  [(pat_A, .true)]
+
+theorem is_closed_pattern_set : IsClosedPatternSet target ps := by sorry
+
+theorem has_collatz_reduction : HasCollatzReduction target := by sorry
+end M_1RB2RA1LC_2LC1RB2RB_HHH2LA1LA
 
 end BusyBeaver

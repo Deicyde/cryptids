@@ -698,6 +698,21 @@ abbrev F : Fin 6 := 5
 
 end SixState
 
+/-! ## Standard 3-State Labels (`ThreeState`)
+
+Standard control state labels `A..C` (`0..2 : Fin 3`) for 3-state Busy Beaver machines. -/
+
+namespace ThreeState
+
+/-- State `A` (`0 : Fin 3`), the initial state. -/
+abbrev A : Fin 3 := 0
+/-- State `B` (`1 : Fin 3`). -/
+abbrev B : Fin 3 := 1
+/-- State `C` (`2 : Fin 3`). -/
+abbrev C : Fin 3 := 2
+
+end ThreeState
+
 /-! ## Concrete Step Execution Tactics (`bb_refl`, `bb_step`, `bb_steps`, `bb_halt`) -/
 
 /-- Close a reflexive `ReachesStar` goal after normalizing directed-head configurations and
@@ -785,20 +800,25 @@ scoped notation3 c₁ " [" M "]⊢⁺ " c₂ => ReachesPlus M c₁ c₂
 
 /-! ## Additional Half-Tape Power Lemmas -/
 
+/-- Reversed addition law for repeated block appendages on a `ListBlank`. -/
 theorem ListBlank.append_pow_add_rev (s : ListBlank Γ) (u : List Γ) (m n : ℕ) :
     ListBlank.append (u ^ (m + n)) s = ListBlank.append (u ^ n) (ListBlank.append (u ^ m) s) := by
   rw [Nat.add_comm, ListBlank.append_pow_add]
 
+/-- Absorb one trailing copy of `u` into `u ^ k` on a `ListBlank`. -/
 theorem ListBlank.append_pow_succ' (u : List Γ) (k : ℕ) (r : ListBlank Γ) :
     ListBlank.append (u ^ k) (ListBlank.append u r) = ListBlank.append (u ^ (k + 1)) r := by
   rw [ListBlank.append_append, list_pow_succ']
 
+/-- Shift `[0, 1] ^ c` on the blank half-tape into `0 :: [1, 0] ^ c`. -/
 theorem default_append_01_pow (c : ℕ) :
     ListBlank.append (([0, 1] : List (Fin 2)) ^ c) default =
       ListBlank.cons 0 (ListBlank.append (([1, 0] : List (Fin 2)) ^ c) default) := by
   conv_lhs => rw [ListBlank.default_eq_append_zero]
   exact append_01_pow_zero c default
 
+/-- Construct `IsValidAcceleration` from an initial reachability proof and a unified step theorem
+dispatching on `next s`. -/
 theorem IsValidAcceleration.of_step {M : Machine Γ Λ} {S : Type*}
     {start : S} {encode : S → Cfg Γ Λ} {next : S → Option S}
     (h_init : ReachesStar M (init []) (encode start))
@@ -815,5 +835,90 @@ theorem IsValidAcceleration.of_step {M : Machine Γ Λ} {S : Type*}
     have hs := h_step s
     rw [h] at hs
     exact hs
+
+/-- Derive `IsClosedPatternSet M ps` from a valid acceleration `IsValidAcceleration M start encode
+next` whose image `encode` characterizes `ps` and whose halting states step in `ReachesPlus` to a
+halting configuration. -/
+theorem IsValidAcceleration.isClosedPatternSet {M : Machine Γ Λ} {S : Type*}
+    {start : S} {encode : S → Cfg Γ Λ} {next : S → Option S}
+    {ps : TapePatternSet Γ Λ}
+    (h : IsValidAcceleration M start encode next)
+    (h_in : ∀ s, IsInPatternSet ps (encode s))
+    (h_of_in : ∀ cfg, IsInPatternSet ps cfg → ∃ s, cfg = encode s)
+    (h_halt_plus : ∀ s, next s = none →
+      ∃ cfg', ReachesPlus M (encode s) cfg' ∧ (step M cfg').isNone) :
+    IsClosedPatternSet M ps := by
+  refine ⟨⟨encode start, h.init_reaches, h_in start⟩, fun cfg hcfg => ?_⟩
+  obtain ⟨s, rfl⟩ := h_of_in cfg hcfg
+  rcases hnext : next s with _ | s'
+  · obtain ⟨cfg', hplus, hnone⟩ := h_halt_plus s hnext
+    exact ⟨cfg', hplus, Or.inr hnone⟩
+  · exact ⟨encode s', h.step_some s s' hnext, Or.inl (h_in s')⟩
+
+/-- Derive `IsClosedStackPatternSet M ps` from a valid acceleration `IsValidAcceleration M start
+encode next` whose image `encode` characterizes a well-formed `ps` and whose halting states step in
+`ReachesPlus` to a halting configuration. -/
+theorem IsValidAcceleration.isClosedStackPatternSet [DecidableEq Γ] {M : Machine Γ Λ} {S : Type*}
+    {start : S} {encode : S → Cfg Γ Λ} {next : S → Option S}
+    {ps : StackPatternSet Γ Λ}
+    (h : IsValidAcceleration M start encode next)
+    (h_in : ∀ s, IsInStackPatternSet ps (encode s))
+    (h_of_in : ∀ cfg, IsInStackPatternSet ps cfg → ∃ s, cfg = encode s)
+    (h_halt_plus : ∀ s, next s = none →
+      ∃ cfg', ReachesPlus M (encode s) cfg' ∧ (step M cfg').isNone)
+    (h_wf : IsWellFormedStackPatternSet ps := by rfl) :
+    IsClosedStackPatternSet M ps := by
+  refine ⟨h_wf, ⟨encode start, h.init_reaches, h_in start⟩, fun cfg hcfg => ?_⟩
+  obtain ⟨s, rfl⟩ := h_of_in cfg hcfg
+  rcases hnext : next s with _ | s'
+  · obtain ⟨cfg', hplus, hnone⟩ := h_halt_plus s hnext
+    exact ⟨cfg', hplus, Or.inr hnone⟩
+  · exact ⟨encode s', h.step_some s s' hnext, Or.inl (h_in s')⟩
+
+omit [Inhabited Γ] in
+private theorem evalStackSeg_two_word_of_bool (a₀ a₁ : Γ) (w : List Bool) :
+    (((w.map fun b => if b then 1 else 0).map fun d =>
+        ([[a₀], [a₁]] : List (List Γ)).getD d []).flatten) =
+      w.map (fun b => if b then a₁ else a₀) := by
+  induction w with
+  | nil => rfl
+  | cons b rest ih =>
+    cases b <;> simpa using ih
+
+omit [Inhabited Γ] in
+private theorem exists_bool_of_evalStackSeg_two_word (a₀ a₁ : Γ) (ds : List ℕ) :
+    ∃ w : List Bool,
+      ((ds.map fun d => ([[a₀], [a₁]] : List (List Γ)).getD d []).flatten) =
+        w.map (fun b => if b then a₁ else a₀) := by
+  induction ds with
+  | nil => exact ⟨[], rfl⟩
+  | cons d rest ih =>
+    obtain ⟨w, hw⟩ := ih
+    rcases d with _ | _ | d
+    · refine ⟨false :: w, ?_⟩
+      simpa using hw
+    · refine ⟨true :: w, ?_⟩
+      simpa using hw
+    · refine ⟨w, ?_⟩
+      simpa using hw
+
+/-- Characterize a single two-symbol `.word [[a₀], [a₁]] 0` `StackExpr` as the image of a
+`List Bool` word `w` mapped by `fun b => if b then a₁ else a₀`. -/
+theorem exists_evalStackExpr_single_word_iff (a₀ a₁ : Γ) (s : ListBlank Γ) :
+    (∃ (vars : ℕ → ℕ) (stks : ℕ → List ℕ),
+      s = evalStackExpr [.word [[a₀], [a₁]] 0] vars stks) ↔
+    ∃ w : List Bool,
+      s = ListBlank.append (w.map (fun b => if b then a₁ else a₀)) default := by
+  constructor
+  · rintro ⟨vars, stks, rfl⟩
+    obtain ⟨w, hw⟩ := exists_bool_of_evalStackSeg_two_word a₀ a₁ (stks 0)
+    refine ⟨w, ?_⟩
+    dsimp only [evalStackExpr, evalStackSeg]
+    rw [hw]
+  · rintro ⟨w, rfl⟩
+    refine ⟨fun _ => 0, fun _ => w.map (fun b => if b then 1 else 0), ?_⟩
+    have hw := evalStackSeg_two_word_of_bool a₀ a₁ w
+    dsimp only [evalStackExpr, evalStackSeg]
+    rw [hw]
 
 end BusyBeaver

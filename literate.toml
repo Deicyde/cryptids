@@ -18,7 +18,9 @@ library = "BusyBeaver"
   "BusyBeaver.Defs",
   "BusyBeaver.Basic",
   "BusyBeaver.Bridge",
-  "BusyBeaver.Machines",
+  "BusyBeaver.Cert",
+  "BusyBeaver.BB6",
+  "BusyBeaver.BB33",
 ]
 "Cryptids" = [
   "Cryptids.Propositions",

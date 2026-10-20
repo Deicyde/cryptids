@@ -88,6 +88,9 @@ namespace BusyBeaver
 /-- Canonical `NeZero 2` instance for `(states, 2)` Turing machines. -/
 instance (priority := high) instNeZeroTwo : @NeZero ℕ Zero.ofOfNat0 2 := Nat.instNeZeroSucc
 
+/-- Canonical `NeZero 3` instance for `(3, 3)` Turing machines. -/
+instance (priority := high) instNeZeroThree : @NeZero ℕ Zero.ofOfNat0 3 := Nat.instNeZeroSucc
+
 /-- Canonical `NeZero 6` instance for `(6, symbols)` Turing machines. -/
 instance (priority := high) instNeZeroSix : @NeZero ℕ Zero.ofOfNat0 6 := Nat.instNeZeroSucc
 
