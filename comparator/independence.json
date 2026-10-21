@@ -1,0 +1,16 @@
+{
+  "challenge_module": "IndependenceChallenge",
+  "solution_module": "Cryptids.Independence",
+  "theorem_names": [
+    "ConjectureMachines.Independence.not_holdsIn_haltsSentence_of_total",
+    "ConjectureMachines.Independence.not_independent_of_total",
+    "ConjectureMachines.Independence.not_independent_rightForever",
+    "ConjectureMachines.Independence.not_zfProvable_haltsSentence",
+    "ConjectureMachines.Independence.zf393_independent_iff"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}

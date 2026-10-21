@@ -1,7 +1,7 @@
 name = "Cryptids"
 version = "0.1.0"
 keywords = ["math"]
-defaultTargets = ["Cryptids", "Challenge"]
+defaultTargets = ["Cryptids", "Challenge", "IndependenceChallenge"]
 
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
@@ -25,6 +25,9 @@ name = "Cryptids"
 
 [[lean_lib]]
 name = "Challenge"
+
+[[lean_lib]]
+name = "IndependenceChallenge"
 
 [[lean_lib]]
 name = "BusyBeaver"

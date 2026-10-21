@@ -6,6 +6,7 @@ on:
       - 'Cryptids/**'
       - 'Cryptids.lean'
       - 'Challenge.lean'
+      - 'IndependenceChallenge.lean'
       - 'artifacts/**'
       - 'baselines/**'
       - 'verify.py'
@@ -20,6 +21,7 @@ on:
       - 'Cryptids/**'
       - 'Cryptids.lean'
       - 'Challenge.lean'
+      - 'IndependenceChallenge.lean'
       - 'artifacts/**'
       - 'baselines/**'
       - 'verify.py'
@@ -49,12 +51,15 @@ jobs:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - uses: leanprover/lean-action@24581d74d674803a25a81b10b059c5c0cdd344c6 # v1
         with:
-          build-args: "Cryptids Challenge"
+          build-args: "Cryptids Challenge IndependenceChallenge"
         env:
           LEAN_NUM_THREADS: "1"
 
       - name: Verify solution against Challenge with comparator
         run: lake comparator --config comparator/all.json
+
+      - name: Verify independence reductions against IndependenceChallenge with comparator
+        run: lake comparator --config comparator/independence.json
 
       - name: Verify machine tables and blank initializers
         run: python3 verify.py

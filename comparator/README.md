@@ -20,6 +20,13 @@ using [`leanprover/comparator`](https://github.com/leanprover/comparator).
   and states all 236 `BB(6)` and `BB(3, 3)` holdout theorems (`is_closed_pattern_set` /
   `is_closed_stack_pattern_set`, `has_collatz_reduction` / `has_stacked_collatz_reduction`,
   `is_valid_acceleration`, and `isHalt_iff_acceleration` across the 59 machines) with `sorry`.
+- [`IndependenceChallenge.lean`](../IndependenceChallenge.lean) imports `Challenge` and states
+  that ZF proves neither `⌜M halts⌝` nor `⌜M never halts⌝` for the ZF machines
+  (`Independent ZFProvable (haltsSentence M)`), with companion theorems pinning down
+  `haltsSentence`. Unlike `Halts zf393 ↔ ZFInconsistent`, this statement is false for trivially
+  non-halting machines, so it cannot be discharged vacuously through Lean's proof of `Con(ZF)`.
+  The headline and companion theorems are open; `independence.json` audits the reductions proved
+  so far.
 
 Comparator exports both the challenge module (`Challenge` or `BusyBeaverChallenge`) and the
 solution module (`Cryptids` or `BusyBeaver`) via `leanexport`, verifying in a Bubblewrap sandbox
@@ -44,6 +51,7 @@ that:
 | [`riemann_95.json`](./riemann_95.json) | `Challenge` | `Cryptids.Semantics.Riemann95` | `candidate_fewer_states`, `candidate_equivalent`, `halts_candidate_iff_not_riemannHypothesis` |
 | [`riemann_120.json`](./riemann_120.json) | `Challenge` | `Cryptids.Semantics.Riemann120` | `halts_riemann120_iff_not_riemannHypothesis`, `halts_candidate_iff_not_riemannHypothesis` |
 | [`riemann_semantics.json`](./riemann_semantics.json) | `Challenge` | `Cryptids.Semantics.Riemann` | `halts_riemann744_iff_exists_counterexample`, `halts_riemann744_iff_not_riemannHypothesis` |
+| [`independence.json`](./independence.json) | `IndependenceChallenge` | `Cryptids.Independence` | The 5 proved reductions toward the open independence targets (`not_holdsIn_haltsSentence_of_total`, `not_independent_of_total`, `not_independent_rightForever`, `not_zfProvable_haltsSentence`, `zf393_independent_iff`) |
 
 ## Usage
 
@@ -52,5 +60,6 @@ From the repository root (with `bwrap` installed):
 ```bash
 lake exe cache get
 lake comparator --config comparator/all.json
+lake comparator --config comparator/independence.json
 lake comparator --config comparator/busy_beaver.json
 ```
