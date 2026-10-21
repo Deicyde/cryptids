@@ -19,16 +19,23 @@ continuum hypothesis: ZF proves neither `⌜M halts⌝` nor `⌜M never halts⌝
 
 * `haltsSentence M` is one closed sentence of set theory per machine, built uniformly from the
   transition table as a space-time diagram indexed by `ω`.
-* `Independent ZFProvable (haltsSentence M)` is *false* for every machine without a halting
-  entry, because ZF refutes its halting sentence in pure logic (`not_independent_of_total`). So it
-  cannot be proved by appeal to `Con(ZF)`, and no axiom whitelist is needed: proofs may use
-  `Classical.choice`.
-* The easy half (ZF does not prove `zf393` halts) follows from soundness in `ZFSet.{0}`
-  (`not_zfProvable_haltsSentence`). The hard half (ZF does not prove `zf393` runs forever) needs
+* For a machine without a halting entry, `haltsSentence M` fails in every `∈`-structure
+  (`not_holdsIn_haltsSentence_of_total`). Assuming completeness of `ZFProvable`
+  (`zfProvable_complete`, open), `Independent ZFProvable (haltsSentence M)` is therefore *false*
+  (`not_independent_of_total`), e.g. for `rightForever`. Lean's proof of `Con(ZF)` is not a
+  loophole: the targets are statements about finite derivations, so the usual axioms
+  (`propext`, `Quot.sound`, `Classical.choice`) are permitted.
+* The easy half (ZF does not prove `zf393` halts) follows from soundness in `ZFSet.{0}` once the
+  sentence is known to be correct there (`haltsSentence_holds_iff`; see
+  `not_zfProvable_haltsSentence`). The hard half (ZF does not prove `zf393` runs forever) needs
   Gödel's second incompleteness theorem for ZF and an internal proof of the reduction.
 
-The targets and companion theorems below are open. The reductions at the end are proved in
-`Cryptids.Independence` and audited by `comparator/independence.json`.
+Here "ZF" is `ZFProvable`, O'Rear's calculus without Foundation. The targets and companion
+theorems below are open. The reductions at the end are proved in `Cryptids.Independence` and
+audited by `comparator/independence.json`.
+
+`(haltsSentence M).code` is astronomically large for the real machines, so proofs about concrete
+machines must stay symbolic (no `decide`, `rfl` or `simp` that unfolds `.code`).
 -/
 
 @[expose] public section
@@ -174,18 +181,21 @@ def haltsSentence (M : Machine s k) : ZFFormula :=
 /-- Negative control: the one-state machine `0R0 0R0`, which moves right forever. -/
 def rightForever : Machine 1 2 := ⟨fun _ _ => some (0, .right, 0)⟩
 
+/-- Negative control with a halting entry: `0R0 ---` halts on reading `1` but only ever writes
+`0`, so it runs forever, and seeing that needs induction along the run. -/
+def haltOnOne : Machine 1 2 := ⟨fun _ a => if a = 0 then some (0, .right, 0) else none⟩
+
 /-! ## Targets
 
-The headline theorems. `ZFProvable` is O'Rear's `zf2.nql` calculus, already trusted by
-`Challenge.lean`; `zf432` is measured against the same calculus so that all three statements are
-about one object theory. -/
+`ZFProvable` is O'Rear's `zf2.nql` calculus (ZF without Foundation), already trusted by
+`Challenge.lean`. `zf432` is not a target: it enumerates Wade's pre-`10fcf152b3` calculus
+`WadeZFProvable`, whose `B6a` clause admits `v₀ ∈ v₁ → ∀ v₁, v₀ ∈ v₁`, so that calculus has no
+models and `zf432` is expected to halt. -/
 
 /-- ZF proves neither that `zf393` halts nor that it runs forever. -/
 theorem zf393_independent : Independent ZFProvable (haltsSentence Machines.zf393) := by sorry
 /-- ZF proves neither that `zf380` halts nor that it runs forever. -/
 theorem zf380_independent : Independent ZFProvable (haltsSentence Machines.zf380) := by sorry
-/-- ZF proves neither that `zf432` halts nor that it runs forever. -/
-theorem zf432_independent : Independent ZFProvable (haltsSentence Machines.zf432) := by sorry
 
 /-! ## Companion theorems
 
@@ -195,30 +205,35 @@ definitions above (as with Flypitch's `CH_f`); the companions catch transcriptio
 /-- The sentence says exactly that `M` halts, in the standard model. -/
 theorem haltsSentence_holds_iff (M : Machine s k) (v : ℕ → ZFSet.{0}) :
     (haltsSentence M).Holds v ↔ ConjectureMachines.Halts M := by sorry
-/-- ZF proves the sentence for every machine that halts (Σ₁-completeness). -/
+/-- ZF proves the sentence for every machine that halts. (It is ZF-provably equivalent to an
+arithmetical Σ₁ sentence, so this is Σ₁-completeness.) -/
 theorem zfProvable_haltsSentence (M : Machine s k) (h : ConjectureMachines.Halts M) :
     ZFProvable (haltsSentence M).code := by sorry
 /-- O'Rear's calculus is complete. -/
 theorem zfProvable_complete : ZFProvableComplete := by sorry
+/-- Negative control that exercises the run encoding: ZF proves that `haltOnOne`, which has a
+halting entry, never halts. -/
+theorem not_independent_haltOnOne : ¬ Independent ZFProvable (haltsSentence haltOnOne) := by
+  sorry
 
-/-! ## Reductions proved today (`Cryptids.Independence`) -/
+/-! ## Reductions (proved in `Cryptids.Independence`) -/
 
-/-- A machine with no halting entry provably never halts, in pure logic: its halting sentence
-fails in every `∈`-structure. -/
+/-- The halting sentence of a machine with no halting entry is logically false: it fails in
+every `∈`-structure. -/
 theorem not_holdsIn_haltsSentence_of_total (M : Machine s k)
-    (hM : ∀ q a, (M.transition q a).isSome) {V : Type} (E : V → V → Prop) (v : ℕ → V) :
+    (hM : ∀ q a, (M.transition q a).isSome) {V : Type*} (E : V → V → Prop) (v : ℕ → V) :
     ¬ (haltsSentence M).HoldsIn E v := by
   sorry
 
-/-- Non-vacuity: if `ZFProvable` is complete, the independence statement is *false* for every
-machine without a halting entry. -/
+/-- Non-vacuity: assuming completeness of `ZFProvable` (`zfProvable_complete`, open), the
+independence statement is *false* for every machine without a halting entry. -/
 theorem not_independent_of_total (hc : ZFProvableComplete) (M : Machine s k)
     (hM : ∀ q a, (M.transition q a).isSome) :
     ¬ Independent ZFProvable (haltsSentence M) := by
   sorry
 
-/-- In particular it is false for `rightForever`, which `Halts M ↔ ZFInconsistent` cannot rule
-out once Lean proves `¬ ZFInconsistent`. -/
+/-- In particular, assuming completeness, it is false for `rightForever`, which
+`Halts M ↔ ZFInconsistent` cannot rule out once Lean proves `¬ ZFInconsistent`. -/
 theorem not_independent_rightForever (hc : ZFProvableComplete) :
     ¬ Independent ZFProvable (haltsSentence rightForever) := by
   sorry

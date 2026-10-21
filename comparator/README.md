@@ -21,12 +21,12 @@ using [`leanprover/comparator`](https://github.com/leanprover/comparator).
   `is_closed_stack_pattern_set`, `has_collatz_reduction` / `has_stacked_collatz_reduction`,
   `is_valid_acceleration`, and `isHalt_iff_acceleration` across the 59 machines) with `sorry`.
 - [`IndependenceChallenge.lean`](../IndependenceChallenge.lean) imports `Challenge` and states
-  that ZF proves neither `⌜M halts⌝` nor `⌜M never halts⌝` for the ZF machines
+  that ZF proves neither `⌜M halts⌝` nor `⌜M never halts⌝` for `zf393` and `zf380`
   (`Independent ZFProvable (haltsSentence M)`), with companion theorems pinning down
-  `haltsSentence`. Unlike `Halts zf393 ↔ ZFInconsistent`, this statement is false for trivially
-  non-halting machines, so it cannot be discharged vacuously through Lean's proof of `Con(ZF)`.
-  The headline and companion theorems are open; `independence.json` audits the reductions proved
-  so far.
+  `haltsSentence`. Unlike `Halts zf393 ↔ ZFInconsistent`, this statement is (assuming
+  completeness of `ZFProvable`) false for trivially non-halting machines, so it cannot be
+  discharged vacuously through Lean's proof of `Con(ZF)`. The headline and companion theorems
+  are open; `independence.json` audits the reductions proved so far.
 
 Comparator exports both the challenge module (`Challenge` or `BusyBeaverChallenge`) and the
 solution module (`Cryptids` or `BusyBeaver`) via `leanexport`, verifying in a Bubblewrap sandbox

@@ -18,7 +18,7 @@ this module proves the reductions that hold today:
 
 * `not_holdsIn_haltsSentence_of_total`: the halting sentence of a machine with no halting entry
   is false in every `∈`-structure.
-* `not_independent_of_total`, `not_independent_rightForever`: given completeness of
+* `not_independent_of_total`, `not_independent_rightForever`: assuming completeness of
   `ZFProvable`, the independence statement is false for such machines, so it is not vacuous.
 * `not_zfProvable_haltsSentence`, `zf393_independent_iff`: given that the sentence is correct in
   `ZFSet.{0}`, the easy half holds and independence of `zf393` reduces to the hard half.
@@ -167,34 +167,45 @@ def haltsSentence (M : Machine s k) : ZFFormula :=
 /-- Negative control: the one-state machine `0R0 0R0`, which moves right forever. -/
 def rightForever : Machine 1 2 := ⟨fun _ _ => some (0, .right, 0)⟩
 
+/-- Negative control with a halting entry: `0R0 ---` halts on reading `1` but only ever writes
+`0`, so it runs forever, and seeing that needs induction along the run. -/
+def haltOnOne : Machine 1 2 := ⟨fun _ a => if a = 0 then some (0, .right, 0) else none⟩
+
 /-! ### Unsatisfiable builder formulas -/
 
 namespace FB
 
 /-- `φ` is false in every `∈`-structure, under every assignment, from every starting index. -/
-def Unsat (φ : FB) : Prop :=
-  ∀ (V : Type) (E : V → V → Prop) (v : ℕ → V) (n : ℕ), ¬ (φ n).HoldsIn E v
+def Unsat.{u} (φ : FB) : Prop :=
+  ∀ (V : Type u) (E : V → V → Prop) (v : ℕ → V) (n : ℕ), ¬ (φ n).HoldsIn E v
 
-theorem unsat_falsum : Unsat falsum := fun _ _ _ _ h => h fun _ => rfl
+/-- `⊥` is unsatisfiable. -/
+theorem unsat_falsum : Unsat.{u} falsum := fun _ _ _ _ h => h fun _ => rfl
 
-theorem Unsat.conj_right {φ ψ : FB} (h : Unsat ψ) : Unsat (conj φ ψ) :=
+/-- A conjunction with an unsatisfiable conjunct is unsatisfiable. -/
+theorem Unsat.conj_right {φ ψ : FB} (h : Unsat.{u} ψ) : Unsat.{u} (conj φ ψ) :=
   fun V E v n hc => hc fun _ hψ => h V E v n hψ
 
-theorem Unsat.disj {φ ψ : FB} (hφ : Unsat φ) (hψ : Unsat ψ) : Unsat (disj φ ψ) :=
+/-- A disjunction of unsatisfiable formulas is unsatisfiable. -/
+theorem Unsat.disj {φ ψ : FB} (hφ : Unsat.{u} φ) (hψ : Unsat.{u} ψ) : Unsat.{u} (disj φ ψ) :=
   fun V E v n hc => hψ V E v n (hc (hφ V E v n))
 
-theorem Unsat.ex {φ : ℕ → FB} (h : ∀ x, Unsat (φ x)) : Unsat (ex φ) :=
+/-- An existential with an unsatisfiable body is unsatisfiable. -/
+theorem Unsat.ex {φ : ℕ → FB} (h : ∀ x, Unsat.{u} (φ x)) : Unsat.{u} (ex φ) :=
   fun V E v n hc => hc fun a => h n V E (Function.update v n a) (n + 1)
 
-theorem Unsat.exIn {a : ℕ} {φ : ℕ → FB} (h : ∀ x, Unsat (φ x)) : Unsat (exIn a φ) :=
+/-- A bounded existential with an unsatisfiable body is unsatisfiable. -/
+theorem Unsat.exIn {a : ℕ} {φ : ℕ → FB} (h : ∀ x, Unsat.{u} (φ x)) : Unsat.{u} (exIn a φ) :=
   Unsat.ex fun x => (h x).conj_right
 
-theorem Unsat.exMany : ∀ {m : ℕ} {φ : (Fin m → ℕ) → FB}, (∀ xs, Unsat (φ xs)) →
-    Unsat (exMany m φ)
+/-- Iterated existentials with an unsatisfiable body are unsatisfiable. -/
+theorem Unsat.exMany : ∀ {m : ℕ} {φ : (Fin m → ℕ) → FB}, (∀ xs, Unsat.{u} (φ xs)) →
+    Unsat.{u} (exMany m φ)
   | 0, _, h => h _
   | _ + 1, _, h => Unsat.ex fun _ => Unsat.exMany fun _ => h _
 
-theorem Unsat.disjs : ∀ {l : List FB}, (∀ φ ∈ l, Unsat φ) → Unsat (disjs l)
+/-- A finite disjunction of unsatisfiable formulas is unsatisfiable. -/
+theorem Unsat.disjs : ∀ {l : List FB}, (∀ φ ∈ l, Unsat.{u} φ) → Unsat.{u} (disjs l)
   | [], _ => unsat_falsum
   | φ :: _, h => Unsat.disj (h φ (List.mem_cons_self ..))
       (Unsat.disjs fun ψ hψ => h ψ (List.mem_cons_of_mem _ hψ))
@@ -202,9 +213,10 @@ theorem Unsat.disjs : ∀ {l : List FB}, (∀ φ ∈ l, Unsat φ) → Unsat (dis
 end FB
 
 omit [NeZero s] [NeZero k] in
-open FB in
+/-- If `M` has no halting entry, the halting clause is unsatisfiable. -/
 theorem haltsAt_unsat (M : Machine s k) (hM : ∀ q a, (M.transition q a).isSome)
-    (w N : ℕ) (S : Fin s → ℕ) (A : Fin k → ℕ) (Hd : ℕ) : Unsat (haltsAt M w N S A Hd) := by
+    (w N : ℕ) (S : Fin s → ℕ) (A : Fin k → ℕ) (Hd : ℕ) :
+    Unsat.{u} (haltsAt M w N S A Hd) := by
   refine Unsat.exIn fun x => Unsat.conj_right <| Unsat.disjs fun φ hφ => ?_
   simp only [List.mem_flatMap, List.mem_map, List.mem_finRange, true_and] at hφ
   obtain ⟨q, a, rfl⟩ := hφ
@@ -212,27 +224,26 @@ theorem haltsAt_unsat (M : Machine s k) (hM : ∀ q a, (M.transition q a).isSome
   simp only [ht]
   exact unsat_falsum
 
-/-! ## Reductions proved today (`Cryptids.Independence`) -/
+/-! ## Reductions -/
 
-/-- A machine with no halting entry provably never halts, in pure logic: its halting sentence
-fails in every `∈`-structure. -/
+/-- The halting sentence of a machine with no halting entry is logically false: it fails in
+every `∈`-structure. -/
 theorem not_holdsIn_haltsSentence_of_total (M : Machine s k)
-    (hM : ∀ q a, (M.transition q a).isSome) {V : Type} (E : V → V → Prop) (v : ℕ → V) :
+    (hM : ∀ q a, (M.transition q a).isSome) {V : Type*} (E : V → V → Prop) (v : ℕ → V) :
     ¬ (haltsSentence M).HoldsIn E v :=
   (Unsat.ex fun w => Unsat.conj_right <| Unsat.exIn fun N => Unsat.exMany fun S =>
     Unsat.exMany fun A => Unsat.ex fun Hd => Unsat.conj_right <|
       haltsAt_unsat M hM w N S A Hd) V E v 0
 
-/-- Non-vacuity: if `ZFProvable` is complete, the independence statement is *false* for every
-machine without a halting entry. -/
+/-- Non-vacuity: assuming completeness of `ZFProvable` (`zfProvable_complete`, open), the
+independence statement is *false* for every machine without a halting entry. -/
 theorem not_independent_of_total (hc : ZFProvableComplete) (M : Machine s k)
     (hM : ∀ q a, (M.transition q a).isSome) :
     ¬ Independent ZFProvable (haltsSentence M) :=
-  fun h => h.2 <| hc _ fun _ E _ v => by
-    simpa only [ZFFormula.HoldsIn] using not_holdsIn_haltsSentence_of_total M hM E v
+  fun h => h.2 <| hc _ fun _ E _ v => not_holdsIn_haltsSentence_of_total M hM E v
 
-/-- In particular it is false for `rightForever`, which `Halts M ↔ ZFInconsistent` cannot rule
-out once Lean proves `¬ ZFInconsistent`. -/
+/-- In particular, assuming completeness, it is false for `rightForever`, which
+`Halts M ↔ ZFInconsistent` cannot rule out once Lean proves `¬ ZFInconsistent`. -/
 theorem not_independent_rightForever (hc : ZFProvableComplete) :
     ¬ Independent ZFProvable (haltsSentence rightForever) :=
   not_independent_of_total hc rightForever fun _ _ => rfl

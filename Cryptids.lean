@@ -52,7 +52,8 @@ linking every machine's blank-tape halting problem to Mathlib's statements:
   End-to-end proofs linking halting from the blank tape to the corresponding mathematical
   conjectures across all baseline machines (`goldbach25`, `zf432`, `riemann744`).
 - `Cryptids.Independence` — Reductions toward the open targets of `IndependenceChallenge`
-  (ZF proves neither `⌜zf393 halts⌝` nor its negation), including the proof that the
-  independence statement is false for machines without a halting entry.
+  (ZF proves neither `⌜zf393 halts⌝` nor its negation), including the proof that, assuming
+  completeness of `ZFProvable`, the independence statement is false for machines without a
+  halting entry.
 -/
 
