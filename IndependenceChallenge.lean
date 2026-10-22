@@ -20,7 +20,7 @@ the second form, so the reader never has to decode a proof calculus or a Gödel 
   relation `x ∈ y`. `Model IsZFC` bundles such a `V`.
 * §3 `HaltsIn V M`: `V` contains a halting run of the Turing machine `M`, i.e. `V` thinks `M`
   halts.
-* §4 the target:
+* §4 the targets, for `zf393` (and the same for `zf380`):
   `(∃ V : Model IsZFC, HaltsIn V zf393) ∧ (∃ V : Model IsZFC, ¬ HaltsIn V zf393)`.
 
 **Why "first-order" matters, and where it is enforced.** `zf393` really runs forever. A model of
@@ -40,8 +40,8 @@ nonstandard length. Such models exist only for *first-order* ZFC, so two things 
 model would be trivial. The target is not of that kind: its first half asks for a model in which a
 machine that does not really halt does halt. For the machine `rightForever` (`0R0 0R0`) no such
 model exists, and this is proved below (`rightForever_not_independent_of_ZFC`). The same holds for
-`haltOnOne` (`0R0 ---`), and the target is also false for every machine that really halts
-(§7, from companion theorems).
+`haltOnOne` (`0R0 ---`). The target is also false for every machine that really halts
+(`not_independent_of_halts`, from the open companion `haltsIn_of_halts`).
 
 **What the proof of each half needs.**
 
@@ -54,17 +54,20 @@ model exists, and this is proved below (`rightForever_not_independent_of_ZFC`). 
   * prove Gödel's second incompleteness theorem for O'Rear's calculus;
   * prove a completeness theorem to turn its consistency with "`zf393` halts" into a model
     (Mathlib has none);
+  * show that such a model satisfies `IsZFWithoutFoundation` (Pairing and Separation from
+    O'Rear's Replacement, von Neumann Infinity from O'Rear's singleton-chain Infinity);
   * `zf393` searches ZF *without* Foundation and Choice, so also turn that model into a model of
     ZFC in which `zf393` still halts (for example Gödel's `L` built inside it; halting is
     arithmetical, hence absolute).
 
   The weaker form `zf393_independent_of_ZF_without_Foundation` (§5) matches the machine's theory
-  exactly and skips the last step. It already implies that O'Rear's calculus proves neither
-  `⌜zf393 halts⌝` nor its negation (`not_zfProvable_of_independent`), with no completeness theorem.
+  exactly and skips the last step. Given the open soundness companion `zfProvable_sound`, it
+  implies that O'Rear's calculus proves neither `⌜zf393 halts⌝` nor its negation
+  (`not_zfProvable_of_independent`), with no completeness theorem.
 
-**Trusted reading.** §1–§4: about 80 lines of code. Everything after §4 is a companion, a
-reduction or a control. Companions marked *(open)* have no proof yet. The others are proved for
-exactly these definitions in the solution-side proof file.
+**Trusted reading.** §1–§4: about 80 lines of code. Everything after §4 is a weaker target (§5),
+a companion, a reduction or a control. Companions marked *(open)* have no proof yet. The others
+are proved for exactly these definitions in the solution-side proof file.
 -/
 
 @[expose] public section
@@ -121,8 +124,10 @@ end Definability
 
 The axioms are written with ordinary Lean quantifiers over `V` and the model's own `x ∈ y`. Only
 Separation and Replacement are schemas, and they range over `Definable` properties. This is the
-first-order theory ZFC (Kunen's list), and every one of its models counts, including models
-with nonstandard natural numbers. -/
+first-order theory ZFC, equivalent to Kunen's list: Pairing, Union and Power Set are stated in
+exact form (equivalent given Separation), and Choice in Zermelo's form for pairwise disjoint
+families (equivalent to well-ordering over ZF). Every model counts, including models with
+nonstandard natural numbers. -/
 
 section Axioms
 variable {V : Type u} [Membership V V]
@@ -140,7 +145,7 @@ def IsInductive (w : V) : Prop :=
 end Axioms
 
 /-- `(V, ∈)` satisfies the axioms of **ZF without Foundation**. This is the theory whose
-theorems `zf393` enumerates. O'Rear's `zf2.nql` calculus (`Challenge.ZFProvable`) states
+theorems `zf393` enumerates. O'Rear's `zf2.nql` calculus (`ZFProvable`, from `Challenge`) states
 Extensionality, Replacement, Power Set, Union and Infinity in its own forms; Pairing and
 Separation are derivable from them. -/
 structure IsZFWithoutFoundation (V : Type u) [Membership V V] : Prop where
@@ -173,8 +178,9 @@ membership relation, satisfying `T`.
 
 The sets live in `Type 1` because Mathlib's standard model `ZFSet.{0}` lives there. The universe
 does not change the meaning of the target: `IsZFC` and `HaltsIn` are first-order, so by
-Löwenheim–Skolem a model can be replaced by a countable one satisfying the same sentences, and a
-countable model can be moved to any universe with `ULift`. -/
+Löwenheim–Skolem a model can be replaced by a countable one satisfying the same sentences. A
+countable model can be transported along a bijection with a subset of `ℕ` into `Type`, and from
+there into any universe with `ULift`. -/
 structure Model (T : ∀ (V : Type 1) [Membership V V], Prop) : Type 2 where
   /-- The sets of the model. -/
   Carrier : Type 1
@@ -197,7 +203,7 @@ and `t < N` means `t ∈ N`). It is recorded by `s + k` sets of ordered pairs:
 * `(t, x) ∈ head q`: at time `t` the machine is in state `q` with its head on cell `x`;
 * `(t, x) ∈ tape a`: at time `t` cell `x` holds symbol `a`.
 
-Conventions match `Challenge.step`:
+Conventions match `step` from `Challenge`:
 * the machine starts in state `0` on the all-`0` tape;
 * the entry `some (b, d, q')` writes `b`, then moves in direction `d`, then enters state `q'`;
 * the entry `none` halts.
@@ -348,6 +354,16 @@ theorem haltsIn_zfSet_iff (M : Machine s k) :
 /-- `HaltsIn V M` is one first-order sentence `σ` of `{∈}`, the same in every `∈`-structure. -/
 theorem haltsIn_firstOrder (M : Machine s k) :
     ∃ σ : setLang.Sentence, ∀ (V : Type u) [Membership V V], HaltsIn V M ↔ V ⊨ σ := by
+  sorry
+
+/-- Companion: in every model of ZF without Foundation, a halting run is determined row by row.
+At each time `t ≤ N` the head row holds exactly one (state, cell) pair, with a natural-number
+cell, and every natural-number cell holds exactly one symbol. -/
+theorem isHaltingRun_rows {V : Type u} [Membership V V] (hV : IsZFWithoutFoundation V)
+    {M : Machine s k} {N : V} {head : Fin s → V} {tape : Fin k → V} (hN : IsNat N)
+    (run : IsHaltingRun M N head tape) (t : V) (ht : IsNat t) (htN : t ∈ N ∨ t = N) :
+    (∃ q x, IsNat x ∧ ∀ r y, PairIn t y (head r) ↔ r = q ∧ y = x) ∧
+    (∀ y, IsNat y → ∃ a, ∀ c, PairIn t y (tape c) ↔ c = a) := by
   sorry
 
 /-- Σ₁-completeness (open): a machine that really halts halts in every model of ZF without

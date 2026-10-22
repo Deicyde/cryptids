@@ -6,6 +6,7 @@
     "ConjectureMachines.Independence.haltsIn_zfSet_iff",
     "ConjectureMachines.Independence.haltsIn_firstOrder",
     "ConjectureMachines.Independence.haltsIn_zfFormula",
+    "ConjectureMachines.Independence.isHaltingRun_rows",
     "ConjectureMachines.Independence.not_haltsIn_haltOnOne",
     "ConjectureMachines.Independence.easy_half",
     "ConjectureMachines.Independence.independent_without_Foundation_of_ZFC",

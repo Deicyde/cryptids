@@ -21,9 +21,11 @@ Proved here, for exactly those definitions:
 * `haltsIn_zfSet_iff`: in `ZFSet`, `HaltsIn` is `Challenge`'s `Halts`.
 * `haltsIn_firstOrder`, `haltsIn_zfFormula`: `HaltsIn V M` is one first-order sentence of `{∈}`
   (and one `ZFFormula`), the same in every `∈`-structure.
+* `isHaltingRun_rows`: in every model of ZF without Foundation a halting run is determined row by
+  row (one head position, one symbol per cell).
 * `not_haltsIn_haltOnOne`: `haltOnOne` halts in no model of ZF without Foundation.
 * The reductions and controls `easy_half`, `independent_without_Foundation_of_ZFC`,
-  `not_independent_of_total`, `rightForever_not_independent_of_ZFC`,
+  `not_haltsIn_of_total`, `not_independent_of_total`, `rightForever_not_independent_of_ZFC`,
   `haltOnOne_not_independent_of_ZFC`.
 
 The targets, the open companions `zfProvable_sound` and `haltsIn_of_halts`, and the two
@@ -85,8 +87,10 @@ end Definability
 
 The axioms are written with ordinary Lean quantifiers over `V` and the model's own `x ∈ y`. Only
 Separation and Replacement are schemas, and they range over `Definable` properties. This is the
-first-order theory ZFC (Kunen's list), and every one of its models counts, including models
-with nonstandard natural numbers. -/
+first-order theory ZFC, equivalent to Kunen's list: Pairing, Union and Power Set are stated in
+exact form (equivalent given Separation), and Choice in Zermelo's form for pairwise disjoint
+families (equivalent to well-ordering over ZF). Every model counts, including models with
+nonstandard natural numbers. -/
 
 section Axioms
 variable {V : Type u} [Membership V V]
@@ -104,7 +108,7 @@ def IsInductive (w : V) : Prop :=
 end Axioms
 
 /-- `(V, ∈)` satisfies the axioms of **ZF without Foundation**. This is the theory whose
-theorems `zf393` enumerates. O'Rear's `zf2.nql` calculus (`Challenge.ZFProvable`) states
+theorems `zf393` enumerates. O'Rear's `zf2.nql` calculus (`ZFProvable`, from `Challenge`) states
 Extensionality, Replacement, Power Set, Union and Infinity in its own forms; Pairing and
 Separation are derivable from them. -/
 structure IsZFWithoutFoundation (V : Type u) [Membership V V] : Prop where
@@ -137,8 +141,9 @@ membership relation, satisfying `T`.
 
 The sets live in `Type 1` because Mathlib's standard model `ZFSet.{0}` lives there. The universe
 does not change the meaning of the target: `IsZFC` and `HaltsIn` are first-order, so by
-Löwenheim–Skolem a model can be replaced by a countable one satisfying the same sentences, and a
-countable model can be moved to any universe with `ULift`. -/
+Löwenheim–Skolem a model can be replaced by a countable one satisfying the same sentences. A
+countable model can be transported along a bijection with a subset of `ℕ` into `Type`, and from
+there into any universe with `ULift`. -/
 structure Model (T : ∀ (V : Type 1) [Membership V V], Prop) : Type 2 where
   /-- The sets of the model. -/
   Carrier : Type 1
@@ -161,7 +166,7 @@ and `t < N` means `t ∈ N`). It is recorded by `s + k` sets of ordered pairs:
 * `(t, x) ∈ head q`: at time `t` the machine is in state `q` with its head on cell `x`;
 * `(t, x) ∈ tape a`: at time `t` cell `x` holds symbol `a`.
 
-Conventions match `Challenge.step`:
+Conventions match `step` from `Challenge`:
 * the machine starts in state `0` on the all-`0` tape;
 * the entry `some (b, d, q')` writes `b`, then moves in direction `d`, then enters state `q'`;
 * the entry `none` halts.
@@ -223,11 +228,10 @@ end Halting
 
 /-! ## 4. Targets
 
-`zf432` is not a target: it enumerates Wade's earlier calculus `WadeZFProvable`, which has no
-models, so `zf432` is expected to halt. -/
+The targets are stated only in `IndependenceChallenge`; this module proves the companions,
+reductions and controls below. -/
 
 variable {s k : ℕ} [NeZero s] [NeZero k]
-
 
 /-! ## Proof machinery (proof file only; not part of the statement) -/
 
@@ -326,7 +330,7 @@ instance FO.existsFinite {α : Type} {ι : Type*} [Finite ι]
   choose φ hφ using fun i => (h i).out
   exact ⟨⟨Formula.iSup φ, fun V _ v => by simp [hφ]⟩⟩
 
-instance : Finite Turing.Dir :=
+scoped instance : Finite Turing.Dir :=
   Finite.of_surjective (fun b : Bool => if b then Turing.Dir.left else .right)
     (by intro d; cases d; exacts [⟨true, rfl⟩, ⟨false, rfl⟩])
 
@@ -916,8 +920,6 @@ theorem InfSep.isNat_trans (hV : InfSep V) :
       · exact (hy c).2 (Or.inl (ih a ha c hc))
       · exact (hy c).2 (Or.inl hc))
 
-
-
 /-- A formula with parameters defines a `Definable` property. -/
 theorem definable_of_formula {β : Type} [Finite β]
     (φ : setLang.Formula (Unit ⊕ β)) (b : β → V) :
@@ -937,13 +939,134 @@ theorem IsZFWithoutFoundation.toInfSep (h : IsZFWithoutFoundation V) : InfSep V 
 
 end HaltOnOne
 
+section RunRows
+
+variable {V : Type u} [Membership V V]
+
+/-- In a model of ZF without Foundation every set has a successor `x ∪ {x}`. -/
+theorem IsZFWithoutFoundation.exists_succ (hV : IsZFWithoutFoundation V) (x : V) :
+    ∃ y, IsSucc x y := by
+  obtain ⟨sx, hsx⟩ := hV.pairing x x
+  obtain ⟨p, hp⟩ := hV.pairing x sx
+  obtain ⟨u, hu⟩ := hV.union p
+  refine ⟨u, fun z => ⟨fun hz => ?_, fun hz => ?_⟩⟩
+  · obtain ⟨y, hy, hzy⟩ := (hu z).1 hz
+    rcases (hp y).1 hy with rfl | rfl
+    · exact Or.inl hzy
+    · exact Or.inr (by simpa using (hsx z).1 hzy)
+  · rcases hz with hz | rfl
+    · exact (hu z).2 ⟨x, (hp x).2 (Or.inl rfl), hz⟩
+    · exact (hu z).2 ⟨sx, (hp sx).2 (Or.inr rfl), (hsx z).2 (Or.inl rfl)⟩
+
+theorem nat_not_self (hV : InfSep V) : ∀ n : V, IsNat n → n ∉ n :=
+  hV.induction (β := Empty)
+    (fun (W : Type u) [Membership W W] (v : Unit ⊕ Empty → W) => v (Sum.inl ()) ∉ v (Sum.inl ()))
+    Empty.elim
+    (fun e he h => he e h)
+    (fun x y hx ih hy hyy => by
+      simp only [Sum.elim_inl] at ih hyy ⊢
+      rcases (hy y).1 hyy with h | h
+      · exact ih (hV.isNat_trans x hx y h x ((hy x).2 (Or.inr rfl)))
+      · subst h; exact ih ((hy y).2 (Or.inr rfl)) |>.elim)
+
+theorem isNat_mem (hV : InfSep V) : ∀ n : V, IsNat n → ∀ m ∈ n, IsNat m :=
+  hV.induction (β := Empty)
+    (fun (W : Type u) [Membership W W] (v : Unit ⊕ Empty → W) => ∀ m ∈ v (Sum.inl ()), IsNat m)
+    Empty.elim
+    (fun e he m hm => absurd hm (he m))
+    (fun x y hx ih hy m hm => by
+      simp only [Sum.elim_inl] at ih hm ⊢
+      rcases (hy m).1 hm with h | rfl
+      · exact ih m h
+      · exact hx)
+
+theorem pred_unique (hV : InfSep V)
+    {x y y' : V} (hx : IsNat x) (h : IsSucc y x) (h' : IsSucc y' x) : y = y' := by
+  have hy : y ∈ x := (h y).2 (Or.inr rfl)
+  have hy' : y' ∈ x := (h' y').2 (Or.inr rfl)
+  have hyn := isNat_mem hV x hx y hy
+  by_contra hne
+  have a : y ∈ y' := by
+    rcases (h' y).1 hy with h1 | h1
+    · exact h1
+    · exact absurd h1 hne
+  have b : y' ∈ y := by
+    rcases (h y').1 hy' with h1 | h1
+    · exact h1
+    · exact absurd h1.symm hne
+  exact nat_not_self hV y hyn (hV.isNat_trans y hyn y' b y a)
+
+variable {s k : ℕ} [NeZero s] [NeZero k]
+
+/-- Determinism of any run in any model of InfSep + Extensionality: at every time `t ≤ N` the
+head row is a single (state, natural cell), and the tape row is a function on natural cells. -/
+theorem run_rows (hV : InfSep V) (ext : ∀ x y : V, (∀ z, z ∈ x ↔ z ∈ y) → x = y)
+    (sx : ∀ x : V, ∃ y, IsSucc x y)
+    (M : Machine s k) (N : V) (head : Fin s → V) (tape : Fin k → V) (hN : IsNat N)
+    (run : IsHaltingRun M N head tape) :
+    ∀ t, IsNat t → (t ∈ N ∨ t = N) →
+      (∃ q x, PairIn t x (head q) ∧ IsNat x ∧ ∀ r y, PairIn t y (head r) → r = q ∧ y = x) ∧
+      (∀ y, IsNat y → ∃ c, PairIn t y (tape c) ∧ ∀ c', PairIn t y (tape c') → c' = c) := by
+  intro t ht
+  refine hV.induction (β := Unit ⊕ (Fin s ⊕ Fin k))
+    (fun (W : Type u) [Membership W W] (v : Unit ⊕ (Unit ⊕ (Fin s ⊕ Fin k)) → W) =>
+      (v (.inl ()) ∈ v (.inr (.inl ())) ∨ v (.inl ()) = v (.inr (.inl ()))) →
+      (∃ q, ∃ x, PairIn (v (.inl ())) x (v (.inr (.inr (.inl q)))) ∧ IsNat x ∧
+          ∀ r, ∀ y, PairIn (v (.inl ())) y (v (.inr (.inr (.inl r)))) → r = q ∧ y = x) ∧
+      (∀ y, IsNat y → ∃ c, PairIn (v (.inl ())) y (v (.inr (.inr (.inr c)))) ∧
+          ∀ c', PairIn (v (.inl ())) y (v (.inr (.inr (.inr c')))) → c' = c))
+    (Sum.elim (fun _ => N) (Sum.elim head tape)) ?_ ?_ t ht
+  · intro e he _
+    simp only [Sum.elim_inl, Sum.elim_inr]
+    obtain ⟨hh, htp⟩ := run.start e he
+    refine ⟨⟨0, N, (hh 0 N).2 ⟨rfl, rfl⟩, hN, fun r y h => (hh r y).1 h⟩,
+      fun y hy => ⟨0, (htp y hy 0).2 rfl, fun c' h => (htp y hy c').1 h⟩⟩
+  · intro t t' htn ih hsucc ht'
+    simp only [Sum.elim_inl, Sum.elim_inr] at ih ht' ⊢
+    have htN : t ∈ N := by
+      rcases ht' with h | h
+      · exact hV.isNat_trans N hN t' h t ((hsucc t).2 (Or.inr rfl))
+      · rw [← h]; exact (hsucc t).2 (Or.inr rfl)
+    obtain ⟨⟨q, x, hq, hxn, huniq⟩, htape⟩ := ih (Or.inl htN)
+    obtain ⟨q0, x0, a, b, d, q', hq0, ha, htr, hh', ht''⟩ := run.step t htN t' hsucc
+    obtain ⟨hq', hx'⟩ := huniq q0 x0 hq0
+    subst q0; subst x0
+    -- some head exists at t'
+    obtain ⟨r1, y1, hy1⟩ : ∃ r y, PairIn t' y (head r) := by
+      rcases ht' with h | rfl
+      · obtain ⟨t'', ht''⟩ := sx t'
+        obtain ⟨r, y, -, -, -, -, hr, -⟩ := run.step t' h t'' ht''
+        exact ⟨r, y, hr⟩
+      · obtain ⟨r, y, -, hr, -⟩ := run.halt; exact ⟨r, y, hr⟩
+    obtain ⟨rfl, hmv1⟩ := (hh' r1 y1).1 hy1
+    have hy1n : IsNat y1 := by
+      cases d with
+      | right => exact hxn.succ hmv1
+      | left => exact isNat_mem hV x hxn y1 ((hmv1 y1).2 (Or.inr rfl))
+    refine ⟨⟨r1, y1, hy1, hy1n, fun r y h => ?_⟩, fun y hy => ?_⟩
+    · obtain ⟨rfl, hmv⟩ := (hh' r y).1 h
+      refine ⟨rfl, ?_⟩
+      cases d with
+      | right => exact ext _ _ fun z => (hmv z).trans (hmv1 z).symm
+      | left => exact pred_unique hV hxn hmv hmv1
+    · by_cases hyx : y = x
+      · exact ⟨b, (ht'' y hy b).2 (Or.inl ⟨hyx, rfl⟩), fun c' h => by
+          rcases (ht'' y hy c').1 h with ⟨-, h⟩ | ⟨h, -⟩
+          · exact h
+          · exact absurd hyx h⟩
+      · obtain ⟨c, hc, hcu⟩ := htape y hy
+        exact ⟨c, (ht'' y hy c).2 (Or.inr ⟨hyx, hc⟩), fun c' h => by
+          rcases (ht'' y hy c').1 h with ⟨h, -⟩ | ⟨-, h⟩
+          · exact absurd h hyx
+          · exact hcu c' h⟩
+
+end RunRows
+
 /-! ## 5. The theory `zf393` actually searches
 
-`zf393` looks for a contradiction in O'Rear's ZF without Foundation (and without Choice). The form
-below is the target for exactly that theory. The ZFC target implies it
-(`independent_without_Foundation_of_ZFC`, proved), and it implies the syntactic statement about
-O'Rear's calculus (`not_zfProvable_of_independent`, proved from two companions, with no
-completeness theorem). -/
+`zf393` looks for a contradiction in O'Rear's ZF without Foundation (and without Choice). The
+target for that theory is stated in `IndependenceChallenge`; the ZFC form implies it
+(`independent_without_Foundation_of_ZFC`). -/
 
 /-- A model of ZFC is a model of ZF without Foundation. -/
 def Model.toZFWithoutFoundation (V : Model IsZFC) : Model IsZFWithoutFoundation where
@@ -1011,6 +1134,20 @@ theorem haltsIn_zfSet_iff (M : Machine s k) :
 theorem haltsIn_firstOrder (M : Machine s k) :
     ∃ σ : setLang.Sentence, ∀ (V : Type u) [Membership V V], HaltsIn V M ↔ V ⊨ σ :=
   haltsIn_firstOrder_aux M
+
+/-- Companion: in every model of ZF without Foundation, a halting run is determined row by row.
+At each time `t ≤ N` the head row holds exactly one (state, cell) pair, with a natural-number
+cell, and every natural-number cell holds exactly one symbol. -/
+theorem isHaltingRun_rows {V : Type u} [Membership V V] (hV : IsZFWithoutFoundation V)
+    {M : Machine s k} {N : V} {head : Fin s → V} {tape : Fin k → V} (hN : IsNat N)
+    (run : IsHaltingRun M N head tape) (t : V) (ht : IsNat t) (htN : t ∈ N ∨ t = N) :
+    (∃ q x, IsNat x ∧ ∀ r y, PairIn t y (head r) ↔ r = q ∧ y = x) ∧
+    (∀ y, IsNat y → ∃ a, ∀ c, PairIn t y (tape c) ↔ c = a) := by
+  obtain ⟨⟨q, x, hq, hxn, hu⟩, htape⟩ :=
+    run_rows hV.toInfSep hV.extensionality hV.exists_succ M N head tape hN run t ht htN
+  refine ⟨⟨q, x, hxn, fun r y => ⟨hu r y, by rintro ⟨rfl, rfl⟩; exact hq⟩⟩, fun y hy => ?_⟩
+  obtain ⟨a, ha, hau⟩ := htape y hy
+  exact ⟨a, fun c => ⟨hau c, by rintro rfl; exact ha⟩⟩
 
 /-- The easy half of the target, from `Challenge`'s `Zf393.not_halts_zf393`: `ZFSet` is a model
 of ZFC in which `zf393` runs forever. -/
@@ -1108,7 +1245,6 @@ theorem not_haltsIn_haltOnOne {V : Type u} [Membership V V] (hV : IsZFWithoutFou
       · exact (hcells y hy).2 h
     · obtain ⟨-, hmv⟩ := (hh' 0 y).1 hy
       exact hxn.succ hmv
-
 
 /-- The target, stated for `haltOnOne`, is false (from `not_haltsIn_haltOnOne`). -/
 theorem haltOnOne_not_independent_of_ZFC :
