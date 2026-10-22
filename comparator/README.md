@@ -2,7 +2,8 @@
 
 This directory contains configuration files for verifying the proofs in [`Cryptids/`](../Cryptids/)
 and [`BusyBeaver/`](../BusyBeaver/) against the self-contained challenge specifications in
-[`Challenge.lean`](../Challenge.lean) and [`BusyBeaverChallenge.lean`](../BusyBeaverChallenge.lean)
+[`Challenge.lean`](../Challenge.lean), [`IndependenceChallenge.lean`](../IndependenceChallenge.lean)
+and [`BusyBeaverChallenge.lean`](../BusyBeaverChallenge.lean)
 using [`leanprover/comparator`](https://github.com/leanprover/comparator).
 
 ## Overview
@@ -20,9 +21,19 @@ using [`leanprover/comparator`](https://github.com/leanprover/comparator).
   and states all 236 `BB(6)` and `BB(3, 3)` holdout theorems (`is_closed_pattern_set` /
   `is_closed_stack_pattern_set`, `has_collatz_reduction` / `has_stacked_collatz_reduction`,
   `is_valid_acceleration`, and `isHalt_iff_acceleration` across the 59 machines) with `sorry`.
+- [`IndependenceChallenge.lean`](../IndependenceChallenge.lean) imports `Challenge` and states
+  that `zf393` and `zf380` are independent of ZFC in model-theoretic form: some model of ZFC
+  thinks the machine halts and some model thinks it runs forever. ZFC is a structure whose fields
+  are the textbook axioms (`IsZFC`), with Separation and Replacement restricted to first-order
+  definable properties, and "the machine halts" (`HaltsIn`) is a halting run inside the model.
+  Unlike `Halts zf393 ↔ ZFInconsistent`, the target is provably false for trivially non-halting
+  machines (`rightForever`, `haltOnOne`), so it cannot be discharged vacuously through Lean's
+  proof of `Con(ZF)`. The targets are open; `independence.json` audits the companion theorems and
+  reductions proved so far in `Cryptids.Independence`.
 
-Comparator exports both the challenge module (`Challenge` or `BusyBeaverChallenge`) and the
-solution module (`Cryptids` or `BusyBeaver`) via `leanexport`, verifying in a Bubblewrap sandbox
+Comparator exports both the challenge module (`Challenge`, `IndependenceChallenge` or
+`BusyBeaverChallenge`) and the solution module (`Cryptids`, `Cryptids.Independence` or
+`BusyBeaver`) via `leanexport`, verifying in a Bubblewrap sandbox
 that:
 1. Every target theorem and all of its transitive definition dependencies match identically between
    the challenge module and the solution module.
@@ -44,6 +55,7 @@ that:
 | [`riemann_95.json`](./riemann_95.json) | `Challenge` | `Cryptids.Semantics.Riemann95` | `candidate_fewer_states`, `candidate_equivalent`, `halts_candidate_iff_not_riemannHypothesis` |
 | [`riemann_120.json`](./riemann_120.json) | `Challenge` | `Cryptids.Semantics.Riemann120` | `halts_riemann120_iff_not_riemannHypothesis`, `halts_candidate_iff_not_riemannHypothesis` |
 | [`riemann_semantics.json`](./riemann_semantics.json) | `Challenge` | `Cryptids.Semantics.Riemann` | `halts_riemann744_iff_exists_counterexample`, `halts_riemann744_iff_not_riemannHypothesis` |
+| [`independence.json`](./independence.json) | `IndependenceChallenge` | `Cryptids.Independence` | The 12 proved companions and reductions toward the open independence targets (`isZFC_zfSet`, `haltsIn_zfSet_iff`, `haltsIn_firstOrder`, `haltsIn_zfFormula`, `isHaltingRun_rows`, `not_haltsIn_haltOnOne`, `easy_half`, `independent_without_Foundation_of_ZFC`, `not_haltsIn_of_total`, `not_independent_of_total`, `rightForever_not_independent_of_ZFC`, `haltOnOne_not_independent_of_ZFC`) |
 
 ## Usage
 
@@ -52,5 +64,6 @@ From the repository root (with `bwrap` installed):
 ```bash
 lake exe cache get
 lake comparator --config comparator/all.json
+lake comparator --config comparator/independence.json
 lake comparator --config comparator/busy_beaver.json
 ```

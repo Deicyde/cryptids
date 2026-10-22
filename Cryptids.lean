@@ -7,6 +7,7 @@ module
 public import Cryptids.Machines
 public import Cryptids.Propositions
 public import Cryptids.Goldbach21
+public import Cryptids.Independence
 public import Cryptids.Riemann104
 public import Cryptids.Riemann95
 public import Cryptids.Riemann120
@@ -50,5 +51,9 @@ linking every machine's blank-tape halting problem to Mathlib's statements:
 - `Cryptids.Semantics.Goldbach`, `Cryptids.Semantics.Zf`, `Cryptids.Semantics.Riemann` —
   End-to-end proofs linking halting from the blank tape to the corresponding mathematical
   conjectures across all baseline machines (`goldbach25`, `zf432`, `riemann744`).
+- `Cryptids.Independence` — Companion theorems and reductions for the open targets of
+  `IndependenceChallenge` (some model of ZFC thinks `zf393` halts and some thinks it runs
+  forever): `ZFSet` satisfies `IsZFC`, `HaltsIn` is first-order and agrees with `Halts` in `ZFSet`,
+  and the target is false for machines that run forever for trivial reasons.
 -/
 

@@ -27,6 +27,8 @@ All proofs in [`Cryptids/`](./) are checked by the Lean 4 kernel (`v4.35.0-rc4`)
    - **Riemann Hypothesis (`riemann_95`, `riemann_104`, `riemann_120`, and `riemann_744`):** All four machines (`riemann_95`, `riemann_104`, Shunia's 120-state machine `riemann_120`, and the 744-state machine `riemann_744`) halt if and only if Mathlib's `RiemannHypothesis` is false (`Halts candidate ↔ ¬ RiemannHypothesis`, `Halts riemann120 ↔ ¬ RiemannHypothesis`, and `Halts riemann744 ↔ ¬ RiemannHypothesis`).
    - **ZF Consistency (`zf_380`, `zf_393`, and `zf_432`):** Both `zf_380` and Wade's 393-state machine `zf_393` (incorporating upstream fix `10fcf152b3`) halt if and only if O'Rear's `zf2.nql` Hilbert system proves $v_0 \in v_0$ (`Halts candidate ↔ ZFInconsistent`, `Halts zf393 ↔ ZFInconsistent`), and hence never halt in `ZFSet.{0}` (`not_halts_candidate`, `not_halts_zf393`), while `zf_432` halts if and only if the 20-clause deductive system enumerated by `zf_432_wade.tm` derives $v_0 \in v_0$ (`WadeZFInconsistent`).
 
+3. **Toward independence of ZFC ([`Independence.lean`](./Independence.lean)):** Companion theorems for the open targets of [`IndependenceChallenge.lean`](../IndependenceChallenge.lean), which state that some model of ZFC thinks `zf_393` (resp. `zf_380`) halts and some model thinks it runs forever. Mathlib's `ZFSet` satisfies the axioms `IsZFC`; the halting predicate `HaltsIn` is first-order, agrees with `Halts` in `ZFSet`, and determines the run row by row in every model of ZF without Foundation; and the target is false for machines that run forever for trivial reasons (`rightForever`, `haltOnOne`).
+
 Details on the proof architecture and mathematical background are in [`Cryptids/Semantics/README.md`](./Semantics/README.md).
 
 The [95-state Riemann construction](../artifacts/riemann_95/README.md) retains the
@@ -46,7 +48,7 @@ For the reduced machines in [`artifacts/`](../artifacts/), the state-space trans
 
 ## Building and Verifying
 
-Build the `Cryptids` and `Challenge` targets:
+Build the `Cryptids`, `Challenge` and `IndependenceChallenge` targets:
 
 ```bash
 lake exe cache get
@@ -58,6 +60,7 @@ Independently audit the proofs against [`Challenge.lean`](../Challenge.lean) wit
 
 ```bash
 lake comparator --config comparator/all.json
+lake comparator --config comparator/independence.json
 ```
 
 Run the standalone zero-dependency Python verifier (re-compiles upstream baseline sources, checks SHA-256 digests and transition tables, and simulates `250,000` steps per domain):
