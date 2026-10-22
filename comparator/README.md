@@ -21,12 +21,13 @@ using [`leanprover/comparator`](https://github.com/leanprover/comparator).
   `is_closed_stack_pattern_set`, `has_collatz_reduction` / `has_stacked_collatz_reduction`,
   `is_valid_acceleration`, and `isHalt_iff_acceleration` across the 59 machines) with `sorry`.
 - [`IndependenceChallenge.lean`](../IndependenceChallenge.lean) imports `Challenge` and states
-  that ZF proves neither `⌜M halts⌝` nor `⌜M never halts⌝` for `zf393` and `zf380`
-  (`Independent ZFProvable (haltsSentence M)`), with companion theorems pinning down
-  `haltsSentence`. Unlike `Halts zf393 ↔ ZFInconsistent`, this statement is (assuming
-  completeness of `ZFProvable`) false for trivially non-halting machines, so it cannot be
-  discharged vacuously through Lean's proof of `Con(ZF)`. The headline and companion theorems
-  are open; `independence.json` audits the reductions proved so far.
+  that `zf393` and `zf380` are independent of ZFC in model-theoretic form: some model of ZFC
+  thinks the machine halts and some model thinks it runs forever. ZFC is a structure whose fields
+  are the textbook axioms (`IsZFC`), with Separation and Replacement restricted to first-order
+  definable properties, and "the machine halts" (`HaltsIn`) is a halting run inside the model.
+  Unlike `Halts zf393 ↔ ZFInconsistent`, the target is provably false for trivially non-halting
+  machines, so it cannot be discharged through Lean's proof of `Con(ZF)`. The targets are open;
+  `independence.json` audits the companion theorems and reductions proved so far.
 
 Comparator exports both the challenge module (`Challenge` or `BusyBeaverChallenge`) and the
 solution module (`Cryptids` or `BusyBeaver`) via `leanexport`, verifying in a Bubblewrap sandbox
@@ -51,7 +52,7 @@ that:
 | [`riemann_95.json`](./riemann_95.json) | `Challenge` | `Cryptids.Semantics.Riemann95` | `candidate_fewer_states`, `candidate_equivalent`, `halts_candidate_iff_not_riemannHypothesis` |
 | [`riemann_120.json`](./riemann_120.json) | `Challenge` | `Cryptids.Semantics.Riemann120` | `halts_riemann120_iff_not_riemannHypothesis`, `halts_candidate_iff_not_riemannHypothesis` |
 | [`riemann_semantics.json`](./riemann_semantics.json) | `Challenge` | `Cryptids.Semantics.Riemann` | `halts_riemann744_iff_exists_counterexample`, `halts_riemann744_iff_not_riemannHypothesis` |
-| [`independence.json`](./independence.json) | `IndependenceChallenge` | `Cryptids.Independence` | The 5 proved reductions toward the open independence targets (`not_holdsIn_haltsSentence_of_total`, `not_independent_of_total`, `not_independent_rightForever`, `not_zfProvable_haltsSentence`, `zf393_independent_iff`) |
+| [`independence.json`](./independence.json) | `IndependenceChallenge` | `Cryptids.Independence` | The 11 proved companions and reductions toward the open independence targets (`isZFC_zfSet`, `haltsIn_zfSet_iff`, `haltsIn_firstOrder`, `haltsIn_zfFormula`, `not_haltsIn_haltOnOne`, `easy_half`, `independent_without_Foundation_of_ZFC`, `not_haltsIn_of_total`, `not_independent_of_total`, `rightForever_not_independent_of_ZFC`, `haltOnOne_not_independent_of_ZFC`) |
 
 ## Usage
 
